@@ -80,3 +80,15 @@ export function fixWpLinks(content: string) {
   const wpUrlPattern = /href="https?:\/\/magentalab\.mycafe24\.com\/[^"]+\/#([^"]+)"/g;
   return content.replace(wpUrlPattern, 'href="#$1"');
 }
+
+export async function getPageBySlug(slug: string): Promise<WPPost | null> {
+  const res = await fetch(`${WP_API_URL}/pages?slug=${slug}`, {
+    next: {
+      revalidate: 3600,
+      tags: [`page-${slug}`]
+    },
+  });
+  if (!res.ok) throw new Error(`Failed to fetch page: ${slug}`);
+  const pages = await res.json();
+  return pages[0] || null;
+}

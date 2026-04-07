@@ -19,8 +19,8 @@ export default function Header() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-gray-600">
-          <Link href="/" className="text-magenta font-semibold transition-colors">블로그</Link>
-          <a href="#" className="hover:text-magenta transition-colors">연구소 소개</a>
+          <Link href="/" className="hover:text-magenta transition-colors">블로그</Link>
+          <Link href="/about" className="hover:text-magenta transition-colors">연구소 소개</Link>
           <a href="#" className="hover:text-magenta transition-colors">파트너십</a>
           <a href="#" className="px-5 py-2.5 bg-magenta text-white rounded-full hover:bg-magenta/90 transition-all shadow-md shadow-magenta/10 hover:shadow-lg">
             문의하기
