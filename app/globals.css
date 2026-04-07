@@ -12,7 +12,7 @@
   --color-foreground: var(--foreground);
   --color-magenta: var(--magenta);
   --color-magenta-light: var(--magenta-light);
-  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-sans: "Pretendard", "Inter", system-ui, -apple-system, sans-serif;
 }
 
 html {
@@ -29,18 +29,23 @@ body {
 
 /* Base typography for WordPress content */
 .wp-content {
-  line-height: 1.7;
+  line-height: 1.625;
+  font-size: 1.125rem; /* 18px */
+  color: #1a1a1a;
 }
 
 .wp-content p {
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .wp-content h1, .wp-content h2, .wp-content h3, .wp-content h4, .wp-content h5 {
-  font-weight: 700;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  margin-top: 3.5rem;
+  margin-bottom: 1.5rem;
   scroll-margin-top: 100px; /* Header offset */
+  line-height: 1.2;
+  color: #000;
 }
 
 .wp-content img {

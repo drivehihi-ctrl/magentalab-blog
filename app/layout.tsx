@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Magentalab 반려동물 연구소 | 블로그",
@@ -20,16 +17,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className="h-full antialiased">
-      <body className={`${inter.className} min-h-full flex flex-col bg-gray-50/50`}>
+    <html lang="ko">
+      <head>
+        <link rel="stylesheet" as="style" crossOrigin="" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+      </head>
+      <body className="antialiased">
         <Header />
-        <main className="flex-grow">
-          {children}
-        </main>
-        <footer className="py-12 border-t border-gray-100 bg-white text-center text-sm text-gray-500">
-          <div className="container mx-auto px-4">
-            <p className="mb-2 font-bold text-gray-900">Magentalab</p>
-            <p>© {new Date().getFullYear()} Magentalab 반려동물 연구소. All rights reserved.</p>
+        <main>{children}</main>
+        <footer className="bg-gray-50 border-t border-gray-100 py-12">
+          <div className="container mx-auto px-4 text-center text-gray-400 text-sm">
+            &copy; 2026 Magentalab. All rights reserved.
           </div>
         </footer>
       </body>
