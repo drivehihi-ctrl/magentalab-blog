@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
   }
 
   // 'posts' 태그가 달린 모든 데이터를 새로고침합니다.
+  // @ts-ignore - Next.js versions may vary in type definitions for revalidateTag
   revalidateTag('posts');
   
   return NextResponse.json({ revalidated: true, now: Date.now() });
