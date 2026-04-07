@@ -51,15 +51,15 @@ export default async function AboutPage() {
           <div className="relative z-10">
             <h2 className="text-3xl font-bold mb-6">연구소의 발걸음을 함께 지켜봐 주세요.</h2>
             <p className="text-gray-400 mb-10 max-w-lg mx-auto">
-              Magentalab은 항상 열려 있습니다. 파트너십 제안이나 연구 협력은 언제든 환영합니다.
+              파트너십 제안은 언제든 환영합니다.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-10 py-4 bg-magenta hover:bg-magenta/90 text-white font-bold rounded-2xl transition-all shadow-lg shadow-magenta/20">
+            <div className="flex justify-center">
+              <a 
+                href="mailto:smagentalab@gmail.com"
+                className="px-10 py-4 bg-magenta hover:bg-magenta/90 text-white font-bold rounded-2xl transition-all shadow-lg shadow-magenta/20"
+              >
                 문의하기
-              </button>
-              <button className="px-10 py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-2xl transition-all">
-                연구 분야 더 보기
-              </button>
+              </a>
             </div>
           </div>
           <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-magenta/20 rounded-full blur-3xl" />

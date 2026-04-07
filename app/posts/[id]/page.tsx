@@ -125,15 +125,20 @@ export default async function PostDetailPage({ params }: PageProps) {
         />
         
         {/* Post Footer / CTA */}
-        <div className="mt-20 p-8 md:p-12 rounded-3xl bg-gray-900 text-white relative overflow-hidden">
+        <div className="mt-20 p-8 md:p-12 rounded-3xl bg-gray-900 text-white text-center relative overflow-hidden">
           <div className="relative z-10">
             <h3 className="text-2xl font-bold mb-4">함께 더 건강한 세상을 만들어요.</h3>
-            <p className="text-gray-400 mb-8 max-w-lg">
-              Magentalab 반려동물 연구소의 모든 이야기가 궁금하신가요? 뉴스레터를 구독하고 가장 먼저 소식을 받아보세요.
+            <p className="text-gray-400 mb-8 max-w-lg mx-auto">
+              파트너십 제안은 언제든 환영합니다.
             </p>
-            <button className="px-8 py-3 bg-magenta hover:bg-magenta/90 text-white font-bold rounded-full transition-all shadow-lg shadow-magenta/20">
-              연구소 소식 구독하기
-            </button>
+            <div className="flex justify-center">
+              <a 
+                href="mailto:smagentalab@gmail.com"
+                className="px-10 py-4 bg-magenta hover:bg-magenta/90 text-white font-bold rounded-2xl transition-all shadow-lg shadow-magenta/20"
+              >
+                문의하기
+              </a>
+            </div>
           </div>
           {/* Decorative background for the CTA */}
           <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-magenta/20 rounded-full blur-3xl" />
