@@ -68,3 +68,15 @@ export async function getComments(postId: number): Promise<WPComment[]> {
   if (!res.ok) throw new Error(`Failed to fetch comments for post: ${postId}`);
   return res.json();
 }
+
+/**
+ * 워드프레스 목차 플러그인 등이 생성한 절대 경로 링크를 내부 앵커 링크로 변환합니다.
+ * 예: https://magentalab.mycafe24.com/post-slug/#anchor -> #anchor
+ */
+export function fixWpLinks(content: string) {
+  if (!content) return "";
+  
+  // 워드프레스 주소와 슬러그가 포함된 앵커 링크를 찾아 #anchor 부분만 남깁니다.
+  const wpUrlPattern = /href="https?:\/\/magentalab\.mycafe24\.com\/[^"]+\/#([^"]+)"/g;
+  return content.replace(wpUrlPattern, 'href="#$1"');
+}

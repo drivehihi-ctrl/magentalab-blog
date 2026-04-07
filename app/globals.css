@@ -15,6 +15,10 @@
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
@@ -32,10 +36,11 @@ body {
   margin-bottom: 1.5rem;
 }
 
-.wp-content h1, .wp-content h2, .wp-content h3 {
+.wp-content h1, .wp-content h2, .wp-content h3, .wp-content h4, .wp-content h5 {
   font-weight: 700;
   margin-top: 2.5rem;
   margin-bottom: 1rem;
+  scroll-margin-top: 100px; /* Header offset */
 }
 
 .wp-content img {

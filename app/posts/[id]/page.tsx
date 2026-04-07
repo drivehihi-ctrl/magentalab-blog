@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Metadata } from "next";
-import { getPost, getFeaturedImage, getCategories } from "@/lib/wp";
+import { getPost, getFeaturedImage, getCategories, fixWpLinks } from "@/lib/wp";
 import Link from "next/link";
 import CommentsSection from "@/components/CommentsSection";
 
@@ -121,7 +121,7 @@ export default async function PostDetailPage({ params }: PageProps) {
       <div className="container mx-auto px-4 max-w-3xl">
         <div 
           className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal"
-          dangerouslySetInnerHTML={{ __html: post.content.rendered }}
+          dangerouslySetInnerHTML={{ __html: fixWpLinks(post.content.rendered) }}
         />
         
         {/* Post Footer / CTA */}
