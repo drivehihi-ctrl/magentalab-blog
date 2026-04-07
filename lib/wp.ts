@@ -44,3 +44,27 @@ export function getFeaturedImage(post: WPPost) {
 export function getCategories(post: WPPost) {
   return post._embedded?.["wp:term"]?.[0] || [];
 }
+
+export interface WPComment {
+  id: number;
+  post: number;
+  parent: number;
+  author_name: string;
+  author_url: string;
+  date: string;
+  content: { rendered: string };
+  author_avatar_urls?: {
+    [key: string]: string;
+  };
+}
+
+export async function getComments(postId: number): Promise<WPComment[]> {
+  const res = await fetch(`${WP_API_URL}/comments?post=${postId}&order=asc`, {
+    next: {
+      revalidate: 3600,
+      tags: [`comments-${postId}`]
+    },
+  });
+  if (!res.ok) throw new Error(`Failed to fetch comments for post: ${postId}`);
+  return res.json();
+}

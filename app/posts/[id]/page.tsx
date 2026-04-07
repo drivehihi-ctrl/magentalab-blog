@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Metadata } from "next";
 import { getPost, getFeaturedImage, getCategories } from "@/lib/wp";
 import Link from "next/link";
+import CommentsSection from "@/components/CommentsSection";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -137,6 +138,9 @@ export default async function PostDetailPage({ params }: PageProps) {
           {/* Decorative background for the CTA */}
           <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-magenta/20 rounded-full blur-3xl" />
         </div>
+
+        {/* Comments Section */}
+        <CommentsSection postId={parseInt(id)} />
       </div>
     </article>
   );
