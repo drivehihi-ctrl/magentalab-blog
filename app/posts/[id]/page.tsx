@@ -11,9 +11,33 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { id } = await params;
   try {
     const post = await getPost(id);
+    const imageUrl = getFeaturedImage(post);
+    const title = post.title.rendered.replace(/<[^>]*>?/gm, "");
+    const description = post.excerpt.rendered.replace(/<[^>]*>?/gm, "").slice(0, 160);
+
     return {
-      title: `${post.title.rendered} | Magentalab`,
-      description: post.excerpt.rendered.replace(/<[^>]*>?/gm, "").slice(0, 160),
+      title: `${title} | Magentalab`,
+      description,
+      openGraph: {
+        title,
+        description,
+        type: "article",
+        publishedTime: post.date,
+        images: [
+          {
+            url: imageUrl,
+            width: 1200,
+            height: 630,
+            alt: title,
+          },
+        ],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: [imageUrl],
+      },
     };
   } catch (error) {
     return {
