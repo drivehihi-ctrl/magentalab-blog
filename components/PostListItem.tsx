@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { WPPost, getFeaturedImage, getCategories } from "@/lib/wp";
+import { WPPost, getFeaturedImage, getCategories, getTags } from "@/lib/wp";
 
 interface PostListItemProps {
   post: WPPost;
@@ -9,6 +9,7 @@ interface PostListItemProps {
 export default function PostListItem({ post }: PostListItemProps) {
   const imageUrl = getFeaturedImage(post);
   const categories = getCategories(post);
+  const tags = getTags(post);
   const date = new Date(post.date).toLocaleDateString("ko-KR", {
     year: "numeric",
     month: "long",
@@ -34,9 +35,20 @@ export default function PostListItem({ post }: PostListItemProps) {
         </div>
         
         <h3 
-          className="text-xl md:text-2xl font-extrabold text-gray-900 leading-tight mb-3 group-hover:text-magenta transition-colors"
+          className="text-xl md:text-2xl font-extrabold text-gray-900 leading-tight mb-2 group-hover:text-magenta transition-colors"
           dangerouslySetInnerHTML={{ __html: post.title.rendered }}
         />
+
+        {/* Tags indicator */}
+        {tags && tags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {tags.slice(0, 3).map((tag: any) => (
+              <span key={tag.id} className="text-[11px] text-gray-400 font-medium">
+                #{tag.name}
+              </span>
+            ))}
+          </div>
+        )}
         
         <div 
           className="text-gray-500 text-sm md:text-base leading-relaxed line-clamp-2 md:line-clamp-3 mb-4 font-normal"

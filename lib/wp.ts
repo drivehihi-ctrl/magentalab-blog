@@ -46,6 +46,10 @@ export function getCategories(post: WPPost) {
   return post._embedded?.["wp:term"]?.[0] || [];
 }
 
+export function getTags(post: WPPost) {
+  return post._embedded?.["wp:term"]?.[1] || [];
+}
+
 export interface WPComment {
   id: number;
   post: number;

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Metadata } from "next";
-import { getPost, getFeaturedImage, getCategories, fixWpLinks } from "@/lib/wp";
+import { getPost, getFeaturedImage, getCategories, getTags, fixWpLinks } from "@/lib/wp";
 import Link from "next/link";
 import CommentsSection from "@/components/CommentsSection";
 
@@ -55,6 +55,7 @@ export default async function PostDetailPage({ params }: PageProps) {
   const post = await getPost(id);
   const imageUrl = getFeaturedImage(post);
   const categories = getCategories(post);
+  const tags = getTags(post);
   const date = new Date(post.date).toLocaleDateString("ko-KR", {
     year: "numeric",
     month: "long",
@@ -147,6 +148,22 @@ export default async function PostDetailPage({ params }: PageProps) {
           className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal"
           dangerouslySetInnerHTML={{ __html: fixWpLinks(post.content.rendered) }}
         />
+        
+        {/* Tags Section */}
+        {tags && tags.length > 0 && (
+          <div className="mt-12 pt-8 border-t border-gray-100">
+            <div className="flex flex-wrap gap-2 text-sm">
+              {tags.map((tag: any) => (
+                <span 
+                  key={tag.id} 
+                  className="px-3 py-1 bg-gray-50 text-gray-500 rounded-lg font-medium transition-colors hover:bg-magenta-light/20 hover:text-magenta"
+                >
+                  #{tag.name}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
         
         {/* Post Footer / CTA */}
         <div className="mt-20 p-8 md:p-12 rounded-3xl bg-gray-900 text-white text-center relative overflow-hidden">
