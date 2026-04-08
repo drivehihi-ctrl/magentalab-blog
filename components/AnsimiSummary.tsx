@@ -10,10 +10,23 @@ export default function AnsimiSummary({ excerpt, categoryNames }: AnsimiSummaryP
   let displayExcerpt = excerpt || "이 게시글의 핵심 연구 데이터를 확인해 보세요.";
   let manualEmpathyMessage = "";
 
-  if (excerpt && excerpt.includes("---")) {
-    const parts = excerpt.split("---");
-    displayExcerpt = parts[0].trim();
-    manualEmpathyMessage = parts[1].replace(/<[^>]*>?/gm, "").trim(); // Strip HTML from empathy part
+  if (excerpt) {
+    // WordPress excerpt often wraps content in <p> tags. 
+    // We look for '---' possibly surrounded by tags or newlines.
+    const splitRegex = /(?:<p>)?\s*---\s*(?:<\/p>)?/;
+    const parts = excerpt.split(splitRegex);
+    
+    if (parts.length >= 2) {
+      displayExcerpt = parts[0].trim();
+      // Ensure the first part doesn't have a hanging open tag if we split inside one
+      if (displayExcerpt.endsWith('<p>')) {
+        displayExcerpt = displayExcerpt.slice(0, -3).trim();
+      }
+      // Re-close any tags if necessary, but simpler is to just trim and let dangerouslySetInnerHTML handle it
+      
+      // The second part is the empathy message - strip all HTML for a clean quote
+      manualEmpathyMessage = parts[1].replace(/<[^>]*>?/gm, "").trim();
+    }
   }
 
   // Determine empathy message based on categories (Fallback)
