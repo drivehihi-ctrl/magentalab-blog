@@ -53,7 +53,7 @@ export default function AnsimiSummary({ excerpt, categoryNames }: AnsimiSummaryP
           </div>
 
           <div 
-            className="text-gray-700 text-sm md:text-base leading-relaxed mb-6 font-medium font-sans prose-sm max-w-none"
+            className="text-gray-700 text-sm md:text-base leading-relaxed mb-6 font-medium whitespace-pre-wrap font-sans prose-sm max-w-none prose-p:my-1"
             dangerouslySetInnerHTML={{ __html: displayExcerpt }}
           />
 
