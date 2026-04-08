@@ -16,7 +16,7 @@ export interface WPPost {
 }
 
 export async function getPosts(): Promise<WPPost[]> {
-  const res = await fetch(`${WP_API_URL}/posts?_embed`, {
+  const res = await fetch(`${WP_API_URL}/posts?_embed&per_page=100`, {
     next: {
       revalidate: 3600,
       tags: ['posts'] // 실시간 업데이트를 위한 태그
