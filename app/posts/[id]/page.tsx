@@ -19,6 +19,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {
       title: `${title} | Magentalab`,
       description,
+      alternates: {
+        canonical: `/posts/${id}`,
+      },
       openGraph: {
         title,
         description,
@@ -35,7 +38,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       },
       twitter: {
         card: "summary_large_image",
-        title,
+        title: `${title} | Magentalab`,
         description,
         images: [imageUrl],
       },
@@ -58,8 +61,29 @@ export default async function PostDetailPage({ params }: PageProps) {
     day: "numeric",
   });
 
+  // Schema.org Structured Data
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": post.title.rendered,
+    "image": [imageUrl],
+    "datePublished": post.date,
+    "dateModified": post.modified || post.date,
+    "author": [{
+      "@type": "Person",
+      "name": "Magentalab Research Team",
+      "url": "https://magentalab-blog.vercel.app/about"
+    }]
+  };
+
   return (
     <article className="pb-24">
+      {/* Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      
       {/* Post Header */}
       <header className="relative pt-16 pb-24 bg-white border-b border-gray-100 overflow-hidden">
         <div className="container mx-auto px-4 max-w-4xl relative z-10">

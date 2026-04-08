@@ -3,6 +3,7 @@ export const WP_API_URL = `${process.env.WORDPRESS_URL}/wp-json/wp/v2`;
 export interface WPPost {
   id: number;
   date: string;
+  modified: string;
   slug: string;
   title: { rendered: string };
   content: { rendered: string };
