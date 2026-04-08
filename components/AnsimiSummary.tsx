@@ -10,14 +10,23 @@ export default function AnsimiSummary({ excerpt, categoryNames }: AnsimiSummaryP
   let displayExcerpt = excerpt || "이 게시글의 핵심 연구 데이터를 확인해 보세요.";
   let manualEmpathyMessage = "";
 
-  // Support various common dash separators (---, em-dash, en-dash)
-  const separatorPattern = /---|\u2014|\u2013/;
+  // Common separators: [공감], [message], [summary], ---, em-dash, en-dash, horizontal line
+  const separatorPattern = /\[공감\]|\[message\]|---|\u2014|\u2013|<\s*hr\s*\/?>/;
   
-  if (excerpt && separatorPattern.test(excerpt)) {
+  if (excerpt && (separatorPattern.test(excerpt) || excerpt.includes("[공감]"))) {
+    // We found a separator!
     const parts = excerpt.split(separatorPattern);
+    
+    // Part 0 is the summary
     displayExcerpt = parts[0].trim();
-    // Use the last part as the empathy message if multiple separators found
-    manualEmpathyMessage = parts[parts.length - 1].replace(/<[^>]*>?/gm, "").trim(); 
+    
+    // The last part is the empathy message
+    if (parts.length > 1) {
+      manualEmpathyMessage = parts[parts.length - 1]
+        .replace(/<[^>]*>?/gm, "") // Strip HTML tags
+        .replace(/&nbsp;/g, " ")    // Clean entities
+        .trim();
+    }
   }
 
   // Determine empathy message based on categories (Fallback)
