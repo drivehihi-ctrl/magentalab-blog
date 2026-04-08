@@ -6,19 +6,28 @@ interface AnsimiSummaryProps {
 }
 
 export default function AnsimiSummary({ excerpt, categoryNames }: AnsimiSummaryProps) {
-  // Determine empathy message based on categories
-  let empathyMessage = "우리 아이와 함께하는 행복한 시간, 안심이가 늘 곁에서 도울게요! 🐾";
-  
-  if (categoryNames.some(c => c.includes('건강') || c.includes('질병'))) {
-    empathyMessage = "우리 아이 건강 정보, 꼼꼼히 챙겨서 오랫동안 행복하게 함께해요! 안심이가 응원할게요. 🏥✨";
-  } else if (categoryNames.some(c => c.includes('푸드') || c.includes('음식'))) {
-    empathyMessage = "맛있는 거 먹을 때가 제일 행복하죠! 건강한 간식으로 아이의 웃음꽃을 피워주세요. 🥗❤️";
-  } else if (categoryNames.some(c => c.includes('생활') || c.includes('훈련'))) {
-    empathyMessage = "아이가 더 편안해하는 법, 차근차근 배우다 보면 어느새 마음이 통해 있을 거예요! 🏠🤝";
+  // Handle manual empathy message via '---' separator in excerpt
+  let displayExcerpt = excerpt || "이 게시글의 핵심 연구 데이터를 확인해 보세요.";
+  let manualEmpathyMessage = "";
+
+  if (excerpt && excerpt.includes("---")) {
+    const parts = excerpt.split("---");
+    displayExcerpt = parts[0].trim();
+    manualEmpathyMessage = parts[1].replace(/<[^>]*>?/gm, "").trim(); // Strip HTML from empathy part
   }
 
-  // Handle empty excerpt
-  const displayExcerpt = excerpt || "이 게시글의 핵심 연구 데이터를 확인해 보세요. 반려동물을 위한 가치 있는 정보가 준비되어 있습니다.";
+  // Determine empathy message based on categories (Fallback)
+  let automatedEmpathyMessage = "우리 아이와 함께하는 행복한 시간, 안심이가 늘 곁에서 도울게요! 🐾";
+  
+  if (categoryNames.some(c => c.includes('건강') || c.includes('질병'))) {
+    automatedEmpathyMessage = "우리 아이 건강 정보, 꼼꼼히 챙겨서 오랫동안 행복하게 함께해요! 안심이가 응원할게요. 🏥✨";
+  } else if (categoryNames.some(c => c.includes('푸드') || c.includes('음식'))) {
+    automatedEmpathyMessage = "맛있는 거 먹을 때가 제일 행복하죠! 건강한 간식으로 아이의 웃음꽃을 피워주세요. 🥗❤️";
+  } else if (categoryNames.some(c => c.includes('생활') || c.includes('훈련'))) {
+    automatedEmpathyMessage = "아이가 더 편안해하는 법, 차근차근 배우다 보면 어느새 마음이 통해 있을 거예요! 🏠🤝";
+  }
+
+  const empathyMessage = manualEmpathyMessage || automatedEmpathyMessage;
 
   return (
     <aside 
