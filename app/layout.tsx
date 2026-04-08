@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import "./globals.css";
 import Header from "@/components/Header";
 
@@ -21,9 +22,25 @@ export default function RootLayout({
       <body className="antialiased">
         <Header />
         <main>{children}</main>
-        <footer className="bg-gray-50 border-t border-gray-100 py-12">
-          <div className="container mx-auto px-4 text-center text-gray-400 text-sm">
-            &copy; 2026 Magentalab. All rights reserved.
+        <footer className="bg-gray-50 border-t border-gray-100 py-16">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12">
+              <div className="max-w-md">
+                <p className="text-gray-900 font-bold mb-2">Magentalab 반려동물 연구소</p>
+                <p className="text-xs text-gray-400 leading-relaxed">
+                  본 정보는 참고용이며, 정확한 진단은 반드시 수의사와 상담하십시오. <br />
+                  Magentalab은 데이터에 기반한 정보 제공을 목적으로 합니다.
+                </p>
+              </div>
+              <nav className="flex flex-wrap gap-6 text-xs font-bold text-gray-500 uppercase tracking-widest">
+                <Link href="/privacy" className="hover:text-magenta transition-colors">개인정보처리방침</Link>
+                <Link href="/terms" className="hover:text-magenta transition-colors">이용약관</Link>
+                <Link href="/about" className="hover:text-magenta transition-colors">연구소 소개</Link>
+              </nav>
+            </div>
+            <div className="pt-8 border-t border-gray-100 text-center text-gray-400 text-[10px] uppercase tracking-[0.2em]">
+              &copy; 2026 Magentalab. All rights reserved.
+            </div>
           </div>
         </footer>
       </body>
