@@ -6,27 +6,18 @@ interface AnsimiSummaryProps {
 }
 
 export default function AnsimiSummary({ excerpt, categoryNames }: AnsimiSummaryProps) {
-  // Handle manual empathy message via '---' separator in excerpt
+  // Handle manual empathy message via separator in excerpt
   let displayExcerpt = excerpt || "이 게시글의 핵심 연구 데이터를 확인해 보세요.";
   let manualEmpathyMessage = "";
 
-  if (excerpt) {
-    // WordPress excerpt often wraps content in <p> tags. 
-    // We look for '---' possibly surrounded by tags or newlines.
-    const splitRegex = /(?:<p>)?\s*---\s*(?:<\/p>)?/;
-    const parts = excerpt.split(splitRegex);
-    
-    if (parts.length >= 2) {
-      displayExcerpt = parts[0].trim();
-      // Ensure the first part doesn't have a hanging open tag if we split inside one
-      if (displayExcerpt.endsWith('<p>')) {
-        displayExcerpt = displayExcerpt.slice(0, -3).trim();
-      }
-      // Re-close any tags if necessary, but simpler is to just trim and let dangerouslySetInnerHTML handle it
-      
-      // The second part is the empathy message - strip all HTML for a clean quote
-      manualEmpathyMessage = parts[1].replace(/<[^>]*>?/gm, "").trim();
-    }
+  // Support various common dash separators (---, em-dash, en-dash)
+  const separatorPattern = /---|\u2014|\u2013/;
+  
+  if (excerpt && separatorPattern.test(excerpt)) {
+    const parts = excerpt.split(separatorPattern);
+    displayExcerpt = parts[0].trim();
+    // Use the last part as the empathy message if multiple separators found
+    manualEmpathyMessage = parts[parts.length - 1].replace(/<[^>]*>?/gm, "").trim(); 
   }
 
   // Determine empathy message based on categories (Fallback)
