@@ -48,6 +48,19 @@ body {
   color: #000;
 }
 
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
 .wp-content img {
   max-width: 100%;
   height: auto;
