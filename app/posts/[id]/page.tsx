@@ -4,6 +4,7 @@ import { getPost, getPosts, getFeaturedImage, getCategories, getTags, getRelated
 import Link from "next/link";
 import CommentsSection from "@/components/CommentsSection";
 import RelatedPosts from "@/components/RelatedPosts";
+import AnsimiSummary from "@/components/AnsimiSummary";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -146,12 +147,20 @@ export default async function PostDetailPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Post Content */}
-      <div className="container mx-auto px-4 max-w-3xl">
-        <div 
-          className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal"
-          dangerouslySetInnerHTML={{ __html: fixWpLinks(post.content.rendered) }}
-        />
+      {/* Post Content Body */}
+      <section className="container mx-auto px-4 max-w-4xl -mt-12 relative z-20">
+        <div className="bg-white rounded-[2rem] p-8 md:p-16 shadow-2xl shadow-gray-200/50 border border-gray-100">
+          
+          {/* GEO Optimized Summary Box */}
+          <AnsimiSummary 
+            excerpt={post.excerpt.rendered} 
+            categoryNames={categories.map(c => c.name)} 
+          />
+
+          <div 
+            className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal"
+            dangerouslySetInnerHTML={{ __html: fixWpLinks(post.content.rendered) }}
+          />
         
         {/* Tags Section */}
         {tags && tags.length > 0 && (
@@ -193,7 +202,8 @@ export default async function PostDetailPage({ params }: PageProps) {
 
         {/* Comments Section */}
         <CommentsSection postId={parseInt(id)} />
-      </div>
+        </div>
+      </section>
     </article>
   );
 }
