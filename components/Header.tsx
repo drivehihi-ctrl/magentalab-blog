@@ -1,6 +1,13 @@
+"use client";
+
 import Link from "next/link";
 
 export default function Header() {
+  const handleMallClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    alert("건설 중");
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/80 backdrop-blur-md">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
@@ -21,7 +28,12 @@ export default function Header() {
         <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-gray-600">
           <Link href="/" className="hover:text-magenta transition-colors">블로그</Link>
           <Link href="/about" className="hover:text-magenta transition-colors">연구소 소개</Link>
-          <a href="#" className="hover:text-magenta transition-colors">파트너십</a>
+          <button 
+            onClick={handleMallClick}
+            className="hover:text-magenta transition-colors cursor-pointer outline-none"
+          >
+            전용몰
+          </button>
           <a 
             href="mailto:smagentalab@gmail.com"
             className="px-5 py-2.5 bg-magenta text-white rounded-full hover:bg-magenta/90 transition-all shadow-md shadow-magenta/10 hover:shadow-lg"
