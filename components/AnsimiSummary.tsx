@@ -17,14 +17,20 @@ export default function AnsimiSummary({ excerpt, categoryNames }: AnsimiSummaryP
     // We found a separator!
     const parts = excerpt.split(separatorPattern);
     
-    // Part 0 is the summary
-    displayExcerpt = parts[0].trim();
+    // Part 0 is the summary - strip redundant trailing intro words
+    displayExcerpt = parts[0]
+      .replace(/안심이의\s*|공감\s*|한마디\s*|[:：]\s*$/g, "")
+      .trim();
     
     // The last part is the empathy message
     if (parts.length > 1) {
       manualEmpathyMessage = parts[parts.length - 1]
         .replace(/<[^>]*>?/gm, "") // Strip HTML tags
         .replace(/&nbsp;/g, " ")    // Clean entities
+        .replace(/&#8220;|&#8221;/g, '"') // Smart quotes
+        .replace(/&#8216;|&#8217;/g, "'") // Smart single quotes
+        .replace(/&#8230;/g, "...")        // Ellipsis
+        .replace(/^[:：\s]*|한마디\s*[:：]\s*/g, "") // Strip leading colons or intro words
         .trim();
     }
   }
