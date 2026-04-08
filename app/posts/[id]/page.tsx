@@ -1,8 +1,9 @@
 import Image from "next/image";
 import { Metadata } from "next";
-import { getPost, getFeaturedImage, getCategories, getTags, fixWpLinks } from "@/lib/wp";
+import { getPost, getPosts, getFeaturedImage, getCategories, getTags, getRelatedPosts, fixWpLinks } from "@/lib/wp";
 import Link from "next/link";
 import CommentsSection from "@/components/CommentsSection";
+import RelatedPosts from "@/components/RelatedPosts";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -53,6 +54,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function PostDetailPage({ params }: PageProps) {
   const { id } = await params;
   const post = await getPost(id);
+  const allPosts = await getPosts();
+  const relatedPosts = getRelatedPosts(post, allPosts);
+  
   const imageUrl = getFeaturedImage(post);
   const categories = getCategories(post);
   const tags = getTags(post);
@@ -164,6 +168,8 @@ export default async function PostDetailPage({ params }: PageProps) {
             </div>
           </div>
         )}
+
+        <RelatedPosts posts={relatedPosts} />
         
         {/* Post Footer / CTA */}
         <div className="mt-20 p-8 md:p-12 rounded-3xl bg-gray-900 text-white text-center relative overflow-hidden">

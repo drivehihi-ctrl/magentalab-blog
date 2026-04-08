@@ -50,6 +50,37 @@ export function getTags(post: WPPost) {
   return post._embedded?.["wp:term"]?.[1] || [];
 }
 
+export function getRelatedPosts(currentPost: WPPost, allPosts: WPPost[], limit: number = 3) {
+  // Get category IDs of the current post
+  const currentCategoryIds = new Set(getCategories(currentPost).map(c => c.id));
+  const currentTagIds = new Set(getTags(currentPost).map(t => t.id));
+
+  return allPosts
+    .filter(p => p.id !== currentPost.id) // Exclude current post
+    .map(p => {
+      // Calculate relevance score
+      let score = 0;
+      const postCategories = getCategories(p);
+      const postTags = getTags(p);
+
+      // Category match (High weight)
+      postCategories.forEach(c => {
+        if (currentCategoryIds.has(c.id)) score += 10;
+      });
+
+      // Tag match (Medium weight)
+      postTags.forEach(t => {
+        if (currentTagIds.has(t.id)) score += 5;
+      });
+
+      return { post: p, score };
+    })
+    .filter(p => p.score > 0) // Only include posts with some relevance
+    .sort((a, b) => b.score - a.score || Number(b.post.date) - Number(a.post.date))
+    .slice(0, limit)
+    .map(p => p.post);
+}
+
 export interface WPComment {
   id: number;
   post: number;
