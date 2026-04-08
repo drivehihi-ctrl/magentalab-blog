@@ -28,6 +28,7 @@ export default function Header() {
         <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-gray-600">
           <Link href="/blog" className="hover:text-magenta transition-colors">블로그</Link>
           <Link href="/about" className="hover:text-magenta transition-colors">연구소 소개</Link>
+          <Link href="/about-ansim" className="hover:text-magenta transition-colors">안심이 소개</Link>
           <button 
             onClick={handleMallClick}
             className="hover:text-magenta transition-colors cursor-pointer outline-none"
