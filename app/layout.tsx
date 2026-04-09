@@ -28,6 +28,7 @@ export default function RootLayout({
           }}
         />
         {/* End Google Tag Manager */}
+        <meta name="google-site-verification" content="nF22SWcLm8AvJD46bLfNyKCJCMvqHS8SuYoiMeEITwE" />
         <link rel="stylesheet" as="style" crossOrigin="" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
       </head>
       <body className="antialiased">
