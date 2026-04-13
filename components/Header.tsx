@@ -29,12 +29,12 @@ export default function Header() {
           <Link href="/blog" className="hover:text-magenta transition-colors">블로그</Link>
           <Link href="/about" className="hover:text-magenta transition-colors">연구소 소개</Link>
           <Link href="/about-ansim" className="hover:text-magenta transition-colors">안심이 소개</Link>
-          <button 
-            onClick={handleMallClick}
-            className="hover:text-magenta transition-colors cursor-pointer outline-none"
+          <Link 
+            href="/shop"
+            className="hover:text-magenta transition-colors cursor-pointer"
           >
             전용몰
-          </button>
+          </Link>
           <a 
             href="mailto:smagentalab@gmail.com"
             className="px-5 py-2.5 bg-magenta text-white rounded-full hover:bg-magenta/90 transition-all shadow-md shadow-magenta/10 hover:shadow-lg"
