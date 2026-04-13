@@ -22,6 +22,21 @@ export default function RootLayout({
       <head>
         <meta name="google-site-verification" content="nF22SWcLm8AvJD46bLfNyKCJCMvqHS8SuYoiMeEITwE" />
         <link rel="stylesheet" as="style" crossOrigin="" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "Magentalab 반려동물 연구소",
+              "url": "https://magentalab-blog.vercel.app",
+              "logo": "https://magentalab-blog.vercel.app/logo.png",
+              "sameAs": [
+                "https://magentalab.mycafe24.com"
+              ]
+            }),
+          }}
+        />
       </head>
       <body className="antialiased">
         <Header />

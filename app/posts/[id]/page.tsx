@@ -67,11 +67,11 @@ export default async function PostDetailPage({ params }: PageProps) {
     day: "numeric",
   });
 
-  // Schema.org Structured Data
-  const jsonLd = {
+  // Schema.org Structured Data - Article
+  const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
-    "headline": post.title.rendered,
+    "headline": post.title.rendered.replace(/<[^>]*>?/gm, ""),
     "image": [imageUrl],
     "datePublished": post.date,
     "dateModified": post.modified || post.date,
@@ -79,7 +79,45 @@ export default async function PostDetailPage({ params }: PageProps) {
       "@type": "Person",
       "name": "Magentalab Research Team",
       "url": "https://magentalab-blog.vercel.app/about"
-    }]
+    }],
+    "publisher": {
+      "@type": "Organization",
+      "name": "Magentalab 반려동물 연구소",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://magentalab-blog.vercel.app/logo.png" // Assuming logo exists or path is correct
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `https://magentalab-blog.vercel.app/posts/${id}`
+    }
+  };
+
+  // Schema.org Structured Data - Breadcrumbs
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "홈",
+        "item": "https://magentalab-blog.vercel.app"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "블로그",
+        "item": "https://magentalab-blog.vercel.app/blog"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": post.title.rendered.replace(/<[^>]*>?/gm, ""),
+        "item": `https://magentalab-blog.vercel.app/posts/${id}`
+      }
+    ]
   };
 
   return (
@@ -87,7 +125,11 @@ export default async function PostDetailPage({ params }: PageProps) {
       {/* Structured Data */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       
       {/* Post Header */}
