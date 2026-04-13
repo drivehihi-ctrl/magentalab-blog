@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
 import Header from "@/components/Header";
+import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://magentalab-blog.vercel.app"),
@@ -44,6 +45,7 @@ export default function RootLayout({
         {/* End Google Tag Manager (noscript) */}
         <Header />
         <main>{children}</main>
+        <Analytics />
         <footer className="bg-gray-50 border-t border-gray-100 py-16">
           <div className="container mx-auto px-4 max-w-5xl">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12">
