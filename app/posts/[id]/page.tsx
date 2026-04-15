@@ -78,19 +78,19 @@ export default async function PostDetailPage({ params }: PageProps) {
     "author": [{
       "@type": "Person",
       "name": "Magentalab Research Team",
-      "url": "https://magentalab-blog.vercel.app/about"
+      "url": "https://www.magentalabblog.com/about"
     }],
     "publisher": {
       "@type": "Organization",
       "name": "Magentalab 반려동물 연구소",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://magentalab-blog.vercel.app/logo.png" // Assuming logo exists or path is correct
+        "url": "https://www.magentalabblog.com/logo.png" // Assuming logo exists or path is correct
       }
     },
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": `https://magentalab-blog.vercel.app/posts/${id}`
+      "@id": `https://www.magentalabblog.com/posts/${id}`
     }
   };
 
@@ -103,19 +103,19 @@ export default async function PostDetailPage({ params }: PageProps) {
         "@type": "ListItem",
         "position": 1,
         "name": "홈",
-        "item": "https://magentalab-blog.vercel.app"
+        "item": "https://www.magentalabblog.com"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "블로그",
-        "item": "https://magentalab-blog.vercel.app/blog"
+        "item": "https://www.magentalabblog.com/blog"
       },
       {
         "@type": "ListItem",
         "position": 3,
         "name": post.title.rendered.replace(/<[^>]*>?/gm, ""),
-        "item": `https://magentalab-blog.vercel.app/posts/${id}`
+        "item": `https://www.magentalabblog.com/posts/${id}`
       }
     ]
   };

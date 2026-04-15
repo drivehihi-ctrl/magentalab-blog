@@ -6,7 +6,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { GoogleTagManager } from "@next/third-parties/google";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://magentalab-blog.vercel.app"),
+  metadataBase: new URL("https://www.magentalabblog.com"),
   title: "Magentalab 반려동물 연구소 | 블로그",
   description: "Magentalab 반려동물 연구소의 최신 연구 소식과 반려동물 건강 정보를 확인하세요.",
 };
@@ -29,8 +29,8 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Organization",
               "name": "Magentalab 반려동물 연구소",
-              "url": "https://magentalab-blog.vercel.app",
-              "logo": "https://magentalab-blog.vercel.app/logo.png",
+              "url": "https://www.magentalabblog.com",
+              "logo": "https://www.magentalabblog.com/logo.png",
               "sameAs": [
                 "https://magentalab.mycafe24.com"
               ]

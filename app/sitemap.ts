@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { getPosts } from '@/lib/wp';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://magentalab-blog.vercel.app';
+  const baseUrl = 'https://www.magentalabblog.com';
 
   // Fetch all posts to generate post-specific sitemap entries
   let posts: any[] = [];
