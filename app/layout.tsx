@@ -21,6 +21,7 @@ export default function RootLayout({
       <GoogleTagManager gtmId="GTM-5J3WFMZS" />
       <head>
         <meta name="google-site-verification" content="nF22SWcLm8AvJD46bLfNyKCJCMvqHS8SuYoiMeEITwE" />
+        <meta name="google-site-verification" content="VfH9EadRthwV5nSVTz48foI3UEdvbXxy8cM69fhqvng" />
         <link rel="stylesheet" as="style" crossOrigin="" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
         <script
           type="application/ld+json"
