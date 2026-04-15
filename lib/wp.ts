@@ -27,6 +27,37 @@ export async function getPosts(): Promise<WPPost[]> {
   return res.json();
 }
 
+/**
+ * 사이트맵 전용: 전체 글을 페이지네이션으로 모두 가져옵니다.
+ * WordPress REST API의 X-WP-TotalPages 헤더를 활용합니다.
+ * revalidate: 0 → Vercel 배포 시 항상 최신 데이터로 사이트맵 생성.
+ */
+export async function getAllPostsForSitemap(): Promise<WPPost[]> {
+  const perPage = 100;
+  // 1페이지를 먼저 가져와 전체 페이지 수 확인
+  const firstRes = await fetch(
+    `${WP_API_URL}/posts?_fields=id,date,modified&per_page=${perPage}&page=1`,
+    { next: { revalidate: 0 } } // 사이트맵은 항상 최신 데이터
+  );
+  if (!firstRes.ok) throw new Error("Failed to fetch posts for sitemap");
+
+  const totalPages = Number(firstRes.headers.get('X-WP-TotalPages') || 1);
+  const firstPagePosts: WPPost[] = await firstRes.json();
+
+  if (totalPages <= 1) return firstPagePosts;
+
+  // 2페이지 이상이 있으면 병렬로 나머지 모두 가져오기
+  const remainingFetches = Array.from({ length: totalPages - 1 }, (_, i) =>
+    fetch(
+      `${WP_API_URL}/posts?_fields=id,date,modified&per_page=${perPage}&page=${i + 2}`,
+      { next: { revalidate: 0 } }
+    ).then(res => res.ok ? res.json() as Promise<WPPost[]> : [])
+  );
+
+  const remainingPages = await Promise.all(remainingFetches);
+  return [firstPagePosts, ...remainingPages].flat();
+}
+
 export async function getPost(id: string): Promise<WPPost> {
   const res = await fetch(`${WP_API_URL}/posts/${id}?_embed`, {
     next: {

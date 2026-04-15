@@ -1,5 +1,8 @@
 import { MetadataRoute } from 'next';
-import { getPosts } from '@/lib/wp';
+import { getAllPostsForSitemap } from '@/lib/wp';
+
+// 사이트맵은 매 요청시마다 최신 데이터로 동적 생성
+export const dynamic = 'force-dynamic';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.magentalabblog.com';
@@ -7,7 +10,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Fetch all posts to generate post-specific sitemap entries
   let posts: any[] = [];
   try {
-    posts = await getPosts();
+    posts = await getAllPostsForSitemap();
   } catch (error) {
     console.error('Failed to fetch posts for sitemap:', error);
   }
