@@ -63,7 +63,7 @@ export default function AnsimiSummary({ excerpt, categoryNames }: AnsimiSummaryP
         <div className="flex-shrink-0">
           <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-white p-2 shadow-sm border border-magenta/5 overflow-hidden">
             <Image
-              src="/images/ansimi-researcher2.png"
+              src="/images/like.png"
               alt="안심 연구원"
               fill
               className="object-contain p-1"

@@ -12,11 +12,19 @@ export default function CommentForm({ postId }: CommentFormProps) {
     author_email: "",
     content: "",
   });
+  const [agreedToConsent, setAgreedToConsent] = useState(false);
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!agreedToConsent) {
+      setErrorMessage("개인정보 수집 및 이용에 동의해주세요.");
+      setStatus("error");
+      return;
+    }
+
     setStatus("submitting");
     setErrorMessage("");
 
@@ -41,6 +49,7 @@ export default function CommentForm({ postId }: CommentFormProps) {
 
       setStatus("success");
       setFormData({ author_name: "", author_email: "", content: "" });
+      setAgreedToConsent(false);
     } catch (err: any) {
       console.error("Comment submission error:", err);
       setStatus("error");
@@ -57,7 +66,8 @@ export default function CommentForm({ postId }: CommentFormProps) {
           </svg>
         </div>
         <h4 className="text-xl font-bold text-magenta mb-2">댓글이 등록되었습니다!</h4>
-        <p className="text-gray-600">관리자 승인 후 블로그에 표시됩니다.</p>
+        <p className="text-gray-600 mb-2">관리자 승인 후 블로그에 표시됩니다.</p>
+        <p className="text-magenta font-bold text-sm">입력하신 이메일로 '안심이 가이드 PDF'를 발송해 드릴 예정입니다! ✨</p>
         <button 
           onClick={() => setStatus("idle")}
           className="mt-6 text-sm font-bold text-magenta hover:underline"
@@ -70,6 +80,17 @@ export default function CommentForm({ postId }: CommentFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="p-8 rounded-4xl bg-white border border-gray-100 shadow-xl shadow-gray-200/50">
+      {/* Lead Magnet Banner */}
+      <div className="mb-8 p-5 rounded-2xl bg-magenta-light/40 border border-magenta/10 flex items-center gap-4 animate-pulse">
+        <div className="text-3xl">🎁</div>
+        <div>
+          <p className="text-sm md:text-base font-bold text-magenta-dark leading-tight">
+            지금 댓글을 남겨주시면 <span className="underline decoration-2">‘강아지 분리불안 해결 가이드’</span> PDF를 보내드려요!
+          </p>
+          <p className="text-[11px] text-magenta/70 mt-1 font-medium">관리자 확인 후 입력하신 이메일로 자동 발송됩니다.</p>
+        </div>
+      </div>
+
       <h4 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
         <span className="w-2 h-8 bg-magenta rounded-full" />
         생각 나누기
@@ -112,6 +133,22 @@ export default function CommentForm({ postId }: CommentFormProps) {
         />
       </div>
 
+      {/* Privacy Consent */}
+      <div className="mb-6 px-1">
+        <label className="flex items-center gap-3 cursor-pointer group">
+          <input
+            type="checkbox"
+            required
+            checked={agreedToConsent}
+            onChange={(e) => setAgreedToConsent(e.target.checked)}
+            className="w-5 h-5 rounded border-2 border-gray-200 text-magenta focus:ring-magenta transition-all cursor-pointer"
+          />
+          <span className="text-xs md:text-sm font-medium text-gray-500 group-hover:text-gray-700 transition-colors">
+            [필수] 개인정보 수집 및 이용 동의 (이메일 마케팅 및 안내)
+          </span>
+        </label>
+      </div>
+
       {status === "error" && (
         <div className="mb-6 p-4 rounded-xl bg-red-50 text-red-600 text-sm font-medium border border-red-100 italic">
           ⚠️ {errorMessage}
@@ -130,15 +167,16 @@ export default function CommentForm({ postId }: CommentFormProps) {
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
             </svg>
-            댓글 등록하기
+            댓글 등록하고 PDF 받기
           </>
         )}
       </button>
       
       <p className="mt-4 text-[11px] text-gray-400 text-center leading-tight">
         비방, 욕설, 광고성 댓글은 삭제될 수 있습니다. <br />
-        입력하신 이메일은 공개되지 않습니다.
+        입력하신 이메일은 마케팅 활용 및 PDF 발송 목적으로만 사용됩니다.
       </p>
     </form>
+
   );
 }

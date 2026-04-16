@@ -9,6 +9,10 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://www.magentalabblog.com"),
   title: "Magentalab 반려동물 연구소 | 블로그",
   description: "Magentalab 반려동물 연구소의 최신 연구 소식과 반려동물 건강 정보를 확인하세요.",
+  icons: {
+    icon: "/images/favicon.png",
+    apple: "/images/favicon.png",
+  },
 };
 
 export default function RootLayout({
