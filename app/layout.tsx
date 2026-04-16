@@ -56,7 +56,7 @@ export default function RootLayout({
                   <p>대표이사 : 김범준 | 사업자등록번호 : 448-07-03101</p>
                   <p>통신판매업 신고 : 제 2025-경기김포-1339호 | 호스팅 : Vercel Inc.</p>
                   <p>주소 : 경기도 김포시 김포한강11로255번길 149, 112동 701호</p>
-                  <p>고객센터 : 0502-1933-8452 | 이메일 : drivehihi@asiahubmart.com</p>
+                  <p>고객센터 : 0502-1933-8452 | 이메일 : smagentalab@gmail.com</p>
                 </div>
               </div>
               <div className="space-y-4">
