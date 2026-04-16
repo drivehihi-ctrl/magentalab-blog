@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Search, X, Loader2, ArrowRight } from "lucide-react";
-import { searchPosts, WPPost, getFeaturedImage } from "@/lib/wp";
+import { WPPost, getFeaturedImage } from "@/lib/wp";
 
 export default function LiveSearch() {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,10 +30,13 @@ export default function LiveSearch() {
       if (query.trim().length >= 2) {
         setIsLoading(true);
         try {
-          const data = await searchPosts(query);
+          const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+          if (!res.ok) throw new Error("Search failed");
+          const data = await res.json();
           setResults(data);
         } catch (error) {
           console.error("Search error:", error);
+          setResults([]);
         } finally {
           setIsLoading(false);
         }
@@ -62,7 +65,7 @@ export default function LiveSearch() {
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="나중에 볼 정보를 검색해보세요..."
+          placeholder="정보를 검색해 보세요"
           className={`ml-2 w-full bg-transparent border-none outline-none text-sm font-medium text-gray-900 placeholder:text-gray-400 transition-opacity duration-300 ${
             isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
           }`}
