@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { Menu, X } from "lucide-react";
 
 export default function Header() {
@@ -20,8 +21,13 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/80 backdrop-blur-md">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 rounded-xl bg-magenta flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-magenta/20 transition-transform group-hover:scale-110">
-            M
+          <div className="w-10 h-10 rounded-xl bg-magenta flex items-center justify-center shadow-lg shadow-magenta/20 transition-transform group-hover:scale-110 overflow-hidden relative">
+            <Image 
+              src="/images/favicon.png" 
+              alt="Magentalab Logo" 
+              fill
+              className="object-cover"
+            />
           </div>
           <div>
             <h1 className="text-xl font-bold tracking-tight text-gray-900">
