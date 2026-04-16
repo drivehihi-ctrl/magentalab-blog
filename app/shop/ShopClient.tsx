@@ -470,8 +470,19 @@ function DiscoveryTab() {
           background: "linear-gradient(180deg, #fff 0%, #FEFAFC 100%)",
         }}
       >
-        <div style={{ fontSize: "11px", color: "#E5007E", fontWeight: 700, marginBottom: "4px", textTransform: "uppercase", letterSpacing: "0.12em" }}>
-          마젠타랩 전용몰
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+          <div style={{ fontSize: "11px", color: "#E5007E", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em" }}>
+            마젠타랩 전용몰
+          </div>
+          <span style={{ 
+            fontSize: "9px", 
+            fontWeight: 800, 
+            background: "#F3F4F6", 
+            color: "#9CA3AF", 
+            padding: "2px 6px", 
+            borderRadius: "4px",
+            letterSpacing: "0.05em"
+          }}>BETA</span>
         </div>
         <h1 style={{ fontSize: "24px", fontWeight: 800, color: "#111", margin: 0, lineHeight: 1.35 }}>
           오늘 우리 아이에게<br />
@@ -700,7 +711,18 @@ function ShopTab() {
       {/* 헤더 */}
       <div className="shop-section-px" style={{ padding: "20px 20px 0", background: "#fff" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
-          <h2 style={{ fontSize: "20px", fontWeight: 800, color: "#111", margin: 0 }}>Shop</h2>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <h2 style={{ fontSize: "20px", fontWeight: 800, color: "#111", margin: 0 }}>Shop</h2>
+            <span style={{ 
+              fontSize: "9px", 
+              fontWeight: 800, 
+              background: "#F3F4F6", 
+              color: "#9CA3AF", 
+              padding: "2px 6px", 
+              borderRadius: "4px",
+              letterSpacing: "0.05em"
+            }}>BETA</span>
+          </div>
           <div style={{ fontSize: "12px", color: "#9CA3AF" }}>반려동물 전용 쇼핑몰</div>
         </div>
         <div style={{ fontSize: "13px", color: "#6B7280", marginBottom: "14px" }}>

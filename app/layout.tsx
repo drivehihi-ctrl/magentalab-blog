@@ -7,11 +7,56 @@ import { GoogleTagManager } from "@next/third-parties/google";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.magentalabblog.com"),
-  title: "Magentalab 반려동물 연구소 | 블로그",
+  title: {
+    default: "Magentalab 반려동물 연구소 | 블로그",
+    template: "%s | Magentalab"
+  },
   description: "Magentalab 반려동물 연구소의 최신 연구 소식과 반려동물 건강 정보를 확인하세요.",
+  keywords: ["반려동물", "강아지", "고양이", "건강", "행동연구", "전용몰", "안심이"],
+  authors: [{ name: "Magentalab" }],
+  creator: "Magentalab",
+  publisher: "Magentalab",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   icons: {
     icon: "/images/favicon.png",
     apple: "/images/favicon.png",
+  },
+  openGraph: {
+    type: "website",
+    locale: "ko_KR",
+    url: "https://www.magentalabblog.com",
+    siteName: "Magentalab",
+    title: "Magentalab 반려동물 연구소",
+    description: "데이터와 과학으로 반려동물의 더 나은 삶을 연구합니다.",
+    images: [
+      {
+        url: "/images/favicon.png",
+        width: 1200,
+        height: 630,
+        alt: "Magentalab Logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Magentalab 반려동물 연구소",
+    description: "반려동물 건강 연구의 모든 것",
+    images: ["/images/favicon.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
 };
 
