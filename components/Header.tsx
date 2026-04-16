@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Menu, X } from "lucide-react";
+import LiveSearch from "./LiveSearch";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -46,6 +47,9 @@ export default function Header() {
           <Link href="/about-ansim" className="hover:text-magenta transition-colors">안심이 소개</Link>
           <Link href="/ask-ansimi" className="hover:text-magenta transition-colors">질문하기</Link>
           <Link href="/shop" className="hover:text-magenta transition-colors">전용몰</Link>
+          <div className="ml-2 mr-2">
+            <LiveSearch />
+          </div>
           <a 
             href="mailto:smagentalab@gmail.com"
             className="px-5 py-2.5 bg-magenta text-white rounded-full hover:bg-magenta/90 transition-all shadow-md shadow-magenta/10 hover:shadow-lg"
@@ -74,11 +78,17 @@ export default function Header() {
 
       {/* Mobile Menu - Sleek Top-Right Dropdown */}
       <div 
-        className={`absolute top-[70px] right-4 z-50 w-60 bg-white md:hidden transition-all duration-300 origin-top-right border border-gray-100 shadow-[0_20px_50px_rgba(0,0,0,0.15)] rounded-3xl overflow-hidden ${
+        className={`absolute top-[70px] right-4 z-50 w-72 bg-white md:hidden transition-all duration-300 origin-top-right border border-gray-100 shadow-[0_20px_50px_rgba(0,0,0,0.15)] rounded-3xl overflow-hidden ${
           isMenuOpen ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
         }`}
       >
-        <div className="flex flex-col p-1.5">
+        <div className="flex flex-col p-2">
+          {/* Mobile Search area */}
+          <div className="px-4 py-3 mb-1 bg-gray-50/50 rounded-2xl border border-gray-50 flex items-center justify-between">
+             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">AI 검색</span>
+             <LiveSearch />
+          </div>
+
           <nav className="flex flex-col gap-0.5">
             <Link 
               href="/blog" 

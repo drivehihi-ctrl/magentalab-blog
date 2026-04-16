@@ -159,3 +159,15 @@ export async function getPageBySlug(slug: string): Promise<WPPost | null> {
   const pages = await res.json();
   return pages[0] || null;
 }
+
+export async function searchPosts(query: string): Promise<WPPost[]> {
+  if (!query) return [];
+  const res = await fetch(`${WP_API_URL}/posts?_embed&search=${encodeURIComponent(query)}&per_page=10`, {
+    next: {
+      revalidate: 3600,
+      tags: ['posts-search']
+    },
+  });
+  if (!res.ok) throw new Error(`Failed to search posts for query: ${query}`);
+  return res.json();
+}
