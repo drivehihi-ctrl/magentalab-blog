@@ -34,12 +34,6 @@ export default function AskAnsimiPage() {
             보내주신 소중한 고민은 안심 연구원이 꼼꼼히 읽어본 후, <br />
             블로그 포스팅이나 이메일을 통해 답변해 드릴게요. 조금만 기다려주세요! ✨
           </p>
-          <div className="bg-magenta/5 rounded-2xl p-6 mb-8 text-left border border-magenta/10">
-            <p className="text-magenta font-bold text-sm mb-1">🎁 선물이 도착할 예정입니다!</p>
-            <p className="text-[11px] text-gray-500 font-medium">
-              질문을 남겨주신 감사의 의미로 '이번주의 연구소 결과 PDF'를 함께 보내드릴게요.
-            </p>
-          </div>
           <button 
             onClick={() => setStatus("idle")}
             className="w-full py-4 bg-magenta text-white font-bold rounded-2xl shadow-lg shadow-magenta/20 hover:bg-magenta/90 transition-all active:scale-95"
@@ -176,14 +170,10 @@ export default function AskAnsimiPage() {
             >
               {status === "submitting" ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : (
+            ) : (
                 <>질문 보내기 <Send size={18} /></>
               )}
             </button>
-            
-            <p className="text-center text-[11px] text-magenta font-bold">
-              ✨ 질문을 남겨주시면 '특별 가이드 PDF'를 선물로 드립니다!
-            </p>
           </form>
         </div>
       </div>
