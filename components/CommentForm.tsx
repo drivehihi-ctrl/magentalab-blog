@@ -67,7 +67,7 @@ export default function CommentForm({ postId }: CommentFormProps) {
         </div>
         <h4 className="text-xl font-bold text-magenta mb-2">댓글이 등록되었습니다!</h4>
         <p className="text-gray-600 mb-2">관리자 승인 후 블로그에 표시됩니다.</p>
-        <p className="text-magenta font-bold text-sm">입력하신 이메일로 '매주의 연구소 결과 PDF'를 발송해 드릴 예정입니다! ✨</p>
+        <p className="text-magenta font-bold text-sm">입력하신 이메일로 '이번주의 연구소 결과 PDF'를 발송해 드릴 예정입니다! ✨</p>
         <button 
           onClick={() => setStatus("idle")}
           className="mt-6 text-sm font-bold text-magenta hover:underline"
@@ -85,7 +85,7 @@ export default function CommentForm({ postId }: CommentFormProps) {
         <div className="text-3xl">🎁</div>
         <div>
           <p className="text-sm md:text-base font-bold text-magenta-dark leading-tight">
-            지금 댓글을 남겨주시면 <span className="underline decoration-2">‘매주의 연구소 결과 PDF’</span>를 보내드려요!
+            지금 댓글을 남겨주시면 <span className="underline decoration-2">‘이번주의 연구소 결과 PDF’</span>를 보내드려요!
           </p>
           <p className="text-[11px] text-magenta/70 mt-1 font-medium">관리자 확인 후 입력하신 이메일로 자동 발송됩니다.</p>
         </div>
