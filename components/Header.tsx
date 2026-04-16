@@ -57,90 +57,75 @@ export default function Header() {
         </button>
       </div>
 
-      {/* Mobile Menu - Backdrop */}
+      {/* Mobile Menu - Immersive Curtain Navigation */}
       <div 
-        className={`fixed inset-0 bg-black/30 backdrop-blur-sm z-40 md:hidden transition-all duration-300 ${
-          isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
-        onClick={() => setIsMenuOpen(false)}
-      />
-
-      {/* Mobile Menu - Sidebar Drawer */}
-      <div 
-        className={`fixed right-0 top-0 bottom-0 z-50 w-[280px] bg-white md:hidden transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] shadow-2xl ${
-          isMenuOpen ? "translate-x-0" : "translate-x-full"
+        className={`fixed inset-0 z-[100] bg-white/95 backdrop-blur-3xl md:hidden transition-all duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] ${
+          isMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-full pointer-events-none"
         }`}
       >
-        <div className="flex flex-col h-full">
-          {/* Top Bar for Drawer */}
-          <div className="flex items-center justify-between px-6 h-20 border-b border-gray-50">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-magenta flex items-center justify-center text-white font-bold text-sm shadow-md shadow-magenta/10">
+        <div className="flex flex-col h-full container mx-auto px-6">
+          {/* Header row inside Curtain to keep the X button accessible */}
+          <div className="flex items-center justify-between h-20">
+            <Link href="/" className="flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
+              <div className="w-10 h-10 rounded-xl bg-magenta flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-magenta/20">
                 M
               </div>
-              <span className="text-sm font-bold text-gray-900 tracking-tight">Magentalab</span>
-            </div>
+              <div>
+                <span className="text-xl font-bold tracking-tight text-gray-900 block">Magentalab</span>
+                <span className="text-[10px] font-bold text-magenta uppercase tracking-widest leading-none">반려동물 연구소</span>
+              </div>
+            </Link>
             <button 
               onClick={() => setIsMenuOpen(false)}
-              className="p-2 -mr-2 text-gray-500 hover:text-magenta transition-colors"
+              className="p-2 -mr-2 text-gray-900 hover:text-magenta transition-colors"
               aria-label="Close Menu"
             >
-              <X size={24} />
+              <X size={32} />
             </button>
           </div>
 
-          <nav className="flex-1 overflow-y-auto px-6 py-10">
-            <div className="flex flex-col gap-8">
-              <Link 
-                href="/blog" 
-                className="text-xl font-bold text-gray-900 hover:text-magenta transition-colors flex items-center justify-between group"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                블로그
-                <span className="text-gray-300 group-hover:text-magenta transition-colors">→</span>
-              </Link>
-              <Link 
-                href="/about" 
-                className="text-xl font-bold text-gray-900 hover:text-magenta transition-colors flex items-center justify-between group"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                연구소 소개
-                <span className="text-gray-300 group-hover:text-magenta transition-colors">→</span>
-              </Link>
-              <Link 
-                href="/about-ansim" 
-                className="text-xl font-bold text-gray-900 hover:text-magenta transition-colors flex items-center justify-between group"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                안심이 소개
-                <span className="text-gray-300 group-hover:text-magenta transition-colors">→</span>
-              </Link>
-              <Link 
-                href="/shop" 
-                className="text-xl font-bold text-gray-900 hover:text-magenta transition-colors flex items-center justify-between group"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                전용몰
-                <span className="text-gray-300 group-hover:text-magenta transition-colors">→</span>
-              </Link>
-            </div>
-
-            <div className="mt-12 pt-10 border-t border-gray-50">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6">Contact Us</p>
-              <a 
-                href="mailto:smagentalab@gmail.com"
-                className="flex items-center justify-center w-full py-4 bg-magenta text-white font-bold rounded-2xl shadow-lg shadow-magenta/10 hover:bg-magenta/90 transition-all active:scale-95"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                문의하기
-              </a>
-            </div>
+          <nav className="flex-1 flex flex-col items-center justify-center gap-10">
+            <Link 
+              href="/blog" 
+              className="text-4xl md:text-5xl font-black text-gray-900 hover:text-magenta transition-all hover:scale-105 active:scale-95"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              블로그
+            </Link>
+            <Link 
+              href="/about" 
+              className="text-4xl md:text-5xl font-black text-gray-900 hover:text-magenta transition-all hover:scale-105 active:scale-95"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              연구소 소개
+            </Link>
+            <Link 
+              href="/about-ansim" 
+              className="text-4xl md:text-5xl font-black text-gray-900 hover:text-magenta transition-all hover:scale-105 active:scale-95"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              안심이 소개
+            </Link>
+            <Link 
+              href="/shop" 
+              className="text-4xl md:text-5xl font-black text-gray-900 hover:text-magenta transition-all hover:scale-105 active:scale-95"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              전용몰
+            </Link>
           </nav>
 
-          {/* Sidebar Footer */}
-          <div className="p-6 border-t border-gray-50 bg-gray-50/50">
-            <p className="text-[10px] text-gray-400 font-medium uppercase tracking-[0.2em]">
-              © 2026 Magentalab
+          <div className="py-12 flex flex-col items-center border-t border-gray-100/50">
+            <a 
+              href="mailto:smagentalab@gmail.com"
+              className="w-full max-w-sm py-5 bg-magenta text-white text-xl font-bold rounded-2xl shadow-2xl shadow-magenta/20 hover:bg-magenta/90 text-center transition-all active:scale-95 mb-8"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              문의하기
+            </a>
+            <div className="w-12 h-1 bg-gray-100 rounded-full mb-6" />
+            <p className="text-[11px] text-gray-400 font-bold uppercase tracking-[0.3em]">
+              © 2026 Magentalab Research
             </p>
           </div>
         </div>
