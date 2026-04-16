@@ -203,10 +203,6 @@ function GlobalShopStyles() {
         0%, 100% { transform: scale(1); }
         50% { transform: scale(1.05); }
       }
-      @keyframes shopShimmer {
-        0% { background-position: -200% 0; }
-        100% { background-position: 200% 0; }
-      }
       @keyframes shopFloat {
         0%, 100% { transform: translateY(0); }
         50% { transform: translateY(-8px); }
@@ -246,6 +242,63 @@ function GlobalShopStyles() {
       }
       .shop-float {
         animation: shopFloat 3s ease-in-out infinite;
+      }
+
+      /* Responsive Container & Grid */
+      .shop-main-container {
+        width: 100%;
+        margin: 0 auto;
+        max-width: 500px;
+        transition: max-width 0.3s ease;
+      }
+      .shop-product-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+      .shop-tab-bar {
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 500px;
+        z-index: 100;
+        transition: all 0.3s ease;
+      }
+
+      @media (min-width: 768px) {
+        .shop-main-container {
+          max-width: 100%;
+          padding-left: 40px;
+          padding-right: 40px;
+        }
+        .shop-product-grid {
+          grid-template-columns: repeat(3, 1fr);
+          gap: 20px;
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .shop-main-container {
+          max-width: 1200px;
+        }
+        .shop-product-grid {
+          grid-template-columns: repeat(4, 1fr);
+          gap: 24px;
+        }
+        .shop-tab-bar {
+          bottom: 24px;
+          max-width: 480px;
+          border: 1px solid rgba(0,0,0,0.08);
+          border-radius: 24px;
+          box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+          background: rgba(255,255,255,0.92) !important;
+        }
+        .shop-section-px {
+          padding-left: 0px !important;
+          padding-right: 0px !important;
+        }
       }
     `}</style>
   );
@@ -410,10 +463,13 @@ function DiscoveryTab() {
   return (
     <div style={{ paddingBottom: "86px" }}>
       {/* 상단 헤더 */}
-      <div style={{
-        padding: "20px 20px 14px",
-        background: "linear-gradient(180deg, #fff 0%, #FEFAFC 100%)",
-      }}>
+      <div 
+        className="shop-section-px"
+        style={{
+          padding: "20px 20px 14px",
+          background: "linear-gradient(180deg, #fff 0%, #FEFAFC 100%)",
+        }}
+      >
         <div style={{ fontSize: "11px", color: "#E5007E", fontWeight: 700, marginBottom: "4px", textTransform: "uppercase", letterSpacing: "0.12em" }}>
           마젠타랩 전용몰
         </div>
@@ -424,7 +480,7 @@ function DiscoveryTab() {
       </div>
 
       {/* 검색바 */}
-      <div style={{ padding: "0 20px 18px" }}>
+      <div className="shop-section-px" style={{ padding: "0 20px 18px" }}>
         <div
           className="shop-btn-hover"
           style={{
@@ -489,7 +545,7 @@ function DiscoveryTab() {
       </div>
 
       {/* 카테고리 이모지 그리드 (아시아허브마트 스타일) */}
-      <div style={{ padding: "0 20px 24px" }}>
+      <div className="shop-section-px" style={{ padding: "0 20px 24px" }}>
         <div style={{ fontWeight: 700, fontSize: "15px", marginBottom: "14px", color: "#111" }}>카테고리</div>
         <div
           className="shop-scrollbar-hide"
@@ -515,7 +571,7 @@ function DiscoveryTab() {
       </div>
 
       {/* 🎬 안심이 케어 가이드 (아시아허브마트 쿠킹클래스 대응) */}
-      <div style={{ padding: "0 20px 24px" }}>
+      <div className="shop-section-px" style={{ padding: "0 20px 24px" }}>
         <div style={{ fontWeight: 700, fontSize: "15px", marginBottom: "4px", color: "#111" }}>🎬 안심이 케어 가이드</div>
         <div style={{ fontSize: "12px", color: "#9CA3AF", marginBottom: "14px" }}>영상을 보고, 아래 추천 제품으로 바로 케어해 보세요!</div>
         <div className="shop-scrollbar-hide" style={{ display: "flex", gap: "12px", overflowX: "auto" }}>
@@ -553,7 +609,7 @@ function DiscoveryTab() {
 
       {/* 🔥 베스트셀러 가로 스크롤 */}
       <div style={{ paddingBottom: "24px" }}>
-        <div style={{ padding: "0 20px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+        <div className="shop-section-px" style={{ padding: "0 20px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
           <div style={{ fontWeight: 700, fontSize: "15px", color: "#111" }}>🔥 베스트셀러</div>
           <span style={{ fontSize: "12px", color: "#E5007E", fontWeight: 600, cursor: "pointer" }}>전체보기</span>
         </div>
@@ -566,7 +622,7 @@ function DiscoveryTab() {
 
       {/* 🆕 신상품 가로 스크롤 */}
       <div style={{ paddingBottom: "24px" }}>
-        <div style={{ padding: "0 20px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+        <div className="shop-section-px" style={{ padding: "0 20px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
           <div style={{ fontWeight: 700, fontSize: "15px", color: "#111" }}>🆕 신상품</div>
           <span style={{ fontSize: "12px", color: "#7C3AED", fontWeight: 600, cursor: "pointer" }}>전체보기</span>
         </div>
@@ -579,7 +635,7 @@ function DiscoveryTab() {
 
       {/* 안심이 AI 추천 배너 */}
       <div
-        className="shop-fade-up"
+        className="shop-fade-up shop-section-px"
         style={{
           margin: "0 20px 24px",
           background: "linear-gradient(135deg, #1A1025 0%, #2D1B4E 50%, #1A1025 100%)",
@@ -611,7 +667,7 @@ function DiscoveryTab() {
       {/* 할인 상품 그리드 */}
       <div style={{ padding: "0 20px 24px" }}>
         <div style={{ fontWeight: 700, fontSize: "15px", marginBottom: "14px", color: "#111" }}>💰 할인 중인 상품</div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+        <div className="shop-product-grid">
           {PRODUCTS.filter(p => p.originalPrice).map((p, i) => (
             <ProductCard key={p.id} p={p} index={i} variant="grid" />
           ))}
@@ -642,7 +698,7 @@ function ShopTab() {
   return (
     <div style={{ paddingBottom: "86px" }}>
       {/* 헤더 */}
-      <div style={{ padding: "20px 20px 0", background: "#fff" }}>
+      <div className="shop-section-px" style={{ padding: "20px 20px 0", background: "#fff" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
           <h2 style={{ fontSize: "20px", fontWeight: 800, color: "#111", margin: 0 }}>Shop</h2>
           <div style={{ fontSize: "12px", color: "#9CA3AF" }}>반려동물 전용 쇼핑몰</div>
@@ -679,7 +735,7 @@ function ShopTab() {
       </div>
 
       {/* 정렬 / 개수 */}
-      <div style={{
+      <div className="shop-section-px" style={{
         padding: "10px 20px", display: "flex", justifyContent: "space-between", alignItems: "center",
         borderBottom: "1px solid #F3F4F6",
       }}>
@@ -707,7 +763,7 @@ function ShopTab() {
       </div>
 
       {/* 상품 그리드 */}
-      <div style={{ padding: "14px 16px 0", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+      <div style={{ padding: "14px 16px 0" }} className="shop-product-grid">
         {sorted.map((p, i) => (
           <ProductCard key={p.id} p={p} index={i} variant="grid" />
         ))}
@@ -871,8 +927,8 @@ export default function ShopClient() {
   ];
 
   return (
-    <div style={{
-      maxWidth: "500px", margin: "0 auto", minHeight: "100vh",
+    <div className="shop-main-container" style={{
+      minHeight: "100vh",
       background: "#F9FAFB", position: "relative",
       fontFamily: "'Pretendard', 'Inter', system-ui, sans-serif",
     }}>
@@ -887,13 +943,11 @@ export default function ShopClient() {
       </div>
 
       {/* 하단 탭바 */}
-      <nav style={{
-        position: "fixed", bottom: 0, left: "50%", transform: "translateX(-50%)",
-        width: "100%", maxWidth: "500px",
+      <nav className="shop-tab-bar" style={{
         background: "rgba(255,255,255,0.95)", backdropFilter: "blur(16px) saturate(180%)",
         WebkitBackdropFilter: "blur(16px) saturate(180%)",
         borderTop: "1px solid rgba(0,0,0,0.06)",
-        display: "flex", zIndex: 100,
+        display: "flex",
         paddingBottom: "env(safe-area-inset-bottom, 0)",
         boxShadow: "0 -4px 24px rgba(0,0,0,0.06)",
       }}>
