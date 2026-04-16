@@ -21,12 +21,12 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/80 backdrop-blur-md">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 rounded-xl bg-magenta flex items-center justify-center shadow-lg shadow-magenta/20 transition-transform group-hover:scale-110 overflow-hidden relative">
+          <div className="w-12 h-12 flex items-center justify-center transition-transform group-hover:scale-110 relative">
             <Image 
               src="/images/favicon.png" 
               alt="Magentalab Logo" 
               fill
-              className="object-cover"
+              className="object-contain"
             />
           </div>
           <div>
@@ -44,6 +44,7 @@ export default function Header() {
           <Link href="/blog" className="hover:text-magenta transition-colors">블로그</Link>
           <Link href="/about" className="hover:text-magenta transition-colors">연구소 소개</Link>
           <Link href="/about-ansim" className="hover:text-magenta transition-colors">안심이 소개</Link>
+          <Link href="/ask-ansimi" className="hover:text-magenta transition-colors">질문하기</Link>
           <Link href="/shop" className="hover:text-magenta transition-colors">전용몰</Link>
           <a 
             href="mailto:smagentalab@gmail.com"
@@ -103,6 +104,15 @@ export default function Header() {
               onClick={() => setIsMenuOpen(false)}
             >
               안심이 소개
+              <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
+            </Link>
+            <div className="h-px bg-gray-50 mx-4" />
+            <Link 
+              href="/ask-ansimi" 
+              className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              질문하기
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
             </Link>
             <div className="h-px bg-gray-50 mx-4" />
