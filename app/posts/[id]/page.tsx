@@ -5,6 +5,7 @@ import Link from "next/link";
 import CommentsSection from "@/components/CommentsSection";
 import RelatedPosts from "@/components/RelatedPosts";
 import AnsimiSummary from "@/components/AnsimiSummary";
+import SocialShare from "@/components/SocialShare";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -203,6 +204,9 @@ export default async function PostDetailPage({ params }: PageProps) {
             className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal"
             dangerouslySetInnerHTML={{ __html: fixWpLinks(post.content.rendered) }}
           />
+        
+        {/* Social Share Section */}
+        <SocialShare url={`/posts/${id}`} title={post.title.rendered.replace(/<[^>]*>?/gm, "")} />
         
         {/* Tags Section */}
         {tags && tags.length > 0 && (
