@@ -1,7 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { Facebook, Twitter, Link as LinkIcon, Check, Share2 } from "lucide-react";
+import { Link as LinkIcon, Check, Share2 } from "lucide-react";
+
+// Inline Brand SVGs (Lucide 1.x does not include Brands)
+const FacebookIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+  </svg>
+);
+
+const TwitterIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/>
+  </svg>
+);
 
 interface SocialShareProps {
   url: string;
@@ -28,17 +41,17 @@ export default function SocialShare({ url, title }: SocialShareProps) {
   const shareLinks = [
     {
       name: "Facebook",
-      icon: <Facebook size={18} />,
+      icon: <FacebookIcon />,
       href: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
       color: "hover:bg-[#1877F2] hover:text-white",
       borderColor: "hover:border-[#1877F2]",
     },
     {
-      name: "Twitter",
-      icon: <Twitter size={18} />,
+      name: "Twitter (X)",
+      icon: <TwitterIcon />,
       href: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
-      color: "hover:bg-[#1DA1F2] hover:text-white",
-      borderColor: "hover:border-[#1DA1F2]",
+      color: "hover:bg-[#000000] hover:text-white",
+      borderColor: "hover:border-[#000000]",
     },
   ];
 
