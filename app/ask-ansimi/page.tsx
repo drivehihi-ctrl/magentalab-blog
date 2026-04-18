@@ -16,10 +16,28 @@ export default function AskAnsimiPage() {
     }
     
     setStatus("submitting");
-    // Simulate API call
-    setTimeout(() => {
+    
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      petInfo: formData.get("petInfo"),
+      message: formData.get("message"),
+    };
+
+    try {
+      await fetch("https://script.google.com/macros/s/AKfycbwJycFqK5h7davDWjsfZ6h-2653ZxccdJ0sQUSUhGAOdT6FaKjNcp_hdmh79MuerLc6/exec", {
+        method: "POST",
+        mode: "no-cors", // Google Apps Script requires no-cors for simple redirects
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
       setStatus("success");
-    }, 1500);
+    } catch (error) {
+      console.error("Submission error:", error);
+      setStatus("error");
+      alert("오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    }
   };
 
   if (status === "success") {
@@ -111,6 +129,7 @@ export default function AskAnsimiPage() {
                 <label className="text-xs font-black text-gray-400 uppercase tracking-widest pl-1">성함 / 닉네임</label>
                 <input 
                   required
+                  name="name"
                   type="text" 
                   placeholder="예: 안심맘"
                   className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-magenta/20 transition-all font-medium text-gray-900 placeholder:text-gray-300"
@@ -120,6 +139,7 @@ export default function AskAnsimiPage() {
                 <label className="text-xs font-black text-gray-400 uppercase tracking-widest pl-1">이메일 주소</label>
                 <input 
                   required
+                  name="email"
                   type="email" 
                   placeholder="answer@example.com"
                   className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-magenta/20 transition-all font-medium text-gray-900 placeholder:text-gray-300"
@@ -131,6 +151,7 @@ export default function AskAnsimiPage() {
               <label className="text-xs font-black text-gray-400 uppercase tracking-widest pl-1">아이의 종류 및 나이</label>
               <input 
                 required
+                name="petInfo"
                 type="text" 
                 placeholder="예: 3살 다크서클이 매력적인 푸들"
                 className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-magenta/20 transition-all font-medium text-gray-900 placeholder:text-gray-300"
@@ -141,6 +162,7 @@ export default function AskAnsimiPage() {
               <label className="text-xs font-black text-gray-400 uppercase tracking-widest pl-1">고민 상담 내용</label>
               <textarea 
                 required
+                name="message"
                 rows={5}
                 placeholder="구체적으로 적어주실수록 더 정확한 도움을 드릴 수 있어요."
                 className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-magenta/20 transition-all font-medium text-gray-900 placeholder:text-gray-300 resize-none"
