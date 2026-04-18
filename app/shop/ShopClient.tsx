@@ -288,12 +288,13 @@ function GlobalShopStyles() {
           gap: 24px;
         }
         .shop-tab-bar {
-          bottom: 24px;
-          max-width: 480px; /* 4개 탭에 맞게 다시 축소 */
-          border: 1px solid rgba(0,0,0,0.08);
-          border-radius: 24px;
-          box-shadow: 0 12px 40px rgba(0,0,0,0.12);
-          background: rgba(255,255,255,0.92) !important;
+          bottom: 0px;
+          max-width: 100%; /* PC에서도 꽉 차게 변경 */
+          border-radius: 0px; /* 하단 고정형으로 변경 */
+          border: none;
+          border-top: 1px solid rgba(0,0,0,0.08);
+          box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+          background: rgba(255,255,255,0.98) !important;
         }
         .shop-section-px {
           padding-left: 0px !important;
@@ -472,32 +473,63 @@ function DiscoveryTab() {
 
   return (
     <div style={{ paddingBottom: "86px" }}>
-      {/* 상단 헤더 */}
+      {/* 상단 히어로 섹션 (아시아허브마트 스타일) */}
       <div 
         className="shop-section-px"
         style={{
-          padding: "20px 20px 14px",
-          background: "linear-gradient(180deg, #fff 0%, #FEFAFC 100%)",
+          padding: "60px 20px 80px",
+          background: "#E5007E",
+          textAlign: "center",
+          color: "#fff",
+          position: "relative",
+          overflow: "hidden",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
-          <div style={{ fontSize: "11px", color: "#E5007E", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em" }}>
+        {/* 데코 효과 */}
+        <div style={{
+          position: "absolute", top: "-50px", right: "-50px", width: "200px", height: "200px",
+          background: "rgba(255,255,255,0.1)", borderRadius: "50%", filter: "blur(40px)"
+        }} />
+        <div style={{
+          position: "absolute", bottom: "-30px", left: "-30px", width: "150px", height: "150px",
+          background: "rgba(0,0,0,0.05)", borderRadius: "50%", filter: "blur(30px)"
+        }} />
+
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", marginBottom: "20px" }}>
+          <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.9)", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.15em" }}>
             마젠타랩 전용몰
           </div>
           <span style={{ 
-            fontSize: "9px", 
-            fontWeight: 800, 
-            background: "#F3F4F6", 
-            color: "#9CA3AF", 
-            padding: "2px 6px", 
+            fontSize: "10px", 
+            fontWeight: 900, 
+            background: "rgba(255,255,255,0.2)", 
+            color: "#fff", 
+            padding: "2px 8px", 
             borderRadius: "4px",
-            letterSpacing: "0.05em"
+            letterSpacing: "0.05em",
+            backdropFilter: "blur(4px)"
           }}>BETA</span>
         </div>
-        <h1 style={{ fontSize: "24px", fontWeight: 800, color: "#111", margin: 0, lineHeight: 1.35 }}>
+        <h1 style={{ fontSize: "32px", mdFontSize: "44px", fontWeight: 800, color: "#fff", margin: "0 0 24px", lineHeight: 1.25, letterSpacing: "-0.02em" }}>
           오늘 우리 아이에게<br />
-          <span style={{ color: "#E5007E" }}>특별한 선물</span>을 줄게요 🐾
+          특별한 선물을 줄게요 🐾
         </h1>
+        <p style={{ fontSize: "15px", color: "rgba(255,255,255,0.85)", lineHeight: 1.6, fontWeight: 500, maxWidth: "500px", margin: "0 auto" }}>
+          연구진이 엄선한 아이템을 발견하세요.<br />
+          마젠타랩이 함께 합니다.
+        </p>
+
+        {/* 액션 버튼 */}
+        <div style={{ display: "flex", justifyContent: "center", gap: "12px", marginTop: "32px" }}>
+          <button style={{
+            background: "#fff", color: "#E5007E", border: "none", borderRadius: "12px",
+            padding: "12px 24px", fontSize: "14px", fontWeight: 800, cursor: "pointer"
+          }}>쇼핑하기</button>
+          <button style={{
+            background: "rgba(0,0,0,0.2)", color: "#fff", border: "1px solid rgba(255,255,255,0.3)", borderRadius: "12px",
+            padding: "12px 24px", fontSize: "14px", fontWeight: 800, cursor: "pointer"
+          }}>문의하기</button>
+        </div>
       </div>
 
       {/* 검색바 */}
