@@ -459,7 +459,6 @@ function ProductCard({ p, index, variant = "grid" }: { p: any; index: number; va
           </button>
         </div>
       </div>
-      </div>
     </Link>
   );
 }
