@@ -18,17 +18,21 @@ export default function AskAnsimiPage() {
     setStatus("submitting");
     
     const formData = new FormData(e.currentTarget);
-    const params = new URLSearchParams();
-    params.append("name", formData.get("name") as string);
-    params.append("email", formData.get("email") as string);
-    params.append("petInfo", formData.get("petInfo") as string);
-    params.append("message", formData.get("message") as string);
+    const data = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      petInfo: formData.get("petInfo"),
+      message: formData.get("message"),
+    };
 
     try {
-      await fetch("https://script.google.com/macros/s/AKfycbwJycFqK5h7davDWjsfZ6h-2653ZxccdJ0sQUSUhGAOdT6FaKjNcp_hdmh79MuerLc6/exec", {
+      await fetch("https://submit-form.com/sITrmhxgw", {
         method: "POST",
-        mode: "no-cors",
-        body: params,
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        body: JSON.stringify(data),
       });
       setStatus("success");
     } catch (error) {
