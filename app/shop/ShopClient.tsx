@@ -1,7 +1,8 @@
-"use client";
-
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { useSession, signIn, signOut } from "next-auth/react";
+import { supabase } from "@/lib/supabase";
 
 // ─── 카테고리 (아시아허브마트 스타일 이모지 바) ──────────────────
 const CATEGORIES = [
@@ -14,8 +15,8 @@ const CATEGORIES = [
   { id: "fashion", label: "의류·악세", emoji: "👗" },
 ];
 
-// ─── 상품 데이터 ──────────────────────────────────────────────────
-const PRODUCTS = [
+// ─── 상품 데이터 (기본 Mock) ──────────────────────────────────────────
+const MOCK_PRODUCTS = [
   {
     id: 1,
     name: "안심 오메가-3 연구소 에디션",
@@ -366,11 +367,12 @@ function IconMy({ active }: { active: boolean }) {
 }
 
 // ─── 프로덕트 카드 공통 ──────────────────────────────────────────
-function ProductCard({ p, index, variant = "grid" }: { p: typeof PRODUCTS[0]; index: number; variant?: "grid" | "scroll" }) {
+function ProductCard({ p, index, variant = "grid" }: { p: any; index: number; variant?: "grid" | "scroll" }) {
   const isScroll = variant === "scroll";
 
   return (
-    <div
+    <Link
+      href={`/shop/${p.id}`}
       className="shop-card-hover shop-fade-up"
       style={{
         animationDelay: `${index * 0.08}s`,
@@ -457,12 +459,13 @@ function ProductCard({ p, index, variant = "grid" }: { p: typeof PRODUCTS[0]; in
           </button>
         </div>
       </div>
-    </div>
+      </div>
+    </Link>
   );
 }
 
 // ─── 디스커버리 탭 (아시아허브마트 메인 스타일) ─────────────────────
-function DiscoveryTab() {
+function DiscoveryTab({ products }: { products: any[] }) {
   const bannerRef = useRef<HTMLDivElement>(null);
   const [bannerIdx, setBannerIdx] = useState(0);
 
@@ -679,7 +682,7 @@ function DiscoveryTab() {
           <span style={{ fontSize: "12px", color: "#E5007E", fontWeight: 600, cursor: "pointer" }}>전체보기</span>
         </div>
         <div className="shop-scrollbar-hide" style={{ display: "flex", gap: "12px", paddingLeft: "20px", paddingRight: "8px", overflowX: "auto" }}>
-          {PRODUCTS.filter(p => p.badge === "BEST").map((p, i) => (
+          {products.filter((p: any) => p.badge === "BEST").map((p: any, i: number) => (
             <ProductCard key={p.id} p={p} index={i} variant="scroll" />
           ))}
         </div>
@@ -692,7 +695,7 @@ function DiscoveryTab() {
           <span style={{ fontSize: "12px", color: "#7C3AED", fontWeight: 600, cursor: "pointer" }}>전체보기</span>
         </div>
         <div className="shop-scrollbar-hide" style={{ display: "flex", gap: "12px", paddingLeft: "20px", paddingRight: "8px", overflowX: "auto" }}>
-          {PRODUCTS.filter(p => p.badge === "NEW").map((p, i) => (
+          {products.filter((p: any) => p.badge === "NEW").map((p: any, i: number) => (
             <ProductCard key={p.id} p={p} index={i} variant="scroll" />
           ))}
         </div>
@@ -733,7 +736,7 @@ function DiscoveryTab() {
       <div style={{ padding: "0 20px 24px" }}>
         <div style={{ fontWeight: 700, fontSize: "15px", marginBottom: "14px", color: "#111" }}>💰 할인 중인 상품</div>
         <div className="shop-product-grid">
-          {PRODUCTS.filter(p => p.originalPrice).map((p, i) => (
+          {products.filter((p: any) => p.original_price || p.originalPrice).map((p: any, i: number) => (
             <ProductCard key={p.id} p={p} index={i} variant="grid" />
           ))}
         </div>
@@ -743,13 +746,13 @@ function DiscoveryTab() {
 }
 
 // ─── 샵 탭 (전체 상품, 카테고리 필터) ──────────────────────────────
-function ShopTab() {
+function ShopTab({ products }: { products: any[] }) {
   const [activeCategory, setActiveCategory] = useState("all");
   const [sortLabel, setSortLabel] = useState("추천순");
 
   const filtered = activeCategory === "all"
-    ? PRODUCTS
-    : PRODUCTS.filter(p => p.category === activeCategory);
+    ? products
+    : products.filter((p: any) => p.category === activeCategory);
 
   const sorted = [...filtered].sort((a, b) => {
     if (sortLabel === "인기순") return b.reviewCount - a.reviewCount;
@@ -889,6 +892,8 @@ function CartTab() {
 
 // ─── 마이 탭 ─────────────────────────────────────────────────────
 function MyTab() {
+  const { data: session } = useSession();
+
   const menuItems = [
     { emoji: "❤️", label: "찜한 상품", sub: "0개" },
     { emoji: "⭐", label: "리뷰 관리", sub: "0개" },
@@ -914,33 +919,50 @@ function MyTab() {
           position: "absolute", bottom: "-30px", left: "20%", width: "100px", height: "100px",
           borderRadius: "50%", background: "rgba(255,255,255,0.06)",
         }} />
-        <div style={{ fontSize: "12px", opacity: 0.85, marginBottom: "4px", position: "relative" }}>로그인하고 더 많은 혜택을</div>
+        <div style={{ fontSize: "12px", opacity: 0.85, marginBottom: "4px", position: "relative" }}>{session ? "반가워요!" : "로그인하고 더 많은 혜택을"}</div>
         <div className="shop-fade-up" style={{ fontSize: "24px", fontWeight: 800, marginBottom: "20px", position: "relative" }}>
-          안녕하세요, 반려인님 👋
+          {session ? `${session.user?.name}님 👋` : "안녕하세요, 반려인님 👋"}
         </div>
-        <div style={{ display: "flex", gap: "12px", position: "relative" }}>
+        {!session ? (
+          <div style={{ display: "flex", gap: "12px", position: "relative" }}>
+            <button
+              onClick={() => signIn()}
+              className="shop-btn-hover"
+              style={{
+                flex: 1, background: "rgba(255,255,255,0.2)",
+                border: "1px solid rgba(255,255,255,0.35)", borderRadius: "14px",
+                color: "#fff", padding: "12px", fontSize: "14px", fontWeight: 700,
+                cursor: "pointer", backdropFilter: "blur(4px)",
+              }}
+            >
+              로그인
+            </button>
+            <button
+              onClick={() => signIn()}
+              className="shop-btn-hover"
+              style={{
+                flex: 1, background: "#fff", border: "none", borderRadius: "14px",
+                color: "#E5007E", padding: "12px", fontSize: "14px", fontWeight: 700, cursor: "pointer",
+                boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+              }}
+            >
+              회원가입
+            </button>
+          </div>
+        ) : (
           <button
+            onClick={() => signOut()}
             className="shop-btn-hover"
             style={{
-              flex: 1, background: "rgba(255,255,255,0.2)",
-              border: "1px solid rgba(255,255,255,0.35)", borderRadius: "14px",
-              color: "#fff", padding: "12px", fontSize: "14px", fontWeight: 700,
-              cursor: "pointer", backdropFilter: "blur(4px)",
+              width: "fit-content", background: "rgba(0,0,0,0.2)",
+              border: "1px solid rgba(255,255,255,0.2)", borderRadius: "10px",
+              color: "#fff", padding: "8px 16px", fontSize: "12px", fontWeight: 700,
+              cursor: "pointer", position: "relative"
             }}
           >
-            로그인
+            로그아웃
           </button>
-          <button
-            className="shop-btn-hover"
-            style={{
-              flex: 1, background: "#fff", border: "none", borderRadius: "14px",
-              color: "#E5007E", padding: "12px", fontSize: "14px", fontWeight: 700, cursor: "pointer",
-              boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-            }}
-          >
-            회원가입
-          </button>
-        </div>
+        )}
       </div>
 
       {/* 주문 현황 카드 */}
@@ -994,6 +1016,27 @@ function MyTab() {
 // ─── 메인 ShopClient ────────────────────────────────────────────
 export default function ShopClient() {
   const [activeTab, setActiveTab] = useState<"discovery" | "shop" | "cart" | "my">("discovery");
+  const [products, setProducts] = useState<any[]>(MOCK_PRODUCTS);
+
+  useEffect(() => {
+    async function fetchProducts() {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (!error && data && data.length > 0) {
+        // Supabase DB 데이터가 있으면 목업 데이터와 합치거나 교체
+        const dbProducts = data.map(p => ({
+          ...p,
+          image: p.image_url || p.image, // DB 필드명 매핑
+          originalPrice: p.original_price || p.originalPrice
+        }));
+        setProducts(dbProducts);
+      }
+    }
+    fetchProducts();
+  }, []);
 
   const tabs = [
     { key: "discovery" as const, label: "Discovery", Icon: IconDiscover },
@@ -1012,8 +1055,8 @@ export default function ShopClient() {
 
       {/* 탭 콘텐츠 */}
       <div style={{ overflowY: "auto", minHeight: "100vh" }}>
-        {activeTab === "discovery" && <DiscoveryTab />}
-        {activeTab === "shop" && <ShopTab />}
+        {activeTab === "discovery" && <DiscoveryTab products={products} />}
+        {activeTab === "shop" && <ShopTab products={products} />}
         {activeTab === "cart" && <CartTab />}
         {activeTab === "my" && <MyTab />}
       </div>
