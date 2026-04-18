@@ -243,6 +243,15 @@ function GlobalShopStyles() {
       .shop-float {
         animation: shopFloat 3s ease-in-out infinite;
       }
+      .shop-hero-title {
+        font-size: 32px;
+        line-height: 1.25;
+      }
+      @media (min-width: 768px) {
+        .shop-hero-title {
+          font-size: 44px;
+        }
+      }
 
       /* Responsive Container & Grid */
       .shop-main-container {
@@ -510,7 +519,10 @@ function DiscoveryTab() {
             backdropFilter: "blur(4px)"
           }}>BETA</span>
         </div>
-        <h1 style={{ fontSize: "32px", mdFontSize: "44px", fontWeight: 800, color: "#fff", margin: "0 0 24px", lineHeight: 1.25, letterSpacing: "-0.02em" }}>
+        <h1 
+          className="shop-hero-title"
+          style={{ fontWeight: 800, color: "#fff", margin: "0 0 24px", letterSpacing: "-0.02em" }}
+        >
           오늘 우리 아이에게<br />
           특별한 선물을 줄게요 🐾
         </h1>
