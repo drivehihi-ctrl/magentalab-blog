@@ -281,15 +281,15 @@ function GlobalShopStyles() {
 
       @media (min-width: 1024px) {
         .shop-main-container {
-          max-width: 1200px;
+          max-width: 1440px; /* 기존 1200px에서 확장 */
         }
         .shop-product-grid {
-          grid-template-columns: repeat(4, 1fr);
+          grid-template-columns: repeat(5, 1fr); /* 기존 4열에서 대화면 5열로 */
           gap: 24px;
         }
         .shop-tab-bar {
           bottom: 24px;
-          max-width: 480px;
+          max-width: 480px; /* 4개 탭에 맞게 다시 축소 */
           border: 1px solid rgba(0,0,0,0.08);
           border-radius: 24px;
           box-shadow: 0 12px 40px rgba(0,0,0,0.12);
@@ -306,41 +306,51 @@ function GlobalShopStyles() {
 
 // ─── 하단 탭바 아이콘 ─────────────────────────────────────────────
 function IconDiscover({ active }: { active: boolean }) {
-  const c = active ? "#E5007E" : "#9CA3AF";
+  const c = active ? "#E5007E" : "#94a3b8";
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-      <circle cx="12" cy="12" r="9" stroke={c} strokeWidth="2" />
-      <path d="M12 3v2M12 19v2M3 12h2M19 12h2" stroke={c} strokeWidth="2" strokeLinecap="round" />
-      <circle cx="12" cy="12" r="3" fill={c} />
+    <svg width="24" height="24" viewBox="0 0 24 24" fill={active ? c : "none"} stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+      <polyline points="9 22 9 12 15 12 15 22" />
     </svg>
   );
 }
 function IconShop({ active }: { active: boolean }) {
-  const c = active ? "#E5007E" : "#9CA3AF";
+  const c = active ? "#E5007E" : "#94a3b8";
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-      <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M3 6h18" stroke={c} strokeWidth="2" strokeLinecap="round" />
-      <path d="M16 10a4 4 0 01-8 0" stroke={c} strokeWidth="2" strokeLinecap="round" />
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
     </svg>
   );
 }
 function IconCart({ active }: { active: boolean }) {
-  const c = active ? "#E5007E" : "#9CA3AF";
+  const c = active ? "#E5007E" : "#94a3b8";
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-      <circle cx="9" cy="21" r="1" fill={c} />
-      <circle cx="20" cy="21" r="1" fill={c} />
-      <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
+    <div style={{ position: "relative" }}>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="9" cy="19" r="2" />
+        <circle cx="18" cy="19" r="2" />
+        <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" />
+      </svg>
+      {/* 장바구니 배지 (아시아허브마트 스타일) */}
+      <span style={{
+        position: "absolute", top: "-5px", right: "-8px",
+        background: "#EF4444", color: "#fff", fontSize: "10px", fontWeight: 800,
+        width: "16px", height: "16px", borderRadius: "50%",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        border: "2px solid #fff"
+      }}>
+        3
+      </span>
+    </div>
   );
 }
 function IconMy({ active }: { active: boolean }) {
-  const c = active ? "#E5007E" : "#9CA3AF";
+  const c = active ? "#E5007E" : "#94a3b8";
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke={c} strokeWidth="2" strokeLinecap="round" />
-      <circle cx="12" cy="7" r="4" stroke={c} strokeWidth="2" />
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
     </svg>
   );
 }
@@ -942,10 +952,10 @@ export default function ShopClient() {
   const [activeTab, setActiveTab] = useState<"discovery" | "shop" | "cart" | "my">("discovery");
 
   const tabs = [
-    { key: "discovery" as const, label: "디스커버리", Icon: IconDiscover },
-    { key: "shop" as const, label: "샵", Icon: IconShop },
-    { key: "cart" as const, label: "장바구니", Icon: IconCart },
-    { key: "my" as const, label: "마이", Icon: IconMy },
+    { key: "discovery" as const, label: "Discovery", Icon: IconDiscover },
+    { key: "shop" as const, label: "Shop", Icon: IconShop },
+    { key: "cart" as const, label: "Cart", Icon: IconCart },
+    { key: "my" as const, label: "My", Icon: IconMy },
   ];
 
   return (

@@ -35,7 +35,7 @@ export default async function HomePage() {
               <span className="inline-block px-4 py-1.5 mb-6 rounded-full bg-magenta-light text-magenta text-xs font-bold uppercase tracking-widest whitespace-nowrap">
                 Latest Research & Blog
               </span>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight mb-8 leading-[1.1]">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 tracking-tight mb-8 leading-[1.1]">
                 반려동물을 위한 <br /> 
                 <span className="text-magenta">더 나은 미래</span>를 <br className="hidden lg:block" />
                 연구합니다.

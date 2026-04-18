@@ -4,10 +4,11 @@ export default function ShopLayout({ children }: { children: React.ReactNode }) 
     <>
       <style>{`
         /* shop 전용: 전역 Header(sticky top-0) 및 footer 숨김 */
-        body > main ~ footer,
+        /* shop 전용: 전역 Header(sticky top-0) 숨김은 유지하되 Footer는 표시 (사용자 요청) */
+        /* body > main ~ footer,
         body footer {
           display: none !important;
-        }
+        } */
         /* Header 컴포넌트: sticky header 숨김 (사용자 요청에 따라 주석 처리)
         header.sticky {
           display: none !important;
