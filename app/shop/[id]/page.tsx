@@ -21,7 +21,16 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
   const product = await getProduct(params.id);
 
   if (!product) {
-    notFound();
+    return (
+      <div className="min-h-[70vh] flex flex-col items-center justify-center p-8 text-center bg-white">
+        <div className="text-4xl mb-4">🔍</div>
+        <h1 className="text-xl font-bold text-gray-900 mb-2">상품 정보를 찾을 수 없습니다.</h1>
+        <p className="text-gray-500 mb-8 text-sm">해당 상품이 삭제되었거나 잘못된 경로입니다.<br/>(ID: {params.id})</p>
+        <Link href="/shop" className="px-6 py-3 bg-magenta text-white font-bold rounded-xl shadow-lg shadow-magenta/20 transition-transform active:scale-95">
+          샵으로 돌아가기
+        </Link>
+      </div>
+    );
   }
 
   const discountRate = product.original_price 
