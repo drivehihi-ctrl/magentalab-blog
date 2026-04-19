@@ -46,7 +46,7 @@ export default function Header() {
           <Link href="/about" className="hover:text-magenta transition-colors">연구소 소개</Link>
           <Link href="/about-ansim" className="hover:text-magenta transition-colors">안심이 소개</Link>
           <Link href="/ask-ansimi" className="hover:text-magenta transition-colors">질문하기</Link>
-          <Link href="/shop" className="hover:text-magenta transition-colors">전용몰</Link>
+          {/* <Link href="/shop" className="hover:text-magenta transition-colors">전용몰</Link> */}
           <div className="ml-2 mr-2">
             <LiveSearch />
           </div>
@@ -125,7 +125,7 @@ export default function Header() {
               질문하기
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
             </Link>
-            <div className="h-px bg-gray-50 mx-4" />
+            {/* <div className="h-px bg-gray-50 mx-4" />
             <Link 
               href="/shop" 
               className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
@@ -133,7 +133,7 @@ export default function Header() {
             >
               전용몰
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
-            </Link>
+            </Link> */}
           </nav>
 
           <div className="mt-1.5 p-1.5 border-t border-gray-50">
