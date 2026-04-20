@@ -5,6 +5,9 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "전체 글 목록 | Magentalab",
   description: "Magentalab 반려동물 연구소의 모든 연구 게시글과 블로그 포스트를 확인하세요.",
+  alternates: {
+    canonical: "/blog",
+  },
 };
 
 export default async function BlogListPage() {
