@@ -758,13 +758,17 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
             className="shop-fade-up"
             style={{
               animationDelay: `${i * 0.12}s`,
-              minWidth: "280px", borderRadius: "22px",
+              minWidth: b.banner_type === "story" ? "180px" : "280px",
+              aspectRatio: b.banner_type === "story" ? "9/16" : "auto",
+              height: b.banner_type === "story" ? "auto" : "160px",
+              borderRadius: "22px",
               background: b.image_url ? `url(${b.image_url}) center/cover no-repeat` : (b.bg || b.bg_gradient),
               padding: "24px 22px", color: "#fff",
               flex: "0 0 auto", position: "relative", overflow: "hidden",
+              display: "flex", flexDirection: "column", justifyContent: "flex-end",
             }}
           >
-            {/* 데코 원 */}
+            {/* 데코 원 (이미지 없을 때만 노출) */}
             {!b.image_url && (
               <div style={{
                 position: "absolute", top: "-20px", right: "-20px",
@@ -772,10 +776,22 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
                 background: "rgba(255,255,255,0.12)",
               }} />
             )}
-            {b.image_url && <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.2)" }} />}
-            <div className="shop-float" style={{ fontSize: "36px", marginBottom: "10px", position: "relative" }}>{b.emoji}</div>
-            <div style={{ fontSize: "16px", fontWeight: 800, marginBottom: "6px", position: "relative" }}>{b.title}</div>
-            <div style={{ fontSize: "12px", opacity: 0.88, position: "relative" }}>{b.sub || b.sub_text}</div>
+            
+            {/* 이미지 위 오버레이 (가독성 향상) */}
+            {b.image_url && (
+              <div style={{ 
+                position: "absolute", inset: 0, 
+                background: b.banner_type === "story" 
+                  ? "linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.6) 100%)" 
+                  : "rgba(0,0,0,0.2)" 
+              }} />
+            )}
+
+            <div style={{ position: "relative", zIndex: 1 }}>
+              {b.emoji && <div className="shop-float" style={{ fontSize: b.banner_type === "story" ? "28px" : "36px", marginBottom: "8px" }}>{b.emoji}</div>}
+              <div style={{ fontSize: b.banner_type === "story" ? "14px" : "16px", fontWeight: 800, marginBottom: "4px", lineHeight: 1.3 }}>{b.title}</div>
+              <div style={{ fontSize: "11px", opacity: 0.9, whiteSpace: "pre-line" }}>{b.sub || b.sub_text}</div>
+            </div>
           </div>
         ))}
       </div>
