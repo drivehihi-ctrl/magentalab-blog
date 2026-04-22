@@ -1068,7 +1068,7 @@ function RequestTab() {
         setLink("");
         setOtherDetails("");
       } else {
-        alert("신청 중 오류가 발생했습니다: " + result.message);
+        alert("신청 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
       }
     } catch (error) {
       console.error(error);
