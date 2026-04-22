@@ -1081,37 +1081,32 @@ function RequestTab() {
   return (
     <div style={{ paddingBottom: "100px", background: "#f8fafc" }}>
       {/* 상단 배너 */}
-      <div style={{ position: "relative", width: "100%", height: "240px", borderRadius: "0 0 24px 24px", overflow: "hidden" }}>
+      <div style={{ position: "relative", width: "100%", borderRadius: "0 0 24px 24px", overflow: "hidden", lineHeight: 0 }}>
+        <img 
+          src="/images/shop/Request.jpeg" 
+          alt="입고 신청 배너"
+          style={{ width: "100%", height: "auto", display: "block" }}
+        />
+        {/* 텍스트 오버레이 (필요한 경우) */}
         <div style={{ 
-          width: "100%", height: "100%", 
-          backgroundImage: "url('/images/shop/Request.jpeg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          position: "absolute", top: 0, left: 0, width: "100%", height: "100%",
           display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-          padding: "20px"
+          padding: "20px", background: "rgba(0,0,0,0.1)"
         }}>
           <div style={{ 
-            fontSize: "36px", fontWeight: 900, color: "#fff", 
-            marginBottom: "12px", letterSpacing: "-0.05em",
+            fontSize: "clamp(24px, 8vw, 36px)", fontWeight: 900, color: "#fff", 
+            marginBottom: "8px", letterSpacing: "-0.05em",
             textAlign: "center", lineHeight: 1.1,
-            textShadow: "0 2px 10px rgba(0,0,0,0.3)"
+            textShadow: "0 2px 10px rgba(0,0,0,0.5)"
           }}>
             입고 희망<br />제 품 신 청
           </div>
           <div style={{ 
-            fontSize: "14px", fontWeight: 700, color: "#fff", 
-            background: "rgba(0,0,0,0.4)", padding: "4px 12px", borderRadius: "20px",
+            fontSize: "clamp(10px, 3vw, 14px)", fontWeight: 700, color: "#fff", 
+            background: "rgba(0,0,0,0.5)", padding: "4px 12px", borderRadius: "20px",
             backdropFilter: "blur(4px)"
           }}>
             저품질과 과대광고로 이루어진 제품은 입고가 제한됩니다
-          </div>
-          
-          {/* 장식용 아이콘 */}
-          <div style={{ position: "absolute", right: "20px", bottom: "10px", fontSize: "80px", opacity: 0.3 }}>
-            🦴
-          </div>
-          <div style={{ position: "absolute", left: "20px", top: "10px", fontSize: "40px", opacity: 0.2 }}>
-            🐾
           </div>
         </div>
       </div>
