@@ -6,7 +6,6 @@ import CommentsSection from "@/components/CommentsSection";
 import RelatedPosts from "@/components/RelatedPosts";
 import AnsimiSummary from "@/components/AnsimiSummary";
 import SocialShare from "@/components/SocialShare";
-import AICommentAssistant from "@/components/AICommentAssistant";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -247,11 +246,7 @@ export default async function PostDetailPage({ params }: PageProps) {
           <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-magenta/20 rounded-full blur-3xl" />
         </div>
 
-        {/* AI Comment Assistant */}
-        <AICommentAssistant 
-          postTitle={post.title.rendered.replace(/<[^>]*>?/gm, "")} 
-          variant="post" 
-        />
+
 
         {/* Comments Section */}
         <CommentsSection postId={parseInt(id)} />

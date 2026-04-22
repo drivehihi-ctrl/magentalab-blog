@@ -554,7 +554,7 @@ function ProductCard({ p, index, variant = "grid" }: { p: any; index: number; va
 }
 
 // ─── 디스커버리 탭 (아시아허브마트 메인 스타일) ─────────────────────
-function DiscoveryTab({ products, banners, careGuides }: { products: any[]; banners: any[]; careGuides: any[] }) {
+function DiscoveryTab({ products, banners, careGuides, session, activePet }: { products: any[]; banners: any[]; careGuides: any[]; session: any; activePet: PetProfile | null }) {
   const bannerRef = useRef<HTMLDivElement>(null);
   const [bannerIdx, setBannerIdx] = useState(0);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
@@ -818,6 +818,7 @@ function DiscoveryTab({ products, banners, careGuides }: { products: any[]; bann
       {/* 안심이 AI 추천 배너 */}
       <div
         className="shop-fade-up shop-section-px"
+        onClick={() => (window as any).setIsProfileModalOpen?.(true)}
         style={{
           margin: "0 20px 24px",
           background: "linear-gradient(135deg, #1A1025 0%, #2D1B4E 50%, #1A1025 100%)",
@@ -845,6 +846,47 @@ function DiscoveryTab({ products, banners, careGuides }: { products: any[]; bann
           <div style={{ fontSize: "11px", color: "#9CA3AF" }}>현재 3,200+ 반려인이 이용 중</div>
         </div>
       </div>
+
+      {/* 🧬 우리아이 연구 등록 유도 배너 (Discovery 추가) */}
+      {!session ? (
+        <div 
+          onClick={() => signIn("kakao", { callbackUrl: "/shop" })}
+          className="shop-card-hover"
+          style={{ 
+            padding: "20px", background: "linear-gradient(135deg, #1A1025 0%, #2D1B4E 100%)", 
+            borderRadius: "20px", margin: "0 20px 24px", color: "#fff", cursor: "pointer",
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            boxShadow: "0 4px 15px rgba(0,0,0,0.1)"
+          }}
+        >
+          <div>
+            <div style={{ fontSize: "15px", fontWeight: 900, marginBottom: "4px" }}>로그인하고 우리 아이 연구 시작하기</div>
+            <div style={{ fontSize: "11px", opacity: 0.9 }}>맞춤형 건강 관리 서비스를 이용해 보세요 🚀</div>
+          </div>
+          <div style={{ width: "40px", height: "40px", background: "rgba(255,255,255,0.1)", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Plus size={20} color="#fff" />
+          </div>
+        </div>
+      ) : !activePet && (
+        <div 
+          onClick={() => (window as any).setIsProfileModalOpen?.(true)}
+          className="shop-card-hover"
+          style={{ 
+            padding: "20px", background: "linear-gradient(135deg, #E5007E 0%, #FF4DA6 100%)", 
+            borderRadius: "20px", margin: "0 20px 24px", color: "#fff", cursor: "pointer",
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            boxShadow: "0 4px 15px rgba(229,0,126,0.2)"
+          }}
+        >
+          <div>
+            <div style={{ fontSize: "15px", fontWeight: 900, marginBottom: "4px" }}>우리아이 건강 연구 등록하기</div>
+            <div style={{ fontSize: "11px", opacity: 0.9 }}>정밀 분석을 통해 딱 맞는 제품을 추천해 드려요 ✨</div>
+          </div>
+          <div style={{ width: "40px", height: "40px", background: "rgba(255,255,255,0.2)", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Plus size={20} color="#fff" />
+          </div>
+        </div>
+      )}
 
       {/* 할인 상품 그리드 */}
       <div style={{ padding: "0 20px 24px" }}>
@@ -1467,9 +1509,23 @@ function MyTab({ profiles, activeId, onSelect, onOpenModal, setActiveSubPage }: 
                 width: "100%", background: "#FEE500", border: "none", borderRadius: "12px",
                 color: "#191919", padding: "10px", fontSize: "13px", fontWeight: 700, 
                 cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
+                marginBottom: "8px"
               }}
             >
+              <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" width="18" height="18" />
               카카오 로그인하고 혜택 받기
+            </button>
+            <button
+              onClick={() => signIn("google", { callbackUrl: "/shop" })}
+              className="shop-btn-hover"
+              style={{
+                width: "100%", background: "#fff", border: "1px solid #e2e8f0", borderRadius: "12px",
+                color: "#111", padding: "10px", fontSize: "13px", fontWeight: 700, 
+                cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
+              }}
+            >
+              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18" />
+              Google 로그인하고 혜택 받기
             </button>
           </div>
         )}
@@ -1477,6 +1533,78 @@ function MyTab({ profiles, activeId, onSelect, onOpenModal, setActiveSubPage }: 
 
       {/* [업그레이드] 우리 아이 연구 프로필 섹션 (가로 아바타 스와이프 UI) */}
       <div style={{ margin: "-30px 0 20px", position: "relative", zIndex: 110 }}>
+        
+        {/* 현재 선택된 아이 상세 요약 카드 */}
+        {activePet ? (
+          <div style={{ margin: "0 16px 24px" }}>
+            <div style={{ 
+              background: "#fff", borderRadius: "24px", padding: "24px", 
+              boxShadow: "0 10px 30px rgba(0,0,0,0.04)", border: "1px solid rgba(0,0,0,0.02)",
+              position: "relative", overflow: "hidden"
+            }}>
+              {/* 배경 장식 */}
+              <div style={{ position: "absolute", right: "-10px", top: "-10px", fontSize: "60px", opacity: 0.05 }}>🧪</div>
+              
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" }}>
+                <div>
+                  <h3 style={{ fontSize: "18px", fontWeight: 900, color: "#111" }}>{activePet.name} 연구원</h3>
+                  <div style={{ display: "flex", gap: "6px", marginTop: "4px" }}>
+                    <span style={{ fontSize: "12px", color: "#6B7280" }}>{activePet.breed}</span>
+                    <span style={{ fontSize: "12px", color: "#E5E7EB" }}>|</span>
+                    <span style={{ fontSize: "12px", color: "#6B7280" }}>{calculateAge(activePet.birthYear, activePet.birthMonth)}살</span>
+                  </div>
+                </div>
+                <div 
+                  onClick={onOpenModal}
+                  style={{ 
+                    background: "#F3F4F6", padding: "6px 12px", borderRadius: "10px", 
+                    fontSize: "12px", fontWeight: 700, color: "#4B5563", cursor: "pointer" 
+                  }}
+                >
+                  정보 수정
+                </div>
+              </div>
+
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                {(activePet.keywords || []).map(kId => {
+                  const kw = HEALTH_KEYWORDS.find(h => h.id === kId);
+                  return (
+                    <span key={kId} style={{ 
+                      fontSize: "11px", background: "#FFF0F6", color: "#E5007E", 
+                      padding: "4px 10px", borderRadius: "8px", fontWeight: 600
+                    }}>
+                      #{kw?.label || kId}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        ) : session && (
+          <div style={{ margin: "0 16px 24px" }}>
+            <div 
+              onClick={onOpenModal}
+              className="shop-card-hover"
+              style={{ 
+                background: "#fff", borderRadius: "24px", padding: "32px 24px", 
+                textAlign: "center", border: "2px dashed #E5E7EB", cursor: "pointer"
+              }}
+            >
+              <div style={{ fontSize: "40px", marginBottom: "12px" }}>🧬</div>
+              <h3 style={{ fontSize: "18px", fontWeight: 900, color: "#111", marginBottom: "8px" }}>아직 등록된 아이가 없어요</h3>
+              <p style={{ fontSize: "13px", color: "#6B7280", marginBottom: "20px" }}>우리 아이 건강 연구를 시작하고<br />0.1% 정밀 맞춤 제품을 추천받으세요!</p>
+              <div style={{ 
+                display: "inline-flex", alignItems: "center", gap: "8px",
+                background: "#E5007E", color: "#fff", padding: "12px 24px",
+                borderRadius: "14px", fontWeight: 800, fontSize: "14px"
+              }}>
+                <Plus size={18} />
+                연구 프로필 등록하기
+              </div>
+            </div>
+          </div>
+        )}
+
         <div 
           style={{ 
             display: "flex", overflowX: "auto", gap: "20px", padding: "10px 24px 20px", 
@@ -2393,7 +2521,7 @@ export default function ShopClient() {
 
       {/* 탭 콘텐츠 */}
       <div style={{ overflowY: "auto", minHeight: "100vh" }}>
-        {activeTab === "discovery" && <DiscoveryTab products={products} banners={banners} careGuides={careGuides} />}
+        {activeTab === "discovery" && <DiscoveryTab products={products} banners={banners} careGuides={careGuides} session={session} activePet={activePet} />}
         {activeTab === "shop" && <ShopTab products={products} session={session} activePet={activePet} />}
         {activeTab === "cart" && <CartTab />}
         {activeTab === "request" && <RequestTab />}
