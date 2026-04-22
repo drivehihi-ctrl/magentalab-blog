@@ -71,6 +71,20 @@ const formatAgeString = (years: number, months: number) => {
   return `${years}세 ${months}개월`;
 };
 
+// 만 나이 계산 함수 (전역 사용을 위해 상단으로 이동)
+const calculateAge = (year: number, month: number, day: number = 1) => {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
+  const currentDay = now.getDate();
+  
+  let age = currentYear - year;
+  if (currentMonth < month || (currentMonth === month && currentDay < day)) {
+    age--;
+  }
+  return age < 0 ? 0 : age;
+};
+
 /**
  * 마젠타 연구소 정밀 이미지 처리 (400x400 Crop + 80% 압축)
  */
@@ -1551,7 +1565,7 @@ function MyTab({ profiles, activeId, onSelect, onOpenModal, setActiveSubPage }: 
                   <div style={{ display: "flex", gap: "6px", marginTop: "4px" }}>
                     <span style={{ fontSize: "12px", color: "#6B7280" }}>{activePet.breed}</span>
                     <span style={{ fontSize: "12px", color: "#E5E7EB" }}>|</span>
-                    <span style={{ fontSize: "12px", color: "#6B7280" }}>{calculateAge(activePet.birthYear, activePet.birthMonth)}살</span>
+                    <span style={{ fontSize: "12px", color: "#6B7280" }}>{calculateAge(activePet.birthYear, activePet.birthMonth, activePet.birthDay || 1)}살</span>
                   </div>
                 </div>
                 <div 
@@ -2269,14 +2283,6 @@ export default function ShopClient() {
 
   const activePet = petProfiles.find(p => p.id === activePetId) || petProfiles[0] || null;
 
-  const calculateAge = (year: number, month: number) => {
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth() + 1;
-    let age = currentYear - year;
-    if (currentMonth < month) age--;
-    return age < 0 ? 0 : age;
-  };
 
   const savePetProfile = async (profile: PetProfile, file?: File) => {
     let finalPhotoUrl = profile.photo_url;
