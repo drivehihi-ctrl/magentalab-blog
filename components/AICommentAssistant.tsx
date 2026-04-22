@@ -8,9 +8,14 @@ interface AICommentAssistantProps {
   variant?: "admin" | "post";
 }
 
+interface AISuggestion {
+  nickname: string;
+  content: string;
+}
+
 export default function AICommentAssistant({ initialContext = "", postTitle = "", variant = "admin" }: AICommentAssistantProps) {
   const [context, setContext] = useState(initialContext);
-  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [suggestions, setSuggestions] = useState<AISuggestion[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -50,74 +55,94 @@ export default function AICommentAssistant({ initialContext = "", postTitle = ""
     }
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    alert("댓글이 클립보드에 정밀하게 복사되었습니다! 📋");
+  const copyToClipboard = (nickname: string, content: string) => {
+    const fullText = `닉네임: ${nickname}\n내용: ${content}`;
+    navigator.clipboard.writeText(fullText);
+    alert(`[${nickname}] 님의 댓글이 클립보드에 정밀하게 복사되었습니다! 📋`);
   };
 
   return (
     <div className={`${isPostVariant ? "bg-gray-50 border-2 border-dashed border-gray-200" : "bg-white border border-gray-100 shadow-xl shadow-gray-200/50"} rounded-3xl p-6 md:p-8 max-w-2xl mx-auto my-12`}>
       <div className="flex items-center gap-4 mb-6">
-        <div className={`w-10 h-10 ${isPostVariant ? "bg-white" : "bg-magenta"} rounded-xl flex items-center justify-center text-xl shadow-sm`}>
-          {isPostVariant ? "✨" : "🤖"}
+        <div className={`w-12 h-12 ${isPostVariant ? "bg-white" : "bg-magenta"} rounded-2xl flex items-center justify-center text-2xl shadow-lg`}>
+          {isPostVariant ? "✨" : "🏭"}
         </div>
         <div>
-          <h3 className="text-lg font-black text-gray-900">
-            {isPostVariant ? "안심이의 댓글 아이디어" : "안심이 AI 댓글 어시스턴트"}
+          <h3 className="text-xl font-black text-gray-900 tracking-tight">
+            {isPostVariant ? "안심이의 댓글 아이디어" : "안심이 AI 댓글 공장 (Persona Beta)"}
           </h3>
-          <p className="text-xs text-gray-500">
-            {isPostVariant ? "포스팅 내용을 분석해 정성스러운 댓글 초안을 만들어 드릴까요?" : "포스팅 주제를 입력하면 사람 같은 다정한 댓글을 생성해 드립니다."}
+          <p className="text-xs text-gray-500 font-medium">
+            {isPostVariant ? "포스팅 내용을 분석해 정성스러운 댓글 초안을 만들어 드릴까요?" : "한 번의 클릭으로 5명의 서로 다른 집사님 댓글을 찍어냅니다."}
           </p>
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-5">
         {!isPostVariant && (
           <div>
-            <label className="block text-xs font-bold text-gray-700 mb-2 ml-1 uppercase tracking-wider">포스팅 주제 또는 맥락</label>
-            <input 
-              type="text"
-              placeholder="예: 밥 안먹는 고양이, 눈물 자국 고민 등"
-              value={context}
-              onChange={(e) => setContext(e.target.value)}
-              className="w-full px-5 py-3 rounded-2xl border-2 border-gray-50 bg-gray-50 focus:bg-white focus:border-magenta outline-none transition-all text-sm"
-            />
+            <label className="block text-[10px] font-black text-gray-400 mb-2 ml-1 uppercase tracking-[0.2em]">포스팅 주제 또는 맥락</label>
+            <div className="relative">
+              <input 
+                type="text"
+                placeholder="예: 밥 안먹는 고양이, 눈물 자국 고민 등"
+                value={context}
+                onChange={(e) => setContext(e.target.value)}
+                className="w-full px-6 py-4 rounded-2xl border-2 border-gray-50 bg-gray-50 focus:bg-white focus:border-magenta outline-none transition-all text-sm font-medium shadow-inner"
+              />
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300">🧪</div>
+            </div>
           </div>
         )}
 
         <button 
           onClick={generateComment}
           disabled={loading}
-          className={`w-full py-4 ${isPostVariant ? "bg-gray-900" : "bg-magenta"} hover:opacity-90 text-white font-bold rounded-2xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 text-sm`}
+          className={`w-full py-5 ${isPostVariant ? "bg-gray-900" : "bg-magenta"} hover:brightness-110 text-white font-black rounded-2xl shadow-[0_10px_30px_rgba(229,0,126,0.3)] transition-all active:scale-[0.97] flex items-center justify-center gap-3 text-base`}
         >
           {loading ? (
-            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin" />
           ) : (
-             isPostVariant ? "✨ AI에게 댓글 추천받기 (제미나이 2.0)" : "✨ 제미나이 AI 정밀 분석 시작"
+             isPostVariant ? "✨ AI에게 댓글 추천받기" : "🚀 5인 5색 댓글 공장 가동하기"
           )}
         </button>
 
         {error && (
-          <div className="p-4 rounded-xl bg-red-50 text-red-600 text-[11px] font-medium border border-red-100 italic">
-            ⚠️ {error}
+          <div className="p-4 rounded-xl bg-red-50 text-red-600 text-[11px] font-bold border border-red-100 flex items-center gap-2">
+            <span>⚠️</span> {error}
           </div>
         )}
 
         {suggestions.length > 0 && (
-          <div className="mt-6 space-y-3 animate-in fade-in slide-in-from-top-4 duration-500">
-            {suggestions.map((text, idx) => (
-              <div key={idx} className="p-5 rounded-2xl bg-white border border-gray-100 relative group shadow-sm">
-                <span className="absolute -top-2.5 left-4 bg-white px-2 py-0.5 rounded-full border border-gray-100 text-[9px] font-bold text-magenta uppercase tracking-widest">
-                  Suggestion #{idx + 1}
-                </span>
-                <p className="text-gray-700 text-xs leading-relaxed whitespace-pre-wrap">
-                  {text}
+          <div className="mt-8 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="h-[1px] flex-1 bg-gray-100" />
+              <span className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">생성된 페르소나 댓글</span>
+              <div className="h-[1px] flex-1 bg-gray-100" />
+            </div>
+
+            {suggestions.map((item, idx) => (
+              <div key={idx} className="p-6 rounded-2xl bg-white border border-gray-100 relative group hover:border-magenta/30 hover:shadow-lg hover:shadow-magenta/5 transition-all">
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-lg bg-gray-50 flex items-center justify-center text-xs shadow-inner">👤</div>
+                    <span className="text-sm font-black text-gray-800">
+                      {item.nickname}
+                    </span>
+                  </div>
+                  <span className="bg-gray-50 text-[9px] font-bold text-gray-400 px-2 py-0.5 rounded-md uppercase">
+                    Persona #{idx + 1}
+                  </span>
+                </div>
+                
+                <p className="text-gray-600 text-sm leading-relaxed mb-4 font-medium italic">
+                  "{item.content}"
                 </p>
+
                 <button 
-                  onClick={() => copyToClipboard(text)}
-                  className="mt-3 flex items-center gap-1.5 text-[10px] font-bold text-magenta hover:underline opacity-60 group-hover:opacity-100 transition-opacity"
+                  onClick={() => copyToClipboard(item.nickname, item.content)}
+                  className="w-full py-2.5 rounded-xl bg-gray-50 text-magenta font-bold text-[11px] hover:bg-magenta hover:text-white transition-all flex items-center justify-center gap-2 border border-magenta/10"
                 >
-                  📋 이 내용으로 작성하기
+                  📋 닉네임 + 내용 복사하기
                 </button>
               </div>
             ))}
@@ -125,10 +150,10 @@ export default function AICommentAssistant({ initialContext = "", postTitle = ""
         )}
       </div>
 
-      <div className="mt-6 pt-4 border-t border-gray-100 text-[10px] text-gray-400 leading-tight">
+      <div className="mt-8 pt-5 border-t border-gray-100 text-[10px] text-gray-400 font-medium text-center leading-relaxed">
         {isPostVariant ? 
-          "* 팁: AI가 추천한 댓글을 복사해 아래 댓글창에 붙여넣어 보세요! 소중한 소통의 시작이 됩니다." :
-          "* 팁: 생성된 댓글을 블로그 포스팅에 직접 작성하시면 마치 집사인 것처럼 소통을 유도할 수 있습니다."
+          "* AI가 분석한 추천 댓글입니다. 자유롭게 수정해서 사용해 보세요!" :
+          "💡 생성된 닉네임과 댓글을 복사해 블로그에 작성해 보세요. \n북적북적 활기찬 연구소 분위기를 0.1% 정밀하게 연출할 수 있습니다."
         }
       </div>
     </div>
