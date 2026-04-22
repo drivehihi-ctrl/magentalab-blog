@@ -46,7 +46,7 @@ interface PetProfile {
 /**
  * 만 나이와 개월 수를 정밀하게 계산하는 함수 (마젠타 연구소 0.1% 정밀 로직)
  */
-const calculatePreciseAge = (year: number, month: number, day: number) => {
+const calculatePreciseAge = (year: number, month: number, day: number = 1) => {
   const now = new Date();
   const birthDate = new Date(year, month - 1, day);
   
@@ -66,24 +66,12 @@ const calculatePreciseAge = (year: number, month: number, day: number) => {
 };
 
 const formatAgeString = (years: number, months: number) => {
-  if (years === 0) return `${months}개월`;
-  if (months === 0) return `${years}세`;
-  return `${years}세 ${months}개월`;
+  if (years === 0) return `${months}개월 연구원`;
+  if (months === 0) return `${years}세 연구원`;
+  return `${years}세 ${months}개월 연구원`;
 };
 
-// 만 나이 계산 함수 (전역 사용을 위해 상단으로 이동)
-const calculateAge = (year: number, month: number, day: number = 1) => {
-  const now = new Date();
-  const currentYear = now.getFullYear();
-  const currentMonth = now.getMonth() + 1;
-  const currentDay = now.getDate();
-  
-  let age = currentYear - year;
-  if (currentMonth < month || (currentMonth === month && currentDay < day)) {
-    age--;
-  }
-  return age < 0 ? 0 : age;
-};
+// calculateAge 함수 제거 (calculatePreciseAge로 통합)
 
 /**
  * 마젠타 연구소 정밀 이미지 처리 (400x400 Crop + 80% 압축)
@@ -331,6 +319,15 @@ function GlobalShopStyles() {
       .shop-badge-pulse {
         animation: shopPulse 2s ease-in-out infinite;
       }
+      @keyframes shopGlow {
+        0%, 100% { box-shadow: 0 0 10px rgba(229, 0, 126, 0.4), 0 0 20px rgba(229, 0, 126, 0.2); }
+        50% { box-shadow: 0 0 20px rgba(229, 0, 126, 0.6), 0 0 40px rgba(229, 0, 126, 0.4); }
+      }
+      .shop-avatar-active {
+        animation: shopGlow 2s ease-in-out infinite;
+        border: 3px solid #E5007E !important;
+        transform: scale(1.1);
+      }
       .shop-float {
         animation: shopFloat 3s ease-in-out infinite;
       }
@@ -568,7 +565,7 @@ function ProductCard({ p, index, variant = "grid" }: { p: any; index: number; va
 }
 
 // ─── 디스커버리 탭 (아시아허브마트 메인 스타일) ─────────────────────
-function DiscoveryTab({ products, banners, careGuides, session, activePet }: { products: any[]; banners: any[]; careGuides: any[]; session: any; activePet: PetProfile | null }) {
+function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpenModal }: { products: any[]; banners: any[]; careGuides: any[]; session: any; activePet: PetProfile | null; onOpenModal: () => void }) {
   const bannerRef = useRef<HTMLDivElement>(null);
   const [bannerIdx, setBannerIdx] = useState(0);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
@@ -832,7 +829,7 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet }: { p
       {/* 안심이 AI 추천 배너 */}
       <div
         className="shop-fade-up shop-section-px"
-        onClick={() => (window as any).setIsProfileModalOpen?.(true)}
+        onClick={onOpenModal}
         style={{
           margin: "0 20px 24px",
           background: "linear-gradient(135deg, #1A1025 0%, #2D1B4E 50%, #1A1025 100%)",
@@ -863,44 +860,12 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet }: { p
 
       {/* 🧬 우리아이 연구 등록 유도 배너 (Discovery 추가) */}
       {!session ? (
-        <div 
-          onClick={() => signIn("kakao", { callbackUrl: "/shop" })}
-          className="shop-card-hover"
-          style={{ 
-            padding: "20px", background: "linear-gradient(135deg, #1A1025 0%, #2D1B4E 100%)", 
-            borderRadius: "20px", margin: "0 20px 24px", color: "#fff", cursor: "pointer",
-            display: "flex", alignItems: "center", justifyContent: "space-between",
-            boxShadow: "0 4px 15px rgba(0,0,0,0.1)"
-          }}
-        >
-          <div>
-            <div style={{ fontSize: "15px", fontWeight: 900, marginBottom: "4px" }}>로그인하고 우리 아이 연구 시작하기</div>
-            <div style={{ fontSize: "11px", opacity: 0.9 }}>맞춤형 건강 관리 서비스를 이용해 보세요 🚀</div>
-          </div>
-          <div style={{ width: "40px", height: "40px", background: "rgba(255,255,255,0.1)", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Plus size={20} color="#fff" />
-          </div>
-        </div>
+...
       ) : !activePet && (
         <div 
-          onClick={() => (window as any).setIsProfileModalOpen?.(true)}
+          onClick={onOpenModal}
           className="shop-card-hover"
-          style={{ 
-            padding: "20px", background: "linear-gradient(135deg, #E5007E 0%, #FF4DA6 100%)", 
-            borderRadius: "20px", margin: "0 20px 24px", color: "#fff", cursor: "pointer",
-            display: "flex", alignItems: "center", justifyContent: "space-between",
-            boxShadow: "0 4px 15px rgba(229,0,126,0.2)"
-          }}
-        >
-          <div>
-            <div style={{ fontSize: "15px", fontWeight: 900, marginBottom: "4px" }}>우리아이 건강 연구 등록하기</div>
-            <div style={{ fontSize: "11px", opacity: 0.9 }}>정밀 분석을 통해 딱 맞는 제품을 추천해 드려요 ✨</div>
-          </div>
-          <div style={{ width: "40px", height: "40px", background: "rgba(255,255,255,0.2)", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Plus size={20} color="#fff" />
-          </div>
-        </div>
-      )}
+...
 
       {/* 할인 상품 그리드 */}
       <div style={{ padding: "0 20px 24px" }}>
@@ -916,7 +881,7 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet }: { p
 }
 
 // ─── 샵 탭 (전체 상품, 카테고리 필터) ──────────────────────────────
-function ShopTab({ products, session, activePet }: { products: any[]; session: any; activePet: PetProfile | null }) {
+function ShopTab({ products, session, activePet, onOpenModal }: { products: any[]; session: any; activePet: PetProfile | null; onOpenModal: () => void }) {
   const [activeCategory, setActiveCategory] = useState("all");
   const [sortLabel, setSortLabel] = useState("추천순");
   const [searchQuery, setSearchQuery] = useState("");
@@ -1461,11 +1426,12 @@ function PetProfileModal({ isOpen, onClose, onSave, initialData }: {
 }
 
 // ─── 내 마이페이지 탭 (My Tab) ────────────────────────────────────
-function MyTab({ profiles, activeId, onSelect, onOpenModal, setActiveSubPage }: { 
+function MyTab({ profiles, activeId, onSelect, onOpenModal, onEditModal, setActiveSubPage }: { 
   profiles: PetProfile[]; 
   activeId: string | null;
   onSelect: (id: string) => void;
   onOpenModal: () => void; 
+  onEditModal: () => void;
   setActiveSubPage: (id: string | null) => void;
 }) {
   const { data: session } = useSession();
@@ -1565,11 +1531,16 @@ function MyTab({ profiles, activeId, onSelect, onOpenModal, setActiveSubPage }: 
                   <div style={{ display: "flex", gap: "6px", marginTop: "4px" }}>
                     <span style={{ fontSize: "12px", color: "#6B7280" }}>{activePet.breed}</span>
                     <span style={{ fontSize: "12px", color: "#E5E7EB" }}>|</span>
-                    <span style={{ fontSize: "12px", color: "#6B7280" }}>{calculateAge(activePet.birthYear, activePet.birthMonth, activePet.birthDay || 1)}살</span>
+                    <span style={{ fontSize: "12px", color: "#6B7280" }}>
+                      {(() => {
+                        const { years, months } = calculatePreciseAge(activePet.birthYear, activePet.birthMonth, activePet.birthDay || 1);
+                        return formatAgeString(years, months);
+                      })()}
+                    </span>
                   </div>
                 </div>
                 <div 
-                  onClick={onOpenModal}
+                  onClick={onEditModal}
                   style={{ 
                     background: "#F3F4F6", padding: "6px 12px", borderRadius: "10px", 
                     fontSize: "12px", fontWeight: 700, color: "#4B5563", cursor: "pointer" 
@@ -1643,7 +1614,6 @@ function MyTab({ profiles, activeId, onSelect, onOpenModal, setActiveSubPage }: 
           {/* 등록된 프로필 아바타들 */}
           {profiles.map(p => {
             const isActive = activeId === p.id;
-            const { years, months } = calculatePreciseAge(p.birthYear, p.birthMonth, p.birthDay || 1);
             
             return (
               <div 
@@ -1651,18 +1621,18 @@ function MyTab({ profiles, activeId, onSelect, onOpenModal, setActiveSubPage }: 
                 onClick={() => onSelect(p.id)}
                 style={{
                   display: "flex", flexDirection: "column", alignItems: "center", 
-                  gap: "8px", flexShrink: 0, cursor: "pointer"
+                  gap: "8px", flexShrink: 0, cursor: "pointer",
+                  transition: "all 0.3s ease",
                 }}
               >
                 <div 
-                  className="shop-btn-hover"
+                  className={`shop-btn-hover ${isActive ? "shop-avatar-active" : ""}`}
                   style={{
                     width: "74px", height: "74px", borderRadius: "50%",
                     padding: "3px",
-                    background: isActive ? "linear-gradient(135deg, #E5007E, #FF69B4)" : "transparent",
+                    background: isActive ? "linear-gradient(135deg, #E5007E, #FF69B4)" : "rgba(0,0,0,0.05)",
                     transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                    transform: isActive ? "scale(1.1)" : "scale(1)",
-                    boxShadow: isActive ? "0 8px 20px rgba(229, 0, 126, 0.3)" : "none",
+                    position: "relative",
                   }}
                 >
                   <div style={{
@@ -1676,6 +1646,18 @@ function MyTab({ profiles, activeId, onSelect, onOpenModal, setActiveSubPage }: 
                       <div style={{ fontSize: "32px" }}>{p.type === "dog" ? "🐶" : "🐱"}</div>
                     )}
                   </div>
+                  {isActive && (
+                    <div style={{
+                      position: "absolute", bottom: "-2px", right: "-2px",
+                      background: "#E5007E", color: "#fff", borderRadius: "50%",
+                      width: "20px", height: "20px", display: "flex", alignItems: "center",
+                      justifyContent: "center", border: "2px solid #fff"
+                    }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    </div>
+                  )}
                 </div>
                 <div style={{ 
                   fontSize: "12px", fontWeight: isActive ? 900 : 600, 
@@ -2280,8 +2262,15 @@ export default function ShopClient() {
   const [petProfiles, setPetProfiles] = useState<PetProfile[]>([]);
   const [activePetId, setActivePetId] = useState<string | null>(null);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [editingPet, setEditingPet] = useState<PetProfile | null>(null);
 
   const activePet = petProfiles.find(p => p.id === activePetId) || petProfiles[0] || null;
+
+  // 모달 열기 함수 (수정 시 profile 전달, 신규 등록 시 null)
+  const openProfileModal = (profile: PetProfile | null = null) => {
+    setEditingPet(profile);
+    setIsProfileModalOpen(true);
+  };
 
 
   const savePetProfile = async (profile: PetProfile, file?: File) => {
@@ -2406,16 +2395,47 @@ export default function ShopClient() {
         setActivePetId(dbProfiles[0].id);
       } else {
         // 2. DB에 데이터가 없으면 로컬 스토리지 데이터 마이그레이션 시도
-        const saved = localStorage.getItem("magenta_pet_profiles");
-        const old = localStorage.getItem("magenta_pet_profile");
+        const oldPet = localStorage.getItem("magenta_pet_profile"); // 기존 단일 데이터
+        const oldPets = localStorage.getItem("magenta_pet_profiles"); // 기존 다중 데이터
         
-        if (saved || old) {
+        if (oldPet || oldPets) {
           console.log("Migrating local data to Supabase...");
-          // 기존 로직과 유사하게 처리하되, 마이그레이션 후 DB에 저장하는 로직 추가 가능
-          if (saved) {
-             const parsed = JSON.parse(saved);
-             setPetProfiles(parsed);
-             setActivePetId(parsed[0]?.id || null);
+          let profilesToMigrate: any[] = [];
+          
+          if (oldPets) {
+            profilesToMigrate = JSON.parse(oldPets);
+          } else if (oldPet) {
+            const single = JSON.parse(oldPet);
+            profilesToMigrate = [{ ...single, id: "pet-legacy-" + Date.now() }];
+          }
+
+          if (profilesToMigrate.length > 0) {
+            // Supabase로 일괄 마이그레이션 (upsert)
+            for (const p of profilesToMigrate) {
+              await supabase.from("pet_profiles").upsert({
+                id: p.id || "pet-" + Date.now(),
+                owner_id: user?.id,
+                name: p.name,
+                type: p.type,
+                birth_year: p.birthYear,
+                birth_month: p.birthMonth,
+                birth_day: p.birthDay || 1,
+                breed: p.breed,
+                keywords: p.keywords || [],
+                photo_url: p.photo_url,
+                updated_at: new Date().toISOString(),
+              });
+            }
+            
+            // 이관 성공 알림 (사용자 경험)
+            alert(`${profilesToMigrate[0].name}의 정보가 안전하게 연구실로 옮겨졌습니다! 다른 아이도 추가해 보시겠어요? 🐾`);
+            
+            // 로컬 스토리지 정리 (중복 마이그레이션 방지)
+            localStorage.removeItem("magenta_pet_profile");
+            localStorage.removeItem("magenta_pet_profiles");
+            
+            // 다시 로드
+            loadProfiles();
           }
         }
       }
@@ -2527,8 +2547,8 @@ export default function ShopClient() {
 
       {/* 탭 콘텐츠 */}
       <div style={{ overflowY: "auto", minHeight: "100vh" }}>
-        {activeTab === "discovery" && <DiscoveryTab products={products} banners={banners} careGuides={careGuides} session={session} activePet={activePet} />}
-        {activeTab === "shop" && <ShopTab products={products} session={session} activePet={activePet} />}
+        {activeTab === "discovery" && <DiscoveryTab products={products} banners={banners} careGuides={careGuides} session={session} activePet={activePet} onOpenModal={() => openProfileModal(null)} />}
+        {activeTab === "shop" && <ShopTab products={products} session={session} activePet={activePet} onOpenModal={() => openProfileModal(null)} />}
         {activeTab === "cart" && <CartTab />}
         {activeTab === "request" && <RequestTab />}
         {activeTab === "my" && (
@@ -2536,7 +2556,8 @@ export default function ShopClient() {
             profiles={petProfiles} 
             activeId={activePetId} 
             onSelect={setActivePetId} 
-            onOpenModal={() => setIsProfileModalOpen(true)} 
+            onOpenModal={() => openProfileModal(null)} 
+            onEditModal={() => openProfileModal(activePet)}
             setActiveSubPage={setActiveSubPage} 
           />
         )}
@@ -2547,7 +2568,7 @@ export default function ShopClient() {
         isOpen={isProfileModalOpen} 
         onClose={() => setIsProfileModalOpen(false)} 
         onSave={savePetProfile}
-        initialData={activePet}
+        initialData={editingPet}
       />
 
       {/* 하단 탭바 */}
