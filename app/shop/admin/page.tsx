@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { supabase } from "@/lib/supabase";
-import { Camera, Trash2, Edit, PlayCircle, Image as ImageIcon } from "lucide-react";
+import { Camera, Trash2, Edit, PlayCircle, Image as ImageIcon, Sparkles, Plus } from "lucide-react";
+import AICommentAssistant from "@/components/AICommentAssistant";
 
 interface Product {
   id: number;
@@ -47,7 +48,7 @@ export default function ShopAdminPage() {
   const { data: session } = useSession();
   const [passcode, setPasscode] = useState("");
   const [isAuthorized, setIsAuthorized] = useState(false);
-  const [activeTab, setActiveTab] = useState<"products" | "banners" | "guides">("products");
+  const [activeTab, setActiveTab] = useState<"products" | "banners" | "guides" | "ai">("products");
   
   // Data States
   const [products, setProducts] = useState<Product[]>([]);
@@ -261,24 +262,38 @@ export default function ShopAdminPage() {
                 onClick={() => { setActiveTab("guides"); setIsEditing(false); }}
                 style={{ ...tabBtnStyle, background: activeTab === "guides" ? "#E5007E" : "rgba(255,255,255,0.05)" }}
               >🎬 케어 가이드</button>
+              <button 
+                onClick={() => { setActiveTab("ai"); setIsEditing(false); }}
+                style={{ ...tabBtnStyle, background: activeTab === "ai" ? "#E5007E" : "rgba(255,255,255,0.05)" }}
+              >🤖 AI 연구 지원</button>
             </div>
           </div>
           <div style={{ display: "flex", gap: "10px", marginBottom: "4px" }}>
-            <button onClick={() => { 
-              setIsEditing(true); 
-              if (activeTab === "products") setCurrentProduct({ category: "supplement" });
-              if (activeTab === "banners") setCurrentBanner({ bg_gradient: "linear-gradient(135deg, #E5007E, #7C3AED)", emoji: "🔬" });
-              if (activeTab === "guides") setCurrentGuide({ emoji: "🎬", gradient: "linear-gradient(135deg, #E5007E, #FF6B9D)" });
-            }} style={addBtnStyle}>+ New Item</button>
+            {activeTab !== "ai" && (
+              <button onClick={() => { 
+                setIsEditing(true); 
+                if (activeTab === "products") setCurrentProduct({ category: "supplement" });
+                if (activeTab === "banners") setCurrentBanner({ bg_gradient: "linear-gradient(135deg, #E5007E, #7C3AED)", emoji: "🔬" });
+                if (activeTab === "guides") setCurrentGuide({ emoji: "🎬", gradient: "linear-gradient(135deg, #E5007E, #FF6B9D)" });
+              }} style={addBtnStyle}>+ New Item</button>
+            )}
             <button onClick={handleLogout} style={logoutBtnStyle}>Logout</button>
           </div>
         </header>
+
+        {activeTab === "ai" && !isEditing && (
+          <div style={{ marginBottom: "40px" }}>
+            <AICommentAssistant />
+          </div>
+        )}
 
         {isEditing && (
           <div style={editorContainerStyle}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "32px" }}>
               <h2 style={{ fontSize: "22px", fontWeight: 900 }}>
-                {activeTab === "products" ? "🧪 상품 실험 정보" : activeTab === "banners" ? "🖼️ 다이내믹 배너 설계" : "📹 케어 가이드 기획"}
+                {activeTab === "products" ? "🧪 상품 실험 정보" : 
+                 activeTab === "banners" ? "🖼️ 다이내믹 배너 설계" : 
+                 activeTab === "guides" ? "📹 케어 가이드 기획" : "🤖 AI 정밀 댓글 연구소"}
               </h2>
               <button onClick={() => setIsEditing(false)} style={{ background: "none", border: "none", color: "#94A3B8", cursor: "pointer" }}>✕ 닫기</button>
             </div>

@@ -1,4 +1,5 @@
 import PostListItem from "@/components/PostListItem";
+import Pagination from "@/components/Pagination";
 import { getPosts } from "@/lib/wp";
 import { Metadata } from "next";
 
@@ -10,8 +11,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function BlogListPage() {
-  const posts = await getPosts();
+export default async function BlogListPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const { page } = await searchParams;
+  const currentPage = Number(page) || 1;
+  const { posts, totalPages, totalPosts } = await getPosts(currentPage, 20);
 
   return (
     <div className="pb-24">
@@ -43,13 +50,20 @@ export default async function BlogListPage() {
             <p className="text-gray-400 font-medium font-sans">등록된 게시글이 없습니다. 📝</p>
           </div>
         )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="py-8">
+            <Pagination totalPages={totalPages} currentPage={currentPage} />
+          </div>
+        )}
       </section>
       
       {/* Simple Stats or Message */}
       <div className="container mx-auto px-4 max-w-5xl">
         <div className="py-12 border-t border-gray-100 text-center">
           <p className="text-sm text-gray-400 font-sans">
-            총 <span className="text-magenta font-bold">{posts.length}</span>개의 연구 데이터가 기록되어 있습니다.
+            총 <span className="text-magenta font-bold">{totalPosts}</span>개의 연구 데이터가 기록되어 있습니다.
           </p>
         </div>
       </div>

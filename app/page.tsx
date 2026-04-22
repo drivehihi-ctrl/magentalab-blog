@@ -1,9 +1,16 @@
 import Image from "next/image";
 import PostCard from "@/components/PostCard";
+import Pagination from "@/components/Pagination";
 import { getPosts } from "@/lib/wp";
 
-export default async function HomePage() {
-  const posts = await getPosts();
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const { page } = await searchParams;
+  const currentPage = Number(page) || 1;
+  const { posts, totalPages } = await getPosts(currentPage, 20);
 
   return (
     <div className="pb-20">
@@ -59,7 +66,14 @@ export default async function HomePage() {
         
         {posts.length === 0 && (
           <div className="py-20 text-center">
-            <p className="text-gray-400">등록된 게시글이 없습니다.</p>
+            <p className="text-gray-400">등록된 게시글이 없습니다. {currentPage > 1 && "이전 페이지로 돌아가보세요."}</p>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="py-12">
+            <Pagination totalPages={totalPages} currentPage={currentPage} />
           </div>
         )}
       </section>

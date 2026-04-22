@@ -8,7 +8,7 @@ export async function GET() {
   const siteUrl = "https://www.magentalabblog.com";
   
   try {
-    const posts = await getPosts();
+    const { posts } = await getPosts();
     
     const rssItemsXml = posts
       .map((post) => {

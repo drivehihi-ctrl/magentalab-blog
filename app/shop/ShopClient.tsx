@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
@@ -860,10 +860,25 @@ function DiscoveryTab({ products, banners, careGuides }: { products: any[]; bann
 }
 
 // ─── 샵 탭 (전체 상품, 카테고리 필터) ──────────────────────────────
-function ShopTab({ products }: { products: any[] }) {
+function ShopTab({ products, session, activePet }: { products: any[]; session: any; activePet: PetProfile | null }) {
   const [activeCategory, setActiveCategory] = useState("all");
   const [sortLabel, setSortLabel] = useState("추천순");
   const [searchQuery, setSearchQuery] = useState("");
+
+  // 반려동물 맞춤형 추천 상품 필터링 (키워드 기반)
+  const recommendedProducts = useMemo(() => {
+    if (!activePet || !activePet.keywords || activePet.keywords.length === 0) return [];
+    
+    return products.filter(p => {
+      // 상품 태그나 이름에 반려동물 키워드 관련 단어가 포함되어 있는지 확인
+      const petKeywords = activePet.keywords.map(k => HEALTH_KEYWORDS.find(hk => hk.id === k)?.label || "");
+      return petKeywords.some(keyword => 
+        p.name.includes(keyword) || 
+        (p.tag || "").includes(keyword) || 
+        (p.category || "").includes(keyword)
+      );
+    }).slice(0, 4); // 최대 4개만 추천
+  }, [activePet, products]);
 
   const filtered = products.filter((p: any) => {
     const matchesCategory = activeCategory === "all" || p.category === activeCategory;
@@ -885,7 +900,77 @@ function ShopTab({ products }: { products: any[] }) {
 
   return (
     <div style={{ paddingBottom: "86px" }}>
-      {/* 검색 바 ( Discovery에서 이동 및 기능 구현 ) */}
+      {/* 로그인 및 프로필 등록 유도 (복구) */}
+      {!session && (
+        <div style={{ padding: "24px 20px", background: "#f8fafc", borderRadius: "24px", margin: "0 20px 20px", border: "1px solid #e2e8f0", textAlign: "center" }}>
+          <div style={{ fontSize: "24px", marginBottom: "8px" }}>🔐</div>
+          <div style={{ fontSize: "15px", fontWeight: 800, color: "#111", marginBottom: "4px" }}>나만의 맞춤 연구 정보를 확인하세요</div>
+          <p style={{ fontSize: "12px", color: "#64748B", marginBottom: "20px" }}>로그인하시면 아이의 건강 상태에 딱 맞는 제품을 추천해 드립니다.</p>
+          <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
+            <button 
+              onClick={() => signIn("google")}
+              style={{
+                flex: 1, padding: "12px", background: "#fff", border: "1px solid #e2e8f0", borderRadius: "12px",
+                display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", fontSize: "13px", fontWeight: 700, cursor: "pointer"
+              }}
+            >
+              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18" />
+              Google 로그인
+            </button>
+            <button 
+              onClick={() => signIn("kakao")}
+              style={{
+                flex: 1, padding: "12px", background: "#FEE500", border: "none", borderRadius: "12px",
+                display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", fontSize: "13px", fontWeight: 700, cursor: "pointer"
+              }}
+            >
+              <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" width="18" height="18" />
+              카카오 로그인
+            </button>
+          </div>
+        </div>
+      )}
+
+      {session && !activePet && (
+        <div 
+          onClick={() => (window as any).setIsProfileModalOpen?.(true)}
+          className="shop-card-hover"
+          style={{ 
+            padding: "20px", background: "linear-gradient(135deg, #E5007E 0%, #FF4DA6 100%)", 
+            borderRadius: "20px", margin: "0 20px 20px", color: "#fff", cursor: "pointer",
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            boxShadow: "0 4px 15px rgba(229,0,126,0.2)"
+          }}
+        >
+          <div>
+            <div style={{ fontSize: "15px", fontWeight: 900, marginBottom: "4px" }}>우리아이 건강 연구 등록하기</div>
+            <div style={{ fontSize: "11px", opacity: 0.9 }}>정밀 분석을 통해 딱 맞는 제품을 추천해 드려요 ✨</div>
+          </div>
+          <div style={{ width: "40px", height: "40px", background: "rgba(255,255,255,0.2)", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Plus size={20} color="#fff" />
+          </div>
+        </div>
+      )}
+
+      {/* 🧬 반려동물 맞춤 추천 섹션 */}
+      {activePet && recommendedProducts.length > 0 && (
+        <div style={{ margin: "0 20px 24px", padding: "20px", background: "#FFF0F6", borderRadius: "24px", border: "1px solid rgba(229,0,126,0.1)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "16px" }}>
+            <div style={{ width: "32px", height: "32px", borderRadius: "10px", background: "#E5007E", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>🧬</div>
+            <div>
+              <div style={{ fontSize: "14px", fontWeight: 900, color: "#111" }}>{activePet.name} 연구원을 위한 맞춤 추천</div>
+              <div style={{ fontSize: "10px", color: "#E5007E", fontWeight: 700 }}>0.1% 정밀 분석 시스템 가동 중</div>
+            </div>
+          </div>
+          <div className="shop-scrollbar-hide" style={{ display: "flex", gap: "12px", overflowX: "auto", paddingBottom: "4px" }}>
+            {recommendedProducts.map((p, i) => (
+              <ProductCard key={p.id} p={p} index={i} variant="scroll" />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 검색 바 */}
       <div 
         className="shop-section-px" 
         style={{ 
@@ -1020,6 +1105,7 @@ function ShopTab({ products }: { products: any[] }) {
     </div>
   );
 }
+
 
 // ─── 개인화 추천 배너 (CurationBanner) ─────────────────────────────
 function CurationBanner({ profile }: { profile: PetProfile }) {
@@ -2244,6 +2330,7 @@ export default function ShopClient() {
     if (typeof window !== "undefined") {
       (window as any).setActiveSubPage = setActiveSubPage;
       (window as any).setActiveTab = setActiveTab;
+      (window as any).setIsProfileModalOpen = setIsProfileModalOpen;
     }
   }, []);
 
@@ -2307,7 +2394,7 @@ export default function ShopClient() {
       {/* 탭 콘텐츠 */}
       <div style={{ overflowY: "auto", minHeight: "100vh" }}>
         {activeTab === "discovery" && <DiscoveryTab products={products} banners={banners} careGuides={careGuides} />}
-        {activeTab === "shop" && <ShopTab products={products} />}
+        {activeTab === "shop" && <ShopTab products={products} session={session} activePet={activePet} />}
         {activeTab === "cart" && <CartTab />}
         {activeTab === "request" && <RequestTab />}
         {activeTab === "my" && (

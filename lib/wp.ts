@@ -16,15 +16,31 @@ export interface WPPost {
   };
 }
 
-export async function getPosts(): Promise<WPPost[]> {
-  const res = await fetch(`${WP_API_URL}/posts?_embed&per_page=100`, {
+export interface PostsResponse {
+  posts: WPPost[];
+  totalPages: number;
+  totalPosts: number;
+}
+
+export async function getPosts(page: number = 1, perPage: number = 20): Promise<PostsResponse> {
+  const res = await fetch(`${WP_API_URL}/posts?_embed&per_page=${perPage}&page=${page}`, {
     next: {
       revalidate: 3600,
       tags: ['posts'] // 실시간 업데이트를 위한 태그
     },
   });
+  
   if (!res.ok) throw new Error("Failed to fetch posts");
-  return res.json();
+  
+  const posts = await res.json();
+  const totalPosts = Number(res.headers.get('X-WP-Total') || posts.length);
+  const totalPages = Number(res.headers.get('X-WP-TotalPages') || 1);
+
+  return { 
+    posts, 
+    totalPages, 
+    totalPosts 
+  };
 }
 
 /**

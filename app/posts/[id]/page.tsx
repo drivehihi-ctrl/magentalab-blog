@@ -6,6 +6,7 @@ import CommentsSection from "@/components/CommentsSection";
 import RelatedPosts from "@/components/RelatedPosts";
 import AnsimiSummary from "@/components/AnsimiSummary";
 import SocialShare from "@/components/SocialShare";
+import AICommentAssistant from "@/components/AICommentAssistant";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -56,7 +57,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function PostDetailPage({ params }: PageProps) {
   const { id } = await params;
   const post = await getPost(id);
-  const allPosts = await getPosts();
+  const { posts: allPosts } = await getPosts();
   const relatedPosts = getRelatedPosts(post, allPosts);
   
   const imageUrl = getFeaturedImage(post);
@@ -245,6 +246,12 @@ export default async function PostDetailPage({ params }: PageProps) {
           {/* Decorative background for the CTA */}
           <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-magenta/20 rounded-full blur-3xl" />
         </div>
+
+        {/* AI Comment Assistant */}
+        <AICommentAssistant 
+          postTitle={post.title.rendered.replace(/<[^>]*>?/gm, "")} 
+          variant="post" 
+        />
 
         {/* Comments Section */}
         <CommentsSection postId={parseInt(id)} />
