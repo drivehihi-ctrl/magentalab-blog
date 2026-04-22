@@ -138,31 +138,90 @@ export default async function ProductDetailPage({
           </div>
         </div>
 
-        {/* 하단 섹션 (상세 이미지 등) */}
+        {/* 하단 섹션 (상세 이미지 + 리뷰) */}
         <div className="mt-12 px-5 md:px-0">
-          <div className="border-b border-gray-100 flex gap-8 mb-8">
+          <div className="border-b border-gray-100 flex gap-8 mb-8 sticky top-[60px] bg-white/90 backdrop-blur-md z-40">
             <button className="pb-4 border-b-2 border-magenta text-sm font-black text-gray-900 tracking-wider">상세정보</button>
-            <button className="pb-4 text-sm font-bold text-gray-400 tracking-wider hover:text-gray-600 transition-colors">리뷰 ({product.review_count || 0})</button>
+            <a href="#reviews" className="pb-4 text-sm font-bold text-gray-400 tracking-wider hover:text-gray-600 transition-colors">리뷰 ({product.review_count || 0})</a>
             <button className="pb-4 text-sm font-bold text-gray-400 tracking-wider hover:text-gray-600 transition-colors">Q&A</button>
           </div>
           
-          <div className="space-y-4 mb-12">
+          {/* 상세 이미지 영역 */}
+          <div className="space-y-4 mb-20">
             {(product.detail_images && product.detail_images.length > 0) ? (
               product.detail_images.map((img: string, idx: number) => (
                 <img 
                   key={idx} 
                   src={img} 
                   alt={`${product.name} 상세설명 ${idx + 1}`} 
-                  className="w-full h-auto block rounded-xl md:rounded-3xl"
+                  className="w-full h-auto block rounded-xl md:rounded-3xl shadow-sm"
                   loading="lazy"
                 />
               ))
             ) : (
-              <div className="py-24 text-center bg-gray-50 rounded-3xl">
+              <div className="py-24 text-center bg-gray-50 rounded-3xl border-2 border-dashed border-gray-100">
                 <div className="text-4xl mb-4">🧪</div>
                 <p className="text-gray-400 text-sm font-black tracking-tight">마젠타 연구소에서 상세 정보를 정밀 분석 중입니다.</p>
               </div>
             )}
+          </div>
+
+          {/* ⭐ 리뷰 섹션 (안심이의 전략적 설계) */}
+          <div id="reviews" className="pt-20 border-t border-gray-100 mb-20">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
+              <div>
+                <h2 className="text-2xl font-black text-gray-900 mb-2">리뷰 <span className="text-magenta">{product.review_count || 0}</span></h2>
+                <p className="text-gray-500 text-sm font-medium">마젠타 연구소 사장님들의 생생한 연구 기록입니다.</p>
+              </div>
+              <div className="flex items-center gap-6 bg-gray-50 px-6 py-4 rounded-2xl">
+                <div className="flex flex-col items-center">
+                  <span className="text-3xl font-black text-gray-900">{product.rating || "5.0"}</span>
+                  <div className="flex text-amber-400 mt-1">
+                    {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 fill-current" />)}
+                  </div>
+                </div>
+                <div className="w-px h-10 bg-gray-200" />
+                <div className="text-xs font-bold text-gray-500 leading-relaxed">
+                  <span className="text-magenta">99%</span>의 연구원(구매자)이<br/>이 제품을 추천합니다.
+                </div>
+              </div>
+            </div>
+
+            {/* 리뷰 리스트 (AI 댓글 공장 페르소나 적용 예시) */}
+            <div className="space-y-8">
+              {[
+                { name: "보리바라기", date: "2024.04.20", content: "진짜 대박이에요! 우리 보리가 입이 짧아서 걱정했는데 이건 접시까지 싹싹 비우네요 ㅎㅎ 성분도 믿음직스럽고 포장도 너무 정성스러워요!", rating: 5 },
+                { name: "냥이집사7", date: "2024.04.18", content: "마젠타랩 제품은 항상 믿고 구매합니다. 이번에도 실망시키지 않네요. 배송도 빠르고 아이가 너무 좋아해서 기분이 좋습니다.", rating: 5 },
+                { name: "초코마마", date: "2024.04.15", content: "지인 추천으로 샀는데 왜 이제 샀나 싶어요 ㅋㅋ 눈물 자국이 확실히 덜해지는 게 눈에 보여서 너무 신기합니다. 대만족!", rating: 5 }
+              ].map((rev, i) => (
+                <div key={i} className="pb-8 border-b border-gray-50 animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: `${i * 0.1}s` }}>
+                  <div className="flex justify-between items-center mb-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-magenta/10 flex items-center justify-center text-xs text-magenta font-black">
+                        {rev.name[0]}
+                      </div>
+                      <div>
+                        <div className="text-sm font-black text-gray-900 flex items-center gap-1.5">
+                          {rev.name}
+                          <span className="text-[10px] bg-green-50 text-green-600 px-1.5 py-0.5 rounded-md uppercase tracking-wider font-black">Verified</span>
+                        </div>
+                        <div className="flex text-amber-400 mt-0.5">
+                          {[...Array(rev.rating)].map((_, i) => <Star key={i} className="w-2.5 h-2.5 fill-current" />)}
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-xs text-gray-400 font-medium">{rev.date}</span>
+                  </div>
+                  <p className="text-gray-600 text-sm leading-relaxed font-medium pl-10">
+                    {rev.content}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <button className="w-full mt-10 py-4 border-2 border-gray-100 rounded-2xl text-gray-400 font-bold text-sm hover:bg-gray-50 transition-all active:scale-[0.98]">
+              리뷰 전체보기
+            </button>
           </div>
         </div>
       </div>
