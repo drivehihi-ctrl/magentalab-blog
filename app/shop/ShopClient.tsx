@@ -1283,6 +1283,30 @@ function MyTab({ profile, onOpenModal }: { profile: PetProfile | null; onOpenMod
   );
 }
 
+// ─── 장바구니 탭 (Cart Tab) ──────────────────────────────────────
+function CartTab() {
+  return (
+    <div style={{ 
+      padding: "80px 20px", textAlign: "center", minHeight: "80vh",
+      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"
+    }}>
+      <div style={{ fontSize: "64px", marginBottom: "20px" }}>🛒</div>
+      <h2 style={{ fontSize: "20px", fontWeight: 800, color: "#111", marginBottom: "8px" }}>장바구니가 비어있습니다</h2>
+      <p style={{ fontSize: "14px", color: "#6B7280", marginBottom: "32px", lineHeight: 1.5 }}>
+        안심이가 추천하는 건강한 아이템들을<br />장바구니에 담아보세요!
+      </p>
+      <button style={{
+        background: "linear-gradient(135deg, #E5007E 0%, #FF4DA6 100%)",
+        color: "#fff", border: "none", borderRadius: "14px",
+        padding: "14px 32px", fontSize: "14px", fontWeight: 800, cursor: "pointer",
+        boxShadow: "0 4px 15px rgba(229,0,126,0.3)"
+      }}>
+        인기 상품 보러가기
+      </button>
+    </div>
+  );
+}
+
 // ─── 입고 요청 탭 (Request Tab) ───────────────────────────────────
 function RequestTab() {
   const [productName, setProductName] = useState("");
