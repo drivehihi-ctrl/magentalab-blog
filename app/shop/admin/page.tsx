@@ -180,16 +180,35 @@ export default function ShopAdminPage() {
 
   // CRUD Operations
   async function handleSaveProduct() {
+    // Supabase에 저장할 데이터만 정밀하게 추출 (ID와 날짜 등 제외)
+    const { id, created_at, ...updateData } = currentProduct as any;
+    
     const payload = { 
-      ...currentProduct, 
-      price: Number(currentProduct.price), 
-      original_price: Number(currentProduct.original_price || currentProduct.price), 
-      stock: Number(currentProduct.stock || 0),
-      is_weekly_pick: !!currentProduct.is_weekly_pick
+      name: updateData.name,
+      brand: updateData.brand,
+      price: Number(updateData.price), 
+      original_price: Number(updateData.original_price || updateData.price), 
+      stock: Number(updateData.stock || 0),
+      category: updateData.category,
+      image_url: updateData.image_url,
+      details_link: updateData.details_link,
+      is_weekly_pick: !!updateData.is_weekly_pick
     };
-    if (currentProduct.id) await supabase.from("products").update(payload).eq("id", currentProduct.id);
-    else await supabase.from("products").insert([payload]);
-    setIsEditing(false); fetchProducts();
+
+    let result;
+    if (id) {
+      result = await supabase.from("products").update(payload).eq("id", id);
+    } else {
+      result = await supabase.from("products").insert([payload]);
+    }
+
+    if (result.error) {
+      console.error("Save error:", result.error);
+      alert("저장 실패: " + result.error.message);
+    } else {
+      setIsEditing(false); 
+      fetchProducts();
+    }
   }
 
   async function handleSaveBanner() {
