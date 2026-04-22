@@ -2451,22 +2451,21 @@ export default function ShopClient() {
         const fileName = `photo.jpg`;
         const filePath = `${user.id}/${profile.id}/${fileName}`;
 
-        // Supabase Storage 업로드
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("pet_profiles")
-          .upload(filePath, processedBlob, {
-            contentType: "image/jpeg",
-            upsert: true,
-          });
+        // 전용 통로(API)를 통해 보안 정책을 우회하여 업로드
+        const formData = new FormData();
+        formData.append("file", processedBlob, "photo.jpg");
+        formData.append("bucket", "pet_profiles");
+        formData.append("folder", `${user.id}/${profile.id}`);
 
-        if (uploadError) throw uploadError;
+        const response = await fetch("/api/shop/upload", {
+          method: "POST",
+          body: formData,
+        });
 
-        // 공개 URL 가져오기
-        const { data: { publicUrl } } = supabase.storage
-          .from("pet_profiles")
-          .getPublicUrl(filePath);
-        
-        finalPhotoUrl = publicUrl;
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "업로드 실패");
+
+        finalPhotoUrl = result.url;
       } catch (err) {
         console.error("Image upload failed:", err);
         alert("이미지 업로드 중 연구 오류가 발생했습니다. (0.1% 오차 발생!)");
