@@ -68,7 +68,7 @@ export default function PrivacyPage() {
             <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">7. 개인정보 보호책임자</h2>
             <p className="mb-6">
               개인정보 처리에 관한 업무를 총괄해서 책임지고, 관련 불만 처리 및 피해 구제 등을 위하여 아래와 같이 개인정보 보호책임자를 지정하고 있습니다.
-              <br />- 이메일 문의 : magentalab.pet@gmail.com
+              <br />- 이메일 문의 : smagentalab@gmail.com
             </p>
 
             <p className="mt-12 pt-8 border-t border-gray-100 text-sm text-gray-400">
