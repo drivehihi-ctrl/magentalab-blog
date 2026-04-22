@@ -779,9 +779,6 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
       <div className="shop-section-px" style={{ padding: "0 20px 24px" }}>
         <div style={{ fontWeight: 700, fontSize: "15px", marginBottom: "4px", color: "#111" }}>🎬 안심이 케어 가이드</div>
         <div style={{ fontSize: "12px", color: "#9CA3AF", marginBottom: "14px" }}>영상을 보고, 아래 추천 제품으로 바로 케어해 보세요!</div>
-      <div className="shop-section-px" style={{ padding: "0 20px 24px" }}>
-        <div style={{ fontWeight: 700, fontSize: "15px", marginBottom: "4px", color: "#111" }}>🎬 안심이 케어 가이드</div>
-        <div style={{ fontSize: "12px", color: "#9CA3AF", marginBottom: "14px" }}>영상을 보고, 아래 추천 제품으로 바로 케어해 보세요!</div>
         <div className="shop-scrollbar-hide" style={{ display: "flex", gap: "12px", overflowX: "auto" }}>
           {displayGuides.map((g, i) => (
             <div
@@ -979,7 +976,28 @@ function ShopTab({ products, session, activePet, onOpenModal }: { products: any[
 
   return (
     <div style={{ paddingBottom: "86px" }}>
-      {/* 로그인 및 프로필 등록 유도 (복구) */}
+      {/* 💎 샵 프리미엄 히어로 섹션 (3번째 스샷 스타일) */}
+      <div style={{ 
+        background: "linear-gradient(to bottom, #88004D, #660039)", 
+        padding: "60px 20px", 
+        textAlign: "center", 
+        color: "#fff",
+        marginBottom: "24px"
+      }}>
+        <div style={{ marginBottom: "20px" }}>
+          {/* 컵케이크 로고 대체 - 추후 /public/images/logo/logo.png 로 교체 가능 */}
+          <div style={{ fontSize: "32px", marginBottom: "12px" }}>🧪</div>
+          <div style={{ fontSize: "18px", fontWeight: 900, letterSpacing: "0.2em", textTransform: "uppercase" }}>MAGENTA LAB</div>
+        </div>
+        <h2 style={{ fontSize: "28px", fontWeight: 900, letterSpacing: "-0.02em", margin: "0 0 12px", textTransform: "uppercase" }}>
+          DISCOVER PRECISION PET WELLNESS
+        </h2>
+        <p style={{ fontSize: "13px", opacity: 0.8, letterSpacing: "0.05em", fontWeight: 500, textTransform: "uppercase" }}>
+          EXPERTS CURATING RESEARCH-DRIVEN PRODUCTS FOR YOUR PET'S PRECISE NEEDS.
+        </p>
+      </div>
+
+      {/* 로그인 및 프로필 등록 유도 (하단 이동) */}
       {!session && (
         <div style={{ padding: "24px 20px", background: "#f8fafc", borderRadius: "24px", margin: "0 20px 20px", border: "1px solid #e2e8f0", textAlign: "center" }}>
           <div style={{ fontSize: "24px", marginBottom: "8px" }}>🔐</div>
@@ -1049,24 +1067,40 @@ function ShopTab({ products, session, activePet, onOpenModal }: { products: any[
         </div>
       )}
 
-      {/* 검색 바 */}
-      <div 
-        className="shop-section-px" 
-        style={{ 
-          padding: "20px 20px 10px", 
-          background: "#fff", 
-          position: "sticky", 
-          top: 0, 
-          zIndex: 10,
-          borderBottom: searchQuery ? "1px solid #F3F4F6" : "none" 
-        }}
-      >
+      {/* 카테고리 및 검색 (스샷 스타일로 정렬) */}
+      <div style={{ background: "#fff", padding: "20px 20px 10px" }}>
+        {/* 카테고리 가로 스크롤 탭 */}
+        <div className="shop-scrollbar-hide" style={{ display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "16px" }}>
+          {CATEGORIES.map((c, i) => (
+            <button
+              key={c.id}
+              onClick={() => setActiveCategory(c.id)}
+              className="shop-slide-in"
+              style={{
+                animationDelay: `${i * 0.04}s`,
+                whiteSpace: "nowrap", padding: "8px 16px", borderRadius: "50px",
+                border: activeCategory === c.id ? "none" : "1px solid #E5E7EB",
+                cursor: "pointer", fontSize: "13px", fontWeight: 600,
+                background: activeCategory === c.id
+                  ? "linear-gradient(135deg, #E5007E 0%, #FF4DA6 100%)"
+                  : "#fff",
+                color: activeCategory === c.id ? "#fff" : "#6B7280",
+                transition: "all 0.25s ease",
+                boxShadow: activeCategory === c.id ? "0 4px 12px rgba(229,0,126,0.2)" : "none"
+              }}
+            >
+              {c.emoji} {c.label}
+            </button>
+          ))}
+        </div>
+
+        {/* 검색 바 */}
         <div
           style={{
             background: "#F3F4F6", borderRadius: "16px",
             padding: "4px 16px", display: "flex", alignItems: "center", gap: "10px",
-            border: "2px solid transparent",
-            boxShadow: "inset 0 2px 4px rgba(0,0,0,0.02)"
+            border: "1px solid #E5E7EB",
+            marginBottom: "12px"
           }}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -1083,60 +1117,10 @@ function ShopTab({ products, session, activePet, onOpenModal }: { products: any[
               padding: "10px 0", fontSize: "14px", color: "#111", width: "100%"
             }}
           />
-          {searchQuery && (
-            <button 
-              onClick={() => setSearchQuery("")}
-              style={{ background: "none", border: "none", color: "#9CA3AF", cursor: "pointer", fontSize: "18px" }}
-            >✕</button>
-          )}
         </div>
-      </div>
 
-      {/* 헤더 */}
-      <div className="shop-section-px" style={{ padding: "20px 20px 0", background: "#fff" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <h2 style={{ fontSize: "20px", fontWeight: 800, color: "#111", margin: 0 }}>Shop</h2>
-            <span style={{ 
-              fontSize: "9px", 
-              fontWeight: 800, 
-              background: "#F3F4F6", 
-              color: "#9CA3AF", 
-              padding: "2px 6px", 
-              borderRadius: "4px",
-              letterSpacing: "0.05em"
-            }}>BETA</span>
-          </div>
-          <div style={{ fontSize: "12px", color: "#9CA3AF" }}>반려동물 전용 쇼핑몰</div>
-        </div>
-        <div style={{ fontSize: "13px", color: "#6B7280", marginBottom: "14px" }}>
+        <div style={{ fontSize: "12px", color: "#6B7280", opacity: 0.8 }}>
           신뢰할 수 있는 제품만 모았습니다
-        </div>
-
-        {/* 카테고리 가로 스크롤 탭 */}
-        <div className="shop-scrollbar-hide" style={{ display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "14px" }}>
-          {CATEGORIES.map((c, i) => (
-            <button
-              key={c.id}
-              onClick={() => setActiveCategory(c.id)}
-              className="shop-slide-in"
-              style={{
-                animationDelay: `${i * 0.04}s`,
-                whiteSpace: "nowrap", padding: "8px 16px", borderRadius: "50px",
-                border: activeCategory === c.id ? "none" : "1px solid #E5E7EB",
-                cursor: "pointer", fontSize: "13px", fontWeight: 600,
-                background: activeCategory === c.id
-                  ? "linear-gradient(135deg, #E5007E 0%, #FF4DA6 100%)"
-                  : "#fff",
-                color: activeCategory === c.id ? "#fff" : "#6B7280",
-                transition: "all 0.25s ease",
-                flexShrink: 0,
-                boxShadow: activeCategory === c.id ? "0 2px 10px rgba(229,0,126,0.3)" : "none",
-              }}
-            >
-              {c.emoji} {c.label}
-            </button>
-          ))}
         </div>
       </div>
       {/* 정렬 / 개수 */}
