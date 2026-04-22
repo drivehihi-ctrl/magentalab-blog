@@ -289,25 +289,25 @@ export default function ShopAdminPage() {
                 <ImageDropzone 
                   url={currentProduct.image_url} 
                   uploading={uploading} 
-                  onUpload={(file) => uploadMedia(file, "products")} 
+                  onUpload={(file: File) => uploadMedia(file, "products")} 
                   onClear={() => setCurrentProduct({...currentProduct, image_url: ""})}
                 />
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
                   <div style={{ gridColumn: "span 2" }}>
                     <label style={labelStyle}>상품 브랜드 & 이름</label>
                     <div style={{ display: "flex", gap: "10px" }}>
-                      <input style={inputStyle} placeholder="브랜드" value={currentProduct.brand || ""} onChange={e => setCurrentProduct({...currentProduct, brand: e.target.value})} />
-                      <input style={{...inputStyle, flex: 2}} placeholder="아이템명" value={currentProduct.name || ""} onChange={e => setCurrentProduct({...currentProduct, name: e.target.value})} />
+                      <input style={inputStyle} placeholder="브랜드" value={currentProduct.brand || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentProduct({...currentProduct, brand: e.target.value})} />
+                      <input style={{...inputStyle, flex: 2}} placeholder="아이템명" value={currentProduct.name || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentProduct({...currentProduct, name: e.target.value})} />
                     </div>
                   </div>
-                  <input type="number" style={inputStyle} placeholder="판매가" value={currentProduct.price || ""} onChange={e => setCurrentProduct({...currentProduct, price: Number(e.target.value)})} />
-                  <input type="number" style={inputStyle} placeholder="정가" value={currentProduct.original_price || ""} onChange={e => setCurrentProduct({...currentProduct, original_price: Number(e.target.value)})} />
-                  <select style={inputStyle} value={currentProduct.category} onChange={e => setCurrentProduct({...currentProduct, category: e.target.value})}>
+                  <input type="number" style={inputStyle} placeholder="판매가" value={currentProduct.price || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentProduct({...currentProduct, price: Number(e.target.value)})} />
+                  <input type="number" style={inputStyle} placeholder="정가" value={currentProduct.original_price || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentProduct({...currentProduct, original_price: Number(e.target.value)})} />
+                  <select style={inputStyle} value={currentProduct.category} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setCurrentProduct({...currentProduct, category: e.target.value})}>
                     <option value="food">사료·간식</option><option value="supplement">영양제</option><option value="hygiene">위생·목욕</option><option value="toy">장난감</option><option value="bedding">침구·하우스</option>
                   </select>
-                  <input type="number" style={inputStyle} placeholder="재고" value={currentProduct.stock || 0} onChange={e => setCurrentProduct({...currentProduct, stock: Number(e.target.value)})} />
+                  <input type="number" style={inputStyle} placeholder="재고" value={currentProduct.stock || 0} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentProduct({...currentProduct, stock: Number(e.target.value)})} />
                   <div style={{ gridColumn: "span 2" }}>
-                    <input style={inputStyle} placeholder="상세 페이지 링크 URL" value={currentProduct.details_link || ""} onChange={e => setCurrentProduct({...currentProduct, details_link: e.target.value})} />
+                    <input style={inputStyle} placeholder="상세 페이지 링크 URL" value={currentProduct.details_link || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentProduct({...currentProduct, details_link: e.target.value})} />
                     <button onClick={handleSaveProduct} style={saveActionBtnStyle}>상품 데이터 저장</button>
                   </div>
                 </div>
@@ -320,18 +320,18 @@ export default function ShopAdminPage() {
                 <ImageDropzone 
                   url={currentBanner.image_url} 
                   uploading={uploading} 
-                  onUpload={(file) => uploadMedia(file, "banners")} 
+                  onUpload={(file: File) => uploadMedia(file, "banners")} 
                   onClear={() => setCurrentBanner({...currentBanner, image_url: ""})}
                 />
                 <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-                  <input style={inputStyle} placeholder="배너 제목" value={currentBanner.title || ""} onChange={e => setCurrentBanner({...currentBanner, title: e.target.value})} />
-                  <input style={inputStyle} placeholder="보조 설명" value={currentBanner.sub_text || ""} onChange={e => setCurrentBanner({...currentBanner, sub_text: e.target.value})} />
+                  <input style={inputStyle} placeholder="배너 제목" value={currentBanner.title || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentBanner({...currentBanner, title: e.target.value})} />
+                  <input style={inputStyle} placeholder="보조 설명" value={currentBanner.sub_text || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentBanner({...currentBanner, sub_text: e.target.value})} />
                   <div style={{ display: "flex", gap: "10px" }}>
-                    <input style={inputStyle} placeholder="이모지 (🧪)" value={currentBanner.emoji || ""} onChange={e => setCurrentBanner({...currentBanner, emoji: e.target.value})} />
-                    <input style={{...inputStyle, flex: 2}} placeholder="그라데이션 (linear-gradient...)" value={currentBanner.bg_gradient || ""} onChange={e => setCurrentBanner({...currentBanner, bg_gradient: e.target.value})} />
+                    <input style={inputStyle} placeholder="이모지 (🧪)" value={currentBanner.emoji || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentBanner({...currentBanner, emoji: e.target.value})} />
+                    <input style={{...inputStyle, flex: 2}} placeholder="그라데이션 (linear-gradient...)" value={currentBanner.bg_gradient || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentBanner({...currentBanner, bg_gradient: e.target.value})} />
                   </div>
-                  <input style={inputStyle} placeholder="연결 링크 URL (공백 가능)" value={currentBanner.link_url || ""} onChange={e => setCurrentBanner({...currentBanner, link_url: e.target.value})} />
-                  <input type="number" style={inputStyle} placeholder="우선순위 (낮을수록 앞)" value={currentBanner.order_index || 0} onChange={e => setCurrentBanner({...currentBanner, order_index: Number(e.target.value)})} />
+                  <input style={inputStyle} placeholder="연결 링크 URL (공백 가능)" value={currentBanner.link_url || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentBanner({...currentBanner, link_url: e.target.value})} />
+                  <input type="number" style={inputStyle} placeholder="우선순위 (낮을수록 앞)" value={currentBanner.order_index || 0} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentBanner({...currentBanner, order_index: Number(e.target.value)})} />
                   <button onClick={handleSaveBanner} style={saveActionBtnStyle}>배너 라이브러리 저장</button>
                 </div>
               </div>
@@ -340,13 +340,13 @@ export default function ShopAdminPage() {
             {/* --- Care Guide Form --- */}
             {activeTab === "guides" && (
               <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-                <input style={inputStyle} placeholder="가이드 제목" value={currentGuide.title || ""} onChange={e => setCurrentGuide({...currentGuide, title: e.target.value})} />
-                <input style={inputStyle} placeholder="보조 제목" value={currentGuide.subtitle || ""} onChange={e => setCurrentGuide({...currentGuide, subtitle: e.target.value})} />
-                <input style={inputStyle} placeholder="YouTube 영상 URL" value={currentGuide.video_url || ""} onChange={e => setCurrentGuide({...currentGuide, video_url: e.target.value})} />
+                <input style={inputStyle} placeholder="가이드 제목" value={currentGuide.title || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentGuide({...currentGuide, title: e.target.value})} />
+                <input style={inputStyle} placeholder="보조 제목" value={currentGuide.subtitle || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentGuide({...currentGuide, subtitle: e.target.value})} />
+                <input style={inputStyle} placeholder="YouTube 영상 URL" value={currentGuide.video_url || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentGuide({...currentGuide, video_url: e.target.value})} />
                 <div style={{ display: "flex", gap: "10px" }}>
-                  <input style={inputStyle} placeholder="이모지 (🎬)" value={currentGuide.emoji || ""} onChange={e => setCurrentGuide({...currentGuide, emoji: e.target.value})} />
-                  <input style={{...inputStyle, flex: 2}} placeholder="배경 그라데이션" value={currentGuide.gradient || ""} onChange={e => setCurrentGuide({...currentGuide, gradient: e.target.value})} />
-                  <input type="number" style={inputStyle} placeholder="순서" value={currentGuide.order_index || 0} onChange={e => setCurrentGuide({...currentGuide, order_index: Number(e.target.value)})} />
+                  <input style={inputStyle} placeholder="이모지 (🎬)" value={currentGuide.emoji || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentGuide({...currentGuide, emoji: e.target.value})} />
+                  <input style={{...inputStyle, flex: 2}} placeholder="배경 그라데이션" value={currentGuide.gradient || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentGuide({...currentGuide, gradient: e.target.value})} />
+                  <input type="number" style={inputStyle} placeholder="순서" value={currentGuide.order_index || 0} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentGuide({...currentGuide, order_index: Number(e.target.value)})} />
                 </div>
                 <button onClick={handleSaveGuide} style={saveActionBtnStyle}>가이드 등록 완료</button>
               </div>

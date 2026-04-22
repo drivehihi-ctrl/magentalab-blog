@@ -1562,57 +1562,7 @@ function MyTab({ profiles, activeId, onSelect, onOpenModal, setActiveSubPage }: 
   );
 }
 
-      {/* 개인화 큐레이션 배너 (프로필이 있을 때만 노출) */}
-      {profile && profile.name && <CurationBanner profile={profile} />}
 
-      {/* 주문 현황 카드 */}
-      <div className="shop-fade-up" style={{
-        margin: "0 16px 12px", background: "#fff", borderRadius: "18px",
-        border: "1px solid rgba(0,0,0,0.05)", padding: "18px",
-        boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
-      }}>
-        <div style={{ fontWeight: 700, fontSize: "14px", color: "#111", marginBottom: "18px" }}>My 주문현황</div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", textAlign: "center" }}>
-          {[["결제완료", "0"], ["배송중", "0"], ["배송완료", "0"], ["취소/환불", "0"]].map(([label, count]) => (
-            <div key={label}>
-              <div style={{ fontSize: "22px", fontWeight: 800, color: "#E5007E" }}>{count}</div>
-              <div style={{ fontSize: "11px", color: "#9CA3AF", marginTop: "4px" }}>{label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 메뉴 목록 */}
-      <div style={{ margin: "0 16px" }}>
-        {menuItems.map((item: any, i: number) => (
-          <div
-            key={item.label}
-            onClick={() => handleMenuClick(item.id)}
-            className="shop-fade-up shop-btn-hover"
-            style={{
-              animationDelay: `${i * 0.05}s`,
-              background: "#fff", borderRadius: "14px",
-              marginBottom: "6px", padding: "15px 16px",
-              display: "flex", alignItems: "center", justifyContent: "space-between",
-              cursor: "pointer", border: "1px solid rgba(0,0,0,0.04)",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <span style={{ fontSize: "20px" }}>{item.emoji}</span>
-              <span style={{ fontSize: "14px", fontWeight: 600, color: "#374151" }}>{item.label}</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              {item.sub && <span style={{ fontSize: "12px", color: "#9CA3AF" }}>{item.sub}</span>}
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                <path d="M9 18l6-6-6-6" stroke="#D1D5DB" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 // ─── 서브페이지 컴포넌트들 ──────────────────────────────────────────
 
@@ -2092,6 +2042,12 @@ function RequestTab() {
 }
 
 // ─── 메인 ShopClient ────────────────────────────────────────────
+export default function ShopClient() {
+  const { data: session } = useSession();
+  const [activeTab, setActiveTab] = useState<"discovery" | "shop" | "cart" | "request" | "my">("discovery");
+  const [activeSubPage, setActiveSubPage] = useState<string | null>(null);
+  const [products, setProducts] = useState<any[]>([]);
+
   // 다중 프로필 상태
   const [petProfiles, setPetProfiles] = useState<PetProfile[]>([]);
   const [activePetId, setActivePetId] = useState<string | null>(null);
@@ -2111,12 +2067,12 @@ function RequestTab() {
   const savePetProfile = async (profile: PetProfile, file?: File) => {
     let finalPhotoUrl = profile.photo_url;
 
-    // 1. 이미지 처리 및 업로드 (이미지가 있을 경우)
-    if (file && session?.user) {
+    const user = session?.user as any;
+    if (file && user?.id) {
       try {
         const processedBlob = await processImage(file);
         const fileName = `photo.jpg`;
-        const filePath = `${session.user.id}/${profile.id}/${fileName}`;
+        const filePath = `${user.id}/${profile.id}/${fileName}`;
 
         // Supabase Storage 업로드
         const { data: uploadData, error: uploadError } = await supabase.storage
@@ -2144,11 +2100,12 @@ function RequestTab() {
 
     // 2. Supabase DB 저장
     try {
+      const user = session?.user as any;
       const { error: dbError } = await supabase
         .from("pet_profiles")
         .upsert({
           id: updatedProfile.id,
-          owner_id: session?.user?.id,
+          owner_id: user?.id,
           name: updatedProfile.name,
           type: updatedProfile.type,
           birth_year: updatedProfile.birthYear,
@@ -2193,7 +2150,8 @@ function RequestTab() {
   // 데이터 로드 및 마이그레이션 (Supabase DB 우선)
   useEffect(() => {
     async function loadProfiles() {
-      if (!session?.user?.id) {
+      const user = session?.user as any;
+      if (!user?.id) {
         // 비로그인 시 로컬 스토리지 사용
         const saved = localStorage.getItem("magenta_pet_profiles");
         if (saved) {
@@ -2208,7 +2166,7 @@ function RequestTab() {
       const { data, error } = await supabase
         .from("pet_profiles")
         .select("*")
-        .eq("owner_id", session.user.id)
+        .eq("owner_id", user?.id)
         .order("updated_at", { ascending: false });
 
       if (!error && data && data.length > 0) {
@@ -2245,8 +2203,8 @@ function RequestTab() {
     loadProfiles();
   }, [session]);
 
-  const [banners, setBanners] = useState([]);
-  const [careGuides, setCareGuides] = useState([]);
+  const [banners, setBanners] = useState<any[]>([]);
+  const [careGuides, setCareGuides] = useState<any[]>([]);
 
   useEffect(() => {
     async function fetchProducts() {
