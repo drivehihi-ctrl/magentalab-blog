@@ -93,6 +93,7 @@ export default function RootLayout({
             }),
           }}
         />
+        <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js" async></script>
       </head>
       <body className="antialiased">
         <SessionProvider>

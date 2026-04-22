@@ -35,6 +35,7 @@ interface PetProfile {
   age: string;
   breed: string;
   keywords: string[];
+  updatedAt?: number;
 }
 
 // ─── 상품 데이터 (기본 Mock) ──────────────────────────────────────────
@@ -988,7 +989,14 @@ function PetProfileModal({ isOpen, onClose, onSave, initialData }: {
       alert("모든 정보를 입력해주세요!");
       return;
     }
-    onSave({ name, type, age, breed, keywords: selectedKeywords });
+    onSave({ 
+      name, 
+      type, 
+      age, 
+      breed, 
+      keywords: selectedKeywords,
+      updatedAt: Date.now() 
+    });
   };
 
   return (
@@ -1091,17 +1099,33 @@ function PetProfileModal({ isOpen, onClose, onSave, initialData }: {
 }
 
 // ─── 내 마이페이지 탭 (My Tab) ────────────────────────────────────
-function MyTab({ profile, onOpenModal }: { profile: PetProfile | null; onOpenModal: () => void }) {
+function MyTab({ profile, onOpenModal, setActiveSubPage }: { profile: PetProfile | null; onOpenModal: () => void; setActiveSubPage: (id: string | null) => void }) {
   const { data: session } = useSession();
   
   const menuItems = [
-    { label: "구독 관리", emoji: "💎", sub: "월 4,900원 패키지" },
-    { label: "배송지 관리", emoji: "📍" },
-    { label: "내 연구 기록", emoji: "📝" },
-    { label: "포인트/쿠폰", emoji: "🎟️", sub: "0P" },
-    { label: "상담 내역", emoji: "💬" },
-    { label: "고객센터", emoji: "📞" },
+    { id: "address", label: "배송지 관리", emoji: "📍" },
+    { id: "research", label: "내 연구 기록", emoji: "📝" },
+    { id: "loyalty", label: "포인트/쿠폰", emoji: "🎟️", sub: "0P" },
+    { id: "consultation", label: "상담 내역", emoji: "💬" },
+    { id: "support", label: "고객센터", emoji: "📞" },
   ];
+
+  const handleMenuClick = (id: string) => {
+    if (!session) {
+      alert("사장님! 로그인이 필요한 서비스입니다. 안심이와 함께 연구를 시작해 보세요! 🐾");
+      signIn("kakao", { callbackUrl: "/shop" });
+      return;
+    }
+    setActiveSubPage(id);
+  };
+
+  const getCalculatedAge = (ageStr: string, updatedAt?: number) => {
+    if (!updatedAt) return ageStr;
+    const recordedAge = parseInt(ageStr.replace(/[^0-9]/g, ""));
+    if (isNaN(recordedAge)) return ageStr;
+    const yearsPassed = Math.floor((Date.now() - updatedAt) / (1000 * 60 * 60 * 24 * 365.25));
+    return `${recordedAge + yearsPassed}살`;
+  };
 
   return (
     <div style={{ paddingBottom: "100px", background: "#F9FAFB" }}>
@@ -1118,7 +1142,7 @@ function MyTab({ profile, onOpenModal }: { profile: PetProfile | null; onOpenMod
             width: "64px", height: "64px", borderRadius: "24px",
             background: "rgba(255,255,255,0.2)", backdropFilter: "blur(8px)",
             display: "flex", alignItems: "center", justifyContent: "center", fontSize: "32px",
-            border: "2px solid rgba(255,255,255,0.4)"
+            border: "2px solid rgba(255,255,255,4)"
           }}>
             {session?.user?.image ? (
               <img src={session.user.image} style={{ width: "100%", height: "100%", borderRadius: "24px" }} alt="me" />
@@ -1146,6 +1170,24 @@ function MyTab({ profile, onOpenModal }: { profile: PetProfile | null; onOpenMod
                 <path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.558 1.707 4.8 4.315 6.055-.177.65-.638 2.35-.732 2.72-.116.45.16.44.337.32.14-.095 2.227-1.513 3.123-2.12.63.09 1.28.14 1.957.14 4.97 0 9-3.185 9-7.115S16.97 3 12 3z"/>
               </svg>
               카카오로 계속하기
+            </button>
+            <button
+              onClick={() => signIn("google", { callbackUrl: "/shop" })}
+              className="shop-btn-hover"
+              style={{
+                width: "100%", background: "#fff", border: "1px solid #E5E7EB", borderRadius: "14px",
+                color: "#374151", padding: "12px", fontSize: "14px", fontWeight: 700, 
+                cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "12px",
+                marginTop: "8px"
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.84z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+              </svg>
+              구글로 계속하기
             </button>
             <div style={{ textAlign: "center", marginTop: "8px" }}>
                <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.6)" }}>계정이 없으신가요? 위 버튼으로 가입 가능합니다.</span>
@@ -1205,7 +1247,7 @@ function MyTab({ profile, onOpenModal }: { profile: PetProfile | null; onOpenMod
                   {profile.type === "dog" ? "🐕" : "🐈"}
                 </div>
                 <div>
-                  <div style={{ fontSize: "16px", fontWeight: 800 }}>{profile.name} <span style={{ fontSize: "12px", fontWeight: 400, color: "#9CA3AF" }}>({profile.breed}, {profile.age})</span></div>
+                  <div style={{ fontSize: "16px", fontWeight: 800 }}>{profile.name} <span style={{ fontSize: "12px", fontWeight: 400, color: "#9CA3AF" }}>({profile.breed}, {getCalculatedAge(profile.age, profile.updatedAt)})</span></div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", marginTop: "4px" }}>
                     {(profile.keywords || []).map(k => (
                       <span key={k} style={{ fontSize: "10px", background: "#fdf2f8", border: "1px solid #fce7f3", padding: "1px 6px", borderRadius: "6px", color: "#E5007E" }}>
@@ -1254,9 +1296,10 @@ function MyTab({ profile, onOpenModal }: { profile: PetProfile | null; onOpenMod
 
       {/* 메뉴 목록 */}
       <div style={{ margin: "0 16px" }}>
-        {menuItems.map((item, i) => (
+        {menuItems.map((item: any, i: number) => (
           <div
             key={item.label}
+            onClick={() => handleMenuClick(item.id)}
             className="shop-fade-up shop-btn-hover"
             style={{
               animationDelay: `${i * 0.05}s`,
@@ -1278,6 +1321,268 @@ function MyTab({ profile, onOpenModal }: { profile: PetProfile | null; onOpenMod
             </div>
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── 서브페이지 컴포넌트들 ──────────────────────────────────────────
+
+function AddressSubPage() {
+  const [addresses, setAddresses] = useState<any[]>([]);
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    if (session) fetchAddresses();
+  }, [session]);
+
+  const fetchAddresses = async () => {
+    const { data, error } = await supabase
+      .from("user_addresses")
+      .select("*")
+      .order("is_default", { ascending: false });
+    if (data) setAddresses(data);
+  };
+
+  const handleAddAddress = () => {
+    if (!(window as any).daum) {
+      alert("주소 서비스가 아직 로드되지 않았습니다. 잠시 후 다시 시도해 주세요.");
+      return;
+    }
+    new (window as any).daum.Postcode({
+      oncomplete: function(data: any) {
+        const fullAddress = data.address;
+        alert(`연구소로 배송받을 주소: ${fullAddress}\n연구 기록을 위해 상세 주소까지 입력해 주세요!`);
+        // 여기서 실제로 insert logic을 수행할 수 있습니다.
+      }
+    }).open();
+  };
+
+  return (
+    <div style={{ padding: "0 4px" }}>
+      <button 
+        onClick={handleAddAddress}
+        className="shop-btn-hover"
+        style={{ 
+          width: "100%", padding: "16px", background: "#E5007E", color: "#fff", 
+          border: "none", borderRadius: "14px", fontWeight: 800, marginBottom: "20px",
+          boxShadow: "0 4px 12px rgba(229,0,126,0.2)"
+        }}
+      >
+        + 새 배송지 추가 (0.1초 검색)
+      </button>
+      
+      {addresses.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "60px 20px" }}>
+          <div style={{ fontSize: "40px", marginBottom: "12px" }}>📍</div>
+          <p style={{ color: "#9CA3AF", fontSize: "14px" }}>등록된 배송지가 없네요.<br />첫 번째 연구소 배송지를 등록해 보세요!</p>
+        </div>
+      ) : (
+        addresses.map(addr => (
+          <div key={addr.id} style={{ background: "#fff", padding: "18px", borderRadius: "18px", marginBottom: "12px", border: "1px solid #F3F4F6", boxShadow: "0 2px 8px rgba(0,0,0,0.02)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+              <span style={{ fontWeight: 800, fontSize: "15px" }}>
+                {addr.address_name} {addr.is_default && <span style={{ color: "#E5007E", fontSize: "10px", background: "#fdf2f8", padding: "2px 6px", borderRadius: "6px", marginLeft: "4px" }}>기본</span>}
+              </span>
+              <button style={{ fontSize: "12px", color: "#EF4444", background: "none", border: "none", fontWeight: 600 }}>삭제</button>
+            </div>
+            <div style={{ fontSize: "13px", color: "#4B5563", lineHeight: 1.5 }}>
+              [{addr.post_code}]<br />
+              {addr.address}<br />
+              {addr.detail_address}
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  );
+}
+
+function ResearchRecordsSubPage({ products }: { products: any[] }) {
+  const [records, setRecords] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // 실시간 Supabase 연동 시: await supabase.from('orders').select('*, products(*)')...
+    // 여기서는 주인님이 요청하신 브랜딩 컨셉을 위해 모의 데이터를 구성합니다.
+    setTimeout(() => {
+      setRecords([
+        { id: "R-1024", product_id: 1, created_at: "2026.04.20", health_concern: "eye", status: "배송완료" },
+        { id: "R-1025", product_id: 3, created_at: "2026.04.15", health_concern: "skin", status: "연구중" },
+      ]);
+      setLoading(false);
+    }, 500);
+  }, []);
+
+  return (
+    <div style={{ padding: "0 4px" }}>
+      <div style={{ fontSize: "13px", color: "#64748B", marginBottom: "20px", lineHeight: 1.5 }}>
+        사장님과 아이가 함께한 모든 연구의 기록입니다.<br />
+        아이의 고민이 어떻게 해결되고 있는지 확인해 보세요!
+      </div>
+
+      {loading ? (
+        <div style={{ textAlign: "center", padding: "40px" }}>기록을 불러오는 중...</div>
+      ) : records.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "60px 20px" }}>
+          <div style={{ fontSize: "40px", marginBottom: "12px" }}>📝</div>
+          <p style={{ color: "#9CA3AF", fontSize: "14px" }}>아직 기록된 연구 내역이 없습니다.<br />아이가 필요한 아이템으로 첫 연구를 시작해 보세요!</p>
+        </div>
+      ) : (
+        records.map(rec => {
+          const product = products.find(p => p.id === rec.product_id);
+          const keyword = HEALTH_KEYWORDS.find(k => k.id === rec.health_concern);
+          return (
+            <div key={rec.id} style={{ background: "#fff", padding: "20px", borderRadius: "22px", marginBottom: "16px", border: "1px solid #F3F4F6", boxShadow: "0 2px 10px rgba(0,0,0,0.03)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+                <span style={{ fontSize: "12px", color: "#9CA3AF", fontWeight: 600 }}>{rec.created_at} | No.{rec.id}</span>
+                <span style={{ fontSize: "12px", fontWeight: 800, color: rec.status === "배송완료" ? "#22C55E" : "#E5007E" }}>{rec.status}</span>
+              </div>
+              <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
+                <img src={product?.image || product?.image_url} style={{ width: "64px", height: "64px", borderRadius: "14px", objectFit: "cover" }} />
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: "15px", fontWeight: 800, color: "#111", marginBottom: "4px" }}>{product?.name}</div>
+                  <div style={{ display: "inline-flex", alignItems: "center", gap: "4px", background: "#fdf2f8", padding: "2px 8px", borderRadius: "6px" }}>
+                    <span style={{ fontSize: "11px", fontWeight: 700, color: "#E5007E" }}>
+                      연구 목표: {keyword?.label} {keyword?.emoji}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })
+      )}
+    </div>
+  );
+}
+
+function LoyaltySubPage() {
+  const [loyalty, setLoyalty] = useState<{points: number, coupons: number} | null>(null);
+
+  useEffect(() => {
+    // await supabase.from('loyalty_accounts').select('*')...
+    setLoyalty({ points: 2500, coupons: 2 });
+  }, []);
+
+  return (
+    <div style={{ padding: "0 4px" }}>
+      <div style={{ 
+        background: "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)", 
+        borderRadius: "24px", padding: "28px", color: "#fff", marginBottom: "24px",
+        boxShadow: "0 10px 25px rgba(15,23,42,0.2)"
+      }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div>
+            <div style={{ fontSize: "13px", opacity: 0.7, marginBottom: "8px" }}>안심 리워드 포인트</div>
+            <div style={{ fontSize: "36px", fontWeight: 900 }}>{loyalty?.points.toLocaleString() || "0"} <span style={{ fontSize: "16px", fontWeight: 400 }}>P</span></div>
+          </div>
+          <div style={{ fontSize: "40px" }}>🎟️</div>
+        </div>
+      </div>
+
+      <div style={{ background: "#fff", borderRadius: "24px", padding: "24px", border: "1px solid #F3F4F6" }}>
+        <h3 style={{ fontSize: "16px", fontWeight: 800, marginBottom: "20px" }}>보유 쿠폰 <span style={{ color: "#E5007E" }}>{loyalty?.coupons || 0}</span>장</h3>
+        {loyalty?.coupons === 0 ? (
+          <div style={{ textAlign: "center", padding: "40px", color: "#9CA3AF", border: "1px dashed #E5E7EB", borderRadius: "16px" }}>
+            사용 가능한 쿠폰이 없습니다.
+          </div>
+        ) : (
+          <div style={{ background: "#fdf2f8", border: "2px dashed #E5007E", padding: "16px", borderRadius: "16px", position: "relative", overflow: "hidden" }}>
+             <div style={{ fontSize: "15px", fontWeight: 800, color: "#E5007E" }}>연구소 첫 방문 기념 할인쿠폰</div>
+             <div style={{ fontSize: "12px", color: "#9CA3AF", marginTop: "4px" }}>전 제품 10% 추가 할인 | ~2026.12.31</div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ConsultationSubPage() {
+  const [tickets, setTickets] = useState<any[]>([]);
+
+  useEffect(() => {
+    // await supabase.from('support_tickets').select('*')...
+    setTickets([
+      { id: 1, subject: "아이 눈물 자국 제품 추천 문의", status: "completed", created_at: "2026.04.18" },
+      { id: 2, subject: "결제 오류 확인 부탁드립니다", status: "pending", created_at: "2026.04.21" },
+    ]);
+  }, []);
+
+  return (
+    <div style={{ padding: "0 4px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+        <h3 style={{ fontSize: "16px", fontWeight: 800 }}>상담 히스토리</h3>
+        <span style={{ fontSize: "12px", color: "#9CA3AF" }}>총 {tickets.length}건</span>
+      </div>
+
+      {tickets.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "60px 20px" }}>
+          <div style={{ fontSize: "40px", marginBottom: "12px" }}>💬</div>
+          <p style={{ color: "#9CA3AF", fontSize: "14px" }}>아직 상담 기록이 없습니다.</p>
+        </div>
+      ) : (
+        tickets.map(t => (
+          <div key={t.id} style={{ background: "#fff", padding: "20px", borderRadius: "18px", marginBottom: "12px", border: "1px solid #F3F4F6", cursor: "pointer" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+              <span style={{ fontSize: "10px", color: t.status === "completed" ? "#22C55E" : "#E5007E", background: t.status === "completed" ? "#F0FDF4" : "#fdf2f8", padding: "2px 8px", borderRadius: "6px", fontWeight: 800 }}>
+                {t.status === "completed" ? "답변 완료" : "답변 대기"}
+              </span>
+              <span style={{ fontSize: "12px", color: "#9CA3AF" }}>{t.created_at}</span>
+            </div>
+            <div style={{ fontSize: "15px", fontWeight: 800, color: "#111" }}>{t.subject}</div>
+          </div>
+        ))
+      )}
+    </div>
+  );
+}
+
+function SupportSubPage() {
+  return (
+    <div style={{ padding: "0 4px" }}>
+      <div style={{ background: "#fff", padding: "28px", borderRadius: "28px", marginBottom: "24px", border: "1px solid #F3F4F6", boxShadow: "0 2px 12px rgba(0,0,0,0.03)" }}>
+        <h3 style={{ fontSize: "17px", fontWeight: 900, marginBottom: "8px", color: "#111" }}>무엇을 도와드릴까요?</h3>
+        <p style={{ fontSize: "13px", color: "#64748B", marginBottom: "24px" }}>안심이가 사장님의 궁금증을 정밀 분석해 드립니다.</p>
+        
+        <div style={{ marginBottom: "16px" }}>
+          <label style={{ display: "block", fontSize: "12px", fontWeight: 800, color: "#9CA3AF", marginBottom: "8px" }}>상담 유형</label>
+          <select style={{ width: "100%", padding: "14px", borderRadius: "12px", border: "1px solid #E2E8F0", background: "#fff", fontSize: "14px" }}>
+            <option>건강 고민 & 제품 추천</option>
+            <option>배송/결제 문의</option>
+            <option>불편 사항 접수</option>
+            <option>기타</option>
+          </select>
+        </div>
+
+        <div style={{ marginBottom: "16px" }}>
+          <label style={{ display: "block", fontSize: "12px", fontWeight: 800, color: "#9CA3AF", marginBottom: "8px" }}>상담 내용</label>
+          <textarea 
+            style={{ width: "100%", padding: "16px", borderRadius: "12px", border: "1px solid #E2E8F0", minHeight: "160px", fontSize: "14px", resize: "none", outline: "none" }} 
+            placeholder="궁금하신 내용을 자세히 적어주세요. 안심이가 꼼꼼히 확인하겠습니다!" 
+          />
+        </div>
+
+        <button 
+          className="shop-btn-hover"
+          style={{ width: "100%", padding: "18px", background: "#1e293b", color: "#fff", border: "none", borderRadius: "14px", fontWeight: 800, fontSize: "16px" }}
+        >
+          안심이에게 메시지 남기기
+        </button>
+      </div>
+
+      <div style={{ textAlign: "center", padding: "20px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", marginBottom: "12px" }}>
+           <div style={{ width: "40px", height: "1px", background: "#E2E8F0" }} />
+           <span style={{ fontSize: "12px", color: "#9CA3AF", fontWeight: 600 }}>급한 용건은 메일로!</span>
+           <div style={{ width: "40px", height: "1px", background: "#E2E8F0" }} />
+        </div>
+        <a 
+          href="mailto:smagentalab@gmail.com" 
+          style={{ display: "inline-flex", alignItems: "center", gap: "8px", color: "#E5007E", fontWeight: 900, fontSize: "15px", textDecoration: "none" }}
+        >
+          📫 업무용 메일로 바로 연락하기
+        </a>
       </div>
     </div>
   );
@@ -1467,6 +1772,7 @@ function RequestTab() {
 // ─── 메인 ShopClient ────────────────────────────────────────────
 export default function ShopClient() {
   const [activeTab, setActiveTab] = useState<"discovery" | "shop" | "cart" | "request" | "my">("discovery");
+  const [activeSubPage, setActiveSubPage] = useState<string | null>(null);
   const [products, setProducts] = useState<any[]>(MOCK_PRODUCTS);
   const [petProfile, setPetProfile] = useState<PetProfile | null>(null);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
@@ -1517,6 +1823,13 @@ export default function ShopClient() {
     fetchProducts();
   }, []);
 
+  // 윈도우 객체에 상태 제어 함수 노출 (서브컴포넌트 간 통신용)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      (window as any).setActiveSubPage = setActiveSubPage;
+    }
+  }, []);
+
   const tabs = [
     { key: "discovery" as const, label: "Discovery", Icon: IconDiscover },
     { key: "shop" as const, label: "Shop", Icon: IconShop },
@@ -1532,6 +1845,88 @@ export default function ShopClient() {
       fontFamily: "'Pretendard', 'Inter', system-ui, sans-serif",
     }}>
       <GlobalShopStyles />
+
+      {/* 대화면 오버레이 서브페이지 (My 탭 전용) */}
+      {activeTab === "my" && activeSubPage && (
+        <div 
+          className="shop-fade-up"
+          style={{
+            position: "fixed", inset: 0, zIndex: 2000,
+            background: "#F9FAFB", display: "flex", flexDirection: "column"
+          }}
+        >
+          {/* 공통 헤더 */}
+          <header style={{ 
+            padding: "16px 20px", display: "flex", alignItems: "center", 
+            background: "#fff", borderBottom: "1px solid #F3F4F6", gap: "12px" 
+          }}>
+            <button 
+              onClick={() => setActiveSubPage(null)}
+              style={{ background: "none", border: "none", cursor: "pointer", padding: "4px" }}
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <h2 style={{ fontSize: "16px", fontWeight: 800, margin: 0 }}>
+              {activeSubPage === "address" && "배송지 관리"}
+              {activeSubPage === "research" && "내 연구 기록"}
+              {activeSubPage === "loyalty" && "포인트/쿠폰"}
+              {activeSubPage === "consultation" && "상담 내역"}
+              {activeSubPage === "support" && "고객센터"}
+            </h2>
+          </header>
+
+          <div style={{ flex: 1, overflowY: "auto", padding: "20px" }}>
+            {activeSubPage === "address" && <AddressSubPage />}
+            {activeSubPage === "research" && <ResearchRecordsSubPage products={products} />}
+            {activeSubPage === "loyalty" && <LoyaltySubPage />}
+            {activeSubPage === "consultation" && <ConsultationSubPage />}
+            {activeSubPage === "support" && <SupportSubPage />}
+          </div>
+        </div>
+      )}
+
+      {/* 대화면 오버레이 서브페이지 (My 탭 전용) */}
+      {activeTab === "my" && activeSubPage && (
+        <div 
+          className="shop-fade-up"
+          style={{
+            position: "fixed", inset: 0, zIndex: 2000,
+            background: "#F9FAFB", display: "flex", flexDirection: "column"
+          }}
+        >
+          {/* 공통 헤더 */}
+          <header style={{ 
+            padding: "16px 20px", display: "flex", alignItems: "center", 
+            background: "#fff", borderBottom: "1px solid #F3F4F6", gap: "12px" 
+          }}>
+            <button 
+              onClick={() => setActiveSubPage(null)}
+              style={{ background: "none", border: "none", cursor: "pointer", padding: "4px" }}
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <h2 style={{ fontSize: "16px", fontWeight: 800, margin: 0 }}>
+              {activeSubPage === "address" && "배송지 관리"}
+              {activeSubPage === "research" && "내 연구 기록"}
+              {activeSubPage === "loyalty" && "포인트/쿠폰"}
+              {activeSubPage === "consultation" && "상담 내역"}
+              {activeSubPage === "support" && "고객센터"}
+            </h2>
+          </header>
+
+          <div style={{ flex: 1, overflowY: "auto", padding: "20px" }}>
+            {activeSubPage === "address" && <AddressSubPage />}
+            {activeSubPage === "research" && <ResearchRecordsSubPage products={products} />}
+            {activeSubPage === "loyalty" && <LoyaltySubPage />}
+            {activeSubPage === "consultation" && <ConsultationSubPage />}
+            {activeSubPage === "support" && <SupportSubPage />}
+          </div>
+        </div>
+      )}
 
       {/* 탭 콘텐츠 */}
       <div style={{ overflowY: "auto", minHeight: "100vh" }}>
