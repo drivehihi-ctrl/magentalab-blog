@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { supabase } from "@/lib/supabase";
+import { Camera, Plus } from "lucide-react";
 
 // ─── 카테고리 (아시아허브마트 스타일 이모지 바) ──────────────────
 const CATEGORIES = [
@@ -30,13 +31,92 @@ const HEALTH_KEYWORDS = [
 ];
 
 interface PetProfile {
+  id: string;
   name: string;
   type: "dog" | "cat";
-  age: string;
+  birthYear: number;
+  birthMonth: number;
+  birthDay: number;
   breed: string;
   keywords: string[];
+  photo_url?: string;
   updatedAt?: number;
 }
+
+/**
+ * 만 나이와 개월 수를 정밀하게 계산하는 함수 (마젠타 연구소 0.1% 정밀 로직)
+ */
+const calculatePreciseAge = (year: number, month: number, day: number) => {
+  const now = new Date();
+  const birthDate = new Date(year, month - 1, day);
+  
+  let years = now.getFullYear() - birthDate.getFullYear();
+  let months = now.getMonth() - birthDate.getMonth();
+  
+  if (now.getDate() < birthDate.getDate()) {
+    months--;
+  }
+  
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+  
+  return { years, months };
+};
+
+const formatAgeString = (years: number, months: number) => {
+  if (years === 0) return `${months}개월`;
+  if (months === 0) return `${years}세`;
+  return `${years}세 ${months}개월`;
+};
+
+/**
+ * 마젠타 연구소 정밀 이미지 처리 (400x400 Crop + 80% 압축)
+ */
+const processImage = (file: File): Promise<Blob> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new (window as any).Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return reject("Canvas context error");
+
+        const size = Math.min(img.width, img.height);
+        canvas.width = 400;
+        canvas.height = 400;
+
+        // 중앙 크롭 및 리사이징
+        ctx.drawImage(
+          img,
+          (img.width - size) / 2,
+          (img.height - size) / 2,
+          size,
+          size,
+          0,
+          0,
+          400,
+          400
+        );
+
+        canvas.toBlob(
+          (blob) => {
+            if (blob) resolve(blob);
+            else reject("Blob conversion error");
+          },
+          "image/jpeg",
+          0.8
+        );
+      };
+      img.onerror = reject;
+      img.src = e.target?.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+};
 
 // ─── 상품 데이터 (기본 Mock) ──────────────────────────────────────────
 const MOCK_PRODUCTS = [
@@ -154,8 +234,8 @@ const MOCK_PRODUCTS = [
   },
 ];
 
-// ─── 케어 가이드 영상 (아시아허브마트 쿠킹클래스 대응) ────────────
-const CARE_GUIDES = [
+// ─── 케어 가이드 (DB 연동 전 기본값) ────────────────────
+let DEFAULT_CARE_GUIDES = [
   {
     id: 1,
     title: "올바른 양치 습관 만들기",
@@ -163,43 +243,16 @@ const CARE_GUIDES = [
     emoji: "🦷",
     gradient: "linear-gradient(135deg, #E5007E 0%, #FF6B9D 100%)",
   },
-  {
-    id: 2,
-    title: "환절기 피부 관리법",
-    subtitle: "민감한 피부를 위한 케어 루틴",
-    emoji: "🧴",
-    gradient: "linear-gradient(135deg, #7C3AED 0%, #A78BFA 100%)",
-  },
-  {
-    id: 3,
-    title: "산책 후 발바닥 관리",
-    subtitle: "발패드 보호 & 마사지 방법",
-    emoji: "🐾",
-    gradient: "linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)",
-  },
 ];
 
-const DISCOVERY_BANNERS = [
+// ─── 디스커버리 배너 (DB 연동 전 기본값) ─────────────────────
+let DEFAULT_BANNERS = [
   {
     id: 1,
     title: "안심이의 이번 주 PICK 🐾",
     sub: "AI 연구팀이 직접 테스트한 진짜 좋은 것들",
-    bg: "linear-gradient(135deg, #E5007E 0%, #7C3AED 100%)",
+    bg: "#E5007E",
     emoji: "🔬",
-  },
-  {
-    id: 2,
-    title: "봄맞이 반려동물 케어 세트",
-    sub: "환절기를 건강하게! 베스트 조합 추천",
-    bg: "linear-gradient(135deg, #F59E0B 0%, #EF4444 100%)",
-    emoji: "🌸",
-  },
-  {
-    id: 3,
-    title: "첫 구매 10% 할인 쿠폰",
-    sub: "지금 가입하면 바로 사용 가능!",
-    bg: "linear-gradient(135deg, #10B981 0%, #059669 100%)",
-    emoji: "🎁",
   },
 ];
 
@@ -501,26 +554,40 @@ function ProductCard({ p, index, variant = "grid" }: { p: any; index: number; va
 }
 
 // ─── 디스커버리 탭 (아시아허브마트 메인 스타일) ─────────────────────
-function DiscoveryTab({ products }: { products: any[] }) {
+function DiscoveryTab({ products, banners, careGuides }: { products: any[]; banners: any[]; careGuides: any[] }) {
   const bannerRef = useRef<HTMLDivElement>(null);
   const [bannerIdx, setBannerIdx] = useState(0);
+  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+
+  const displayBanners = banners.length > 0 ? banners : DEFAULT_BANNERS;
+  const displayGuides = careGuides.length > 0 ? careGuides : DEFAULT_CARE_GUIDES;
 
   useEffect(() => {
+    if (displayBanners.length <= 1) return;
     const timer = setInterval(() => {
-      setBannerIdx(i => (i + 1) % DISCOVERY_BANNERS.length);
+      setBannerIdx(i => (i + 1) % displayBanners.length);
     }, 4000);
     return () => clearInterval(timer);
-  }, []);
+  }, [displayBanners]);
 
   useEffect(() => {
     if (bannerRef.current) {
-      const scrollTo = bannerIdx * (bannerRef.current.scrollWidth / DISCOVERY_BANNERS.length);
+      const scrollTo = bannerIdx * (bannerRef.current.scrollWidth / displayBanners.length);
       bannerRef.current.scrollTo({ left: scrollTo, behavior: "smooth" });
     }
-  }, [bannerIdx]);
+  }, [bannerIdx, displayBanners]);
+
+  const getYTId = (url: string) => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url?.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
 
   return (
     <div style={{ paddingBottom: "86px" }}>
+      {selectedVideo && (
+        <VideoModal url={selectedVideo} onClose={() => setSelectedVideo(null)} />
+      )}
       {/* 상단 히어로 섹션 (아시아허브마트 스타일) */}
       <div 
         className="shop-section-px"
@@ -572,35 +639,35 @@ function DiscoveryTab({ products }: { products: any[] }) {
 
         {/* 액션 버튼 */}
         <div style={{ display: "flex", justifyContent: "center", gap: "12px", marginTop: "32px" }}>
-          <button style={{
-            background: "#fff", color: "#E5007E", border: "none", borderRadius: "12px",
-            padding: "12px 24px", fontSize: "14px", fontWeight: 800, cursor: "pointer"
-          }}>쇼핑하기</button>
-          <button style={{
-            background: "rgba(0,0,0,0.2)", color: "#fff", border: "1px solid rgba(255,255,255,0.3)", borderRadius: "12px",
-            padding: "12px 24px", fontSize: "14px", fontWeight: 800, cursor: "pointer"
-          }}>문의하기</button>
+          <button 
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                const { setActiveTab }: any = window as any;
+                if (setActiveTab) setActiveTab("shop");
+              }
+            }}
+            style={{
+              background: "#fff", color: "#E5007E", border: "none", borderRadius: "12px",
+              padding: "12px 24px", fontSize: "14px", fontWeight: 800, cursor: "pointer"
+            }}
+          >쇼핑하기</button>
+          <button 
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                const { setActiveTab, setActiveSubPage }: any = window as any;
+                if (setActiveTab) setActiveTab("my");
+                if (setActiveSubPage) setActiveSubPage("consultation");
+              }
+            }}
+            style={{
+              background: "rgba(0,0,0,0.2)", color: "#fff", border: "1px solid rgba(255,255,255,0.3)", borderRadius: "12px",
+              padding: "12px 24px", fontSize: "14px", fontWeight: 800, cursor: "pointer"
+            }}
+          >문의하기</button>
         </div>
       </div>
 
-      {/* 검색바 */}
-      <div className="shop-section-px" style={{ padding: "0 20px 18px" }}>
-        <div
-          className="shop-btn-hover"
-          style={{
-            background: "#F3F4F6", borderRadius: "16px",
-            padding: "13px 16px", display: "flex", alignItems: "center", gap: "10px",
-            cursor: "pointer", border: "2px solid transparent",
-            transition: "border-color 0.2s",
-          }}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <circle cx="11" cy="11" r="8" stroke="#9CA3AF" strokeWidth="2" />
-            <path d="M21 21l-4.35-4.35" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" />
-          </svg>
-          <span style={{ fontSize: "14px", color: "#9CA3AF" }}>제품명, 브랜드, 카테고리 검색</span>
-        </div>
-      </div>
+      {/* 검색바 삭제됨 (Shop 탭으로 이동) */}
 
       {/* 배너 슬라이드 (자동 회전) */}
       <div
@@ -608,45 +675,51 @@ function DiscoveryTab({ products }: { products: any[] }) {
         className="shop-scrollbar-hide"
         style={{ padding: "0 20px 20px", display: "flex", gap: "12px", overflowX: "auto" }}
       >
-        {DISCOVERY_BANNERS.map((b, i) => (
+        {displayBanners.map((b, i) => (
           <div
             key={b.id}
             className="shop-fade-up"
             style={{
               animationDelay: `${i * 0.12}s`,
               minWidth: "280px", borderRadius: "22px",
-              background: b.bg, padding: "24px 22px", color: "#fff",
+              background: b.image_url ? `url(${b.image_url}) center/cover no-repeat` : (b.bg || b.bg_gradient),
+              padding: "24px 22px", color: "#fff",
               flex: "0 0 auto", position: "relative", overflow: "hidden",
             }}
           >
             {/* 데코 원 */}
-            <div style={{
-              position: "absolute", top: "-20px", right: "-20px",
-              width: "100px", height: "100px", borderRadius: "50%",
-              background: "rgba(255,255,255,0.12)",
-            }} />
-            <div className="shop-float" style={{ fontSize: "36px", marginBottom: "10px" }}>{b.emoji}</div>
+            {!b.image_url && (
+              <div style={{
+                position: "absolute", top: "-20px", right: "-20px",
+                width: "100px", height: "100px", borderRadius: "50%",
+                background: "rgba(255,255,255,0.12)",
+              }} />
+            )}
+            {b.image_url && <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.2)" }} />}
+            <div className="shop-float" style={{ fontSize: "36px", marginBottom: "10px", position: "relative" }}>{b.emoji}</div>
             <div style={{ fontSize: "16px", fontWeight: 800, marginBottom: "6px", position: "relative" }}>{b.title}</div>
-            <div style={{ fontSize: "12px", opacity: 0.88, position: "relative" }}>{b.sub}</div>
+            <div style={{ fontSize: "12px", opacity: 0.88, position: "relative" }}>{b.sub || b.sub_text}</div>
           </div>
         ))}
       </div>
 
       {/* 배너 인디케이터 */}
-      <div style={{ display: "flex", justifyContent: "center", gap: "6px", paddingBottom: "20px" }}>
-        {DISCOVERY_BANNERS.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setBannerIdx(i)}
-            style={{
-              width: bannerIdx === i ? "20px" : "6px", height: "6px",
-              borderRadius: "3px", border: "none", cursor: "pointer",
-              background: bannerIdx === i ? "#E5007E" : "#D1D5DB",
-              transition: "all 0.3s ease",
-            }}
-          />
-        ))}
-      </div>
+      {displayBanners.length > 1 && (
+        <div style={{ display: "flex", justifyContent: "center", gap: "6px", paddingBottom: "20px" }}>
+          {displayBanners.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setBannerIdx(i)}
+              style={{
+                width: bannerIdx === i ? "20px" : "6px", height: "6px",
+                borderRadius: "3px", border: "none", cursor: "pointer",
+                background: bannerIdx === i ? "#E5007E" : "#D1D5DB",
+                transition: "all 0.3s ease",
+              }}
+            />
+          ))}
+        </div>
+      )}
 
       {/* 카테고리 이모지 그리드 (아시아허브마트 스타일) */}
       <div className="shop-section-px" style={{ padding: "0 20px 24px" }}>
@@ -678,10 +751,14 @@ function DiscoveryTab({ products }: { products: any[] }) {
       <div className="shop-section-px" style={{ padding: "0 20px 24px" }}>
         <div style={{ fontWeight: 700, fontSize: "15px", marginBottom: "4px", color: "#111" }}>🎬 안심이 케어 가이드</div>
         <div style={{ fontSize: "12px", color: "#9CA3AF", marginBottom: "14px" }}>영상을 보고, 아래 추천 제품으로 바로 케어해 보세요!</div>
+      <div className="shop-section-px" style={{ padding: "0 20px 24px" }}>
+        <div style={{ fontWeight: 700, fontSize: "15px", marginBottom: "4px", color: "#111" }}>🎬 안심이 케어 가이드</div>
+        <div style={{ fontSize: "12px", color: "#9CA3AF", marginBottom: "14px" }}>영상을 보고, 아래 추천 제품으로 바로 케어해 보세요!</div>
         <div className="shop-scrollbar-hide" style={{ display: "flex", gap: "12px", overflowX: "auto" }}>
-          {CARE_GUIDES.map((g, i) => (
+          {displayGuides.map((g, i) => (
             <div
               key={g.id}
+              onClick={() => g.video_url && setSelectedVideo(g.video_url)}
               className="shop-card-hover shop-fade-up"
               style={{
                 animationDelay: `${i * 0.1}s`,
@@ -704,11 +781,12 @@ function DiscoveryTab({ products }: { products: any[] }) {
                 background: "rgba(255,255,255,0.25)", borderRadius: "10px", padding: "6px 10px",
                 fontSize: "11px", fontWeight: 700,
               }}>
-                ▶ 영상보기
+                ▶ {g.video_url ? "영상보기" : "연구 준비중"}
               </div>
             </div>
           ))}
         </div>
+      </div>
       </div>
 
       {/* 🔥 베스트셀러 가로 스크롤 */}
@@ -785,10 +863,16 @@ function DiscoveryTab({ products }: { products: any[] }) {
 function ShopTab({ products }: { products: any[] }) {
   const [activeCategory, setActiveCategory] = useState("all");
   const [sortLabel, setSortLabel] = useState("추천순");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const filtered = activeCategory === "all"
-    ? products
-    : products.filter((p: any) => p.category === activeCategory);
+  const filtered = products.filter((p: any) => {
+    const matchesCategory = activeCategory === "all" || p.category === activeCategory;
+    const matchesSearch = 
+      p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      p.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (p.category || "").toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   const sorted = [...filtered].sort((a, b) => {
     if (sortLabel === "인기순") return b.reviewCount - a.reviewCount;
@@ -801,6 +885,49 @@ function ShopTab({ products }: { products: any[] }) {
 
   return (
     <div style={{ paddingBottom: "86px" }}>
+      {/* 검색 바 ( Discovery에서 이동 및 기능 구현 ) */}
+      <div 
+        className="shop-section-px" 
+        style={{ 
+          padding: "20px 20px 10px", 
+          background: "#fff", 
+          position: "sticky", 
+          top: 0, 
+          zIndex: 10,
+          borderBottom: searchQuery ? "1px solid #F3F4F6" : "none" 
+        }}
+      >
+        <div
+          style={{
+            background: "#F3F4F6", borderRadius: "16px",
+            padding: "4px 16px", display: "flex", alignItems: "center", gap: "10px",
+            border: "2px solid transparent",
+            boxShadow: "inset 0 2px 4px rgba(0,0,0,0.02)"
+          }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <circle cx="11" cy="11" r="8" stroke="#9CA3AF" strokeWidth="2" />
+            <path d="M21 21l-4.35-4.35" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+          <input 
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="제품명, 브랜드, 카테고리 검색"
+            style={{
+              flex: 1, background: "none", border: "none", outline: "none",
+              padding: "10px 0", fontSize: "14px", color: "#111", width: "100%"
+            }}
+          />
+          {searchQuery && (
+            <button 
+              onClick={() => setSearchQuery("")}
+              style={{ background: "none", border: "none", color: "#9CA3AF", cursor: "pointer", fontSize: "18px" }}
+            >✕</button>
+          )}
+        </div>
+      </div>
+
       {/* 헤더 */}
       <div className="shop-section-px" style={{ padding: "20px 20px 0", background: "#fff" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
@@ -960,44 +1087,74 @@ function CurationBanner({ profile }: { profile: PetProfile }) {
 
 // ─── 프로필 입력 모달 (PetProfileModal) ────────────────────────────
 function PetProfileModal({ isOpen, onClose, onSave, initialData }: { 
-  isOpen: boolean; onClose: () => void; onSave: (profile: PetProfile) => void; initialData: PetProfile | null 
+  isOpen: boolean; onClose: () => void; onSave: (profile: PetProfile, file?: File) => void; initialData: PetProfile | null 
 }) {
   const [name, setName] = useState(initialData?.name || "");
   const [type, setType] = useState<"dog" | "cat">(initialData?.type || "dog");
-  const [age, setAge] = useState(initialData?.age || "");
+  const [birthYear, setBirthYear] = useState<number>(initialData?.birthYear || 2024);
+  const [birthMonth, setBirthMonth] = useState<number>(initialData?.birthMonth || 1);
+  const [birthDay, setBirthDay] = useState<number>(initialData?.birthDay || 1);
   const [breed, setBreed] = useState(initialData?.breed || "");
+  const [photoUrl, setPhotoUrl] = useState(initialData?.photo_url || "");
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>(initialData?.keywords || []);
+  
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const yearsArr = Array.from({ length: 30 }, (_, i) => 2024 - i);
+  const monthsArr = Array.from({ length: 12 }, (_, i) => i + 1);
+  const daysArr = Array.from({ length: 31 }, (_, i) => i + 1);
 
   useEffect(() => {
     if (isOpen) {
       setName(initialData?.name || "");
       setType(initialData?.type || "dog");
-      setAge(initialData?.age || "");
+      setBirthYear(initialData?.birthYear || 2024);
+      setBirthMonth(initialData?.birthMonth || 1);
+      setBirthDay(initialData?.birthDay || 1);
       setBreed(initialData?.breed || "");
+      setPhotoUrl(initialData?.photo_url || "");
       setSelectedKeywords(initialData?.keywords || []);
+      setPreviewUrl(null);
+      setSelectedFile(null);
     }
   }, [initialData, isOpen]);
 
   if (!isOpen) return null;
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file)); // 0.1초 미리보기
+    }
+  };
 
   const toggleKeyword = (id: string) => {
     setSelectedKeywords(prev => prev.includes(id) ? prev.filter(k => k !== id) : [...prev, id]);
   };
 
   const handleSave = () => {
-    if (!name || !age || !breed) {
+    if (!name || !breed) {
       alert("모든 정보를 입력해주세요!");
       return;
     }
     onSave({ 
+      id: initialData?.id || "pet-" + Date.now(),
       name, 
       type, 
-      age, 
+      birthYear, 
+      birthMonth,
+      birthDay,
       breed, 
+      photo_url: photoUrl,
       keywords: selectedKeywords,
       updatedAt: Date.now() 
-    });
+    }, selectedFile || undefined);
   };
+
+  const { years, months } = calculatePreciseAge(birthYear, birthMonth, birthDay);
 
   return (
     <div style={{
@@ -1013,7 +1170,44 @@ function PetProfileModal({ isOpen, onClose, onSave, initialData }: {
         <button onClick={onClose} style={{ position: "absolute", top: "20px", right: "20px", background: "none", border: "none", cursor: "pointer", fontSize: "20px", color: "#9CA3AF" }}>✕</button>
         
         <div style={{ textAlign: "center", marginBottom: "24px" }}>
-          <div style={{ fontSize: "32px", marginBottom: "8px" }}>🧁</div>
+          {/* 사진 업로드 영역 */}
+          <div style={{ position: "relative", width: "100px", height: "100px", margin: "0 auto 16px" }}>
+            <div 
+              onClick={() => fileInputRef.current?.click()}
+              style={{
+                width: "100px", height: "100px", borderRadius: "50%",
+                background: "#F3F4F6", overflow: "hidden", cursor: "pointer",
+                border: "3px solid #FFF", boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                display: "flex", alignItems: "center", justifyContent: "center"
+              }}
+            >
+              {previewUrl || photoUrl ? (
+                <img src={previewUrl || photoUrl} alt="pet" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              ) : (
+                <div style={{ fontSize: "40px" }}>{type === "dog" ? "🐶" : "🐱"}</div>
+              )}
+            </div>
+            <button 
+              onClick={() => fileInputRef.current?.click()}
+              style={{
+                position: "absolute", bottom: "0", right: "0",
+                background: "#E5007E", color: "#fff", border: "none",
+                width: "32px", height: "32px", borderRadius: "50%",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                boxShadow: "0 2px 8px rgba(229,0,126,0.4)", cursor: "pointer"
+              }}
+            >
+              <Camera size={18} />
+            </button>
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              onChange={handleFileChange} 
+              accept="image/*" 
+              style={{ display: "none" }} 
+            />
+          </div>
+          
           <h2 style={{ fontSize: "22px", fontWeight: 900, color: "#111", letterSpacing: "-0.03em" }}>우리 아이 연구 프로필</h2>
           <p style={{ fontSize: "13px", color: "#666", marginTop: "4px" }}>안심이가 0.1% 정밀 분석을 시작합니다!</p>
         </div>
@@ -1038,23 +1232,49 @@ function PetProfileModal({ isOpen, onClose, onSave, initialData }: {
               style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#F9FAFB" }} 
             />
           </div>
-          <div style={{ display: "flex", gap: "12px" }}>
-            <div style={{ flex: 1 }}>
-              <label style={{ fontSize: "12px", fontWeight: 800, color: "#E5007E", marginBottom: "6px", display: "block" }}>나이</label>
-              <input 
-                value={age} onChange={e => setAge(e.target.value)} 
-                placeholder="예: 3살" 
-                style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#F9FAFB" }} 
-              />
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px" }}>
+            <div>
+              <label style={{ fontSize: "12px", fontWeight: 800, color: "#E5007E", marginBottom: "6px", display: "block" }}>태어난 연도</label>
+              <select 
+                value={birthYear}
+                onChange={e => setBirthYear(Number(e.target.value))}
+                style={{ width: "100%", padding: "12px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#F9FAFB", fontSize: "14px" }}
+              >
+                {yearsArr.map(y => <option key={y} value={y}>{y}년</option>)}
+              </select>
             </div>
-            <div style={{ flex: 2 }}>
-              <label style={{ fontSize: "12px", fontWeight: 800, color: "#E5007E", marginBottom: "6px", display: "block" }}>견종/묘종</label>
-              <input 
-                value={breed} onChange={e => setBreed(e.target.value)} 
-                placeholder="예: 푸들" 
-                style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#F9FAFB" }} 
-              />
+            <div>
+              <label style={{ fontSize: "12px", fontWeight: 800, color: "#E5007E", marginBottom: "6px", display: "block" }}>태어난 월</label>
+              <select 
+                value={birthMonth}
+                onChange={e => setBirthMonth(Number(e.target.value))}
+                style={{ width: "100%", padding: "12px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#F9FAFB", fontSize: "14px" }}
+              >
+                {monthsArr.map(m => <option key={m} value={m}>{m}월</option>)}
+              </select>
             </div>
+            <div>
+              <label style={{ fontSize: "12px", fontWeight: 800, color: "#E5007E", marginBottom: "6px", display: "block" }}>태어난 일</label>
+              <select 
+                value={birthDay}
+                onChange={e => setBirthDay(Number(e.target.value))}
+                style={{ width: "100%", padding: "12px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#F9FAFB", fontSize: "14px" }}
+              >
+                {daysArr.map(d => <option key={d} value={d}>{d}일</option>)}
+              </select>
+            </div>
+          </div>
+          <div style={{ fontSize: "12px", color: "#E5007E", fontWeight: 800, textAlign: "right", marginTop: "-10px" }}>
+             {name} 연구원은 현재 {formatAgeString(years, months)}입니다! 🎂
+          </div>
+
+          <div>
+            <label style={{ fontSize: "12px", fontWeight: 800, color: "#E5007E", marginBottom: "6px", display: "block" }}>견종/묘종</label>
+            <input 
+              value={breed} onChange={e => setBreed(e.target.value)} 
+              placeholder="예: 푸들" 
+              style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#F9FAFB" }} 
+            />
           </div>
 
           <div>
@@ -1099,15 +1319,21 @@ function PetProfileModal({ isOpen, onClose, onSave, initialData }: {
 }
 
 // ─── 내 마이페이지 탭 (My Tab) ────────────────────────────────────
-function MyTab({ profile, onOpenModal, setActiveSubPage }: { profile: PetProfile | null; onOpenModal: () => void; setActiveSubPage: (id: string | null) => void }) {
+function MyTab({ profiles, activeId, onSelect, onOpenModal, setActiveSubPage }: { 
+  profiles: PetProfile[]; 
+  activeId: string | null;
+  onSelect: (id: string) => void;
+  onOpenModal: () => void; 
+  setActiveSubPage: (id: string | null) => void;
+}) {
   const { data: session } = useSession();
+  const activePet = profiles.find(p => p.id === activeId) || profiles[0] || null;
   
   const menuItems = [
     { id: "address", label: "배송지 관리", emoji: "📍" },
     { id: "research", label: "내 연구 기록", emoji: "📝" },
     { id: "loyalty", label: "포인트/쿠폰", emoji: "🎟️", sub: "0P" },
     { id: "consultation", label: "상담 내역", emoji: "💬" },
-    { id: "support", label: "고객센터", emoji: "📞" },
   ];
 
   const handleMenuClick = (id: string) => {
@@ -1117,14 +1343,6 @@ function MyTab({ profile, onOpenModal, setActiveSubPage }: { profile: PetProfile
       return;
     }
     setActiveSubPage(id);
-  };
-
-  const getCalculatedAge = (ageStr: string, updatedAt?: number) => {
-    if (!updatedAt) return ageStr;
-    const recordedAge = parseInt(ageStr.replace(/[^0-9]/g, ""));
-    if (isNaN(recordedAge)) return ageStr;
-    const yearsPassed = Math.floor((Date.now() - updatedAt) / (1000 * 60 * 60 * 24 * 365.25));
-    return `${recordedAge + yearsPassed}살`;
   };
 
   return (
@@ -1139,140 +1357,210 @@ function MyTab({ profile, onOpenModal, setActiveSubPage }: { profile: PetProfile
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "20px" }}>
           <div style={{
-            width: "64px", height: "64px", borderRadius: "24px",
+            width: "60px", height: "60px", borderRadius: "22px",
             background: "rgba(255,255,255,0.2)", backdropFilter: "blur(8px)",
-            display: "flex", alignItems: "center", justifyContent: "center", fontSize: "32px",
-            border: "2px solid rgba(255,255,255,4)"
+            display: "flex", alignItems: "center", justifyContent: "center", fontSize: "28px",
+            border: "2px solid rgba(255,255,255,0.3)"
           }}>
             {session?.user?.image ? (
-              <img src={session.user.image} style={{ width: "100%", height: "100%", borderRadius: "24px" }} alt="me" />
+              <img src={session.user.image} style={{ width: "100%", height: "100%", borderRadius: "22px" }} alt="me" />
             ) : "👤"}
           </div>
           <div>
-            <div style={{ fontSize: "20px", fontWeight: 900 }}>{session?.user?.name || "방문자"} 사장님</div>
-            <div style={{ fontSize: "12px", opacity: 0.8, marginTop: "2px" }}>오늘도 안심이와 함께 연구해요!</div>
+            <div style={{ fontSize: "18px", fontWeight: 900 }}>{session?.user?.name || "방문자"} 사장님</div>
+            <div style={{ fontSize: "12px", opacity: 0.8, marginTop: "2px" }}>연구소에 오신 것을 환영합니다!</div>
           </div>
         </div>
         
-        {!session ? (
-          <div style={{ background: "rgba(0,0,0,0.15)", borderRadius: "18px", padding: "16px", marginTop: "10px" }}>
+        {!session && (
+          <div style={{ background: "rgba(0,0,0,0.15)", borderRadius: "18px", padding: "12px" }}>
             <button
               onClick={() => signIn("kakao", { callbackUrl: "/shop" })}
               className="shop-btn-hover"
               style={{
-                width: "100%", background: "#FEE500", border: "none", borderRadius: "14px",
-                color: "#191919", padding: "12px", fontSize: "14px", fontWeight: 700, 
-                cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "12px",
-                boxShadow: "0 2px 8px rgba(254,229,0,0.15)",
+                width: "100%", background: "#FEE500", border: "none", borderRadius: "12px",
+                color: "#191919", padding: "10px", fontSize: "13px", fontWeight: 700, 
+                cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
               }}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.558 1.707 4.8 4.315 6.055-.177.65-.638 2.35-.732 2.72-.116.45.16.44.337.32.14-.095 2.227-1.513 3.123-2.12.63.09 1.28.14 1.957.14 4.97 0 9-3.185 9-7.115S16.97 3 12 3z"/>
-              </svg>
-              카카오로 계속하기
+              카카오 로그인하고 혜택 받기
             </button>
-            <button
-              onClick={() => signIn("google", { callbackUrl: "/shop" })}
-              className="shop-btn-hover"
-              style={{
-                width: "100%", background: "#fff", border: "1px solid #E5E7EB", borderRadius: "14px",
-                color: "#374151", padding: "12px", fontSize: "14px", fontWeight: 700, 
-                cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "12px",
-                marginTop: "8px"
-              }}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24">
-                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
-                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                <path d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.84z" fill="#FBBC05"/>
-                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
-              </svg>
-              구글로 계속하기
-            </button>
-            <div style={{ textAlign: "center", marginTop: "8px" }}>
-               <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.6)" }}>계정이 없으신가요? 위 버튼으로 가입 가능합니다.</span>
-            </div>
           </div>
-        ) : (
-          <button
-            onClick={() => signOut()}
-            className="shop-btn-hover"
-            style={{
-              width: "fit-content", background: "rgba(0,0,0,0.2)",
-              border: "1px solid rgba(255,255,255,0.2)", borderRadius: "10px",
-              color: "#fff", padding: "8px 16px", fontSize: "12px", fontWeight: 700,
-              cursor: "pointer", position: "relative"
-            }}
-          >
-            로그아웃
-          </button>
         )}
       </div>
 
-       {/* [0순위] 우리 아이 연구 프로필 섹션 */}
-      <div style={{ margin: "-30px 16px 20px", position: "relative", zIndex: 110 }}>
-        {(!profile || !profile.name) ? (
+      {/* [업그레이드] 우리 아이 연구 프로필 섹션 (가로 아바타 스와이프 UI) */}
+      <div style={{ margin: "-30px 0 20px", position: "relative", zIndex: 110 }}>
+        <div 
+          style={{ 
+            display: "flex", overflowX: "auto", gap: "20px", padding: "10px 24px 20px", 
+            scrollbarWidth: "none", alignItems: "center" 
+          }} 
+          className="no-scrollbar"
+        >
+          {/* 아이 추가하기 버튼 (원형) */}
           <div 
             onClick={onOpenModal}
-            className="shop-fade-up shop-btn-hover"
+            className="shop-btn-hover"
             style={{
-              background: "#fff", borderRadius: "24px", padding: "24px",
-              border: "1px solid rgba(0,0,0,0.05)", boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-              display: "flex", flexDirection: "column", alignItems: "center", cursor: "pointer"
+              minWidth: "70px", height: "70px", borderRadius: "50%",
+              background: "#fff", border: "2px dashed #E5E7EB",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              cursor: "pointer", flexShrink: 0, color: "#9CA3AF"
             }}
           >
-            <div style={{ fontSize: "40px", marginBottom: "12px" }}>🔍</div>
-            <div style={{ fontSize: "16px", fontWeight: 800, color: "#111" }}>우리 아이 연구 프로필 등록하기</div>
-            <p style={{ fontSize: "12px", color: "#9CA3AF", marginTop: "4px", textAlign: "center" }}>
-              프로필을 등록하면 안심이가 0.1% 정밀 분석을 통해 <br /> 맞춤형 건강 리포트를 전해드려요!
-            </p>
-            <div style={{ 
-              marginTop: "16px", background: "#E5007E", color: "#fff", padding: "8px 20px", 
-              borderRadius: "12px", fontSize: "13px", fontWeight: 700 
-            }}>
-              10초 만에 등록하기
-            </div>
+            <Plus size={24} />
           </div>
-        ) : (
-          <div 
-            className="shop-fade-up"
-            style={{
-              background: "#fff", borderRadius: "24px", padding: "20px",
-              border: "1px solid rgba(0,0,0,0.05)", boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" }}>
-              <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-                <div style={{ fontSize: "28px", background: "#fdf2f8", width: "50px", height: "50px", borderRadius: "16px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  {profile.type === "dog" ? "🐕" : "🐈"}
-                </div>
-                <div>
-                  <div style={{ fontSize: "16px", fontWeight: 800 }}>{profile.name} <span style={{ fontSize: "12px", fontWeight: 400, color: "#9CA3AF" }}>({profile.breed}, {getCalculatedAge(profile.age, profile.updatedAt)})</span></div>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", marginTop: "4px" }}>
-                    {(profile.keywords || []).map(k => (
-                      <span key={k} style={{ fontSize: "10px", background: "#fdf2f8", border: "1px solid #fce7f3", padding: "1px 6px", borderRadius: "6px", color: "#E5007E" }}>
-                        #{HEALTH_KEYWORDS.find(hk => hk.id === k)?.label}
-                      </span>
-                    ))}
+
+          {/* 등록된 프로필 아바타들 */}
+          {profiles.map(p => {
+            const isActive = activeId === p.id;
+            const { years, months } = calculatePreciseAge(p.birthYear, p.birthMonth, p.birthDay || 1);
+            
+            return (
+              <div 
+                key={p.id}
+                onClick={() => onSelect(p.id)}
+                style={{
+                  display: "flex", flexDirection: "column", alignItems: "center", 
+                  gap: "8px", flexShrink: 0, cursor: "pointer"
+                }}
+              >
+                <div 
+                  className="shop-btn-hover"
+                  style={{
+                    width: "74px", height: "74px", borderRadius: "50%",
+                    padding: "3px",
+                    background: isActive ? "linear-gradient(135deg, #E5007E, #FF69B4)" : "transparent",
+                    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                    transform: isActive ? "scale(1.1)" : "scale(1)",
+                    boxShadow: isActive ? "0 8px 20px rgba(229, 0, 126, 0.3)" : "none",
+                  }}
+                >
+                  <div style={{
+                    width: "100%", height: "100%", borderRadius: "50%",
+                    background: "#fff", border: "2px solid #fff", overflow: "hidden",
+                    display: "flex", alignItems: "center", justifyContent: "center"
+                  }}>
+                    {p.photo_url ? (
+                      <img src={p.photo_url} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt={p.name} />
+                    ) : (
+                      <div style={{ fontSize: "32px" }}>{p.type === "dog" ? "🐶" : "🐱"}</div>
+                    )}
                   </div>
                 </div>
+                <div style={{ 
+                  fontSize: "12px", fontWeight: isActive ? 900 : 600, 
+                  color: isActive ? "#E5007E" : "#4B5563" 
+                }}>
+                  {p.name}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 현재 선택된 아이 상세 요약 카드 */}
+      {activePet && (
+        <div style={{ margin: "0 16px 24px" }}>
+          <div style={{ 
+            background: "#fff", borderRadius: "24px", padding: "24px", 
+            boxShadow: "0 10px 30px rgba(0,0,0,0.04)", border: "1px solid rgba(0,0,0,0.02)",
+            position: "relative", overflow: "hidden"
+          }}>
+            {/* 배경 장식 */}
+            <div style={{ position: "absolute", right: "-10px", top: "-10px", fontSize: "60px", opacity: 0.05 }}>🧪</div>
+            
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" }}>
+              <div>
+                <h3 style={{ fontSize: "18px", fontWeight: 900, color: "#111" }}>{activePet.name} 연구원</h3>
+                <p style={{ fontSize: "13px", color: "#6B7280", marginTop: "4px" }}>
+                  {activePet.breed} · {(() => {
+                    const { years, months } = calculatePreciseAge(activePet.birthYear, activePet.birthMonth, activePet.birthDay || 1);
+                    return formatAgeString(years, months);
+                  })()}
+                </p>
               </div>
               <button 
-                onClick={onOpenModal}
-                style={{ fontSize: "12px", color: "#E5007E", background: "none", border: "none", cursor: "pointer", fontWeight: 600, padding: "4px" }}
+                onClick={(e) => { e.stopPropagation(); onOpenModal(); }}
+                style={{ 
+                  fontSize: "11px", color: "#E5007E", background: "#fdf2f8", 
+                  border: "none", cursor: "pointer", fontWeight: 700, 
+                  padding: "6px 12px", borderRadius: "10px" 
+                }}
               >
-                수정
+                정보 수정
               </button>
             </div>
+
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginBottom: "16px" }}>
+              {(activePet.keywords || []).map(k => (
+                <span key={k} style={{ fontSize: "11px", background: "#f1f5f9", padding: "4px 10px", borderRadius: "8px", color: "#475569", fontWeight: 600 }}>
+                  #{HEALTH_KEYWORDS.find(hk => hk.id === k)?.label}
+                </span>
+              ))}
+            </div>
+
             <div style={{ 
-              background: "#F9FAFB", borderRadius: "12px", padding: "10px 14px", 
-              fontSize: "11px", color: "#444", borderLeft: "4px solid #E5007E" 
+              background: "#F9FAFB", borderRadius: "14px", padding: "14px", 
+              fontSize: "12px", color: "#4B5563", lineHeight: 1.5,
+              borderLeft: "4px solid #E5007E"
             }}>
-              💡 {HEALTH_KEYWORDS.find(hk => (profile.keywords || []).includes(hk.id))?.tip || "정밀 분석 중..."}
+              💡 <b>안심이의 처방:</b> {HEALTH_KEYWORDS.find(hk => activePet.keywords.includes(hk.id))?.tip || "정밀 분석을 위해 상담 기록을 업데이트해 주세요!"}
             </div>
           </div>
-        )}
+        </div>
+      )}
+
+      {/* 주문 현황 카드 */}
+      <div className="shop-fade-up" style={{
+        margin: "0 16px 12px", background: "#fff", borderRadius: "18px",
+        border: "1px solid rgba(0,0,0,0.05)", padding: "18px",
+        boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
+      }}>
+        <div style={{ fontWeight: 700, fontSize: "14px", color: "#111", marginBottom: "18px" }}>My 주문현황</div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", textAlign: "center" }}>
+          {[["결제완료", "0"], ["배송중", "0"], ["배송완료", "0"], ["취소/환불", "0"]].map(([label, count]) => (
+            <div key={label}>
+              <div style={{ fontSize: "22px", fontWeight: 800, color: "#E5007E" }}>{count}</div>
+              <div style={{ fontSize: "11px", color: "#9CA3AF", marginTop: "4px" }}>{label}</div>
+            </div>
+          ))}
+        </div>
       </div>
+
+      {/* 메뉴 목록 */}
+      <div style={{ margin: "0 16px" }}>
+        {menuItems.map((item: any, i: number) => (
+          <div
+            key={item.label}
+            onClick={() => handleMenuClick(item.id)}
+            className="shop-fade-up shop-btn-hover"
+            style={{
+              animationDelay: `${i * 0.05}s`,
+              background: "#fff", borderRadius: "14px",
+              marginBottom: "6px", padding: "15px 16px",
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+              cursor: "pointer", border: "1px solid rgba(0,0,0,0.04)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <span style={{ fontSize: "20px" }}>{item.emoji}</span>
+              <span style={{ fontSize: "14px", fontWeight: 600, color: "#374151" }}>{item.label}</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              {item.sub && <span style={{ fontSize: "12px", color: "#9CA3AF" }}>{item.sub}</span>}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <path d="M9 18l6-6-6-6" stroke="#D1D5DB" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
       {/* 개인화 큐레이션 배너 (프로필이 있을 때만 노출) */}
       {profile && profile.name && <CurationBanner profile={profile} />}
@@ -1327,6 +1615,40 @@ function MyTab({ profile, onOpenModal, setActiveSubPage }: { profile: PetProfile
 }
 
 // ─── 서브페이지 컴포넌트들 ──────────────────────────────────────────
+
+// ─── 비디오 모달 (YouTube Embed) ─────────────────────────────
+function VideoModal({ url, onClose }: { url: string; onClose: () => void }) {
+  const getYTId = (url: string) => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url?.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
+
+  const videoId = getYTId(url);
+
+  return (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 3000, background: "rgba(0,0,0,0.9)",
+      display: "flex", alignItems: "center", justifyContent: "center", padding: "20px"
+    }}>
+      <div style={{ width: "100%", maxWidth: "800px", position: "relative" }}>
+        <button onClick={onClose} style={{
+          position: "absolute", top: "-40px", right: 0, background: "none", border: "none",
+          color: "#fff", fontSize: "24px", cursor: "pointer"
+        }}>✕</button>
+        <div style={{ position: "relative", paddingBottom: "56.25%", height: 0, borderRadius: "16px", overflow: "hidden" }}>
+          <iframe
+            style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
+            src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          ></iframe>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function AddressSubPage() {
   const [addresses, setAddresses] = useState<any[]>([]);
@@ -1770,38 +2092,161 @@ function RequestTab() {
 }
 
 // ─── 메인 ShopClient ────────────────────────────────────────────
-export default function ShopClient() {
-  const [activeTab, setActiveTab] = useState<"discovery" | "shop" | "cart" | "request" | "my">("discovery");
-  const [activeSubPage, setActiveSubPage] = useState<string | null>(null);
-  const [products, setProducts] = useState<any[]>(MOCK_PRODUCTS);
-  const [petProfile, setPetProfile] = useState<PetProfile | null>(null);
+  // 다중 프로필 상태
+  const [petProfiles, setPetProfiles] = useState<PetProfile[]>([]);
+  const [activePetId, setActivePetId] = useState<string | null>(null);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
-  // 로컬 스토리지에서 프로필 로드
-  useEffect(() => {
-    const saved = localStorage.getItem("magenta_pet_profile");
-    if (saved) {
+  const activePet = petProfiles.find(p => p.id === activePetId) || petProfiles[0] || null;
+
+  const calculateAge = (year: number, month: number) => {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1;
+    let age = currentYear - year;
+    if (currentMonth < month) age--;
+    return age < 0 ? 0 : age;
+  };
+
+  const savePetProfile = async (profile: PetProfile, file?: File) => {
+    let finalPhotoUrl = profile.photo_url;
+
+    // 1. 이미지 처리 및 업로드 (이미지가 있을 경우)
+    if (file && session?.user) {
       try {
-        const parsed = JSON.parse(saved);
-        // 데이터 정합성 체크 (이름이 없으면 무효화)
-        if (parsed && typeof parsed === 'object' && parsed.name) {
-          setPetProfile(parsed);
-        } else {
-          localStorage.removeItem("magenta_pet_profile");
-          setPetProfile(null);
-        }
-      } catch (e) {
-        console.error("Failed to parse pet profile", e);
-        localStorage.removeItem("magenta_pet_profile");
+        const processedBlob = await processImage(file);
+        const fileName = `photo.jpg`;
+        const filePath = `${session.user.id}/${profile.id}/${fileName}`;
+
+        // Supabase Storage 업로드
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("pet_profiles")
+          .upload(filePath, processedBlob, {
+            contentType: "image/jpeg",
+            upsert: true,
+          });
+
+        if (uploadError) throw uploadError;
+
+        // 공개 URL 가져오기
+        const { data: { publicUrl } } = supabase.storage
+          .from("pet_profiles")
+          .getPublicUrl(filePath);
+        
+        finalPhotoUrl = publicUrl;
+      } catch (err) {
+        console.error("Image upload failed:", err);
+        alert("이미지 업로드 중 연구 오류가 발생했습니다. (0.1% 오차 발생!)");
       }
     }
-  }, []);
 
-  const savePetProfile = (profile: PetProfile) => {
-    setPetProfile(profile);
-    localStorage.setItem("magenta_pet_profile", JSON.stringify(profile));
-    setIsProfileModalOpen(false);
+    const updatedProfile = { ...profile, photo_url: finalPhotoUrl, updatedAt: Date.now() };
+
+    // 2. Supabase DB 저장
+    try {
+      const { error: dbError } = await supabase
+        .from("pet_profiles")
+        .upsert({
+          id: updatedProfile.id,
+          owner_id: session?.user?.id,
+          name: updatedProfile.name,
+          type: updatedProfile.type,
+          birth_year: updatedProfile.birthYear,
+          birth_month: updatedProfile.birthMonth,
+          birth_day: updatedProfile.birthDay,
+          breed: updatedProfile.breed,
+          keywords: updatedProfile.keywords,
+          photo_url: updatedProfile.photo_url,
+          updated_at: new Date().toISOString(),
+        });
+
+      if (dbError) throw dbError;
+
+      setPetProfiles(prev => {
+        const exists = prev.find(p => p.id === updatedProfile.id);
+        if (exists) return prev.map(p => p.id === updatedProfile.id ? updatedProfile : p);
+        return [...prev, updatedProfile];
+      });
+      setActivePetId(updatedProfile.id);
+      setIsProfileModalOpen(false);
+      
+      // 마이그레이션 안내 문구 (신규 등록 시)
+      if (!profile.id.startsWith("pet-")) {
+        alert(`${updatedProfile.name}의 정보가 안전하게 연구실로 옮겨졌습니다! 다른 아이도 추가해 보시겠어요?`);
+      }
+    } catch (err) {
+      console.error("DB save failed:", err);
+      // 오프라인/에러 시 로컬 스토리지 백업 (옵션)
+      localStorage.setItem("magenta_pet_profiles_backup", JSON.stringify(updatedProfile));
+    }
   };
+
+  const deletePetProfile = (id: string) => {
+    setPetProfiles(prev => {
+      const next = prev.filter(p => p.id !== id);
+      localStorage.setItem("magenta_pet_profiles", JSON.stringify(next));
+      if (activePetId === id) setActivePetId(next[0]?.id || null);
+      return next;
+    });
+  };
+
+  // 데이터 로드 및 마이그레이션 (Supabase DB 우선)
+  useEffect(() => {
+    async function loadProfiles() {
+      if (!session?.user?.id) {
+        // 비로그인 시 로컬 스토리지 사용
+        const saved = localStorage.getItem("magenta_pet_profiles");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          setPetProfiles(parsed);
+          setActivePetId(parsed[0]?.id || null);
+        }
+        return;
+      }
+
+      // 1. Supabase DB에서 프로필 가져오기
+      const { data, error } = await supabase
+        .from("pet_profiles")
+        .select("*")
+        .eq("owner_id", session.user.id)
+        .order("updated_at", { ascending: false });
+
+      if (!error && data && data.length > 0) {
+        const dbProfiles: PetProfile[] = data.map(p => ({
+          id: p.id,
+          name: p.name,
+          type: p.type as "dog" | "cat",
+          birthYear: p.birth_year,
+          birthMonth: p.birth_month,
+          birthDay: p.birth_day,
+          breed: p.breed,
+          keywords: p.keywords,
+          photo_url: p.photo_url,
+          updatedAt: new Date(p.updated_at).getTime(),
+        }));
+        setPetProfiles(dbProfiles);
+        setActivePetId(dbProfiles[0].id);
+      } else {
+        // 2. DB에 데이터가 없으면 로컬 스토리지 데이터 마이그레이션 시도
+        const saved = localStorage.getItem("magenta_pet_profiles");
+        const old = localStorage.getItem("magenta_pet_profile");
+        
+        if (saved || old) {
+          console.log("Migrating local data to Supabase...");
+          // 기존 로직과 유사하게 처리하되, 마이그레이션 후 DB에 저장하는 로직 추가 가능
+          if (saved) {
+             const parsed = JSON.parse(saved);
+             setPetProfiles(parsed);
+             setActivePetId(parsed[0]?.id || null);
+          }
+        }
+      }
+    }
+    loadProfiles();
+  }, [session]);
+
+  const [banners, setBanners] = useState([]);
+  const [careGuides, setCareGuides] = useState([]);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -1820,13 +2265,27 @@ export default function ShopClient() {
         setProducts(dbProducts);
       }
     }
+
+    async function fetchBanners() {
+      const { data } = await supabase.from("shop_banners").select("*").order("order_index", { ascending: true });
+      if (data) setBanners(data);
+    }
+
+    async function fetchCareGuides() {
+      const { data } = await supabase.from("care_guides").select("*").order("order_index", { ascending: true });
+      if (data) setCareGuides(data);
+    }
+
     fetchProducts();
+    fetchBanners();
+    fetchCareGuides();
   }, []);
 
   // 윈도우 객체에 상태 제어 함수 노출 (서브컴포넌트 간 통신용)
   useEffect(() => {
     if (typeof window !== "undefined") {
       (window as any).setActiveSubPage = setActiveSubPage;
+      (window as any).setActiveTab = setActiveTab;
     }
   }, []);
 
@@ -1887,54 +2346,21 @@ export default function ShopClient() {
         </div>
       )}
 
-      {/* 대화면 오버레이 서브페이지 (My 탭 전용) */}
-      {activeTab === "my" && activeSubPage && (
-        <div 
-          className="shop-fade-up"
-          style={{
-            position: "fixed", inset: 0, zIndex: 2000,
-            background: "#F9FAFB", display: "flex", flexDirection: "column"
-          }}
-        >
-          {/* 공통 헤더 */}
-          <header style={{ 
-            padding: "16px 20px", display: "flex", alignItems: "center", 
-            background: "#fff", borderBottom: "1px solid #F3F4F6", gap: "12px" 
-          }}>
-            <button 
-              onClick={() => setActiveSubPage(null)}
-              style={{ background: "none", border: "none", cursor: "pointer", padding: "4px" }}
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2">
-                <path d="M19 12H5M12 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <h2 style={{ fontSize: "16px", fontWeight: 800, margin: 0 }}>
-              {activeSubPage === "address" && "배송지 관리"}
-              {activeSubPage === "research" && "내 연구 기록"}
-              {activeSubPage === "loyalty" && "포인트/쿠폰"}
-              {activeSubPage === "consultation" && "상담 내역"}
-              {activeSubPage === "support" && "고객센터"}
-            </h2>
-          </header>
-
-          <div style={{ flex: 1, overflowY: "auto", padding: "20px" }}>
-            {activeSubPage === "address" && <AddressSubPage />}
-            {activeSubPage === "research" && <ResearchRecordsSubPage products={products} />}
-            {activeSubPage === "loyalty" && <LoyaltySubPage />}
-            {activeSubPage === "consultation" && <ConsultationSubPage />}
-            {activeSubPage === "support" && <SupportSubPage />}
-          </div>
-        </div>
-      )}
-
       {/* 탭 콘텐츠 */}
       <div style={{ overflowY: "auto", minHeight: "100vh" }}>
-        {activeTab === "discovery" && <DiscoveryTab products={products} />}
+        {activeTab === "discovery" && <DiscoveryTab products={products} banners={banners} careGuides={careGuides} />}
         {activeTab === "shop" && <ShopTab products={products} />}
         {activeTab === "cart" && <CartTab />}
         {activeTab === "request" && <RequestTab />}
-        {activeTab === "my" && <MyTab profile={petProfile} onOpenModal={() => setIsProfileModalOpen(true)} setActiveSubPage={setActiveSubPage} />}
+        {activeTab === "my" && (
+          <MyTab 
+            profiles={petProfiles} 
+            activeId={activePetId} 
+            onSelect={setActivePetId} 
+            onOpenModal={() => setIsProfileModalOpen(true)} 
+            setActiveSubPage={setActiveSubPage} 
+          />
+        )}
       </div>
 
       {/* 공통 모달 */}
@@ -1942,7 +2368,7 @@ export default function ShopClient() {
         isOpen={isProfileModalOpen} 
         onClose={() => setIsProfileModalOpen(false)} 
         onSave={savePetProfile}
-        initialData={petProfile}
+        initialData={activePet}
       />
 
       {/* 하단 탭바 */}

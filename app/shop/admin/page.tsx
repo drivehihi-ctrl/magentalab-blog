@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { supabase } from "@/lib/supabase";
-import Link from "next/link";
+import { Camera, Trash2, Edit, PlayCircle, Image as ImageIcon } from "lucide-react";
 
 interface Product {
   id: number;
@@ -19,48 +19,87 @@ interface Product {
   created_at?: string;
 }
 
+interface Banner {
+  id: string;
+  title: string;
+  sub_text: string;
+  bg_gradient: string;
+  emoji: string;
+  image_url?: string;
+  link_url?: string;
+  order_index: number;
+}
+
+interface CareGuide {
+  id: string;
+  title: string;
+  subtitle: string;
+  emoji: string;
+  video_url: string;
+  gradient: string;
+  order_index: number;
+}
+
 const ADMIN_PASSCODE = "magenta123";
-const BUCKET_NAME = "shop_products";
+const PRODUCT_BUCKET = "shop_products";
 
 export default function ShopAdminPage() {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [passcode, setPasscode] = useState("");
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const [activeTab, setActiveTab] = useState<"products" | "banners" | "guides">("products");
+  
+  // Data States
   const [products, setProducts] = useState<Product[]>([]);
+  const [banners, setBanners] = useState<Banner[]>([]);
+  const [careGuides, setCareGuides] = useState<CareGuide[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Edit States
   const [isEditing, setIsEditing] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Partial<Product>>({});
+  const [currentBanner, setCurrentBanner] = useState<Partial<Banner>>({});
+  const [currentGuide, setCurrentGuide] = useState<Partial<CareGuide>>({});
+  
+  // Media States
   const [uploading, setUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [optimizing, setOptimizing] = useState(false);
   const [compressionMode, setCompressionMode] = useState<"standard" | "high">("standard");
-  const [pendingFile, setPendingFile] = useState<File | null>(null);
-  const [previewSize, setPreviewSize] = useState(0);
 
-  // 로컬 스토리지에서 인증 상태 확인
+  // Authentication logic
   useEffect(() => {
     const auth = sessionStorage.getItem("shop_admin_authorized");
-    if (auth === "true") {
-      setIsAuthorized(true);
-    }
+    if (auth === "true") setIsAuthorized(true);
   }, []);
 
   useEffect(() => {
     if (isAuthorized) {
-      fetchProducts();
+      if (activeTab === "products") fetchProducts();
+      if (activeTab === "banners") fetchBanners();
+      if (activeTab === "guides") fetchCareGuides();
     }
-  }, [isAuthorized]);
+  }, [isAuthorized, activeTab]);
 
+  // Fetchers
   async function fetchProducts() {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("products")
-      .select("*")
-      .order("created_at", { ascending: false });
+    const { data } = await supabase.from("products").select("*").order("created_at", { ascending: false });
+    if (data) setProducts(data);
+    setLoading(false);
+  }
 
-    if (!error && data) {
-      setProducts(data);
-    }
+  async function fetchBanners() {
+    setLoading(true);
+    const { data } = await supabase.from("shop_banners").select("*").order("order_index", { ascending: true });
+    if (data) setBanners(data);
+    setLoading(false);
+  }
+
+  async function fetchCareGuides() {
+    setLoading(true);
+    const { data } = await supabase.from("care_guides").select("*").order("order_index", { ascending: true });
+    if (data) setCareGuides(data);
     setLoading(false);
   }
 
@@ -69,9 +108,7 @@ export default function ShopAdminPage() {
     if (passcode === ADMIN_PASSCODE) {
       setIsAuthorized(true);
       sessionStorage.setItem("shop_admin_authorized", "true");
-    } else {
-      alert("비밀번호가 틀렸습니다.");
-    }
+    } else alert("비밀번호가 틀렸습니다.");
   };
 
   const handleLogout = () => {
@@ -79,44 +116,28 @@ export default function ShopAdminPage() {
     sessionStorage.removeItem("shop_admin_authorized");
   };
 
-  // ─── 이미지 처리 유틸리티 ──────────────────────────────────────────
-
-  // 이미지 압축 (Canvas 이용)
+  // Image Processing & Compression
   const compressImage = async (file: File, quality = 0.8): Promise<File> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = (event) => {
-        const img = new (window as any).Image();
-        img.src = event.target?.result;
+        const img = new Image();
+        img.src = event.target?.result as string;
         img.onload = () => {
           const canvas = document.createElement("canvas");
           const ctx = canvas.getContext("2d");
           if (!ctx) return reject(new Error("Canvas context failed"));
-
-          // 최대 1200px 규모로 조정
           let width = img.width;
           let height = img.height;
           const maxDim = 1200;
-          if (width > height && width > maxDim) {
-            height *= maxDim / width;
-            width = maxDim;
-          } else if (height > maxDim) {
-            width *= maxDim / height;
-            height = maxDim;
-          }
-
-          canvas.width = width;
-          canvas.height = height;
+          if (width > height && width > maxDim) { height *= maxDim / width; width = maxDim; }
+          else if (height > maxDim) { width *= maxDim / height; height = maxDim; }
+          canvas.width = width; canvas.height = height;
           ctx.drawImage(img, 0, 0, width, height);
-          
           canvas.toBlob((blob) => {
-            if (blob) {
-              const compressedFile = new File([blob], file.name, { type: "image/jpeg", lastModified: Date.now() });
-              resolve(compressedFile);
-            } else {
-              reject(new Error("Compression failed"));
-            }
+            if (blob) resolve(new File([blob], file.name, { type: "image/jpeg", lastModified: Date.now() }));
+            else reject(new Error("Compression failed"));
           }, "image/jpeg", quality);
         };
       };
@@ -124,138 +145,88 @@ export default function ShopAdminPage() {
     });
   };
 
-  // 기존 이미지 삭제 유틸
-  const deleteOldFile = async (url: string) => {
-    if (!url || !url.includes(BUCKET_NAME)) return;
+  const deleteOldFile = async (url: string, bucket: string) => {
+    if (!url || !url.includes(bucket)) return;
     try {
-      const fileName = url.split("/").pop();
-      if (fileName) {
-        await supabase.storage.from(BUCKET_NAME).remove([`products/${fileName}`]);
-      }
-    } catch (e) {
-      console.error("Old file deletion failed", e);
-    }
+      const parts = url.split("/");
+      const fileName = parts.pop();
+      const folder = parts.pop();
+      if (fileName && folder) await supabase.storage.from(bucket).remove([`${folder}/${fileName}`]);
+    } catch (e) { console.error("File deletion failed", e); }
   };
 
-  // 최종 업로드 로직
-  const uploadToStorage = async (file: File) => {
+  const uploadMedia = async (file: File, folder: string) => {
     setUploading(true);
     try {
-      // 기존 이미지 삭제 (수정 시)
-      if (currentProduct.image_url) {
-        await deleteOldFile(currentProduct.image_url);
-      }
-
+      const currentUrl = activeTab === "products" ? currentProduct.image_url : currentBanner.image_url;
+      if (currentUrl) await deleteOldFile(currentUrl, PRODUCT_BUCKET);
+      
       const fileExt = file.name.split(".").pop();
       const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `products/${fileName}`;
+      const filePath = `${folder}/${fileName}`;
 
-      const { error: uploadError } = await supabase.storage
-        .from(BUCKET_NAME)
-        .upload(filePath, file);
-
+      const { error: uploadError } = await supabase.storage.from(PRODUCT_BUCKET).upload(filePath, file);
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage
-        .from(BUCKET_NAME)
-        .getPublicUrl(filePath);
-
-      setCurrentProduct({ ...currentProduct, image_url: publicUrl });
-      setPendingFile(null);
-    } catch (error: any) {
-      alert("업로드 실패: " + error.message);
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  // 파일 선택/드롭 핸들러
-  const handleFileAction = async (files: FileList | null) => {
-    if (!files || files.length === 0) return;
-    const file = files[0];
-    setPendingFile(file);
-    // 즉시 업로드 (입력 시 바로)
-    await uploadToStorage(file);
-  };
-
-  // 수동 최적화 버튼 클릭 시
-  const handleOptimizeAction = async () => {
-    if (!pendingFile && !currentProduct.image_url) return;
-    setOptimizing(true);
-    try {
-      alert(`0.1% 정밀 압축(${compressionMode === "standard" ? "80%" : "고강도"})을 시작합니다...`);
-
-      const quality = compressionMode === "standard" ? 0.8 : 0.4;
+      const { data: { publicUrl } } = supabase.storage.from(PRODUCT_BUCKET).getPublicUrl(filePath);
       
-      if (pendingFile) {
-        const compressed = await compressImage(pendingFile, quality);
-        await uploadToStorage(compressed);
-        alert("최적화 완료! 용량이 획기적으로 줄어들었습니다. 🧪");
-      } else {
-        alert("새로운 이미지를 드래그하여 업로드할 때 최적화가 적용됩니다!");
-      }
-    } finally {
-      setOptimizing(false);
-    }
+      if (activeTab === "products") setCurrentProduct({ ...currentProduct, image_url: publicUrl });
+      else setCurrentBanner({ ...currentBanner, image_url: publicUrl });
+    } catch (error: any) { alert("업로드 실패: " + error.message); }
+    finally { setUploading(false); }
   };
 
-  // ─── 드래그 앤 드롭 이벤트 ──────────────────────────────────────
+  // CRUD Operations
+  async function handleSaveProduct() {
+    const payload = { ...currentProduct, price: Number(currentProduct.price), original_price: Number(currentProduct.original_price || currentProduct.price), stock: Number(currentProduct.stock || 0) };
+    if (currentProduct.id) await supabase.from("products").update(payload).eq("id", currentProduct.id);
+    else await supabase.from("products").insert([payload]);
+    setIsEditing(false); fetchProducts();
+  }
 
-  const onDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-  const onDragLeave = () => setIsDragging(false);
-  const onDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    handleFileAction(e.dataTransfer.files);
-  };
-
-  // ─── CRUD ───────────────────────────────────────────────────────
-
-  async function handleSave() {
-    if (!currentProduct.name || !currentProduct.price) {
-      alert("상품명과 가격은 필수입니다.");
-      return;
-    }
-
-    const payload = {
-      ...currentProduct,
-      price: Number(currentProduct.price),
-      original_price: Number(currentProduct.original_price || currentProduct.price),
-      stock: Number(currentProduct.stock || 0),
+  async function handleSaveBanner() {
+    const payload = { 
+      title: currentBanner.title, 
+      sub_text: currentBanner.sub_text, 
+      bg_gradient: currentBanner.bg_gradient, 
+      emoji: currentBanner.emoji,
+      image_url: currentBanner.image_url,
+      link_url: currentBanner.link_url,
+      order_index: Number(currentBanner.order_index || 0)
     };
-
-    if (currentProduct.id) {
-      await supabase.from("products").update(payload).eq("id", currentProduct.id);
-    } else {
-      await supabase.from("products").insert([payload]);
-    }
-
-    setIsEditing(false);
-    setCurrentProduct({});
-    fetchProducts();
+    if (currentBanner.id) await supabase.from("shop_banners").update(payload).eq("id", currentBanner.id);
+    else await supabase.from("shop_banners").insert([payload]);
+    setIsEditing(false); fetchBanners();
   }
 
-  async function handleDelete(id: number, imageUrl?: string) {
-    if (!confirm("⚠️ [자동 파쇄 경고]\n이 상품을 삭제하면 데이터베이스 정보와 함께 스토리지에 저장된 이미지 파일이 영구 삭제됩니다. 계속하시겠습니까?")) return;
-    
-    // 이미지 삭제
-    if (imageUrl) {
-      await deleteOldFile(imageUrl);
-    }
-    
-    const { error } = await supabase.from("products").delete().eq("id", id);
-    if (!error) fetchProducts();
+  async function handleSaveGuide() {
+    const payload = { 
+      title: currentGuide.title, 
+      subtitle: currentGuide.subtitle, 
+      emoji: currentGuide.emoji, 
+      video_url: currentGuide.video_url,
+      gradient: currentGuide.gradient,
+      order_index: Number(currentGuide.order_index || 0)
+    };
+    if (currentGuide.id) await supabase.from("care_guides").update(payload).eq("id", currentGuide.id);
+    else await supabase.from("care_guides").insert([payload]);
+    setIsEditing(false); fetchCareGuides();
   }
 
-  // ─── UI ─────────────────────────────────────────────────────────
+  async function handleDelete(id: any, table: string, imageUrl?: string) {
+    if (!confirm("정말 삭제하시겠습니까? 관련 데이터와 파일이 영구 삭제됩니다.")) return;
+    if (imageUrl) await deleteOldFile(imageUrl, PRODUCT_BUCKET);
+    await supabase.from(table).delete().eq("id", id);
+    if (table === "products") fetchProducts();
+    if (table === "shop_banners") fetchBanners();
+    if (table === "care_guides") fetchCareGuides();
+  }
 
+  // --- Auth Render ---
   if (!isAuthorized) {
     return (
       <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#0F172A" }}>
-        <div style={{ width: "100%", maxWidth: "420px", background: "rgba(30, 41, 59, 0.7)", backdropFilter: "blur(20px)", borderRadius: "32px", padding: "48px 40px", textAlign: "center", border: "1px solid rgba(255,255,255,0.1)" }}>
+        <div style={authCardStyle}>
           <div style={{ fontSize: "50px", marginBottom: "20px" }}>🛡️</div>
           <h1 style={{ fontSize: "28px", fontWeight: 900, color: "#fff", marginBottom: "8px" }}>안심 관리 시스템</h1>
           <form onSubmit={handleAuth} style={{ marginTop: "30px" }}>
@@ -271,13 +242,34 @@ export default function ShopAdminPage() {
     <div style={{ minHeight: "100vh", background: "#020617", color: "#F8FAFC", padding: "40px 24px" }}>
       <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
         
-        <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "40px" }}>
+        <header style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "40px" }}>
           <div>
             <h1 style={{ fontSize: "32px", fontWeight: 900, letterSpacing: "-0.04em" }}>Shop Intelligence Dashboard</h1>
-            <p style={{ color: "#94A3B8", fontSize: "14px" }}>안심 연구원의 0.1% 정밀 재고 및 미디어 라이브러리</p>
+            <p style={{ color: "#94A3B8", fontSize: "14px" }}>안심 연구원의 0.1% 정밀 미디어 및 라이브러리 제어 센터</p>
+            
+            {/* Tab Navigation */}
+            <div style={{ display: "flex", gap: "8px", marginTop: "24px" }}>
+              <button 
+                onClick={() => { setActiveTab("products"); setIsEditing(false); }}
+                style={{ ...tabBtnStyle, background: activeTab === "products" ? "#E5007E" : "rgba(255,255,255,0.05)" }}
+              >📦 상품 관리</button>
+              <button 
+                onClick={() => { setActiveTab("banners"); setIsEditing(false); }}
+                style={{ ...tabBtnStyle, background: activeTab === "banners" ? "#E5007E" : "rgba(255,255,255,0.05)" }}
+              >🖼️ 배너 제어</button>
+              <button 
+                onClick={() => { setActiveTab("guides"); setIsEditing(false); }}
+                style={{ ...tabBtnStyle, background: activeTab === "guides" ? "#E5007E" : "rgba(255,255,255,0.05)" }}
+              >🎬 케어 가이드</button>
+            </div>
           </div>
-          <div style={{ display: "flex", gap: "10px" }}>
-            <button onClick={() => { setIsEditing(true); setCurrentProduct({ category: "supplement", badge: "" }); }} style={addBtnStyle}>+ New Research Item</button>
+          <div style={{ display: "flex", gap: "10px", marginBottom: "4px" }}>
+            <button onClick={() => { 
+              setIsEditing(true); 
+              if (activeTab === "products") setCurrentProduct({ category: "supplement" });
+              if (activeTab === "banners") setCurrentBanner({ bg_gradient: "linear-gradient(135deg, #E5007E, #7C3AED)", emoji: "🔬" });
+              if (activeTab === "guides") setCurrentGuide({ emoji: "🎬", gradient: "linear-gradient(135deg, #E5007E, #FF6B9D)" });
+            }} style={addBtnStyle}>+ New Item</button>
             <button onClick={handleLogout} style={logoutBtnStyle}>Logout</button>
           </div>
         </header>
@@ -285,194 +277,204 @@ export default function ShopAdminPage() {
         {isEditing && (
           <div style={editorContainerStyle}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "32px" }}>
-              <h2 style={{ fontSize: "22px", fontWeight: 900 }}>{currentProduct.id ? "🔬 아이템 수정 중" : "🧪 신규 연구 물품 등록"}</h2>
+              <h2 style={{ fontSize: "22px", fontWeight: 900 }}>
+                {activeTab === "products" ? "🧪 상품 실험 정보" : activeTab === "banners" ? "🖼️ 다이내믹 배너 설계" : "📹 케어 가이드 기획"}
+              </h2>
               <button onClick={() => setIsEditing(false)} style={{ background: "none", border: "none", color: "#94A3B8", cursor: "pointer" }}>✕ 닫기</button>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1.5fr", gap: "40px" }}>
-              {/* 왼쪽: 이미지 업로드 섹션 */}
-              <div>
-                <label style={labelStyle}>STORAGE & MEDIA</label>
-                <div 
-                  onDragOver={onDragOver} 
-                  onDragLeave={onDragLeave} 
-                  onDrop={onDrop}
-                  style={{
-                    ...dropzoneStyle,
-                    borderColor: isDragging ? "#E5007E" : "rgba(255,255,255,0.1)",
-                    background: isDragging ? "rgba(229, 0, 126, 0.05)" : "rgba(15, 23, 42, 0.4)"
-                  }}
-                >
-                  {uploading ? (
-                    <div style={{ textAlign: "center" }}>
-                      <div className="shop-loading-spin" style={{ margin: "0 auto 12px" }} />
-                      <p style={{ fontSize: "13px", color: "#E5007E", fontWeight: 700 }}>현미경으로 이미지 스캔 중...</p>
+            {/* --- Product Form --- */}
+            {activeTab === "products" && (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1.5fr", gap: "40px" }}>
+                <ImageDropzone 
+                  url={currentProduct.image_url} 
+                  uploading={uploading} 
+                  onUpload={(file) => uploadMedia(file, "products")} 
+                  onClear={() => setCurrentProduct({...currentProduct, image_url: ""})}
+                />
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+                  <div style={{ gridColumn: "span 2" }}>
+                    <label style={labelStyle}>상품 브랜드 & 이름</label>
+                    <div style={{ display: "flex", gap: "10px" }}>
+                      <input style={inputStyle} placeholder="브랜드" value={currentProduct.brand || ""} onChange={e => setCurrentProduct({...currentProduct, brand: e.target.value})} />
+                      <input style={{...inputStyle, flex: 2}} placeholder="아이템명" value={currentProduct.name || ""} onChange={e => setCurrentProduct({...currentProduct, name: e.target.value})} />
                     </div>
-                  ) : currentProduct.image_url ? (
-                    <div style={{ position: "relative", width: "100%", height: "100%", borderRadius: "16px", overflow: "hidden" }}>
-                       <img src={currentProduct.image_url} alt="preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                       {/* Magnifying glass Effect Overlay (Css) */}
-                       <div style={magnifierOverlayStyle} />
-                       <div style={{ position: "absolute", bottom: "10px", right: "10px", background: "rgba(0,0,0,0.6)", padding: "4px 8px", borderRadius: "6px", fontSize: "10px" }}>
-                         0.1% 정밀 프리뷰 활성
-                       </div>
-                    </div>
-                  ) : (
-                    <div style={{ textAlign: "center", padding: "20px" }}>
-                      <div style={{ fontSize: "40px", marginBottom: "12px" }}>📦</div>
-                      <p style={{ fontSize: "14px", fontWeight: 700, color: "#fff" }}>여기에 연구 물품 사진을 던져주세요!</p>
-                      <p style={{ fontSize: "11px", color: "#64748B", marginTop: "4px" }}>또는 클릭하여 파일 선택 (shop_products 전용)</p>
-                      <input 
-                        type="file" 
-                        onChange={(e) => handleFileAction(e.target.files)} 
-                        style={{ position: "absolute", inset: 0, opacity: 0, cursor: "pointer" }} 
-                      />
-                    </div>
-                  )}
-                </div>
-
-                <div style={{ marginTop: "16px", display: "flex", flexWrap: "wrap", gap: "8px" }}>
-                   <div style={{ width: "100%", display: "flex", background: "rgba(15, 23, 42, 0.4)", borderRadius: "12px", padding: "4px", marginBottom: "8px" }}>
-                     <button 
-                       onClick={() => setCompressionMode("standard")}
-                       style={{ ...modeBtnStyle, background: compressionMode === "standard" ? "#E5007E" : "transparent" }}
-                     >표준(80%)</button>
-                     <button 
-                       onClick={() => setCompressionMode("high")}
-                       style={{ ...modeBtnStyle, background: compressionMode === "high" ? "#E5007E" : "transparent" }}
-                     >고강도</button>
-                   </div>
-                   <button 
-                     onClick={handleOptimizeAction}
-                     disabled={!currentProduct.image_url || optimizing}
-                     style={optimizeBtnStyle}
-                   >
-                     ⚡ {optimizing ? "최적화 중..." : "용량을 0.1% 더 가볍게 만들기"}
-                   </button>
-                   {currentProduct.image_url && (
-                     <button 
-                       onClick={() => setCurrentProduct({...currentProduct, image_url: ""})}
-                       style={{ ...optimizeBtnStyle, background: "rgba(255,255,255,0.05)", flex: "0 0 auto" }}
-                     >🗑️</button>
-                   )}
-                </div>
-              </div>
-
-              {/* 오른쪽: 상세 정보 입력 섹션 */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
-                <div style={{ gridColumn: "span 2" }}>
-                  <label style={labelStyle}>상품 브랜드 & 이름</label>
-                  <div style={{ display: "flex", gap: "10px" }}>
-                    <input style={{ ...inputStyle, flex: 1 }} placeholder="브랜드명" value={currentProduct.brand || ""} onChange={e => setCurrentProduct({...currentProduct, brand: e.target.value})} />
-                    <input style={{ ...inputStyle, flex: 2 }} placeholder="아이템 정식 명칭" value={currentProduct.name || ""} onChange={e => setCurrentProduct({...currentProduct, name: e.target.value})} />
+                  </div>
+                  <input type="number" style={inputStyle} placeholder="판매가" value={currentProduct.price || ""} onChange={e => setCurrentProduct({...currentProduct, price: Number(e.target.value)})} />
+                  <input type="number" style={inputStyle} placeholder="정가" value={currentProduct.original_price || ""} onChange={e => setCurrentProduct({...currentProduct, original_price: Number(e.target.value)})} />
+                  <select style={inputStyle} value={currentProduct.category} onChange={e => setCurrentProduct({...currentProduct, category: e.target.value})}>
+                    <option value="food">사료·간식</option><option value="supplement">영양제</option><option value="hygiene">위생·목욕</option><option value="toy">장난감</option><option value="bedding">침구·하우스</option>
+                  </select>
+                  <input type="number" style={inputStyle} placeholder="재고" value={currentProduct.stock || 0} onChange={e => setCurrentProduct({...currentProduct, stock: Number(e.target.value)})} />
+                  <div style={{ gridColumn: "span 2" }}>
+                    <input style={inputStyle} placeholder="상세 페이지 링크 URL" value={currentProduct.details_link || ""} onChange={e => setCurrentProduct({...currentProduct, details_link: e.target.value})} />
+                    <button onClick={handleSaveProduct} style={saveActionBtnStyle}>상품 데이터 저장</button>
                   </div>
                 </div>
-                <div>
-                  <label style={labelStyle}>판매 가격 (KRW)</label>
-                  <input type="number" style={inputStyle} value={currentProduct.price || ""} onChange={e => setCurrentProduct({...currentProduct, price: Number(e.target.value)})} />
-                </div>
-                <div>
-                  <label style={labelStyle}>정상 가격 (할인 전)</label>
-                  <input type="number" style={inputStyle} value={currentProduct.original_price || ""} onChange={e => setCurrentProduct({...currentProduct, original_price: Number(e.target.value)})} />
-                </div>
-                <div>
-                  <label style={labelStyle}>카테고리</label>
-                  <select style={inputStyle} value={currentProduct.category} onChange={e => setCurrentProduct({...currentProduct, category: e.target.value})}>
-                    <option value="food">사료·간식</option>
-                    <option value="supplement">영양제</option>
-                    <option value="hygiene">위생·목욕</option>
-                    <option value="toy">장난감</option>
-                    <option value="bedding">침구·하우스</option>
-                  </select>
-                </div>
-                <div>
-                  <label style={labelStyle}>현재 재고량</label>
-                  <input type="number" style={inputStyle} value={currentProduct.stock || 0} onChange={e => setCurrentProduct({...currentProduct, stock: Number(e.target.value)})} />
-                </div>
-                <div style={{ gridColumn: "span 2" }}>
-                  <label style={labelStyle}>외부 상세 페이지 링크 URL</label>
-                  <input style={inputStyle} placeholder="https://..." value={currentProduct.details_link || ""} onChange={e => setCurrentProduct({...currentProduct, details_link: e.target.value})} />
-                </div>
-                <div style={{ gridColumn: "span 2" }}>
-                   <button onClick={handleSave} style={saveActionBtnStyle}>
-                     {currentProduct.id ? "연구 결과 업데이트 완료" : "신규 필드 아이템으로 등록"}
-                   </button>
+              </div>
+            )}
+
+            {/* --- Banner Form --- */}
+            {activeTab === "banners" && (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1.5fr", gap: "40px" }}>
+                <ImageDropzone 
+                  url={currentBanner.image_url} 
+                  uploading={uploading} 
+                  onUpload={(file) => uploadMedia(file, "banners")} 
+                  onClear={() => setCurrentBanner({...currentBanner, image_url: ""})}
+                />
+                <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+                  <input style={inputStyle} placeholder="배너 제목" value={currentBanner.title || ""} onChange={e => setCurrentBanner({...currentBanner, title: e.target.value})} />
+                  <input style={inputStyle} placeholder="보조 설명" value={currentBanner.sub_text || ""} onChange={e => setCurrentBanner({...currentBanner, sub_text: e.target.value})} />
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <input style={inputStyle} placeholder="이모지 (🧪)" value={currentBanner.emoji || ""} onChange={e => setCurrentBanner({...currentBanner, emoji: e.target.value})} />
+                    <input style={{...inputStyle, flex: 2}} placeholder="그라데이션 (linear-gradient...)" value={currentBanner.bg_gradient || ""} onChange={e => setCurrentBanner({...currentBanner, bg_gradient: e.target.value})} />
+                  </div>
+                  <input style={inputStyle} placeholder="연결 링크 URL (공백 가능)" value={currentBanner.link_url || ""} onChange={e => setCurrentBanner({...currentBanner, link_url: e.target.value})} />
+                  <input type="number" style={inputStyle} placeholder="우선순위 (낮을수록 앞)" value={currentBanner.order_index || 0} onChange={e => setCurrentBanner({...currentBanner, order_index: Number(e.target.value)})} />
+                  <button onClick={handleSaveBanner} style={saveActionBtnStyle}>배너 라이브러리 저장</button>
                 </div>
               </div>
-            </div>
+            )}
+
+            {/* --- Care Guide Form --- */}
+            {activeTab === "guides" && (
+              <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+                <input style={inputStyle} placeholder="가이드 제목" value={currentGuide.title || ""} onChange={e => setCurrentGuide({...currentGuide, title: e.target.value})} />
+                <input style={inputStyle} placeholder="보조 제목" value={currentGuide.subtitle || ""} onChange={e => setCurrentGuide({...currentGuide, subtitle: e.target.value})} />
+                <input style={inputStyle} placeholder="YouTube 영상 URL" value={currentGuide.video_url || ""} onChange={e => setCurrentGuide({...currentGuide, video_url: e.target.value})} />
+                <div style={{ display: "flex", gap: "10px" }}>
+                  <input style={inputStyle} placeholder="이모지 (🎬)" value={currentGuide.emoji || ""} onChange={e => setCurrentGuide({...currentGuide, emoji: e.target.value})} />
+                  <input style={{...inputStyle, flex: 2}} placeholder="배경 그라데이션" value={currentGuide.gradient || ""} onChange={e => setCurrentGuide({...currentGuide, gradient: e.target.value})} />
+                  <input type="number" style={inputStyle} placeholder="순서" value={currentGuide.order_index || 0} onChange={e => setCurrentGuide({...currentGuide, order_index: Number(e.target.value)})} />
+                </div>
+                <button onClick={handleSaveGuide} style={saveActionBtnStyle}>가이드 등록 완료</button>
+              </div>
+            )}
           </div>
         )}
 
-        {/* 제품 리스트 영역 */}
+        {/* --- Data List Area --- */}
         <div style={tableWrapperStyle}>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-                <th style={thStyle}>RESEARCH PHOTO</th>
-                <th style={thStyle}>SPECIFICATIONS</th>
-                <th style={thStyle}>INVENTORY</th>
-                <th style={thStyle}>ACTIONS</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr><td colSpan={4} style={{ padding: "60px", textAlign: "center" }}>데이터 로딩 중...</td></tr>
-              ) : products.map(p => (
-                <tr key={p.id} style={trStyle}>
-                  <td style={tdPadding}><img src={p.image_url} style={{ width: "80px", height: "80px", borderRadius: "16px", objectFit: "cover" }} /></td>
-                  <td style={tdPadding}>
-                    <div style={{ fontWeight: 800 }}>{p.name}</div>
-                    <div style={{ fontSize: "12px", color: "#64748B" }}>{p.brand} | {p.category}</div>
-                    <div style={{ marginTop: "4px", fontWeight: 700, color: "#E5007E" }}>{p.price.toLocaleString()}원</div>
-                  </td>
-                  <td style={tdPadding}>
-                    <div style={{ display: "inline-block", padding: "4px 10px", borderRadius: "6px", fontSize: "12px", fontWeight: 800, background: (p.stock || 0) < 5 ? "#FEF2F2" : "#F0FDF4", color: (p.stock || 0) < 5 ? "#EF4444" : "#22C55E" }}>
-                      Stock: {p.stock || 0}
-                    </div>
-                  </td>
-                  <td style={tdPadding}>
-                    <div style={{ display: "flex", gap: "8px" }}>
-                      <button onClick={() => { setCurrentProduct(p); setIsEditing(true); }} style={miniBtnStyle}>Edit</button>
-                      <button onClick={() => handleDelete(p.id, p.image_url)} style={{ ...miniBtnStyle, background: "rgba(239, 68, 68, 0.1)", color: "#EF4444" }}>Delete</button>
-                    </div>
-                  </td>
+          {loading ? (
+            <div style={{ padding: "80px", textAlign: "center" }}>데이터를 정밀 분석 중입니다...</div>
+          ) : (
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                  <th style={thStyle}>MEDIA / PREVIEW</th>
+                  <th style={thStyle}>CONTENT INFO</th>
+                  <th style={thStyle}>STATUS / ORDER</th>
+                  <th style={thStyle}>ACTIONS</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {activeTab === "products" && products.map(p => (
+                  <tr key={p.id} style={trStyle}>
+                    <td style={tdPadding}><img src={p.image_url} style={previewImgStyle} /></td>
+                    <td style={tdPadding}>
+                      <div style={{ fontWeight: 800 }}>{p.name}</div>
+                      <div style={{ fontSize: "12px", color: "#64748B" }}>{p.brand} | {p.category}</div>
+                      <div style={{ marginTop: "4px", fontWeight: 700, color: "#E5007E" }}>{p.price.toLocaleString()}원</div>
+                    </td>
+                    <td style={tdPadding}>
+                      <span style={{ ...badgeStyle, background: (p.stock || 0) < 5 ? "#FEF2F2" : "#F0FDF4", color: (p.stock || 0) < 5 ? "#EF4444" : "#22C55E" }}>
+                        Stock: {p.stock || 0}
+                      </span>
+                    </td>
+                    <td style={tdPadding}><ActionButtons onEdit={() => { setCurrentProduct(p); setIsEditing(true); }} onDelete={() => handleDelete(p.id, "products", p.image_url)} /></td>
+                  </tr>
+                ))}
+
+                {activeTab === "banners" && banners.map(b => (
+                  <tr key={b.id} style={trStyle}>
+                    <td style={tdPadding}>
+                      {b.image_url ? <img src={b.image_url} style={previewImgStyle} /> : <div style={{...previewImgStyle, background: b.bg_gradient, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "24px"}}>{b.emoji}</div>}
+                    </td>
+                    <td style={tdPadding}>
+                      <div style={{ fontWeight: 800 }}>{b.title}</div>
+                      <div style={{ fontSize: "12px", color: "#94A3B8" }}>{b.sub_text}</div>
+                    </td>
+                    <td style={tdPadding}><span style={badgeStyle}>Index: {b.order_index}</span></td>
+                    <td style={tdPadding}><ActionButtons onEdit={() => { setCurrentBanner(b); setIsEditing(true); }} onDelete={() => handleDelete(b.id, "shop_banners", b.image_url)} /></td>
+                  </tr>
+                ))}
+
+                {activeTab === "guides" && careGuides.map(g => (
+                  <tr key={g.id} style={trStyle}>
+                    <td style={tdPadding}>
+                      <div style={{...previewImgStyle, background: g.gradient, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "24px"}}>{g.emoji}</div>
+                    </td>
+                    <td style={tdPadding}>
+                      <div style={{ fontWeight: 800 }}>{g.title}</div>
+                      <div style={{ fontSize: "12px", color: "#64748B" }}>{g.subtitle}</div>
+                      <div style={{ fontSize: "10px", color: "#3B82F6", marginTop: "4px" }}>{g.video_url}</div>
+                    </td>
+                    <td style={tdPadding}><span style={badgeStyle}>Index: {g.order_index}</span></td>
+                    <td style={tdPadding}><ActionButtons onEdit={() => { setCurrentGuide(g); setIsEditing(true); }} onDelete={() => handleDelete(g.id, "care_guides")} /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
+// --- Sub-Components ---
+
+function ImageDropzone({ url, uploading, onUpload, onClear }: any) {
+  const [isDragging, setIsDragging] = useState(false);
+  return (
+    <div>
+      <label style={labelStyle}>STORAGE & MEDIA</label>
+      <div 
+        onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+        onDragLeave={() => setIsDragging(false)}
+        onDrop={(e) => { e.preventDefault(); setIsDragging(false); if(e.dataTransfer.files) onUpload(e.dataTransfer.files[0]); }}
+        style={{ ...dropzoneStyle, borderColor: isDragging ? "#E5007E" : "rgba(255,255,255,0.1)", background: isDragging ? "rgba(229, 0, 126, 0.05)" : "rgba(15, 23, 42, 0.4)" }}
+      >
+        {uploading ? <p style={{ color: "#E5007E", fontWeight: 700 }}>현미경 스캔 중...</p> : 
+          url ? <div style={{ position: "relative", width: "100%", height: "100%" }}><img src={url} style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "24px" }} /><div style={magnifierOverlayStyle} /></div> 
+          : <div style={{ textAlign: "center" }}><p>이미지를 드래그해주세요</p><input type="file" onChange={(e) => e.target.files && onUpload(e.target.files[0])} style={{ position: "absolute", inset: 0, opacity: 0, cursor: "pointer" }} /></div>}
+      </div>
+      {url && <button onClick={onClear} style={{ ...miniBtnStyle, marginTop: "12px", width: "100%" }}>이미지 초기화 🗑️</button>}
+    </div>
+  );
+}
+
+function ActionButtons({ onEdit, onDelete }: any) {
+  return (
+    <div style={{ display: "flex", gap: "8px" }}>
+      <button onClick={onEdit} style={miniBtnStyle}><Edit size={14} /></button>
+      <button onClick={onDelete} style={{ ...miniBtnStyle, background: "rgba(239, 68, 68, 0.1)", color: "#EF4444" }}><Trash2 size={14} /></button>
+    </div>
+  );
+}
+
 // ─── 스타일 상수 ──────────────────────────────────────────────────
 
+const authCardStyle: React.CSSProperties = { width: "100%", maxWidth: "420px", background: "rgba(30, 41, 59, 0.7)", backdropFilter: "blur(20px)", borderRadius: "32px", padding: "48px 40px", textAlign: "center", border: "1px solid rgba(255,255,255,0.1)" };
 const authInputStyle: React.CSSProperties = { width: "100%", padding: "18px", borderRadius: "16px", background: "#0F172A", border: "1px solid rgba(255,255,255,0.1)", color: "#fff", textAlign: "center", fontSize: "18px", marginBottom: "16px" };
 const authBtnStyle: React.CSSProperties = { width: "100%", padding: "18px", borderRadius: "16px", background: "#E5007E", color: "#fff", border: "none", fontSize: "16px", fontWeight: 800, cursor: "pointer" };
 const addBtnStyle: React.CSSProperties = { padding: "12px 24px", borderRadius: "12px", background: "#E5007E", border: "none", color: "#fff", fontWeight: 800, cursor: "pointer" };
 const logoutBtnStyle: React.CSSProperties = { padding: "12px 20px", borderRadius: "12px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "#94A3B8", fontWeight: 700, cursor: "pointer" };
+const tabBtnStyle: React.CSSProperties = { padding: "10px 18px", borderRadius: "10px", border: "none", color: "#fff", fontWeight: 700, cursor: "pointer", fontSize: "13px", transition: "all 0.2s" };
 const editorContainerStyle: React.CSSProperties = { background: "#0F172A", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "32px", padding: "40px", marginBottom: "40px", boxShadow: "0 20px 50px rgba(0,0,0,0.5)" };
 const labelStyle: React.CSSProperties = { display: "block", fontSize: "11px", fontWeight: 900, color: "rgba(255,255,255,0.3)", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "0.1em" };
-const inputStyle: React.CSSProperties = { width: "100%", padding: "14px 18px", borderRadius: "14px", background: "rgba(2, 6, 23, 0.6)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff", outline: "none" };
+const inputStyle: React.CSSProperties = { width: "100%", padding: "14px 18px", borderRadius: "14px", background: "rgba(2, 6, 23, 0.6)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff", outline: "none", fontSize: "14px" };
 const dropzoneStyle: React.CSSProperties = { width: "100%", height: "240px", border: "2px dashed", borderRadius: "24px", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", transition: "all 0.2s" };
 const thStyle: React.CSSProperties = { padding: "16px", textAlign: "left", fontSize: "11px", color: "rgba(255,255,255,0.4)" };
 const tdPadding: React.CSSProperties = { padding: "16px", verticalAlign: "middle" };
 const tableWrapperStyle: React.CSSProperties = { background: "#0F172A", borderRadius: "32px", overflow: "hidden", border: "1px solid rgba(255,255,255,0.05)" };
 const trStyle: React.CSSProperties = { borderBottom: "1px solid rgba(255,255,255,0.02)" };
-const miniBtnStyle: React.CSSProperties = { padding: "8px 16px", borderRadius: "10px", background: "rgba(255,255,255,0.05)", border: "none", color: "#fff", fontSize: "12px", fontWeight: 700, cursor: "pointer" };
-const optimizeBtnStyle: React.CSSProperties = { flex: 1, padding: "12px", borderRadius: "12px", background: "linear-gradient(135deg, #E5007E 0%, #FF41AA 100%)", color: "#fff", border: "none", fontSize: "12px", fontWeight: 800, cursor: "pointer" };
-const modeBtnStyle: React.CSSProperties = { flex: 1, padding: "8px", borderRadius: "10px", border: "none", color: "#fff", fontSize: "11px", fontWeight: 700, cursor: "pointer", transition: "all 0.2s" };
+const miniBtnStyle: React.CSSProperties = { padding: "10px", borderRadius: "10px", background: "rgba(255,255,255,0.05)", border: "none", color: "#fff", cursor: "pointer" };
+const badgeStyle: React.CSSProperties = { display: "inline-block", padding: "4px 10px", borderRadius: "6px", fontSize: "12px", fontWeight: 800 };
 const saveActionBtnStyle: React.CSSProperties = { width: "100%", padding: "18px", borderRadius: "16px", background: "#fff", color: "#0F172A", border: "none", fontSize: "16px", fontWeight: 900, cursor: "pointer", marginTop: "20px" };
+const previewImgStyle: React.CSSProperties = { width: "80px", height: "80px", borderRadius: "16px", objectFit: "cover" };
 const magnifierOverlayStyle: React.CSSProperties = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  width: "80px",
-  height: "80px",
-  transform: "translate(-50%, -50%)",
-  borderRadius: "50%",
-  border: "2px solid rgba(255,255,255,0.6)",
-  boxShadow: "0 0 0 9999px rgba(0,0,0,0.3)",
-  pointerEvents: "none"
+  position: "absolute", top: "50%", left: "50%", width: "80px", height: "80px", transform: "translate(-50%, -50%)",
+  borderRadius: "50%", border: "2px solid rgba(255,255,255,0.6)", boxShadow: "0 0 0 9999px rgba(0,0,0,0.3)", pointerEvents: "none"
 };
