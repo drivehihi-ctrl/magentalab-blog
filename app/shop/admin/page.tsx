@@ -414,9 +414,6 @@ export default function ShopAdminPage() {
                     <td style={tdPadding}>
                       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                         <div style={{ fontWeight: 800 }}>{p.name}</div>
-                        {p.is_weekly_pick && (
-                          <span style={{ fontSize: "10px", background: "#E5007E", color: "#fff", padding: "2px 6px", borderRadius: "4px", fontWeight: 900 }}>PICK</span>
-                        )}
                       </div>
                       <div style={{ fontSize: "12px", color: "#64748B" }}>{p.brand} | {p.category}</div>
                       <div style={{ marginTop: "4px", fontWeight: 700, color: "#E5007E" }}>{p.price.toLocaleString()}원</div>
