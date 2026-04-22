@@ -1084,20 +1084,24 @@ function RequestTab() {
       <div style={{ position: "relative", width: "100%", height: "240px", borderRadius: "0 0 24px 24px", overflow: "hidden" }}>
         <div style={{ 
           width: "100%", height: "100%", 
-          background: "linear-gradient(135deg, #A5D8FF 0%, #E7F5FF 100%)",
+          backgroundImage: "url('/images/shop/Request.jpeg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
           display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
           padding: "20px"
         }}>
           <div style={{ 
-            fontSize: "36px", fontWeight: 900, color: "#1C7ED6", 
+            fontSize: "36px", fontWeight: 900, color: "#fff", 
             marginBottom: "12px", letterSpacing: "-0.05em",
-            textAlign: "center", lineHeight: 1.1
+            textAlign: "center", lineHeight: 1.1,
+            textShadow: "0 2px 10px rgba(0,0,0,0.3)"
           }}>
             입고 희망<br />제 품 신 청
           </div>
           <div style={{ 
-            fontSize: "14px", fontWeight: 700, color: "#1C7ED6", 
-            background: "rgba(255,255,255,0.6)", padding: "4px 12px", borderRadius: "20px"
+            fontSize: "14px", fontWeight: 700, color: "#fff", 
+            background: "rgba(0,0,0,0.4)", padding: "4px 12px", borderRadius: "20px",
+            backdropFilter: "blur(4px)"
           }}>
             저품질과 과대광고로 이루어진 제품은 입고가 제한됩니다
           </div>
@@ -1142,7 +1146,7 @@ function RequestTab() {
               value={link}
               onChange={(e) => setLink(e.target.value)}
               required 
-              placeholder="제품이 온라인에 있나요? (선택)"
+              placeholder="제품이 온라인에 있나요? (필수)"
               style={{
                 width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #e2e8f0",
                 fontSize: "14px", background: "#fff", outline: "none",
