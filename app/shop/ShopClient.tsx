@@ -17,6 +17,26 @@ const CATEGORIES = [
   { id: "fashion", label: "의류·악세", emoji: "👗" },
 ];
 
+// ─── 반려동물 연구 프로필 키워드 (Ansim-i's Research Categories) ──────────
+const HEALTH_KEYWORDS = [
+  { id: "eye", label: "눈/눈물", hashtags: ["#눈물자국", "#안구건조", "#백내장예방"], tip: "반짝이는 눈망울 연구소", emoji: "👀" },
+  { id: "skin", label: "피부/모질", hashtags: ["#가려움/알러지", "#각질", "#털빠짐"], tip: "비단결 모질 프로젝트", emoji: "🧴" },
+  { id: "joint", label: "관절/뼈", hashtags: ["#슬개골탈구", "#디스크예방", "#활동량저하"], tip: "안심 튼튼 보행 가이드", emoji: "🦴" },
+  { id: "digestion", label: "소화/장", hashtags: ["#묽은변/설사", "#구토", "#식욕부진"], tip: "황금변 생성 연구소", emoji: "💩" },
+  { id: "dental", label: "구강/치아", hashtags: ["#입냄새", "#치석", "#잇몸건강"], tip: "건강한 미소(Smile) 연구", emoji: "🦷" },
+  { id: "weight", label: "체중/다이어트", hashtags: ["#비만관리", "#근력강화", "#노령견영양"], tip: "0.1% 정밀 체중 관리", emoji: "⚖️" },
+  { id: "kidney", label: "신장/요로", hashtags: ["#음수량부족", "#결석예방", "#신부전케어"], tip: "마젠타랩의 핵심 연구 분야!", emoji: "💧" },
+  { id: "emotion", label: "심리/행동", hashtags: ["#분리불안", "#스트레스", "#사회성"], tip: "행복한 멍냥이 심리 상담", emoji: "🧠" },
+];
+
+interface PetProfile {
+  name: string;
+  type: "dog" | "cat";
+  age: string;
+  breed: string;
+  keywords: string[];
+}
+
 // ─── 상품 데이터 (기본 Mock) ──────────────────────────────────────────
 const MOCK_PRODUCTS = [
   {
@@ -386,7 +406,9 @@ function ProductCard({ p, index, variant = "grid" }: { p: any; index: number; va
 
   return (
     <Link
-      href={`/shop/${p.id}`}
+      href={p.details_link || `/shop/${p.id}`}
+      target={p.details_link?.startsWith('http') ? "_blank" : undefined}
+      rel={p.details_link?.startsWith('http') ? "noopener noreferrer" : undefined}
       className="shop-card-hover shop-fade-up"
       style={{
         animationDelay: `${index * 0.08}s`,
@@ -825,7 +847,6 @@ function ShopTab({ products }: { products: any[] }) {
           ))}
         </div>
       </div>
-
       {/* 정렬 / 개수 */}
       <div className="shop-section-px" style={{
         padding: "10px 20px", display: "flex", justifyContent: "space-between", alignItems: "center",
@@ -872,92 +893,245 @@ function ShopTab({ products }: { products: any[] }) {
   );
 }
 
-// ─── 장바구니 탭 ─────────────────────────────────────────────────
-function CartTab() {
+// ─── 개인화 추천 배너 (CurationBanner) ─────────────────────────────
+function CurationBanner({ profile }: { profile: PetProfile }) {
+  if (!profile || !profile.keywords) return null;
+  
+  const keywordLabels = profile.keywords.map(k => HEALTH_KEYWORDS.find(hk => hk.id === k)?.label).filter(Boolean);
+  const primaryKeyword = profile.keywords[0];
+  const tip = HEALTH_KEYWORDS.find(hk => hk.id === primaryKeyword)?.tip || "정밀 분석 중...";
+  
+  // 키워드별 추천 상품 키워드 매칭
+  const getRecMessage = (k: string) => {
+    switch(k) {
+      case "eye": return "루테인 보조제와 저자극 세정제를 추천해요";
+      case "skin": return "가수분해 간식과 오메가3가 도움이 될 거예요";
+      case "joint": return "글루코사민 영양제와 미끄럼 방지 용품이 필수예요";
+      case "digestion": return "프로바이오틱스와 소화가 잘 되는 화식은 어때요?";
+      case "dental": return "치석 제거 껌과 구강 세정액을 연구해왔어요";
+      case "weight": return "저칼로리 간식과 근력 강화 아이템이 필요해요";
+      case "kidney": return "저나트륨 간식과 수분 보충제가 가장 중요해요!";
+      case "emotion": return "스트레스 완화 간식과 노즈워크 장난감을 추천해요";
+      default: return "안심 연구원이 선정한 맞춤 추천템을 확인하세요";
+    }
+  };
+
   return (
-    <div style={{
-      paddingBottom: "86px", display: "flex", flexDirection: "column",
-      alignItems: "center", justifyContent: "center", minHeight: "70vh", padding: "40px 20px 86px",
+    <div className="shop-fade-up" style={{
+      margin: "0 16px 24px",
+      padding: "20px",
+      borderRadius: "20px",
+      background: "linear-gradient(135deg, #FF69B4 0%, #E5007E 100%)",
+      color: "#fff",
+      boxShadow: "0 10px 20px rgba(229, 0, 126, 0.2)",
+      position: "relative",
+      overflow: "hidden"
     }}>
-      <div className="shop-float" style={{ fontSize: "72px", marginBottom: "20px" }}>🛒</div>
-      <div className="shop-fade-up" style={{ fontSize: "20px", fontWeight: 800, color: "#111", marginBottom: "8px" }}>
-        장바구니가 비어있어요
+      {/* 배경 장식 */}
+      <div style={{ position: "absolute", right: "-10px", bottom: "-10px", fontSize: "80px", opacity: 0.15 }}>🧪</div>
+      
+      <div style={{ position: "relative", zIndex: 1 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+          <span style={{ background: "rgba(255,255,255,0.2)", padding: "2px 8px", borderRadius: "8px", fontSize: "10px", fontWeight: 700 }}>AI NUTRITION REPORT</span>
+        </div>
+        <h3 style={{ fontSize: "18px", fontWeight: 900, marginBottom: "4px", letterSpacing: "-0.02em" }}>
+          안심이가 제안하는 <span style={{ color: "#FFE066" }}>'{profile.name}'</span> 맞춤 리포트
+        </h3>
+        <p style={{ fontSize: "12px", opacity: 0.9, marginBottom: "16px", lineHeight: 1.4 }}>
+          {keywordLabels.join(", ")} 집중 케어가 필요해 보여요! <br />
+          {getRecMessage(primaryKeyword)}
+        </p>
+        
+        <button style={{
+          background: "#fff", color: "#E5007E", border: "none", borderRadius: "10px",
+          padding: "8px 16px", fontSize: "12px", fontWeight: 800, cursor: "pointer",
+          display: "flex", alignItems: "center", gap: "4px", boxShadow: "0 4px 10px rgba(0,0,0,0.1)"
+        }}>
+          상세 보고서 보기
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+            <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
       </div>
-      <div className="shop-fade-up" style={{ animationDelay: "0.1s", fontSize: "14px", color: "#9CA3AF", marginBottom: "32px", textAlign: "center", lineHeight: 1.6 }}>
-        마음에 드는 상품을 담아보세요!<br />
-        안심이가 추천하는 제품을 확인해보세요 🐾
-      </div>
-      <button
-        className="shop-btn-hover shop-fade-up"
-        style={{
-          animationDelay: "0.2s",
-          background: "linear-gradient(135deg, #E5007E 0%, #FF4DA6 100%)",
-          color: "#fff", border: "none", borderRadius: "16px", padding: "16px 36px",
-          fontSize: "15px", fontWeight: 700, cursor: "pointer",
-          boxShadow: "0 4px 16px rgba(229,0,126,0.3)",
-        }}
-      >
-        쇼핑 시작하기
-      </button>
     </div>
   );
 }
 
-// ─── 마이 탭 ─────────────────────────────────────────────────────
-function MyTab() {
-  const { data: session } = useSession();
+// ─── 프로필 입력 모달 (PetProfileModal) ────────────────────────────
+function PetProfileModal({ isOpen, onClose, onSave, initialData }: { 
+  isOpen: boolean; onClose: () => void; onSave: (profile: PetProfile) => void; initialData: PetProfile | null 
+}) {
+  const [name, setName] = useState(initialData?.name || "");
+  const [type, setType] = useState<"dog" | "cat">(initialData?.type || "dog");
+  const [age, setAge] = useState(initialData?.age || "");
+  const [breed, setBreed] = useState(initialData?.breed || "");
+  const [selectedKeywords, setSelectedKeywords] = useState<string[]>(initialData?.keywords || []);
 
+  useEffect(() => {
+    if (isOpen) {
+      setName(initialData?.name || "");
+      setType(initialData?.type || "dog");
+      setAge(initialData?.age || "");
+      setBreed(initialData?.breed || "");
+      setSelectedKeywords(initialData?.keywords || []);
+    }
+  }, [initialData, isOpen]);
+
+  if (!isOpen) return null;
+
+  const toggleKeyword = (id: string) => {
+    setSelectedKeywords(prev => prev.includes(id) ? prev.filter(k => k !== id) : [...prev, id]);
+  };
+
+  const handleSave = () => {
+    if (!name || !age || !breed) {
+      alert("모든 정보를 입력해주세요!");
+      return;
+    }
+    onSave({ name, type, age, breed, keywords: selectedKeywords });
+  };
+
+  return (
+    <div style={{
+      position: "fixed", top: 0, left: 0, width: "100%", height: "100%",
+      background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)",
+      zIndex: 2000, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px"
+    }}>
+      <div className="shop-fade-in" style={{
+        width: "100%", maxWidth: "450px", background: "#fff", borderRadius: "28px",
+        padding: "32px 24px", position: "relative", boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
+        maxHeight: "90vh", overflowY: "auto"
+      }}>
+        <button onClick={onClose} style={{ position: "absolute", top: "20px", right: "20px", background: "none", border: "none", cursor: "pointer", fontSize: "20px", color: "#9CA3AF" }}>✕</button>
+        
+        <div style={{ textAlign: "center", marginBottom: "24px" }}>
+          <div style={{ fontSize: "32px", marginBottom: "8px" }}>🧁</div>
+          <h2 style={{ fontSize: "22px", fontWeight: 900, color: "#111", letterSpacing: "-0.03em" }}>우리 아이 연구 프로필</h2>
+          <p style={{ fontSize: "13px", color: "#666", marginTop: "4px" }}>안심이가 0.1% 정밀 분석을 시작합니다!</p>
+        </div>
+
+        <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+          <button 
+            onClick={() => setType("dog")}
+            style={{ flex: 1, padding: "12px", borderRadius: "14px", border: type === "dog" ? "2px solid #E5007E" : "1px solid #e2e8f0", background: type === "dog" ? "#FFF0F6" : "#fff", fontWeight: 700, fontSize: "14px", cursor: "pointer" }}
+          >🐕 강아지</button>
+          <button 
+            onClick={() => setType("cat")}
+            style={{ flex: 1, padding: "12px", borderRadius: "14px", border: type === "cat" ? "2px solid #E5007E" : "1px solid #e2e8f0", background: type === "cat" ? "#FFF0F6" : "#fff", fontWeight: 700, fontSize: "14px", cursor: "pointer" }}
+          >🐈 고양이</button>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+          <div>
+            <label style={{ fontSize: "12px", fontWeight: 800, color: "#E5007E", marginBottom: "6px", display: "block" }}>이름</label>
+            <input 
+              value={name} onChange={e => setName(e.target.value)} 
+              placeholder="식별 가능한 이름을 적어주세요" 
+              style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#F9FAFB" }} 
+            />
+          </div>
+          <div style={{ display: "flex", gap: "12px" }}>
+            <div style={{ flex: 1 }}>
+              <label style={{ fontSize: "12px", fontWeight: 800, color: "#E5007E", marginBottom: "6px", display: "block" }}>나이</label>
+              <input 
+                value={age} onChange={e => setAge(e.target.value)} 
+                placeholder="예: 3살" 
+                style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#F9FAFB" }} 
+              />
+            </div>
+            <div style={{ flex: 2 }}>
+              <label style={{ fontSize: "12px", fontWeight: 800, color: "#E5007E", marginBottom: "6px", display: "block" }}>견종/묘종</label>
+              <input 
+                value={breed} onChange={e => setBreed(e.target.value)} 
+                placeholder="예: 푸들" 
+                style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "#F9FAFB" }} 
+              />
+            </div>
+          </div>
+
+          <div>
+            <label style={{ fontSize: "12px", fontWeight: 800, color: "#E5007E", marginBottom: "10px", display: "block" }}>
+              현재 가장 걱정되는 건강 키워드(정밀 분석 모드)
+            </label>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+              {HEALTH_KEYWORDS.map(k => (
+                <button
+                  key={k.id}
+                  onClick={() => toggleKeyword(k.id)}
+                  style={{
+                    padding: "10px", borderRadius: "12px", fontSize: "12px", fontWeight: 600,
+                    cursor: "pointer", border: "1px solid", transition: "all 0.2s",
+                    display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "2px",
+                    background: selectedKeywords.includes(k.id) ? "#E5007E" : "#fff",
+                    borderColor: selectedKeywords.includes(k.id) ? "#E5007E" : "#e2e8f0",
+                    color: selectedKeywords.includes(k.id) ? "#fff" : "#111"
+                  }}
+                >
+                  <div style={{ fontSize: "14px" }}>{k.emoji} {k.label}</div>
+                  <div style={{ fontSize: "9px", opacity: 0.7 }}>{k.hashtags[0]} {k.hashtags[1]}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <button 
+          onClick={handleSave}
+          style={{
+            width: "100%", marginTop: "32px", padding: "16px", borderRadius: "16px",
+            background: "#E5007E", color: "#fff", border: "none", fontSize: "16px", fontWeight: 800,
+            cursor: "pointer", boxShadow: "0 4px 12px rgba(229, 0, 126, 0.3)"
+          }}
+        >
+          연구 프로필 저장하기
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── 내 마이페이지 탭 (My Tab) ────────────────────────────────────
+function MyTab({ profile, onOpenModal }: { profile: PetProfile | null; onOpenModal: () => void }) {
+  const { data: session } = useSession();
+  
   const menuItems = [
-    { emoji: "❤️", label: "찜한 상품", sub: "0개" },
-    { emoji: "⭐", label: "리뷰 관리", sub: "0개" },
-    { emoji: "🎟️", label: "쿠폰함", sub: "0개" },
-    { emoji: "🐾", label: "반려동물 프로필", sub: "설정하기" },
-    { emoji: "💬", label: "1:1 문의", sub: "안심이에게 물어보기" },
-    { emoji: "📋", label: "이용약관 / 개인정보", sub: "" },
+    { label: "구독 관리", emoji: "💎", sub: "월 4,900원 패키지" },
+    { label: "배송지 관리", emoji: "📍" },
+    { label: "내 연구 기록", emoji: "📝" },
+    { label: "포인트/쿠폰", emoji: "🎟️", sub: "0P" },
+    { label: "상담 내역", emoji: "💬" },
+    { label: "고객센터", emoji: "📞" },
   ];
 
   return (
-    <div style={{ paddingBottom: "86px" }}>
-      {/* 상단 프로필 배너 */}
+    <div style={{ paddingBottom: "100px", background: "#F9FAFB" }}>
+      {/* 프로필 헤더 */}
       <div style={{
-        padding: "28px 22px", color: "#fff", position: "relative", overflow: "hidden",
-        background: "linear-gradient(135deg, #E5007E 0%, #7C3AED 50%, #4F46E5 100%)",
+        background: "linear-gradient(180deg, #E5007E 0%, #FF2E9D 100%)",
+        padding: "40px 24px 60px",
+        borderRadius: "0 0 32px 32px",
+        color: "#fff",
+        position: "relative",
       }}>
-        {/* 데코 */}
-        <div style={{
-          position: "absolute", top: "-40px", right: "-40px", width: "160px", height: "160px",
-          borderRadius: "50%", background: "rgba(255,255,255,0.08)",
-        }} />
-        <div style={{
-          position: "absolute", bottom: "-30px", left: "20%", width: "100px", height: "100px",
-          borderRadius: "50%", background: "rgba(255,255,255,0.06)",
-        }} />
-        <div style={{ fontSize: "12px", opacity: 0.85, marginBottom: "4px", position: "relative" }}>{session ? "반가워요!" : "로그인하고 더 많은 혜택을"}</div>
-        <div className="shop-fade-up" style={{ fontSize: "24px", fontWeight: 800, marginBottom: "20px", position: "relative" }}>
-          {session ? `${session.user?.name}님 👋` : "안녕하세요, 반려인님 👋"}
+        <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "20px" }}>
+          <div style={{
+            width: "64px", height: "64px", borderRadius: "24px",
+            background: "rgba(255,255,255,0.2)", backdropFilter: "blur(8px)",
+            display: "flex", alignItems: "center", justifyContent: "center", fontSize: "32px",
+            border: "2px solid rgba(255,255,255,0.4)"
+          }}>
+            {session?.user?.image ? (
+              <img src={session.user.image} style={{ width: "100%", height: "100%", borderRadius: "24px" }} alt="me" />
+            ) : "👤"}
+          </div>
+          <div>
+            <div style={{ fontSize: "20px", fontWeight: 900 }}>{session?.user?.name || "방문자"} 사장님</div>
+            <div style={{ fontSize: "12px", opacity: 0.8, marginTop: "2px" }}>오늘도 안심이와 함께 연구해요!</div>
+          </div>
         </div>
+        
         {!session ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px", position: "relative" }}>
-            {/* Google Login Button */}
-            <button
-              onClick={() => signIn("google", { callbackUrl: "/shop" })}
-              className="shop-btn-hover"
-              style={{
-                width: "100%", background: "#fff", border: "1px solid #e5e7eb", borderRadius: "14px",
-                color: "#374151", padding: "12px", fontSize: "14px", fontWeight: 700, 
-                cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "12px",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-              }}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24">
-                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 12-4.53z" fill="#EA4335"/>
-              </svg>
-              구글로 계속하기
-            </button>
-            {/* Kakao Login Button */}
+          <div style={{ background: "rgba(0,0,0,0.15)", borderRadius: "18px", padding: "16px", marginTop: "10px" }}>
             <button
               onClick={() => signIn("kakao", { callbackUrl: "/shop" })}
               className="shop-btn-hover"
@@ -993,9 +1167,77 @@ function MyTab() {
         )}
       </div>
 
+       {/* [0순위] 우리 아이 연구 프로필 섹션 */}
+      <div style={{ margin: "-30px 16px 20px", position: "relative", zIndex: 110 }}>
+        {(!profile || !profile.name) ? (
+          <div 
+            onClick={onOpenModal}
+            className="shop-fade-up shop-btn-hover"
+            style={{
+              background: "#fff", borderRadius: "24px", padding: "24px",
+              border: "1px solid rgba(0,0,0,0.05)", boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+              display: "flex", flexDirection: "column", alignItems: "center", cursor: "pointer"
+            }}
+          >
+            <div style={{ fontSize: "40px", marginBottom: "12px" }}>🔍</div>
+            <div style={{ fontSize: "16px", fontWeight: 800, color: "#111" }}>우리 아이 연구 프로필 등록하기</div>
+            <p style={{ fontSize: "12px", color: "#9CA3AF", marginTop: "4px", textAlign: "center" }}>
+              프로필을 등록하면 안심이가 0.1% 정밀 분석을 통해 <br /> 맞춤형 건강 리포트를 전해드려요!
+            </p>
+            <div style={{ 
+              marginTop: "16px", background: "#E5007E", color: "#fff", padding: "8px 20px", 
+              borderRadius: "12px", fontSize: "13px", fontWeight: 700 
+            }}>
+              10초 만에 등록하기
+            </div>
+          </div>
+        ) : (
+          <div 
+            className="shop-fade-up"
+            style={{
+              background: "#fff", borderRadius: "24px", padding: "20px",
+              border: "1px solid rgba(0,0,0,0.05)", boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" }}>
+              <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                <div style={{ fontSize: "28px", background: "#fdf2f8", width: "50px", height: "50px", borderRadius: "16px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  {profile.type === "dog" ? "🐕" : "🐈"}
+                </div>
+                <div>
+                  <div style={{ fontSize: "16px", fontWeight: 800 }}>{profile.name} <span style={{ fontSize: "12px", fontWeight: 400, color: "#9CA3AF" }}>({profile.breed}, {profile.age})</span></div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", marginTop: "4px" }}>
+                    {(profile.keywords || []).map(k => (
+                      <span key={k} style={{ fontSize: "10px", background: "#fdf2f8", border: "1px solid #fce7f3", padding: "1px 6px", borderRadius: "6px", color: "#E5007E" }}>
+                        #{HEALTH_KEYWORDS.find(hk => hk.id === k)?.label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <button 
+                onClick={onOpenModal}
+                style={{ fontSize: "12px", color: "#E5007E", background: "none", border: "none", cursor: "pointer", fontWeight: 600, padding: "4px" }}
+              >
+                수정
+              </button>
+            </div>
+            <div style={{ 
+              background: "#F9FAFB", borderRadius: "12px", padding: "10px 14px", 
+              fontSize: "11px", color: "#444", borderLeft: "4px solid #E5007E" 
+            }}>
+              💡 {HEALTH_KEYWORDS.find(hk => (profile.keywords || []).includes(hk.id))?.tip || "정밀 분석 중..."}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 개인화 큐레이션 배너 (프로필이 있을 때만 노출) */}
+      {profile && profile.name && <CurationBanner profile={profile} />}
+
       {/* 주문 현황 카드 */}
       <div className="shop-fade-up" style={{
-        margin: "16px 16px 12px", background: "#fff", borderRadius: "18px",
+        margin: "0 16px 12px", background: "#fff", borderRadius: "18px",
         border: "1px solid rgba(0,0,0,0.05)", padding: "18px",
         boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
       }}>
@@ -1202,6 +1444,34 @@ function RequestTab() {
 export default function ShopClient() {
   const [activeTab, setActiveTab] = useState<"discovery" | "shop" | "cart" | "request" | "my">("discovery");
   const [products, setProducts] = useState<any[]>(MOCK_PRODUCTS);
+  const [petProfile, setPetProfile] = useState<PetProfile | null>(null);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+
+  // 로컬 스토리지에서 프로필 로드
+  useEffect(() => {
+    const saved = localStorage.getItem("magenta_pet_profile");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        // 데이터 정합성 체크 (이름이 없으면 무효화)
+        if (parsed && typeof parsed === 'object' && parsed.name) {
+          setPetProfile(parsed);
+        } else {
+          localStorage.removeItem("magenta_pet_profile");
+          setPetProfile(null);
+        }
+      } catch (e) {
+        console.error("Failed to parse pet profile", e);
+        localStorage.removeItem("magenta_pet_profile");
+      }
+    }
+  }, []);
+
+  const savePetProfile = (profile: PetProfile) => {
+    setPetProfile(profile);
+    localStorage.setItem("magenta_pet_profile", JSON.stringify(profile));
+    setIsProfileModalOpen(false);
+  };
 
   useEffect(() => {
     async function fetchProducts() {
@@ -1245,8 +1515,16 @@ export default function ShopClient() {
         {activeTab === "shop" && <ShopTab products={products} />}
         {activeTab === "cart" && <CartTab />}
         {activeTab === "request" && <RequestTab />}
-        {activeTab === "my" && <MyTab />}
+        {activeTab === "my" && <MyTab profile={petProfile} onOpenModal={() => setIsProfileModalOpen(true)} />}
       </div>
+
+      {/* 공통 모달 */}
+      <PetProfileModal 
+        isOpen={isProfileModalOpen} 
+        onClose={() => setIsProfileModalOpen(false)} 
+        onSave={savePetProfile}
+        initialData={petProfile}
+      />
 
       {/* 하단 탭바 */}
       <nav className="shop-tab-bar" style={{
