@@ -812,7 +812,6 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
           ))}
         </div>
       </div>
-      </div>
 
       {/* 🔥 베스트셀러 가로 스크롤 */}
       <div style={{ paddingBottom: "24px" }}>
