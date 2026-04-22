@@ -1277,32 +1277,49 @@ function PetProfileModal({ isOpen, onClose, onSave, initialData }: {
         <button onClick={onClose} style={{ position: "absolute", top: "20px", right: "20px", background: "none", border: "none", cursor: "pointer", fontSize: "20px", color: "#9CA3AF" }}>✕</button>
         
         <div style={{ textAlign: "center", marginBottom: "24px" }}>
-          {/* 사진 업로드 영역 */}
-          <div style={{ position: "relative", width: "100px", height: "100px", margin: "0 auto 16px" }}>
+          {/* 사진 업로드 영역 (아이 증명사진) */}
+          <div style={{ position: "relative", width: "120px", height: "120px", margin: "0 auto 20px" }}>
             <div 
               onClick={() => fileInputRef.current?.click()}
               style={{
-                width: "100px", height: "100px", borderRadius: "50%",
+                width: "120px", height: "120px", borderRadius: "50%",
                 background: "#F3F4F6", overflow: "hidden", cursor: "pointer",
-                border: "3px solid #FFF", boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                display: "flex", alignItems: "center", justifyContent: "center"
+                border: "4px solid #fff", boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                transition: "all 0.3s ease",
+                position: "relative"
               }}
+              className="shop-card-hover"
             >
               {previewUrl || photoUrl ? (
                 <img src={previewUrl || photoUrl} alt="pet" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               ) : (
-                <div style={{ fontSize: "40px" }}>{type === "dog" ? "🐶" : "🐱"}</div>
+                <div style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: "48px", marginBottom: "4px" }}>{type === "dog" ? "🐶" : "🐱"}</div>
+                  <div style={{ fontSize: "10px", color: "#9CA3AF", fontWeight: 700 }}>사진 등록</div>
+                </div>
               )}
+              {/* 오버레이 효과 */}
+              <div style={{
+                position: "absolute", inset: 0, background: "rgba(0,0,0,0.2)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                opacity: 0, transition: "opacity 0.3s ease"
+              }} className="hover-overlay">
+                <Camera size={24} color="#fff" />
+              </div>
             </div>
             <button 
               onClick={() => fileInputRef.current?.click()}
               style={{
-                position: "absolute", bottom: "0", right: "0",
-                background: "#E5007E", color: "#fff", border: "none",
-                width: "32px", height: "32px", borderRadius: "50%",
+                position: "absolute", bottom: "4px", right: "4px",
+                background: "linear-gradient(135deg, #E5007E 0%, #FF4DA6 100%)",
+                color: "#fff", border: "2px solid #fff",
+                width: "36px", height: "36px", borderRadius: "50%",
                 display: "flex", alignItems: "center", justifyContent: "center",
-                boxShadow: "0 2px 8px rgba(229,0,126,0.4)", cursor: "pointer"
+                boxShadow: "0 4px 12px rgba(229,0,126,0.4)", cursor: "pointer",
+                zIndex: 2
               }}
+              className="shop-btn-hover"
             >
               <Camera size={18} />
             </button>
@@ -1315,8 +1332,12 @@ function PetProfileModal({ isOpen, onClose, onSave, initialData }: {
             />
           </div>
           
-          <h2 style={{ fontSize: "22px", fontWeight: 900, color: "#111", letterSpacing: "-0.03em" }}>우리 아이 연구 프로필</h2>
-          <p style={{ fontSize: "13px", color: "#666", marginTop: "4px" }}>안심이가 0.1% 정밀 분석을 시작합니다!</p>
+          <h2 style={{ fontSize: "24px", fontWeight: 900, color: "#111", letterSpacing: "-0.04em", marginBottom: "4px" }}>
+            {name ? `${name} 연구원` : "우리아이 연구 프로필"}
+          </h2>
+          <p style={{ fontSize: "13px", color: "#E5007E", fontWeight: 700, marginBottom: "24px" }}>
+            {name ? "0.1% 정밀 분석 시스템 가동 중 🧬" : "안심이가 정밀 분석을 시작합니다!"}
+          </p>
         </div>
 
         <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
@@ -1531,22 +1552,32 @@ function MyTab({ profiles, activeId, onSelect, onOpenModal, onEditModal, setActi
                   <div style={{ display: "flex", gap: "6px", marginTop: "4px" }}>
                     <span style={{ fontSize: "12px", color: "#6B7280" }}>{activePet.breed}</span>
                     <span style={{ fontSize: "12px", color: "#E5E7EB" }}>|</span>
-                    <span style={{ fontSize: "12px", color: "#6B7280" }}>
+                    <span style={{ fontSize: "12px", color: "#E5007E", fontWeight: 700 }}>
                       {(() => {
                         const { years, months } = calculatePreciseAge(activePet.birthYear, activePet.birthMonth, activePet.birthDay || 1);
                         return formatAgeString(years, months);
                       })()}
                     </span>
                   </div>
+                  <div style={{ 
+                    marginTop: "10px", fontSize: "11px", color: "#6B7280", 
+                    background: "#F3F4F6", padding: "4px 10px", borderRadius: "20px",
+                    display: "inline-block"
+                  }}>
+                    ✨ {activePet.name} 연구원이 지켜보고 있어요!
+                  </div>
                 </div>
                 <div 
                   onClick={onEditModal}
                   style={{ 
-                    background: "#F3F4F6", padding: "6px 12px", borderRadius: "10px", 
-                    fontSize: "12px", fontWeight: 700, color: "#4B5563", cursor: "pointer" 
+                    background: "linear-gradient(135deg, #E5007E 0%, #FF4DA6 100%)", 
+                    padding: "8px 16px", borderRadius: "12px", 
+                    fontSize: "12px", fontWeight: 800, color: "#fff", cursor: "pointer",
+                    boxShadow: "0 4px 12px rgba(229,0,126,0.2)"
                   }}
+                  className="shop-btn-hover"
                 >
-                  정보 수정
+                  수정하기
                 </div>
               </div>
 
