@@ -16,6 +16,7 @@ interface Product {
   category: string;
   badge?: string;
   stock?: number;
+  detail_images?: string[];
   details_link?: string;
   created_at?: string;
 }
@@ -157,7 +158,7 @@ export default function ShopAdminPage() {
     } catch (e) { console.error("File deletion failed", e); }
   };
 
-  const uploadMedia = async (file: File, folder: string) => {
+  const uploadMedia = async (file: File, folder: string): Promise<string | null> => {
     setUploading(true);
     try {
       const currentUrl = activeTab === "products" ? currentProduct.image_url : currentBanner.image_url;
@@ -174,8 +175,14 @@ export default function ShopAdminPage() {
       
       if (activeTab === "products") setCurrentProduct({ ...currentProduct, image_url: publicUrl });
       else setCurrentBanner({ ...currentBanner, image_url: publicUrl });
-    } catch (error: any) { alert("업로드 실패: " + error.message); }
-    finally { setUploading(false); }
+      
+      setUploading(false);
+      return publicUrl;
+    } catch (error: any) { 
+      alert("업로드 실패: " + error.message); 
+      setUploading(false);
+      return null;
+    }
   };
 
   // CRUD Operations
@@ -189,7 +196,8 @@ export default function ShopAdminPage() {
       stock: Number(updateData.stock || 0),
       category: updateData.category,
       image_url: updateData.image_url,
-      details_link: updateData.details_link
+      details_link: updateData.details_link,
+      detail_images: updateData.detail_images || []
     };
     let result;
     if (id) result = await supabase.from("products").update(payload).eq("id", id);
@@ -336,8 +344,75 @@ export default function ShopAdminPage() {
                   </select>
                   <input type="number" style={inputStyle} placeholder="재고" value={currentProduct.stock || 0} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentProduct({...currentProduct, stock: Number(e.target.value)})} />
                   <div style={{ gridColumn: "span 2" }}>
-                    <input style={inputStyle} placeholder="상세 페이지 링크 URL" value={currentProduct.details_link || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentProduct({...currentProduct, details_link: e.target.value})} />
-                    <button onClick={handleSaveProduct} style={saveActionBtnStyle}>상품 데이터 저장</button>
+                    <label style={labelStyle}>상세페이지 이미지 갤러리 (여러 장 드래그 업로드 가능)</label>
+                    <div style={{ 
+                      border: "2px dashed rgba(255,255,255,0.1)", borderRadius: "16px", padding: "20px",
+                      background: "rgba(15, 23, 42, 0.4)", marginBottom: "16px"
+                    }}>
+                      <input 
+                        type="file" 
+                        multiple 
+                        onChange={async (e) => {
+                          if (e.target.files) {
+                            setUploading(true);
+                            const files = Array.from(e.target.files);
+                            const newUrls: string[] = [];
+                            for (const file of files) {
+                              const url = await uploadMedia(file, "products");
+                              if (url) newUrls.push(url);
+                            }
+                            setCurrentProduct({
+                              ...currentProduct, 
+                              detail_images: [...(currentProduct.detail_images || []), ...newUrls]
+                            });
+                            setUploading(false);
+                          }
+                        }}
+                        style={{ marginBottom: "16px", fontSize: "12px" }}
+                      />
+                      
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+                        {(currentProduct.detail_images || []).map((img: string, idx: number) => (
+                          <div key={idx} style={{ position: "relative", width: "80px", height: "100px" }}>
+                            <img src={img} style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.1)" }} />
+                            <div style={{ position: "absolute", top: "-5px", right: "-5px", display: "flex", gap: "2px" }}>
+                              <button 
+                                onClick={() => {
+                                  const newList = [...(currentProduct.detail_images || [])];
+                                  if (idx > 0) {
+                                    [newList[idx], newList[idx-1]] = [newList[idx-1], newList[idx]];
+                                    setCurrentProduct({...currentProduct, detail_images: newList});
+                                  }
+                                }}
+                                style={{ background: "#334155", color: "#fff", border: "none", borderRadius: "4px", padding: "2px", fontSize: "10px", cursor: "pointer" }}
+                              >◀</button>
+                              <button 
+                                onClick={() => {
+                                  const newList = (currentProduct.detail_images || []).filter((_, i) => i !== idx);
+                                  setCurrentProduct({...currentProduct, detail_images: newList});
+                                }}
+                                style={{ background: "#EF4444", color: "#fff", border: "none", borderRadius: "4px", padding: "2px", fontSize: "10px", cursor: "pointer" }}
+                              >X</button>
+                              <button 
+                                onClick={() => {
+                                  const newList = [...(currentProduct.detail_images || [])];
+                                  if (idx < newList.length - 1) {
+                                    [newList[idx], newList[idx+1]] = [newList[idx+1], newList[idx]];
+                                    setCurrentProduct({...currentProduct, detail_images: newList});
+                                  }
+                                }}
+                                style={{ background: "#334155", color: "#fff", border: "none", borderRadius: "4px", padding: "2px", fontSize: "10px", cursor: "pointer" }}
+                              >▶</button>
+                            </div>
+                            <div style={{ position: "absolute", bottom: "0", left: "0", right: "0", background: "rgba(0,0,0,0.5)", color: "#fff", fontSize: "10px", textAlign: "center", borderBottomLeftRadius: "8px", borderBottomRightRadius: "8px" }}>
+                              {idx + 1}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <input style={inputStyle} placeholder="외부 사이트 상세 페이지 링크 (필요 시)" value={currentProduct.details_link || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentProduct({...currentProduct, details_link: e.target.value})} />
+                    <button onClick={handleSaveProduct} style={saveActionBtnStyle}>상품 데이터 저장 🚀</button>
                   </div>
                 </div>
               </div>
@@ -354,24 +429,50 @@ export default function ShopAdminPage() {
                 />
                 <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
                   <div style={{ display: "flex", gap: "10px" }}>
-                    <select 
-                      style={{ ...inputStyle, flex: 1 }} 
-                      value={currentBanner.banner_type || "standard"} 
-                      onChange={(e) => setCurrentBanner({...currentBanner, banner_type: e.target.value as any})}
-                    >
-                      <option value="standard">일반 가로 배너</option>
-                      <option value="story">9:16 스토리 배너</option>
-                    </select>
-                    <input style={{ ...inputStyle, flex: 2 }} placeholder="배너 제목 (예: 어린이날 특집)" value={currentBanner.title || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentBanner({...currentBanner, title: e.target.value})} />
+                    <div style={{ flex: 1 }}>
+                      <label style={labelStyle}>배너 형태</label>
+                      <select 
+                        style={inputStyle} 
+                        value={currentBanner.banner_type || "standard"} 
+                        onChange={(e) => setCurrentBanner({...currentBanner, banner_type: e.target.value as any})}
+                      >
+                        <option value="standard">일반 가로 배너 (Main)</option>
+                        <option value="story">9:16 스토리 배너 (Story)</option>
+                      </select>
+                    </div>
+                    <div style={{ flex: 2 }}>
+                      <label style={labelStyle}>배너 제목 (Landing Title)</label>
+                      <input style={inputStyle} placeholder="예: 어린이날 특집 픽 상품" value={currentBanner.title || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentBanner({...currentBanner, title: e.target.value})} />
+                    </div>
                   </div>
-                  <input style={inputStyle} placeholder="보조 설명" value={currentBanner.sub_text || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentBanner({...currentBanner, sub_text: e.target.value})} />
+                  
+                  <div>
+                    <label style={labelStyle}>보조 설명 (Sub-text, 공란 가능)</label>
+                    <input style={inputStyle} placeholder="예: 우리 아이를 위한 특별한 선물" value={currentBanner.sub_text || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentBanner({...currentBanner, sub_text: e.target.value})} />
+                  </div>
+
                   <div style={{ display: "flex", gap: "10px" }}>
-                    <input style={inputStyle} placeholder="이모지 (🧪)" value={currentBanner.emoji || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentBanner({...currentBanner, emoji: e.target.value})} />
-                    <input style={{...inputStyle, flex: 2}} placeholder="그라데이션 (linear-gradient...)" value={currentBanner.bg_gradient || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentBanner({...currentBanner, bg_gradient: e.target.value})} />
+                    <div style={{ flex: 1 }}>
+                      <label style={labelStyle}>대표 이모지</label>
+                      <input style={inputStyle} placeholder="🧪" value={currentBanner.emoji || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentBanner({...currentBanner, emoji: e.target.value})} />
+                    </div>
+                    <div style={{ flex: 2 }}>
+                      <label style={labelStyle}>배경 그라데이션 (이미지 없을 때 사용)</label>
+                      <input style={inputStyle} placeholder="linear-gradient(135deg, #FF6B9D, #E5007E)" value={currentBanner.bg_gradient || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentBanner({...currentBanner, bg_gradient: e.target.value})} />
+                    </div>
                   </div>
-                  <input style={inputStyle} placeholder="연결 링크 URL (공백 가능)" value={currentBanner.link_url || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentBanner({...currentBanner, link_url: e.target.value})} />
-                  <input type="number" style={inputStyle} placeholder="우선순위 (낮을수록 앞)" value={currentBanner.order_index || 0} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentBanner({...currentBanner, order_index: Number(e.target.value)})} />
-                  <button onClick={handleSaveBanner} style={saveActionBtnStyle}>배너 라이브러리 저장</button>
+
+                  <div>
+                    <label style={labelStyle}>연결 링크 (클릭 시 이동할 랜딩 페이지 URL)</label>
+                    <input style={inputStyle} placeholder="https://..." value={currentBanner.link_url || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentBanner({...currentBanner, link_url: e.target.value})} />
+                  </div>
+
+                  <div>
+                    <label style={labelStyle}>노출 순서 (숫자가 작을수록 앞에 나옵니다)</label>
+                    <input type="number" style={inputStyle} placeholder="1" value={currentBanner.order_index || 0} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentBanner({...currentBanner, order_index: Number(e.target.value)})} />
+                  </div>
+
+                  <button onClick={handleSaveBanner} style={saveActionBtnStyle}>배너 라이브러리 저장 🚀</button>
                 </div>
               </div>
             )}
@@ -479,7 +580,11 @@ function ImageDropzone({ url, uploading, onUpload, onClear }: any) {
       >
         {uploading ? <p style={{ color: "#E5007E", fontWeight: 700 }}>현미경 스캔 중...</p> : 
           url ? <div style={{ position: "relative", width: "100%", height: "100%" }}><img src={url} style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "24px" }} /><div style={magnifierOverlayStyle} /></div> 
-          : <div style={{ textAlign: "center" }}><p>이미지를 드래그해주세요</p><input type="file" onChange={(e) => e.target.files && onUpload(e.target.files[0])} style={{ position: "absolute", inset: 0, opacity: 0, cursor: "pointer" }} /></div>}
+          : <div style={{ textAlign: "center" }}>
+              <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.6)", marginBottom: "4px" }}>배너 이미지를 올려주세요</p>
+              <p style={{ fontSize: "11px", color: "rgba(255,255,255,0.3)" }}>가로형 또는 9:16 세로형</p>
+              <input type="file" onChange={(e) => e.target.files && onUpload(e.target.files[0])} style={{ position: "absolute", inset: 0, opacity: 0, cursor: "pointer" }} />
+            </div>}
       </div>
       {url && <button onClick={onClear} style={{ ...miniBtnStyle, marginTop: "12px", width: "100%" }}>이미지 초기화 🗑️</button>}
     </div>

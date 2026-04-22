@@ -146,8 +146,23 @@ export default async function ProductDetailPage({
             <button className="pb-4 text-sm font-bold text-gray-400 tracking-wider hover:text-gray-600 transition-colors">Q&A</button>
           </div>
           
-          <div className="py-8 text-center bg-gray-50 rounded-3xl mb-12">
-            <p className="text-gray-400 text-sm font-medium">상세 이미지 준비 중입니다.</p>
+          <div className="space-y-4 mb-12">
+            {(product.detail_images && product.detail_images.length > 0) ? (
+              product.detail_images.map((img: string, idx: number) => (
+                <img 
+                  key={idx} 
+                  src={img} 
+                  alt={`${product.name} 상세설명 ${idx + 1}`} 
+                  className="w-full h-auto block rounded-xl md:rounded-3xl"
+                  loading="lazy"
+                />
+              ))
+            ) : (
+              <div className="py-24 text-center bg-gray-50 rounded-3xl">
+                <div className="text-4xl mb-4">🧪</div>
+                <p className="text-gray-400 text-sm font-black tracking-tight">마젠타 연구소에서 상세 정보를 정밀 분석 중입니다.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
