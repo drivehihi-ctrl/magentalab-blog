@@ -1458,6 +1458,13 @@ function MyTab({ profiles, activeId, onSelect, onOpenModal, onEditModal, setActi
   const { data: session } = useSession();
   const activePet = profiles.find(p => p.id === activeId) || profiles[0] || null;
   
+  // 생일 체크 로직 (0.1% 정밀 축하 시스템)
+  const isBirthday = useMemo(() => {
+    if (!activePet) return false;
+    const now = new Date();
+    return now.getMonth() + 1 === activePet.birthMonth && now.getDate() === (activePet.birthDay || 1);
+  }, [activePet]);
+
   const menuItems = [
     { id: "address", label: "배송지 관리", emoji: "📍" },
     { id: "research", label: "내 연구 기록", emoji: "📝" },
@@ -1534,6 +1541,26 @@ function MyTab({ profiles, activeId, onSelect, onOpenModal, onEditModal, setActi
 
       {/* [업그레이드] 우리 아이 연구 프로필 섹션 (가로 아바타 스와이프 UI) */}
       <div style={{ margin: "-30px 0 20px", position: "relative", zIndex: 110 }}>
+        
+        {/* 생일 축하 배너 (안심이의 감동 팝업) */}
+        {isBirthday && activePet && (
+          <div className="shop-fade-up" style={{
+            margin: "0 16px 16px",
+            background: "linear-gradient(135deg, #FF6B6B 0%, #E5007E 100%)",
+            borderRadius: "16px", padding: "16px", color: "#fff",
+            display: "flex", alignItems: "center", gap: "12px",
+            boxShadow: "0 8px 20px rgba(229,0,126,0.25)",
+            border: "2px solid #fff"
+          }}>
+            <div style={{ fontSize: "32px" }}>🎂</div>
+            <div>
+              <div style={{ fontSize: "14px", fontWeight: 900 }}>축하합니다! 🥳</div>
+              <div style={{ fontSize: "12px", opacity: 0.9 }}>
+                오늘은 {activePet.name} 연구원의 {calculatePreciseAge(activePet.birthYear, activePet.birthMonth, activePet.birthDay || 1).years}살 생일이에요!
+              </div>
+            </div>
+          </div>
+        )}
         
         {/* 현재 선택된 아이 상세 요약 카드 */}
         {activePet ? (
@@ -1737,8 +1764,11 @@ function MyTab({ profiles, activeId, onSelect, onOpenModal, onEditModal, setActi
 
             <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginBottom: "16px" }}>
               {(activePet.keywords || []).map(k => (
-                <span key={k} style={{ fontSize: "11px", background: "#f1f5f9", padding: "4px 10px", borderRadius: "8px", color: "#475569", fontWeight: 600 }}>
-                  #{HEALTH_KEYWORDS.find(hk => hk.id === k)?.label}
+                <span key={k} style={{ 
+                  fontSize: "11px", background: "#f1f5f9", padding: "4px 10px", borderRadius: "8px", 
+                  color: "#475569", fontWeight: 600, border: "1px solid #e2e8f0" 
+                }}>
+                  #{HEALTH_KEYWORDS.find(hk => hk.id === k)?.label || k}
                 </span>
               ))}
             </div>
