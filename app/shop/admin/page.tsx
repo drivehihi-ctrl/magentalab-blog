@@ -162,16 +162,24 @@ export default function ShopAdminPage() {
     setUploading(true);
     try {
       const currentUrl = activeTab === "products" ? currentProduct.image_url : currentBanner.image_url;
-      if (currentUrl) await deleteOldFile(currentUrl, PRODUCT_BUCKET);
+      if (currentUrl) await deleteOldFile(currentUrl, folder);
       
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `${folder}/${fileName}`;
+      const formData = new FormData();
+      formData.append("file", file);
+      // folder 인자에 보관함 이름(products 또는 banners)이 담겨 있으므로 이를 사용합니다.
+      formData.append("bucket", folder); 
+      formData.append("folder", ""); // 폴더는 따로 쓰지 않고 루트에 저장합니다.
 
-      const { error: uploadError } = await supabase.storage.from(PRODUCT_BUCKET).upload(filePath, file);
-      if (uploadError) throw uploadError;
+      // 서버 사이드 전용 통로(API)를 통해 RLS를 우회하여 업로드
+      const response = await fetch("/api/shop/upload", {
+        method: "POST",
+        body: formData,
+      });
 
-      const { data: { publicUrl } } = supabase.storage.from(PRODUCT_BUCKET).getPublicUrl(filePath);
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "업로드 실패");
+
+      const publicUrl = result.url;
       
       if (activeTab === "products") setCurrentProduct({ ...currentProduct, image_url: publicUrl });
       else setCurrentBanner({ ...currentBanner, image_url: publicUrl });
@@ -179,7 +187,7 @@ export default function ShopAdminPage() {
       setUploading(false);
       return publicUrl;
     } catch (error: any) { 
-      alert("업로드 실패: " + error.message); 
+      alert("업로드 실패 (안심이 특급처방 가동 중): " + error.message); 
       setUploading(false);
       return null;
     }
