@@ -15,6 +15,7 @@ interface Product {
   image_url: string;
   category: string;
   badge?: string;
+  stock?: number;
   is_weekly_pick?: boolean;
   weekly_pick_image_url?: string;
   details_link?: string;
