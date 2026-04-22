@@ -16,8 +16,6 @@ interface Product {
   category: string;
   badge?: string;
   stock?: number;
-  is_weekly_pick?: boolean;
-  weekly_pick_image_url?: string;
   details_link?: string;
   created_at?: string;
 }
@@ -31,6 +29,7 @@ interface Banner {
   image_url?: string;
   link_url?: string;
   order_index: number;
+  banner_type?: "standard" | "story";
 }
 
 interface CareGuide {
@@ -181,9 +180,7 @@ export default function ShopAdminPage() {
 
   // CRUD Operations
   async function handleSaveProduct() {
-    // Supabase에 저장할 데이터만 정밀하게 추출 (ID와 날짜 등 제외)
     const { id, created_at, ...updateData } = currentProduct as any;
-    
     const payload = { 
       name: updateData.name,
       brand: updateData.brand,
@@ -192,25 +189,13 @@ export default function ShopAdminPage() {
       stock: Number(updateData.stock || 0),
       category: updateData.category,
       image_url: updateData.image_url,
-      details_link: updateData.details_link,
-      is_weekly_pick: !!updateData.is_weekly_pick,
-      weekly_pick_image_url: updateData.weekly_pick_image_url
+      details_link: updateData.details_link
     };
-
     let result;
-    if (id) {
-      result = await supabase.from("products").update(payload).eq("id", id);
-    } else {
-      result = await supabase.from("products").insert([payload]);
-    }
-
-    if (result.error) {
-      console.error("Save error:", result.error);
-      alert("저장 실패: " + result.error.message);
-    } else {
-      setIsEditing(false); 
-      fetchProducts();
-    }
+    if (id) result = await supabase.from("products").update(payload).eq("id", id);
+    else result = await supabase.from("products").insert([payload]);
+    if (result.error) alert("저장 실패: " + result.error.message);
+    else { setIsEditing(false); fetchProducts(); }
   }
 
   async function handleSaveBanner() {
@@ -221,7 +206,8 @@ export default function ShopAdminPage() {
       emoji: currentBanner.emoji,
       image_url: currentBanner.image_url,
       link_url: currentBanner.link_url,
-      order_index: Number(currentBanner.order_index || 0)
+      order_index: Number(currentBanner.order_index || 0),
+      banner_type: currentBanner.banner_type || "standard"
     };
     if (currentBanner.id) await supabase.from("shop_banners").update(payload).eq("id", currentBanner.id);
     else await supabase.from("shop_banners").insert([payload]);
@@ -350,21 +336,6 @@ export default function ShopAdminPage() {
                   </select>
                   <input type="number" style={inputStyle} placeholder="재고" value={currentProduct.stock || 0} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentProduct({...currentProduct, stock: Number(e.target.value)})} />
                   <div style={{ gridColumn: "span 2" }}>
-                    <div style={{ 
-                      background: "rgba(229, 0, 126, 0.1)", padding: "12px 16px", borderRadius: "12px", 
-                      marginBottom: "16px", display: "flex", alignItems: "center", gap: "12px", border: "1px solid rgba(229, 0, 126, 0.2)" 
-                    }}>
-                      <input 
-                        type="checkbox" 
-                        id="is_weekly_pick"
-                        checked={!!currentProduct.is_weekly_pick} 
-                        onChange={(e) => setCurrentProduct({...currentProduct, is_weekly_pick: e.target.checked})}
-                        style={{ width: "20px", height: "20px", accentColor: "#E5007E", cursor: "pointer" }}
-                      />
-                      <label htmlFor="is_weekly_pick" style={{ fontSize: "14px", fontWeight: 800, color: "#FF6B9D", cursor: "pointer" }}>
-                        🐾 안심이의 이번 주 PICK으로 선정하기
-                      </label>
-                    </div>
                     <input style={inputStyle} placeholder="상세 페이지 링크 URL" value={currentProduct.details_link || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentProduct({...currentProduct, details_link: e.target.value})} />
                     <button onClick={handleSaveProduct} style={saveActionBtnStyle}>상품 데이터 저장</button>
                   </div>
@@ -382,7 +353,17 @@ export default function ShopAdminPage() {
                   onClear={() => setCurrentBanner({...currentBanner, image_url: ""})}
                 />
                 <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-                  <input style={inputStyle} placeholder="배너 제목" value={currentBanner.title || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentBanner({...currentBanner, title: e.target.value})} />
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <select 
+                      style={{ ...inputStyle, flex: 1 }} 
+                      value={currentBanner.banner_type || "standard"} 
+                      onChange={(e) => setCurrentBanner({...currentBanner, banner_type: e.target.value as any})}
+                    >
+                      <option value="standard">일반 가로 배너</option>
+                      <option value="story">9:16 스토리 배너</option>
+                    </select>
+                    <input style={{ ...inputStyle, flex: 2 }} placeholder="배너 제목 (예: 어린이날 특집)" value={currentBanner.title || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentBanner({...currentBanner, title: e.target.value})} />
+                  </div>
                   <input style={inputStyle} placeholder="보조 설명" value={currentBanner.sub_text || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentBanner({...currentBanner, sub_text: e.target.value})} />
                   <div style={{ display: "flex", gap: "10px" }}>
                     <input style={inputStyle} placeholder="이모지 (🧪)" value={currentBanner.emoji || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentBanner({...currentBanner, emoji: e.target.value})} />
@@ -456,7 +437,7 @@ export default function ShopAdminPage() {
                     </td>
                     <td style={tdPadding}>
                       <div style={{ fontWeight: 800 }}>{b.title}</div>
-                      <div style={{ fontSize: "12px", color: "#94A3B8" }}>{b.sub_text}</div>
+                      <div style={{ fontSize: "12px", color: "#94A3B8" }}>{b.sub_text} | {b.banner_type === "story" ? "9:16 스토리" : "일반"}</div>
                     </td>
                     <td style={tdPadding}><span style={badgeStyle}>Index: {b.order_index}</span></td>
                     <td style={tdPadding}><ActionButtons onEdit={() => { setCurrentBanner(b); setIsEditing(true); }} onDelete={() => handleDelete(b.id, "shop_banners", b.image_url)} /></td>
@@ -481,89 +462,6 @@ export default function ShopAdminPage() {
             </table>
           )}
         </div>
-
-        {/* 🍱 위클리 PICK 정밀 제어 센터 (배너 제어 탭 하단에 추가) */}
-        {activeTab === "banners" && !isEditing && (
-          <div style={{ marginTop: "60px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "24px" }}>
-              <span style={{ fontSize: "24px" }}>🍱</span>
-              <h2 style={{ fontSize: "24px", fontWeight: 900 }}>위클리 PICK 배너 정밀 제어</h2>
-              <span style={{ fontSize: "12px", background: "#E5007E", color: "#fff", padding: "2px 8px", borderRadius: "20px" }}>9:16 STORY VIEW</span>
-            </div>
-            
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "20px" }}>
-              {products.map(p => (
-                <div key={p.id} style={{ 
-                  background: "#0F172A", borderRadius: "24px", padding: "20px", border: p.is_weekly_pick ? "2px solid #E5007E" : "1px solid rgba(255,255,255,0.1)",
-                  transition: "all 0.3s"
-                }}>
-                  <div style={{ display: "flex", gap: "16px", marginBottom: "16px" }}>
-                    <img src={p.weekly_pick_image_url || p.image_url} style={{ width: "60px", height: "107px", borderRadius: "12px", objectFit: "cover", border: "1px solid rgba(255,255,255,0.1)" }} />
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 800, fontSize: "14px", marginBottom: "4px" }}>{p.name}</div>
-                      <div style={{ fontSize: "12px", color: "#64748B" }}>{p.brand}</div>
-                      
-                      <button 
-                        onClick={async () => {
-                          const newStatus = !p.is_weekly_pick;
-                          const { error } = await supabase.from("products").update({ is_weekly_pick: newStatus }).eq("id", p.id);
-                          if (!error) fetchProducts();
-                        }}
-                        style={{
-                          marginTop: "10px", padding: "6px 12px", borderRadius: "8px", 
-                          background: p.is_weekly_pick ? "#E5007E" : "rgba(255,255,255,0.05)",
-                          color: "#fff", border: "none", fontSize: "11px", fontWeight: 800, cursor: "pointer"
-                        }}
-                      >
-                        {p.is_weekly_pick ? "✅ PICK 해제" : "➕ PICK 선정"}
-                      </button>
-                    </div>
-                  </div>
-
-                  {p.is_weekly_pick && (
-                    <div style={{ marginTop: "10px", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "10px" }}>
-                      <label style={{ ...labelStyle, marginBottom: "8px" }}>배너 전용 세로 이미지 (9:16)</label>
-                      <div style={{ display: "flex", gap: "10px" }}>
-                        <input 
-                          type="file" 
-                          onChange={async (e) => {
-                            if (e.target.files && e.target.files[0]) {
-                              setUploading(true);
-                              const file = e.target.files[0];
-                              const fileExt = file.name.split(".").pop();
-                              const fileName = `pick-${p.id}-${Math.random()}.${fileExt}`;
-                              const filePath = `weekly_picks/${fileName}`;
-                              
-                              const { error: uploadError } = await supabase.storage.from(PRODUCT_BUCKET).upload(filePath, file);
-                              if (!uploadError) {
-                                const { data: { publicUrl } } = supabase.storage.from(PRODUCT_BUCKET).getPublicUrl(filePath);
-                                await supabase.from("products").update({ weekly_pick_image_url: publicUrl }).eq("id", p.id);
-                                fetchProducts();
-                              }
-                              setUploading(false);
-                            }
-                          }}
-                          style={{ fontSize: "10px", flex: 1 }}
-                        />
-                      </div>
-                      {p.weekly_pick_image_url && (
-                        <button 
-                          onClick={async () => {
-                            await supabase.from("products").update({ weekly_pick_image_url: null }).eq("id", p.id);
-                            fetchProducts();
-                          }}
-                          style={{ marginTop: "8px", background: "none", border: "none", color: "#EF4444", fontSize: "10px", cursor: "pointer" }}
-                        >
-                          이미지 초기화 🗑️
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

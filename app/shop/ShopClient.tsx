@@ -644,64 +644,64 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
           특별한 선물을 줄게요 🐾
         </h1>
 
-        {/* 안심이의 이번 주 PICK (9:16 스토리 스타일) */}
+        {/* 🎬 마젠타랩 기획전 스토리 배너 (9:16 스타일) */}
         {(() => {
-          const weeklyPicks = products.filter(p => p.is_weekly_pick);
-          if (weeklyPicks.length === 0) return null;
+          const storyBanners = banners.filter(b => b.banner_type === "story");
+          if (storyBanners.length === 0) return null;
           return (
-            <div style={{ marginBottom: "20px" }}>
+            <div style={{ marginBottom: "24px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                  <span style={{ fontSize: "18px" }}>🐾</span>
-                  <h2 style={{ fontSize: "15px", fontWeight: 900, color: "#fff", margin: 0 }}>안심이의 이번 주 PICK</h2>
+                  <span style={{ fontSize: "18px" }}>🎬</span>
+                  <h2 style={{ fontSize: "16px", fontWeight: 900, color: "#fff", margin: 0 }}>오늘의 추천 기획전</h2>
                 </div>
-                <span style={{ fontSize: "10px", color: "#E5007E", fontWeight: 800 }}>연구팀 강추</span>
+                <span style={{ fontSize: "10px", color: "#E5007E", fontWeight: 800 }}>AI 연구팀 PICK</span>
               </div>
               
               <div 
-                style={{ display: "flex", gap: "12px", overflowX: "auto", paddingBottom: "10px" }}
+                style={{ 
+                  display: "flex", gap: "14px", overflowX: "auto", paddingBottom: "10px",
+                  scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch"
+                }}
                 className="no-scrollbar"
               >
-                {weeklyPicks.map(p => (
+                {storyBanners.map(b => (
                   <div 
-                    key={p.id}
+                    key={b.id}
                     onClick={() => {
-                      if (p.details_link) window.open(p.details_link, "_blank");
-                      else {
-                        if (typeof window !== "undefined") {
-                          (window as any).setActiveTab?.("shop");
-                        }
-                      }
+                      if (b.link_url) window.open(b.link_url, "_blank");
                     }}
                     style={{
-                      flexShrink: 0, width: "120px", aspectRatio: "9/16",
-                      borderRadius: "16px", overflow: "hidden", position: "relative",
+                      flexShrink: 0, width: "160px", aspectRatio: "9/16",
+                      borderRadius: "20px", overflow: "hidden", position: "relative",
                       cursor: "pointer", border: "1px solid rgba(255,255,255,0.1)",
-                      boxShadow: "0 10px 20px rgba(0,0,0,0.3)"
+                      boxShadow: "0 12px 24px rgba(0,0,0,0.4)",
+                      scrollSnapAlign: "start"
                     }}
                     className="shop-card-hover"
                   >
-                    <img 
-                      src={p.weekly_pick_image_url || p.image_url} 
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }} 
-                      alt={p.name}
-                    />
+                    {b.image_url ? (
+                      <img 
+                        src={b.image_url} 
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+                        alt={b.title}
+                      />
+                    ) : (
+                      <div style={{ 
+                        width: "100%", height: "100%", background: b.bg_gradient || "#333",
+                        display: "flex", alignItems: "center", justifyContent: "center", fontSize: "40px"
+                      }}>
+                        {b.emoji}
+                      </div>
+                    )}
                     <div style={{
                       position: "absolute", inset: 0,
-                      background: "linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.85) 100%)",
+                      background: "linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.9) 100%)",
                       display: "flex", flexDirection: "column", justifyContent: "flex-end",
-                      padding: "10px"
+                      padding: "16px"
                     }}>
-                      <div style={{ fontSize: "9px", color: "#FF69B4", fontWeight: 900, marginBottom: "2px" }}>{p.brand}</div>
-                      <div style={{ fontSize: "11px", color: "#fff", fontWeight: 700, lineHeight: 1.2 }}>{p.name}</div>
-                    </div>
-                    <div style={{
-                      position: "absolute", top: "8px", right: "8px",
-                      background: "rgba(229,0,126,0.9)", color: "#fff",
-                      fontSize: "8px", fontWeight: 900, padding: "2px 5px",
-                      borderRadius: "4px"
-                    }}>
-                      PICK
+                      <div style={{ fontSize: "14px", color: "#fff", fontWeight: 900, lineHeight: 1.2 }}>{b.title}</div>
+                      <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.7)", marginTop: "4px" }}>{b.sub_text}</div>
                     </div>
                   </div>
                 ))}
