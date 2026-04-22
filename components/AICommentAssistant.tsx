@@ -87,7 +87,7 @@ export default function AICommentAssistant({ initialContext = "", postTitle = ""
                 placeholder="예: 밥 안먹는 고양이, 눈물 자국 고민 등"
                 value={context}
                 onChange={(e) => setContext(e.target.value)}
-                className="w-full px-6 py-4 rounded-2xl border-2 border-gray-50 bg-gray-50 focus:bg-white focus:border-magenta outline-none transition-all text-sm font-medium shadow-inner"
+                className="w-full px-6 py-4 rounded-2xl border-2 border-gray-50 bg-gray-50 focus:bg-white focus:border-magenta outline-none transition-all text-sm font-medium shadow-inner text-gray-900"
               />
               <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300">🧪</div>
             </div>
