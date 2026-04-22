@@ -682,7 +682,7 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
                     className="shop-card-hover"
                   >
                     <img 
-                      src={p.image_url} 
+                      src={p.weekly_pick_image_url || p.image_url} 
                       style={{ width: "100%", height: "100%", objectFit: "cover" }} 
                       alt={p.name}
                     />

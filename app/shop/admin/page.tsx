@@ -15,8 +15,8 @@ interface Product {
   image_url: string;
   category: string;
   badge?: string;
-  stock?: number;
   is_weekly_pick?: boolean;
+  weekly_pick_image_url?: string;
   details_link?: string;
   created_at?: string;
 }
@@ -192,7 +192,8 @@ export default function ShopAdminPage() {
       category: updateData.category,
       image_url: updateData.image_url,
       details_link: updateData.details_link,
-      is_weekly_pick: !!updateData.is_weekly_pick
+      is_weekly_pick: !!updateData.is_weekly_pick,
+      weekly_pick_image_url: updateData.weekly_pick_image_url
     };
 
     let result;
@@ -479,6 +480,89 @@ export default function ShopAdminPage() {
             </table>
           )}
         </div>
+
+        {/* 🍱 위클리 PICK 정밀 제어 센터 (배너 제어 탭 하단에 추가) */}
+        {activeTab === "banners" && !isEditing && (
+          <div style={{ marginTop: "60px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "24px" }}>
+              <span style={{ fontSize: "24px" }}>🍱</span>
+              <h2 style={{ fontSize: "24px", fontWeight: 900 }}>위클리 PICK 배너 정밀 제어</h2>
+              <span style={{ fontSize: "12px", background: "#E5007E", color: "#fff", padding: "2px 8px", borderRadius: "20px" }}>9:16 STORY VIEW</span>
+            </div>
+            
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "20px" }}>
+              {products.map(p => (
+                <div key={p.id} style={{ 
+                  background: "#0F172A", borderRadius: "24px", padding: "20px", border: p.is_weekly_pick ? "2px solid #E5007E" : "1px solid rgba(255,255,255,0.1)",
+                  transition: "all 0.3s"
+                }}>
+                  <div style={{ display: "flex", gap: "16px", marginBottom: "16px" }}>
+                    <img src={p.weekly_pick_image_url || p.image_url} style={{ width: "60px", height: "107px", borderRadius: "12px", objectFit: "cover", border: "1px solid rgba(255,255,255,0.1)" }} />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: 800, fontSize: "14px", marginBottom: "4px" }}>{p.name}</div>
+                      <div style={{ fontSize: "12px", color: "#64748B" }}>{p.brand}</div>
+                      
+                      <button 
+                        onClick={async () => {
+                          const newStatus = !p.is_weekly_pick;
+                          const { error } = await supabase.from("products").update({ is_weekly_pick: newStatus }).eq("id", p.id);
+                          if (!error) fetchProducts();
+                        }}
+                        style={{
+                          marginTop: "10px", padding: "6px 12px", borderRadius: "8px", 
+                          background: p.is_weekly_pick ? "#E5007E" : "rgba(255,255,255,0.05)",
+                          color: "#fff", border: "none", fontSize: "11px", fontWeight: 800, cursor: "pointer"
+                        }}
+                      >
+                        {p.is_weekly_pick ? "✅ PICK 해제" : "➕ PICK 선정"}
+                      </button>
+                    </div>
+                  </div>
+
+                  {p.is_weekly_pick && (
+                    <div style={{ marginTop: "10px", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "10px" }}>
+                      <label style={{ ...labelStyle, marginBottom: "8px" }}>배너 전용 세로 이미지 (9:16)</label>
+                      <div style={{ display: "flex", gap: "10px" }}>
+                        <input 
+                          type="file" 
+                          onChange={async (e) => {
+                            if (e.target.files && e.target.files[0]) {
+                              setUploading(true);
+                              const file = e.target.files[0];
+                              const fileExt = file.name.split(".").pop();
+                              const fileName = `pick-${p.id}-${Math.random()}.${fileExt}`;
+                              const filePath = `weekly_picks/${fileName}`;
+                              
+                              const { error: uploadError } = await supabase.storage.from(PRODUCT_BUCKET).upload(filePath, file);
+                              if (!uploadError) {
+                                const { data: { publicUrl } } = supabase.storage.from(PRODUCT_BUCKET).getPublicUrl(filePath);
+                                await supabase.from("products").update({ weekly_pick_image_url: publicUrl }).eq("id", p.id);
+                                fetchProducts();
+                              }
+                              setUploading(false);
+                            }
+                          }}
+                          style={{ fontSize: "10px", flex: 1 }}
+                        />
+                      </div>
+                      {p.weekly_pick_image_url && (
+                        <button 
+                          onClick={async () => {
+                            await supabase.from("products").update({ weekly_pick_image_url: null }).eq("id", p.id);
+                            fetchProducts();
+                          }}
+                          style={{ marginTop: "8px", background: "none", border: "none", color: "#EF4444", fontSize: "10px", cursor: "pointer" }}
+                        >
+                          이미지 초기화 🗑️
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
