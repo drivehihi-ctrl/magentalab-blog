@@ -995,7 +995,7 @@ function ShopTab({ products, session, activePet, onOpenModal }: { products: any[
 
       {session && !activePet && (
         <div 
-          onClick={() => (window as any).setIsProfileModalOpen?.(true)}
+          onClick={onOpenModal}
           className="shop-card-hover"
           style={{ 
             padding: "20px", background: "linear-gradient(135deg, #E5007E 0%, #FF4DA6 100%)", 
@@ -1250,7 +1250,7 @@ function PetProfileModal({ isOpen, onClose, onSave, initialData }: {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const yearsArr = Array.from({ length: 30 }, (_, i) => 2024 - i);
+  const yearsArr = Array.from({ length: 30 }, (_, i) => 2026 - i);
   const monthsArr = Array.from({ length: 12 }, (_, i) => i + 1);
   const daysArr = Array.from({ length: 31 }, (_, i) => i + 1);
 
@@ -1308,7 +1308,7 @@ function PetProfileModal({ isOpen, onClose, onSave, initialData }: {
     <div style={{
       position: "fixed", top: 0, left: 0, width: "100%", height: "100%",
       background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)",
-      zIndex: 2000, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px"
+      zIndex: 3000, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px"
     }}>
       <div className="shop-fade-in" style={{
         width: "100%", maxWidth: "450px", background: "#fff", borderRadius: "28px",
