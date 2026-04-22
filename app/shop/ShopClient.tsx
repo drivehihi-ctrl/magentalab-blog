@@ -367,6 +367,18 @@ function IconMy({ active }: { active: boolean }) {
     </svg>
   );
 }
+function IconRequest({ active }: { active: boolean }) {
+  const c = active ? "#E5007E" : "#94a3b8";
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+      <polyline points="14 2 14 8 20 8" />
+      <line x1="16" y1="13" x2="8" y2="13" />
+      <line x1="16" y1="17" x2="8" y2="17" />
+      <polyline points="10 9 9 9 8 9" />
+    </svg>
+  );
+}
 
 // ─── 프로덕트 카드 공통 ──────────────────────────────────────────
 function ProductCard({ p, index, variant = "grid" }: { p: any; index: number; variant?: "grid" | "scroll" }) {
@@ -1029,9 +1041,167 @@ function MyTab() {
   );
 }
 
+// ─── 입고 요청 탭 (Request Tab) ───────────────────────────────────
+function RequestTab() {
+  const [productName, setProductName] = useState("");
+  const [link, setLink] = useState("");
+  const [otherDetails, setOtherDetails] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("https://submit-form.com/Hu1kJWNOZ", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        body: JSON.stringify({ productName, link, otherDetails }),
+      });
+
+      if (response.ok) {
+        alert("입고 신청이 완료되었습니다! 관리자에게 메시지가 전송되었습니다. 🐾");
+        setProductName("");
+        setLink("");
+        setOtherDetails("");
+      } else {
+        alert("신청 중 오류가 발생했습니다: " + result.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("서버 통신 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div style={{ paddingBottom: "100px", background: "#f8fafc" }}>
+      {/* 상단 배너 */}
+      <div style={{ position: "relative", width: "100%", height: "240px", borderRadius: "0 0 24px 24px", overflow: "hidden" }}>
+        <div style={{ 
+          width: "100%", height: "100%", 
+          background: "linear-gradient(135deg, #A5D8FF 0%, #E7F5FF 100%)",
+          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+          padding: "20px"
+        }}>
+          <div style={{ 
+            fontSize: "36px", fontWeight: 900, color: "#1C7ED6", 
+            marginBottom: "12px", letterSpacing: "-0.05em",
+            textAlign: "center", lineHeight: 1.1
+          }}>
+            입고 희망<br />제 품 신 청
+          </div>
+          <div style={{ 
+            fontSize: "14px", fontWeight: 700, color: "#1C7ED6", 
+            background: "rgba(255,255,255,0.6)", padding: "4px 12px", borderRadius: "20px"
+          }}>
+            저품질과 과대광고로 이루어진 제품은 입고가 제한됩니다
+          </div>
+          
+          {/* 장식용 아이콘 */}
+          <div style={{ position: "absolute", right: "20px", bottom: "10px", fontSize: "80px", opacity: 0.3 }}>
+            🦴
+          </div>
+          <div style={{ position: "absolute", left: "20px", top: "10px", fontSize: "40px", opacity: 0.2 }}>
+            🐾
+          </div>
+        </div>
+      </div>
+
+      {/* 폼 섹션 */}
+      <form onSubmit={handleSubmit} style={{ padding: "24px 20px" }}>
+        <div style={{ opacity: isSubmitting ? 0.6 : 1, pointerEvents: isSubmitting ? "none" : "auto" }}>
+          <div style={{ marginBottom: "20px" }}>
+            <label style={{ display: "block", fontSize: "14px", fontWeight: 700, marginBottom: "8px", color: "#111" }}>
+              상품명(*필수)
+            </label>
+            <input 
+              type="text" 
+              value={productName}
+              onChange={(e) => setProductName(e.target.value)}
+              required 
+              placeholder="상품명을 작성해주세요. (필수)"
+              style={{
+                width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #e2e8f0",
+                fontSize: "14px", background: "#fff", outline: "none",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.02)"
+              }}
+            />
+          </div>
+
+          <div style={{ marginBottom: "20px" }}>
+            <label style={{ display: "block", fontSize: "14px", fontWeight: 700, marginBottom: "8px", color: "#111" }}>
+              링크(*필수)
+            </label>
+            <input 
+              type="text" 
+              value={link}
+              onChange={(e) => setLink(e.target.value)}
+              required 
+              placeholder="제품이 온라인에 있나요? (선택)"
+              style={{
+                width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #e2e8f0",
+                fontSize: "14px", background: "#fff", outline: "none",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.02)"
+              }}
+            />
+          </div>
+
+          <div style={{ marginBottom: "20px" }}>
+            <label style={{ display: "block", fontSize: "14px", fontWeight: 700, marginBottom: "8px", color: "#111" }}>
+              상품 사진(*오프전용상품은 사진첨부)
+            </label>
+            <div style={{
+              width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #e2e8f0",
+              fontSize: "14px", background: "#fff", display: "flex", alignItems: "center",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.02)"
+            }}>
+              <input type="file" style={{ fontSize: "12px", width: "100%" }} />
+            </div>
+          </div>
+
+          <div style={{ marginBottom: "32px" }}>
+            <label style={{ display: "block", fontSize: "14px", fontWeight: 700, marginBottom: "8px", color: "#111" }}>
+              기타사항
+            </label>
+            <textarea 
+              value={otherDetails}
+              onChange={(e) => setOtherDetails(e.target.value)}
+              placeholder="그 외 기타 사항을 적어주세요. (선택)"
+              style={{
+                width: "100%", padding: "14px 16px", borderRadius: "12px", border: "1px solid #e2e8f0",
+                fontSize: "14px", background: "#fff", outline: "none", minHeight: "100px", resize: "none",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.02)"
+              }}
+            />
+          </div>
+
+          <button 
+            type="submit"
+            disabled={isSubmitting}
+            className="shop-btn-hover"
+            style={{
+              width: "100%", padding: "18px", borderRadius: "16px", 
+              background: isSubmitting ? "#9CA3AF" : "#4DB6AC", color: "#fff", border: "none",
+              fontSize: "16px", fontWeight: 800, cursor: isSubmitting ? "default" : "pointer",
+              boxShadow: "0 4px 12px rgba(77, 182, 172, 0.3)"
+            }}
+          >
+            {isSubmitting ? "처리 중..." : "입고 신청"}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
 // ─── 메인 ShopClient ────────────────────────────────────────────
 export default function ShopClient() {
-  const [activeTab, setActiveTab] = useState<"discovery" | "shop" | "cart" | "my">("discovery");
+  const [activeTab, setActiveTab] = useState<"discovery" | "shop" | "cart" | "request" | "my">("discovery");
   const [products, setProducts] = useState<any[]>(MOCK_PRODUCTS);
 
   useEffect(() => {
@@ -1058,6 +1228,7 @@ export default function ShopClient() {
     { key: "discovery" as const, label: "Discovery", Icon: IconDiscover },
     { key: "shop" as const, label: "Shop", Icon: IconShop },
     { key: "cart" as const, label: "Cart", Icon: IconCart },
+    { key: "request" as const, label: "Request", Icon: IconRequest },
     { key: "my" as const, label: "My", Icon: IconMy },
   ];
 
@@ -1074,6 +1245,7 @@ export default function ShopClient() {
         {activeTab === "discovery" && <DiscoveryTab products={products} />}
         {activeTab === "shop" && <ShopTab products={products} />}
         {activeTab === "cart" && <CartTab />}
+        {activeTab === "request" && <RequestTab />}
         {activeTab === "my" && <MyTab />}
       </div>
 
