@@ -378,7 +378,7 @@ function GlobalShopStyles() {
 
       @media (min-width: 1024px) {
         .shop-main-container {
-          max-width: 1440px; /* 기존 1200px에서 확장 */
+          max-width: 100% !important; /* 모니터 끝까지 확장 (아시아허브마트 스타일) */
         }
         .shop-product-grid {
           grid-template-columns: repeat(5, 1fr); /* 기존 4열에서 대화면 5열로 */
@@ -603,8 +603,8 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
       <div 
         className="shop-section-px"
         style={{
-          padding: "60px 20px 80px",
-          background: "#E5007E",
+          padding: "80px 20px 100px",
+          background: "linear-gradient(to bottom, #88004D, #660039)",
           textAlign: "center",
           color: "#fff",
           position: "relative",
@@ -621,27 +621,18 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
           background: "rgba(0,0,0,0.05)", borderRadius: "50%", filter: "blur(30px)"
         }} />
 
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", marginBottom: "20px" }}>
-          <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.9)", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.15em" }}>
-            마젠타랩 전용몰
-          </div>
-          <span style={{ 
-            fontSize: "10px", 
-            fontWeight: 900, 
-            background: "rgba(255,255,255,0.2)", 
-            color: "#fff", 
-            padding: "2px 8px", 
-            borderRadius: "4px",
-            letterSpacing: "0.05em",
-            backdropFilter: "blur(4px)"
-          }}>BETA</span>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "32px" }}>
+          <div style={{ fontSize: "36px", marginBottom: "12px" }}>🧪</div>
+          <div style={{ fontSize: "18px", fontWeight: 900, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.9)" }}>MAGENTA LAB</div>
+          <div style={{ fontSize: "11px", fontWeight: 800, color: "rgba(255,255,255,0.6)", textTransform: "uppercase", letterSpacing: "0.1em", marginTop: "4px" }}>Pet Wellness Research Institute</div>
         </div>
+
         <h1 
           className="shop-hero-title"
-          style={{ fontWeight: 800, color: "#fff", margin: "0 0 24px", letterSpacing: "-0.02em" }}
+          style={{ fontSize: "32px", fontWeight: 900, color: "#fff", margin: "0 0 24px", letterSpacing: "-0.03em", lineHeight: 1.2 }}
         >
-          {activePet ? `${activePet.name} 연구원에게` : "오늘 우리 아이에게"}<br />
-          특별한 선물을 줄게요 🐾
+          {activePet ? `${activePet.name} 연구원을 위한` : "세상의 모든 아이를 위한"}<br />
+          정밀 케어 솔루션 🐾
         </h1>
 
         <p style={{ fontSize: "15px", color: "rgba(255,255,255,0.85)", lineHeight: 1.6, fontWeight: 500, maxWidth: "500px", margin: "0 auto" }}>
