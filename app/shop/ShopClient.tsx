@@ -860,14 +860,55 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
 
       {/* 🧬 우리아이 연구 등록 유도 배너 (Discovery 추가) */}
       {!session ? (
-...
+        <div style={{ padding: "24px 20px", background: "#f8fafc", borderRadius: "24px", margin: "0 20px 20px", border: "1px solid #e2e8f0", textAlign: "center" }}>
+          <div style={{ fontSize: "24px", marginBottom: "8px" }}>🔐</div>
+          <div style={{ fontSize: "15px", fontWeight: 800, color: "#111", marginBottom: "4px" }}>나만의 맞춤 연구 정보를 확인하세요</div>
+          <p style={{ fontSize: "12px", color: "#64748B", marginBottom: "20px" }}>로그인하시면 아이의 건강 상태에 딱 맞는 제품을 추천해 드립니다.</p>
+          <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
+            <button 
+              onClick={() => signIn("google")}
+              style={{
+                flex: 1, padding: "12px", background: "#fff", border: "1px solid #e2e8f0", borderRadius: "12px",
+                display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", fontSize: "13px", fontWeight: 700, cursor: "pointer"
+              }}
+            >
+              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18" />
+              Google 로그인
+            </button>
+            <button 
+              onClick={() => signIn("kakao")}
+              style={{
+                flex: 1, padding: "12px", background: "#FEE500", border: "none", borderRadius: "12px",
+                display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", fontSize: "13px", fontWeight: 700, cursor: "pointer"
+              }}
+            >
+              <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" width="18" height="18" />
+              카카오 로그인
+            </button>
+          </div>
+        </div>
       ) : !activePet && (
         <div 
           onClick={onOpenModal}
           className="shop-card-hover"
-...
+          style={{ 
+            padding: "20px", background: "linear-gradient(135deg, #E5007E 0%, #FF4DA6 100%)", 
+            borderRadius: "20px", margin: "0 20px 24px", color: "#fff", cursor: "pointer",
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            boxShadow: "0 4px 15px rgba(229,0,126,0.2)"
+          }}
+        >
+          <div>
+            <div style={{ fontSize: "15px", fontWeight: 900, marginBottom: "4px" }}>우리아이 건강 연구 등록하기</div>
+            <div style={{ fontSize: "11px", opacity: 0.9 }}>정밀 분석을 통해 딱 맞는 제품을 추천해 드려요 ✨</div>
+          </div>
+          <div style={{ width: "40px", height: "40px", background: "rgba(255,255,255,0.2)", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Plus size={20} color="#fff" />
+          </div>
+        </div>
+      )}
 
-      {/* 할인 상품 그리드 */}
+      {/* 💰 할인 중인 상품 그리드 */}
       <div style={{ padding: "0 20px 24px" }}>
         <div style={{ fontWeight: 700, fontSize: "15px", marginBottom: "14px", color: "#111" }}>💰 할인 중인 상품</div>
         <div className="shop-product-grid">
