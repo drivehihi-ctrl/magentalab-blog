@@ -2371,11 +2371,11 @@ function RequestTab() {
 }
 
 // ─── 메인 ShopClient ────────────────────────────────────────────
-export default function ShopClient() {
+export default function ShopClient({ initialProducts = [], initialBanners = [] }: { initialProducts?: any[], initialBanners?: any[] }) {
   const { data: session } = useSession();
   const [activeTab, setActiveTab] = useState<"discovery" | "shop" | "cart" | "request" | "my">("discovery");
   const [activeSubPage, setActiveSubPage] = useState<string | null>(null);
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<any[]>(initialProducts.length > 0 ? initialProducts : MOCK_PRODUCTS);
 
   // 다중 프로필 상태
   const [petProfiles, setPetProfiles] = useState<PetProfile[]>([]);
@@ -2561,7 +2561,7 @@ export default function ShopClient() {
     loadProfiles();
   }, [session]);
 
-  const [banners, setBanners] = useState<any[]>([]);
+  const [banners, setBanners] = useState<any[]>(initialBanners);
   const [careGuides, setCareGuides] = useState<any[]>([]);
 
   useEffect(() => {
@@ -2572,10 +2572,10 @@ export default function ShopClient() {
         .order("created_at", { ascending: false });
 
       if (!error && data && data.length > 0) {
-        // Supabase DB 데이터가 있으면 목업 데이터와 합치거나 교체
+        const timestamp = Date.now();
         const dbProducts = data.map(p => ({
           ...p,
-          image: p.image_url || p.image, // DB 필드명 매핑
+          image: p.image_url ? `${p.image_url}?t=${timestamp}` : p.image,
           originalPrice: p.original_price || p.originalPrice
         }));
         setProducts(dbProducts);
@@ -2584,7 +2584,13 @@ export default function ShopClient() {
 
     async function fetchBanners() {
       const { data } = await supabase.from("shop_banners").select("*").order("order_index", { ascending: true });
-      if (data) setBanners(data);
+      if (data) {
+        const timestamp = Date.now();
+        setBanners(data.map(b => ({
+          ...b,
+          image_url: b.image_url ? `${b.image_url}?t=${timestamp}` : null
+        })));
+      }
     }
 
     async function fetchCareGuides() {
