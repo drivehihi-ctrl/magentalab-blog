@@ -16,6 +16,7 @@ interface Product {
   category: string;
   badge?: string;
   stock?: number;
+  is_weekly_pick?: boolean;
   details_link?: string;
   created_at?: string;
 }
@@ -179,7 +180,13 @@ export default function ShopAdminPage() {
 
   // CRUD Operations
   async function handleSaveProduct() {
-    const payload = { ...currentProduct, price: Number(currentProduct.price), original_price: Number(currentProduct.original_price || currentProduct.price), stock: Number(currentProduct.stock || 0) };
+    const payload = { 
+      ...currentProduct, 
+      price: Number(currentProduct.price), 
+      original_price: Number(currentProduct.original_price || currentProduct.price), 
+      stock: Number(currentProduct.stock || 0),
+      is_weekly_pick: !!currentProduct.is_weekly_pick
+    };
     if (currentProduct.id) await supabase.from("products").update(payload).eq("id", currentProduct.id);
     else await supabase.from("products").insert([payload]);
     setIsEditing(false); fetchProducts();
@@ -322,6 +329,21 @@ export default function ShopAdminPage() {
                   </select>
                   <input type="number" style={inputStyle} placeholder="재고" value={currentProduct.stock || 0} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentProduct({...currentProduct, stock: Number(e.target.value)})} />
                   <div style={{ gridColumn: "span 2" }}>
+                    <div style={{ 
+                      background: "rgba(229, 0, 126, 0.1)", padding: "12px 16px", borderRadius: "12px", 
+                      marginBottom: "16px", display: "flex", alignItems: "center", gap: "12px", border: "1px solid rgba(229, 0, 126, 0.2)" 
+                    }}>
+                      <input 
+                        type="checkbox" 
+                        id="is_weekly_pick"
+                        checked={!!currentProduct.is_weekly_pick} 
+                        onChange={(e) => setCurrentProduct({...currentProduct, is_weekly_pick: e.target.checked})}
+                        style={{ width: "20px", height: "20px", accentColor: "#E5007E", cursor: "pointer" }}
+                      />
+                      <label htmlFor="is_weekly_pick" style={{ fontSize: "14px", fontWeight: 800, color: "#FF6B9D", cursor: "pointer" }}>
+                        🐾 안심이의 이번 주 PICK으로 선정하기
+                      </label>
+                    </div>
                     <input style={inputStyle} placeholder="상세 페이지 링크 URL" value={currentProduct.details_link || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentProduct({...currentProduct, details_link: e.target.value})} />
                     <button onClick={handleSaveProduct} style={saveActionBtnStyle}>상품 데이터 저장</button>
                   </div>
@@ -388,7 +410,12 @@ export default function ShopAdminPage() {
                   <tr key={p.id} style={trStyle}>
                     <td style={tdPadding}><img src={p.image_url} style={previewImgStyle} /></td>
                     <td style={tdPadding}>
-                      <div style={{ fontWeight: 800 }}>{p.name}</div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <div style={{ fontWeight: 800 }}>{p.name}</div>
+                        {p.is_weekly_pick && (
+                          <span style={{ fontSize: "10px", background: "#E5007E", color: "#fff", padding: "2px 6px", borderRadius: "4px", fontWeight: 900 }}>PICK</span>
+                        )}
+                      </div>
                       <div style={{ fontSize: "12px", color: "#64748B" }}>{p.brand} | {p.category}</div>
                       <div style={{ marginTop: "4px", fontWeight: 700, color: "#E5007E" }}>{p.price.toLocaleString()}원</div>
                     </td>

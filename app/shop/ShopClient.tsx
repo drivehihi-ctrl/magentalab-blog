@@ -640,9 +640,75 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
           className="shop-hero-title"
           style={{ fontWeight: 800, color: "#fff", margin: "0 0 24px", letterSpacing: "-0.02em" }}
         >
-          오늘 우리 아이에게<br />
+          {activePet ? `${activePet.name} 연구원에게` : "오늘 우리 아이에게"}<br />
           특별한 선물을 줄게요 🐾
         </h1>
+
+        {/* 안심이의 이번 주 PICK (9:16 스토리 스타일) */}
+        {(() => {
+          const weeklyPicks = products.filter(p => p.is_weekly_pick);
+          if (weeklyPicks.length === 0) return null;
+          return (
+            <div style={{ marginBottom: "20px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <span style={{ fontSize: "18px" }}>🐾</span>
+                  <h2 style={{ fontSize: "15px", fontWeight: 900, color: "#fff", margin: 0 }}>안심이의 이번 주 PICK</h2>
+                </div>
+                <span style={{ fontSize: "10px", color: "#E5007E", fontWeight: 800 }}>연구팀 강추</span>
+              </div>
+              
+              <div 
+                style={{ display: "flex", gap: "12px", overflowX: "auto", paddingBottom: "10px" }}
+                className="no-scrollbar"
+              >
+                {weeklyPicks.map(p => (
+                  <div 
+                    key={p.id}
+                    onClick={() => {
+                      if (p.details_link) window.open(p.details_link, "_blank");
+                      else {
+                        if (typeof window !== "undefined") {
+                          (window as any).setActiveTab?.("shop");
+                        }
+                      }
+                    }}
+                    style={{
+                      flexShrink: 0, width: "120px", aspectRatio: "9/16",
+                      borderRadius: "16px", overflow: "hidden", position: "relative",
+                      cursor: "pointer", border: "1px solid rgba(255,255,255,0.1)",
+                      boxShadow: "0 10px 20px rgba(0,0,0,0.3)"
+                    }}
+                    className="shop-card-hover"
+                  >
+                    <img 
+                      src={p.image_url} 
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+                      alt={p.name}
+                    />
+                    <div style={{
+                      position: "absolute", inset: 0,
+                      background: "linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.85) 100%)",
+                      display: "flex", flexDirection: "column", justifyContent: "flex-end",
+                      padding: "10px"
+                    }}>
+                      <div style={{ fontSize: "9px", color: "#FF69B4", fontWeight: 900, marginBottom: "2px" }}>{p.brand}</div>
+                      <div style={{ fontSize: "11px", color: "#fff", fontWeight: 700, lineHeight: 1.2 }}>{p.name}</div>
+                    </div>
+                    <div style={{
+                      position: "absolute", top: "8px", right: "8px",
+                      background: "rgba(229,0,126,0.9)", color: "#fff",
+                      fontSize: "8px", fontWeight: 900, padding: "2px 5px",
+                      borderRadius: "4px"
+                    }}>
+                      PICK
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
         <p style={{ fontSize: "15px", color: "rgba(255,255,255,0.85)", lineHeight: 1.6, fontWeight: 500, maxWidth: "500px", margin: "0 auto" }}>
           연구진이 엄선한 아이템을 발견하세요.<br />
           마젠타랩이 함께 합니다.
