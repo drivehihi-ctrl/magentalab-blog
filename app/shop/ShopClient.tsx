@@ -1934,7 +1934,7 @@ export default function ShopClient() {
         {activeTab === "shop" && <ShopTab products={products} />}
         {activeTab === "cart" && <CartTab />}
         {activeTab === "request" && <RequestTab />}
-        {activeTab === "my" && <MyTab profile={petProfile} onOpenModal={() => setIsProfileModalOpen(true)} />}
+        {activeTab === "my" && <MyTab profile={petProfile} onOpenModal={() => setIsProfileModalOpen(true)} setActiveSubPage={setActiveSubPage} />}
       </div>
 
       {/* 공통 모달 */}
