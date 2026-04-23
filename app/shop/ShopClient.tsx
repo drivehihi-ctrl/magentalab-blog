@@ -2355,7 +2355,7 @@ function RequestTab() {
 // ─── 메인 ShopClient ────────────────────────────────────────────
 export default function ShopClient({ initialProducts = [], initialBanners = [] }: { initialProducts?: any[], initialBanners?: any[] }) {
   const { data: session } = useSession();
-  const logoUrl = useMemo(() => `/images/shop/Magentalab%20logo.png?t=${Date.now()}`, []);
+  const logoUrl = useMemo(() => `/images/shop/logo.png?t=${Date.now()}`, []);
   const [activeTab, setActiveTab] = useState<"discovery" | "shop" | "cart" | "request" | "my">("discovery");
   const [activeSubPage, setActiveSubPage] = useState<string | null>(null);
   const [products, setProducts] = useState<any[]>(initialProducts.length > 0 ? initialProducts : MOCK_PRODUCTS);
