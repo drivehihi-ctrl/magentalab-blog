@@ -621,7 +621,7 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
           background: "rgba(0,0,0,0.05)", borderRadius: "50%", filter: "blur(30px)"
         }} />
 
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "32px" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "8px" }}>
           <img 
             src={logoUrl} 
             alt="Magenta Lab Logo"
@@ -976,7 +976,7 @@ function ShopTab({ products, session, activePet, onOpenModal, logoUrl }: { produ
         color: "#fff",
         marginBottom: "24px"
       }}>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "20px" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "8px" }}>
           {/* 정식 로고 장착 (0.1% 정밀 이식) */}
           <img 
             src={logoUrl} 
