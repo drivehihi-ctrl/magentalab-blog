@@ -35,7 +35,7 @@ export default function PostListItem({ post }: PostListItemProps) {
         </div>
         
         <h3 
-          className="text-xl md:text-2xl font-extrabold text-gray-900 leading-tight mb-2 group-hover:text-magenta transition-colors"
+          className="text-xl md:text-2xl font-extrabold text-blue-600 leading-tight mb-2 group-hover:text-blue-800 transition-colors underline decoration-blue-200 underline-offset-4"
           dangerouslySetInnerHTML={{ __html: post.title.rendered }}
         />
 

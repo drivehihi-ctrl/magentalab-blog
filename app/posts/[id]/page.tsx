@@ -155,7 +155,7 @@ export default async function PostDetailPage({ params }: PageProps) {
           </div>
           
           <h1 
-            className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-gray-900 leading-[1.1] mb-8 tracking-tight"
+            className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-blue-600 leading-[1.1] mb-8 tracking-tight underline decoration-blue-100 underline-offset-8"
             dangerouslySetInnerHTML={{ __html: post.title.rendered }}
           />
           
