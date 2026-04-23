@@ -978,7 +978,7 @@ function ShopTab({ products, session, activePet, onOpenModal, logoUrl }: { produ
         color: "#fff",
         marginBottom: "24px"
       }}>
-        <div style={{ marginBottom: "20px" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "20px" }}>
           {/* 정식 로고 장착 (0.1% 정밀 이식) */}
           <img 
             src={logoUrl} 
@@ -2355,7 +2355,7 @@ function RequestTab() {
 // ─── 메인 ShopClient ────────────────────────────────────────────
 export default function ShopClient({ initialProducts = [], initialBanners = [] }: { initialProducts?: any[], initialBanners?: any[] }) {
   const { data: session } = useSession();
-  const logoUrl = useMemo(() => `/images/shop/Magentalab logo.png?t=${Date.now()}`, []);
+  const logoUrl = useMemo(() => `/images/shop/Magentalab%20logo.png?t=${Date.now()}`, []);
   const [activeTab, setActiveTab] = useState<"discovery" | "shop" | "cart" | "request" | "my">("discovery");
   const [activeSubPage, setActiveSubPage] = useState<string | null>(null);
   const [products, setProducts] = useState<any[]>(initialProducts.length > 0 ? initialProducts : MOCK_PRODUCTS);
