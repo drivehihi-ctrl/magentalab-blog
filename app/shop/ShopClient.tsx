@@ -565,7 +565,7 @@ function ProductCard({ p, index, variant = "grid" }: { p: any; index: number; va
 }
 
 // ─── 디스커버리 탭 (아시아허브마트 메인 스타일) ─────────────────────
-function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpenModal }: { products: any[]; banners: any[]; careGuides: any[]; session: any; activePet: PetProfile | null; onOpenModal: () => void }) {
+function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpenModal, logoUrl }: { products: any[]; banners: any[]; careGuides: any[]; session: any; activePet: PetProfile | null; onOpenModal: () => void; logoUrl: string }) {
   const bannerRef = useRef<HTMLDivElement>(null);
   const [bannerIdx, setBannerIdx] = useState(0);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
@@ -930,7 +930,7 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
 }
 
 // ─── 샵 탭 (전체 상품, 카테고리 필터) ──────────────────────────────
-function ShopTab({ products, session, activePet, onOpenModal }: { products: any[]; session: any; activePet: PetProfile | null; onOpenModal: () => void }) {
+function ShopTab({ products, session, activePet, onOpenModal, logoUrl }: { products: any[]; session: any; activePet: PetProfile | null; onOpenModal: () => void; logoUrl: string }) {
   const [activeCategory, setActiveCategory] = useState("all");
   const [sortLabel, setSortLabel] = useState("추천순");
   const [searchQuery, setSearchQuery] = useState("");
@@ -2654,8 +2654,8 @@ export default function ShopClient({ initialProducts = [], initialBanners = [] }
 
       {/* 탭 콘텐츠 */}
       <div style={{ overflowY: "auto", minHeight: "100vh" }}>
-        {activeTab === "discovery" && <DiscoveryTab products={products} banners={banners} careGuides={careGuides} session={session} activePet={activePet} onOpenModal={() => openProfileModal(null)} />}
-        {activeTab === "shop" && <ShopTab products={products} session={session} activePet={activePet} onOpenModal={() => openProfileModal(null)} />}
+        {activeTab === "discovery" && <DiscoveryTab products={products} banners={banners} careGuides={careGuides} session={session} activePet={activePet} onOpenModal={() => openProfileModal(null)} logoUrl={logoUrl} />}
+        {activeTab === "shop" && <ShopTab products={products} session={session} activePet={activePet} onOpenModal={() => openProfileModal(null)} logoUrl={logoUrl} />}
         {activeTab === "cart" && <CartTab />}
         {activeTab === "request" && <RequestTab />}
         {activeTab === "my" && (
