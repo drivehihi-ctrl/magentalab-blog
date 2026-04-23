@@ -623,7 +623,7 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
 
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "32px" }}>
           <img 
-            src="/images/shop/Magentalab logo-removebg-preview.png" 
+            src={logoUrl} 
             alt="Magenta Lab Logo"
             style={{ width: "80px", height: "auto", marginBottom: "16px" }} 
           />
@@ -981,7 +981,7 @@ function ShopTab({ products, session, activePet, onOpenModal }: { products: any[
         <div style={{ marginBottom: "20px" }}>
           {/* 정식 로고 장착 (0.1% 정밀 이식) */}
           <img 
-            src="/images/shop/Magentalab logo-removebg-preview.png" 
+            src={logoUrl} 
             alt="Magenta Lab Logo"
             style={{ width: "80px", height: "auto", marginBottom: "12px" }} 
           />
@@ -2355,6 +2355,7 @@ function RequestTab() {
 // ─── 메인 ShopClient ────────────────────────────────────────────
 export default function ShopClient({ initialProducts = [], initialBanners = [] }: { initialProducts?: any[], initialBanners?: any[] }) {
   const { data: session } = useSession();
+  const logoUrl = useMemo(() => `/images/shop/Magentalab logo.png?t=${Date.now()}`, []);
   const [activeTab, setActiveTab] = useState<"discovery" | "shop" | "cart" | "request" | "my">("discovery");
   const [activeSubPage, setActiveSubPage] = useState<string | null>(null);
   const [products, setProducts] = useState<any[]>(initialProducts.length > 0 ? initialProducts : MOCK_PRODUCTS);
