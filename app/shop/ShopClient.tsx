@@ -625,7 +625,7 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
           <img 
             src={logoUrl} 
             alt="Magenta Lab Logo"
-            style={{ width: "80px", height: "auto", marginBottom: "16px" }} 
+            style={{ width: "120px", height: "auto", marginBottom: "16px" }} 
           />
           <div style={{ fontSize: "18px", fontWeight: 900, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.9)" }}>MAGENTA LAB</div>
           <div style={{ fontSize: "11px", fontWeight: 800, color: "rgba(255,255,255,0.6)", textTransform: "uppercase", letterSpacing: "0.1em", marginTop: "4px" }}>Pet Wellness Research Institute</div>
@@ -983,7 +983,7 @@ function ShopTab({ products, session, activePet, onOpenModal, logoUrl }: { produ
           <img 
             src={logoUrl} 
             alt="Magenta Lab Logo"
-            style={{ width: "80px", height: "auto", marginBottom: "12px" }} 
+            style={{ width: "120px", height: "auto", marginBottom: "12px" }} 
           />
           <div style={{ fontSize: "18px", fontWeight: 900, letterSpacing: "0.2em", textTransform: "uppercase" }}>MAGENTA LAB</div>
         </div>
