@@ -625,10 +625,8 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
           <img 
             src={logoUrl} 
             alt="Magenta Lab Logo"
-            style={{ width: "120px", height: "auto", marginBottom: "16px" }} 
+            style={{ width: "120px", height: "auto" }} 
           />
-          <div style={{ fontSize: "18px", fontWeight: 900, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.9)" }}>MAGENTA LAB</div>
-          <div style={{ fontSize: "11px", fontWeight: 800, color: "rgba(255,255,255,0.6)", textTransform: "uppercase", letterSpacing: "0.1em", marginTop: "4px" }}>Pet Wellness Research Institute</div>
         </div>
 
         <h1 
@@ -983,15 +981,14 @@ function ShopTab({ products, session, activePet, onOpenModal, logoUrl }: { produ
           <img 
             src={logoUrl} 
             alt="Magenta Lab Logo"
-            style={{ width: "120px", height: "auto", marginBottom: "12px" }} 
+            style={{ width: "120px", height: "auto" }} 
           />
-          <div style={{ fontSize: "18px", fontWeight: 900, letterSpacing: "0.2em", textTransform: "uppercase" }}>MAGENTA LAB</div>
         </div>
-        <h2 style={{ fontSize: "28px", fontWeight: 900, letterSpacing: "-0.02em", margin: "0 0 12px", textTransform: "uppercase" }}>
-          DISCOVER PRECISION PET WELLNESS
+        <h2 style={{ fontSize: "24px", fontWeight: 900, letterSpacing: "-0.02em", margin: "0 0 12px" }}>
+          반려동물의 건강을 위한 최적의 솔루션을 만나보세요
         </h2>
-        <p style={{ fontSize: "13px", opacity: 0.8, letterSpacing: "0.05em", fontWeight: 500, textTransform: "uppercase" }}>
-          EXPERTS CURATING RESEARCH-DRIVEN PRODUCTS FOR YOUR PET'S PRECISE NEEDS.
+        <p style={{ fontSize: "14px", opacity: 0.8, letterSpacing: "-0.01em", fontWeight: 500, lineHeight: 1.6 }}>
+          전문가들이 반려동물의 정확한 니즈에 맞춰<br />연구 기반 제품을 엄선했습니다.
         </p>
       </div>
 
