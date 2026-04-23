@@ -622,7 +622,11 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
         }} />
 
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "32px" }}>
-          <div style={{ fontSize: "36px", marginBottom: "12px" }}>🧪</div>
+          <img 
+            src="/images/shop/Magentalab logo-removebg-preview.png" 
+            alt="Magenta Lab Logo"
+            style={{ width: "80px", height: "auto", marginBottom: "16px" }} 
+          />
           <div style={{ fontSize: "18px", fontWeight: 900, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.9)" }}>MAGENTA LAB</div>
           <div style={{ fontSize: "11px", fontWeight: 800, color: "rgba(255,255,255,0.6)", textTransform: "uppercase", letterSpacing: "0.1em", marginTop: "4px" }}>Pet Wellness Research Institute</div>
         </div>
@@ -975,8 +979,12 @@ function ShopTab({ products, session, activePet, onOpenModal }: { products: any[
         marginBottom: "24px"
       }}>
         <div style={{ marginBottom: "20px" }}>
-          {/* 컵케이크 로고 대체 - 추후 /public/images/logo/logo.png 로 교체 가능 */}
-          <div style={{ fontSize: "32px", marginBottom: "12px" }}>🧪</div>
+          {/* 정식 로고 장착 (0.1% 정밀 이식) */}
+          <img 
+            src="/images/shop/Magentalab logo-removebg-preview.png" 
+            alt="Magenta Lab Logo"
+            style={{ width: "80px", height: "auto", marginBottom: "12px" }} 
+          />
           <div style={{ fontSize: "18px", fontWeight: 900, letterSpacing: "0.2em", textTransform: "uppercase" }}>MAGENTA LAB</div>
         </div>
         <h2 style={{ fontSize: "28px", fontWeight: 900, letterSpacing: "-0.02em", margin: "0 0 12px", textTransform: "uppercase" }}>
