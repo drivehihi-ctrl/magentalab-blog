@@ -5,13 +5,20 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { post, author_name, author_email, content } = body;
 
-    const wpUrl = process.env.WORDPRESS_URL || "http://magentalab.mycafe24.com";
+    const wpUrl = process.env.WORDPRESS_URL || "https://magentalab.mycafe24.com";
     const apiUrl = `${wpUrl}/wp-json/wp/v2/comments`;
+
+    // Basic Auth를 위한 출입증 제작
+    const wpUser = process.env.WP_USER;
+    const wpPassword = process.env.WP_APP_PASSWORD;
+    const authHeader = Buffer.from(`${wpUser}:${wpPassword}`).toString("base64");
 
     const response = await fetch(apiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Basic ${authHeader}`,
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
       },
       body: JSON.stringify({
         post,
