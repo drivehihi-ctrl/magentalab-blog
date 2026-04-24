@@ -33,7 +33,10 @@ export async function POST(req: Request) {
     if (!response.ok || !data.id) {
       console.error("WordPress API Error:", data);
       return NextResponse.json(
-        { message: data.message || "워드프레스 서버에서 댓글 등록을 거부했거나 ID 발급에 실패했습니다." },
+        { 
+          message: data.message || "워드프레스 서버에서 댓글 등록을 거부했습니다.",
+          rawError: data // 실제 워드프레스가 뱉은 에러 객체 전체를 전달
+        },
         { status: response.status || 500 }
       );
     }
