@@ -68,7 +68,7 @@ export default function CommentForm({ postId }: CommentFormProps) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h4 className="text-xl font-bold text-magenta mb-2">댓글이 등록되었습니다! {submittedId && <span className="text-xs font-normal opacity-50">(ID: {submittedId})</span>}</h4>
+        <h4 className="text-xl font-bold text-magenta mb-2">✨ 안심이 댓글 배송 성공! ✨ {submittedId && <span className="text-xs font-normal opacity-50">(ID: {submittedId})</span>}</h4>
         <p className="text-gray-600 mb-2">관리자 승인 후 블로그에 표시됩니다.</p>
         <p className="text-magenta font-bold text-sm">입력하신 이메일로 '이번주의 연구소 결과 PDF'를 발송해 드릴 예정입니다! ✨</p>
         <button 
