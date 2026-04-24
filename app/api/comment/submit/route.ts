@@ -38,7 +38,7 @@ export async function POST(req: Request) {
       );
     }
 
-    return NextResponse.json({ success: true, data });
+    return NextResponse.json({ success: true, id: data.id, message: "댓글이 성공적으로 등록되었습니다." });
   } catch (error: any) {
     console.error("Comment Proxy Error:", error);
     return NextResponse.json(
