@@ -34,10 +34,10 @@ export async function POST(req: Request) {
       console.error("WordPress API Error:", data);
       return NextResponse.json(
         { 
-          message: data.message || "워드프레스 서버에서 댓글 등록을 거부했습니다.",
-          rawError: data // 실제 워드프레스가 뱉은 에러 객체 전체를 전달
+          message: data.message || "워드프레스 서버에서 댓글 등록을 거부했습니다. (ID 미발급)",
+          rawError: data 
         },
-        { status: response.status || 500 }
+        { status: 500 } // 워드프레스가 200을 줘도 ID가 없으면 강제로 500 에러 처리!
       );
     }
 

@@ -46,7 +46,9 @@ export default function CommentForm({ postId }: CommentFormProps) {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "댓글 등록 중 오류가 발생했습니다.");
+        const error = new Error(data.message || "댓글 등록 중 오류가 발생했습니다.") as any;
+        error.rawError = data.rawError;
+        throw error;
       }
 
       setSubmittedId(data.id || null);
@@ -55,6 +57,10 @@ export default function CommentForm({ postId }: CommentFormProps) {
       setAgreedToConsent(false);
     } catch (err: any) {
       console.error("Comment submission error:", err);
+      // 에러의 상세 내용을 알림창으로 표시 (디버깅용)
+      if (err.message && err.message.includes("거부했습니다")) {
+          window.alert("워드프레스 거절 사유: " + (err.rawError ? JSON.stringify(err.rawError) : "알 수 없음"));
+      }
       setStatus("error");
       setErrorMessage(err.message || "댓글 등록에 실패했습니다. 잠시 후 다시 시도해주세요.");
     }
