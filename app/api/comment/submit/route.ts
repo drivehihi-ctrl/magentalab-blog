@@ -30,11 +30,11 @@ export async function POST(req: Request) {
 
     const data = await response.json();
 
-    if (!response.ok) {
+    if (!response.ok || !data.id) {
       console.error("WordPress API Error:", data);
       return NextResponse.json(
-        { message: data.message || "워드프레스 서버에서 댓글 등록을 거부했습니다." },
-        { status: response.status }
+        { message: data.message || "워드프레스 서버에서 댓글 등록을 거부했거나 ID 발급에 실패했습니다." },
+        { status: response.status || 500 }
       );
     }
 
