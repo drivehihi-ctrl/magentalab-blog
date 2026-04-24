@@ -44,7 +44,6 @@ export default function CommentForm({ postId }: CommentFormProps) {
       });
 
       const data = await response.json();
-      window.alert("서버 응답 데이터: " + JSON.stringify(data));
 
       if (!response.ok) {
         throw new Error(data.message || "댓글 등록 중 오류가 발생했습니다.");

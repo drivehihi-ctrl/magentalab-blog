@@ -6,7 +6,7 @@ export async function POST(req: Request) {
     const { post, author_name, author_email, content } = body;
 
     const wpUrl = process.env.WORDPRESS_URL || "https://magentalab.mycafe24.com";
-    const apiUrl = `${wpUrl}/wp-json/wp/v2/comments`;
+    const apiUrl = `${wpUrl}/wp-json/wp/v2/comments/`;
 
     // Basic Auth를 위한 출입증 제작
     const wpUser = process.env.WP_USER;
