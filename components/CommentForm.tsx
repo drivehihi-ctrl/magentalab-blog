@@ -29,7 +29,7 @@ export default function CommentForm({ postId }: CommentFormProps) {
     setErrorMessage("");
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_WORDPRESS_URL || "http://magentalab.mycafe24.com"}/wp-json/wp/v2/comments`, {
+      const response = await fetch("/api/comment/submit", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
