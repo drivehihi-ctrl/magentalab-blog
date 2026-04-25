@@ -1,4 +1,4 @@
-import { getComments, WPComment } from "@/lib/wp";
+import { supabase } from "@/lib/supabase";
 import CommentForm from "./CommentForm";
 
 interface CommentsSectionProps {
@@ -6,19 +6,31 @@ interface CommentsSectionProps {
 }
 
 export default async function CommentsSection({ postId }: CommentsSectionProps) {
-  const comments = await getComments(postId);
+  // Supabase에서 해당 포스트의 승인된 댓글 가져오기
+  const { data: comments, error } = await supabase
+    .from("comments")
+    .select("*")
+    .eq("post_id", postId)
+    .eq("is_approved", true)
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching comments from Supabase:", error);
+  }
+
+  const commentList = comments || [];
 
   return (
     <div className="mt-20 border-t border-gray-100 pt-16">
       <div className="flex items-center gap-3 mb-12">
-        <h3 className="text-2xl font-bold text-gray-900">댓글 ({comments.length})</h3>
+        <h3 className="text-2xl font-bold text-gray-900">댓글 ({commentList.length})</h3>
         <div className="h-px flex-grow bg-gray-100" />
       </div>
 
-      {comments.length > 0 ? (
+      {commentList.length > 0 ? (
         <ul className="space-y-10 mb-16">
-          {comments.map((comment: WPComment) => {
-            const date = new Date(comment.date).toLocaleDateString("ko-KR", {
+          {commentList.map((comment) => {
+            const date = new Date(comment.created_at).toLocaleDateString("ko-KR", {
               year: "numeric",
               month: "long",
               day: "numeric",
@@ -39,10 +51,9 @@ export default async function CommentsSection({ postId }: CommentsSectionProps) 
                       <h4 className="font-bold text-gray-900">{comment.author_name}</h4>
                       <span className="text-xs text-gray-400 font-medium">{date}</span>
                     </div>
-                    <div 
-                      className="text-gray-600 leading-relaxed wp-content text-sm"
-                      dangerouslySetInnerHTML={{ __html: comment.content.rendered }}
-                    />
+                    <div className="text-gray-600 leading-relaxed text-sm whitespace-pre-wrap">
+                      {comment.content}
+                    </div>
                   </div>
                 </div>
               </li>
