@@ -172,9 +172,12 @@ export default function ShopAdminPage() {
                 <div style={inputGroupStyle}><label>카테고리</label>
                   <select style={naverInputStyle} value={currentProduct.category || ""} onChange={e => setCurrentProduct({...currentProduct, category: e.target.value})}>
                     <option value="">카테고리 선택</option>
-                    <option value="food">사료/간식</option>
+                    <option value="food">사료·간식</option>
                     <option value="supplement">영양제</option>
-                    <option value="hygiene">위생/용품</option>
+                    <option value="hygiene">위생·목욕</option>
+                    <option value="toy">장난감</option>
+                    <option value="bedding">침구·하우스</option>
+                    <option value="clothing">의류·악세</option>
                   </select>
                 </div>
                 {/* 뱃지 및 외부링크 복구 */}

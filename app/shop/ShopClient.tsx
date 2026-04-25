@@ -15,7 +15,7 @@ const CATEGORIES = [
   { id: "hygiene", label: "위생·목욕", emoji: "🛁" },
   { id: "toy", label: "장난감", emoji: "🎾" },
   { id: "bedding", label: "침구·하우스", emoji: "🏠" },
-  { id: "fashion", label: "의류·악세", emoji: "👗" },
+  { id: "clothing", label: "의류·악세", emoji: "👗" },
 ];
 
 // ─── 반려동물 연구 프로필 키워드 (Ansim-i's Research Categories) ──────────
