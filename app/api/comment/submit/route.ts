@@ -6,11 +6,17 @@ export async function POST(req: Request) {
     const { post, author_name, author_email, content } = body;
 
     const wpUrl = process.env.WORDPRESS_URL || "https://magentalab.mycafe24.com";
-    const apiUrl = `${wpUrl}/wp-json/wp/v2/comments/`;
-
-    // Basic Auth를 위한 출입증 제작
     const wpUser = process.env.WP_USER;
     const wpPassword = process.env.WP_APP_PASSWORD;
+
+    if (!wpUser || !wpPassword) {
+      return NextResponse.json(
+        { message: "서버 환경 변수(WP_USER, WP_APP_PASSWORD)가 설정되지 않았습니다. Vercel 설정을 확인해주세요." },
+        { status: 500 }
+      );
+    }
+
+    const apiUrl = `${wpUrl}/wp-json/wp/v2/comments/?post=${post}`;
     const authHeader = Buffer.from(`${wpUser}:${wpPassword}`).toString("base64");
 
     const response = await fetch(apiUrl, {
