@@ -181,7 +181,16 @@ export default function ShopAdminPage() {
                   </select>
                 </div>
                 {/* 뱃지 및 외부링크 복구 */}
-                <div style={inputGroupStyle}><label>상품 뱃지 (예: BEST, SALE)</label><input style={naverInputStyle} value={currentProduct.badge || ""} onChange={e => setCurrentProduct({...currentProduct, badge: e.target.value})} /></div>
+                <div style={inputGroupStyle}><label>상품 뱃지</label>
+                  <select style={naverInputStyle} value={currentProduct.badge || ""} onChange={e => setCurrentProduct({...currentProduct, badge: e.target.value})}>
+                    <option value="">뱃지 없음</option>
+                    <option value="BEST">BEST</option>
+                    <option value="NEW">NEW</option>
+                    <option value="SALE">SALE</option>
+                    <option value="HOT">HOT</option>
+                    <option value="추천">추천</option>
+                  </select>
+                </div>
                 <div style={inputGroupStyle}><label>상세 외부링크 (필요 시)</label><input style={naverInputStyle} value={currentProduct.details_link || ""} onChange={e => setCurrentProduct({...currentProduct, details_link: e.target.value})} /></div>
               </div>
             </div>
