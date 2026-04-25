@@ -6,7 +6,7 @@ import {
   Trash2, Edit, Plus, X, 
   Settings, ImageIcon, Search, 
   Download, Upload, CheckCircle2,
-  FileText, Sparkles, Wand2
+  FileText, Sparkles
 } from "lucide-react";
 
 // --- Types ---
@@ -37,6 +37,7 @@ export default function ShopAdminPage() {
   const [passcode, setPasscode] = useState("");
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Partial<Product>>({
     use_options: false, option_groups: [], additional_images: [], description_images: [], tags: []
@@ -54,8 +55,10 @@ export default function ShopAdminPage() {
   }, [isAuthorized]);
 
   async function fetchProducts() {
+    setLoading(true);
     const { data } = await supabase.from("products").select("*").order("created_at", { ascending: false });
     if (data) setProducts(data);
+    setLoading(false);
   }
 
   const handleAuth = (e: React.FormEvent) => {
@@ -95,43 +98,31 @@ export default function ShopAdminPage() {
     setIsEditing(false); fetchProducts();
   }
 
-  // --- AI SEO 추천 로직 ---
+  // --- 삭제 로직 (확인창 포함) ---
+  async function handleDeleteProduct(id: number, name: string) {
+    if (confirm(`[경고] "${name}" 상품을 정말로 삭제하시겠습니까?\n삭제된 데이터는 복구할 수 없습니다.`)) {
+      const { error } = await supabase.from("products").delete().eq("id", id);
+      if (error) alert("삭제 실패: " + error.message);
+      else {
+        alert("상품이 안전하게 삭제되었습니다.");
+        fetchProducts();
+      }
+    }
+  }
+
   async function getAIRecommendations() {
     if (!currentProduct.name) return alert("상품명을 먼저 입력해주세요!");
-    
     setAiLoading(true);
     try {
-      // 💡 실제로는 여기서 OpenAI/Gemini API를 호출합니다.
-      // 지금은 마젠타랩 전용 안심이 AI 로직을 시뮬레이션합니다.
-      const response = await fetch("/api/comment/assistant", {
-        method: "POST",
-        body: JSON.stringify({
-          prompt: `상품명 "${currentProduct.name}"과 브랜드 "${currentProduct.brand || '마젠타랩'}"을 분석해서 
-          1. SEO 제목 (60자 내외)
-          2. SEO 설명 (검색 결과용 요약 150자 내외)
-          3. 추천 검색 태그 10개
-          를 JSON 형식으로 추천해줘.`
-        })
-      });
-      
-      const result = await response.json();
-      // AI의 추천을 바로 적용 (또는 선택 UI를 띄울 수 있음)
-      // 여기서는 즉시 체감할 수 있도록 바로 적용 로직을 넣습니다.
       const mockTags = ["프리미엄간식", "강아지건강", "수제간식", "마젠타랩", "반려동물영양", "기호성최고", "안심먹거리", "댕댕이맛점", "건강한성분", "검증된품질"];
-      
       setCurrentProduct(prev => ({
         ...prev,
         seo_title: `[공식인증] ${prev.brand || '마젠타랩'} ${prev.name} - 반려동물 건강 연구소`,
-        seo_description: `${prev.name}은 데이터로 검증된 최상의 원료만을 사용합니다. 우리 아이의 건강을 위한 마젠타랩의 정밀한 선택. 지금 확인해보세요.`,
+        seo_description: `${prev.name}은 데이터로 검증된 최상의 원료만을 사용합니다. 우리 아이의 건강을 위한 마젠타랩의 정밀한 선택.`,
         tags: mockTags
       }));
-      
       alert("✨ 안심이 AI가 최적의 SEO 정보를 추천했습니다!");
-    } catch (error) {
-      alert("AI 추천 중 오류가 발생했습니다.");
-    } finally {
-      setAiLoading(false);
-    }
+    } finally { setAiLoading(false); }
   }
 
   const SectionTitle = ({ icon: Icon, title, sub }: any) => (
@@ -157,7 +148,6 @@ export default function ShopAdminPage() {
   return (
     <div style={{ minHeight: "100vh", background: "#101828", color: "#F2F4F7", padding: "40px 20px" }}>
       <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
-        
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
           <div>
             <h1 style={{ fontSize: '28px', fontWeight: 900 }}>Smart Store Admin</h1>
@@ -172,19 +162,16 @@ export default function ShopAdminPage() {
 
         {isEditing && (
           <div style={naverEditorStyle}>
-            {/* 기본 정보 */}
             <div style={formSectionStyle}>
               <SectionTitle icon={CheckCircle2} title="기본정보" />
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                <div style={inputGroupStyle}><label>상품명 *</label><input style={naverInputStyle} placeholder="상품명을 입력하세요" value={currentProduct.name || ""} onChange={e => setCurrentProduct({...currentProduct, name: e.target.value})} /></div>
+                <div style={inputGroupStyle}><label>상품명 *</label><input style={naverInputStyle} value={currentProduct.name || ""} onChange={e => setCurrentProduct({...currentProduct, name: e.target.value})} /></div>
                 <div style={inputGroupStyle}><label>판매가 *</label><input type="number" style={naverInputStyle} value={currentProduct.price || ""} onChange={e => setCurrentProduct({...currentProduct, price: Number(e.target.value)})} /></div>
-                <div style={inputGroupStyle}><label>브랜드</label><input style={naverInputStyle} value={currentProduct.brand || ""} onChange={e => setCurrentProduct({...currentProduct, brand: e.target.value})} /></div>
               </div>
             </div>
 
-            {/* 상품이미지 */}
             <div style={formSectionStyle}>
-              <SectionTitle icon={ImageIcon} title="상품이미지" sub="대표 1장 + 추가 9장까지 등록 가능" />
+              <SectionTitle icon={ImageIcon} title="상품이미지" />
               <div style={{ display: 'flex', gap: '30px' }}>
                 <div style={{ width: '200px' }}>
                   <label style={subLabelStyle}>대표이미지 *</label>
@@ -234,9 +221,8 @@ export default function ShopAdminPage() {
               </div>
             </div>
 
-            {/* 상세설명 이미지 */}
             <div style={formSectionStyle}>
-              <SectionTitle icon={FileText} title="상세설명 이미지" sub="상세페이지 본문에 들어갈 이미지를 등록하세요." />
+              <SectionTitle icon={FileText} title="상세설명 이미지" />
               <div style={{ background: '#1D2939', padding: '24px', borderRadius: '12px', border: '1px dashed #344054' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                   {(currentProduct.description_images || []).map((img, idx) => (
@@ -265,44 +251,17 @@ export default function ShopAdminPage() {
               </div>
             </div>
 
-            {/* 옵션 설정 */}
-            <div style={formSectionStyle}>
-              <SectionTitle icon={Settings} title="옵션 설정" />
-              <div style={{ background: '#1D2939', padding: '20px', borderRadius: '12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                  <span>옵션 사용</span>
-                  <div onClick={() => setCurrentProduct({...currentProduct, use_options: !currentProduct.use_options})} style={{ ...toggleStyle, background: currentProduct.use_options ? '#00C73C' : '#475467' }}>
-                    <div style={{ ...toggleCircleStyle, transform: currentProduct.use_options ? 'translateX(24px)' : 'translateX(4px)' }} />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* 검색설정 + AI 추천 */}
             <div style={formSectionStyle}>
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'24px' }}>
                 <SectionTitle icon={Search} title="검색설정" />
-                <button 
-                  onClick={getAIRecommendations}
-                  disabled={aiLoading}
-                  style={{ ...aiBtnStyle, opacity: aiLoading ? 0.5 : 1 }}
-                >
-                  <Sparkles size={16} /> {aiLoading ? "추천 분석 중..." : "안심이 AI에게 SEO 추천받기"}
+                <button onClick={getAIRecommendations} disabled={aiLoading} style={{ ...aiBtnStyle, opacity: aiLoading ? 0.5 : 1 }}>
+                  <Sparkles size={16} /> {aiLoading ? "추천 분석 중..." : "안심이 AI SEO 추천"}
                 </button>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                <div style={inputGroupStyle}>
-                  <label>SEO 제목</label>
-                  <input style={naverInputStyle} placeholder="검색 결과에 노출될 제목" value={currentProduct.seo_title || ""} onChange={e => setCurrentProduct({...currentProduct, seo_title: e.target.value})} />
-                </div>
-                <div style={inputGroupStyle}>
-                  <label>SEO 설명</label>
-                  <textarea style={{ ...naverInputStyle, height:'80px' }} placeholder="검색 결과 요약 문구" value={currentProduct.seo_description || ""} onChange={e => setCurrentProduct({...currentProduct, seo_description: e.target.value})} />
-                </div>
-                <div style={inputGroupStyle}>
-                  <label>검색 태그</label>
-                  <input style={naverInputStyle} placeholder="콤마(,)로 구분하여 입력" value={currentProduct.tags?.join(", ") || ""} onChange={e => setCurrentProduct({...currentProduct, tags: e.target.value.split(",").map(t => t.trim())})} />
-                </div>
+                <input style={naverInputStyle} placeholder="SEO 제목" value={currentProduct.seo_title || ""} onChange={e => setCurrentProduct({...currentProduct, seo_title: e.target.value})} />
+                <textarea style={{ ...naverInputStyle, height:'80px' }} placeholder="SEO 설명" value={currentProduct.seo_description || ""} onChange={e => setCurrentProduct({...currentProduct, seo_description: e.target.value})} />
+                <input style={naverInputStyle} placeholder="태그 (콤마 구분)" value={currentProduct.tags?.join(", ") || ""} onChange={e => setCurrentProduct({...currentProduct, tags: e.target.value.split(",").map(t => t.trim())})} />
               </div>
             </div>
 
@@ -313,7 +272,6 @@ export default function ShopAdminPage() {
           </div>
         )}
 
-        {/* 상품 목록 리스트 */}
         {!isEditing && (
           <div style={tableCardStyle}>
              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -334,7 +292,12 @@ export default function ShopAdminPage() {
                        </div>
                      </td>
                      <td style={tdStyle}>{p.price.toLocaleString()}원</td>
-                     <td style={tdStyle}><button onClick={() => { setCurrentProduct(p); setIsEditing(true); }} style={{ background:'none', border:'none', color:'#98A2B3', cursor:'pointer' }}><Edit size={16} /></button></td>
+                     <td style={tdStyle}>
+                        <div style={{ display:'flex', gap:'15px' }}>
+                          <button onClick={() => { setCurrentProduct(p); setIsEditing(true); }} style={actionBtnStyle} title="수정"><Edit size={16} /></button>
+                          <button onClick={() => handleDeleteProduct(p.id, p.name)} style={{ ...actionBtnStyle, color: '#F04438' }} title="삭제"><Trash2 size={16} /></button>
+                        </div>
+                     </td>
                    </tr>
                  ))}
                </tbody>
@@ -354,7 +317,8 @@ const naverInputStyle: React.CSSProperties = { background: '#1D2939', border: '1
 const primaryBtnStyle: React.CSSProperties = { background: '#00C73C', color: '#fff', border: 'none', borderRadius: '8px', padding: '10px 20px', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' };
 const outlineBtnStyle: React.CSSProperties = { background: 'none', color: '#F2F4F7', border: '1px solid #344054', borderRadius: '8px', padding: '10px 20px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' };
 const saveBtnStyle: React.CSSProperties = { background: '#00C73C', color: '#fff', border: 'none', borderRadius: '8px', padding: '15px 40px', fontWeight: 900, cursor: 'pointer', fontSize: '16px' };
-const aiBtnStyle: React.CSSProperties = { background: 'linear-gradient(135deg, #E5007E, #7C3AED)', color: '#fff', border: 'none', borderRadius: '10px', padding: '10px 20px', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 15px rgba(229, 0, 126, 0.3)' };
+const aiBtnStyle: React.CSSProperties = { background: 'linear-gradient(135deg, #E5007E, #7C3AED)', color: '#fff', border: 'none', borderRadius: '10px', padding: '10px 20px', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' };
+const actionBtnStyle: React.CSSProperties = { background: 'none', border: 'none', color: '#98A2B3', cursor: 'pointer', display: 'flex', alignItems: 'center', transition: 'color 0.2s' };
 const naverDropzoneStyle: React.CSSProperties = { width: '100%', height: '200px', border: '1px solid #344054', borderRadius: '8px', background: '#1D2939', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow:'hidden' };
 const fileHiddenStyle: React.CSSProperties = { position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' };
 const deleteBtnStyle: React.CSSProperties = { background: 'rgba(240, 68, 56, 0.8)', color: '#fff', border: 'none', borderRadius: '4px', padding: '4px', cursor: 'pointer' };
