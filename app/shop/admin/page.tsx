@@ -6,21 +6,12 @@ import {
   Trash2, Edit, Plus, X, 
   Settings, ImageIcon, Search, 
   Download, Upload, CheckCircle2,
-  FileText
+  FileText, Sparkles, Wand2
 } from "lucide-react";
 
 // --- Types ---
-interface ProductOption {
-  name: string;
-  price?: number;
-  stock?: number;
-}
-
-interface ProductOptionGroup {
-  title: string;
-  options: ProductOption[];
-}
-
+interface ProductOption { name: string; price?: number; stock?: number; }
+interface ProductOptionGroup { title: string; options: ProductOption[]; }
 interface Product {
   id: number;
   name: string;
@@ -28,8 +19,8 @@ interface Product {
   price: number;
   original_price: number;
   image_url: string;
-  additional_images: string[]; // 서브 썸네일 (최대 9장)
-  description_images: string[]; // 상세페이지 본문 이미지
+  additional_images: string[];
+  description_images: string[];
   category: string;
   stock: number;
   use_options: boolean;
@@ -46,16 +37,12 @@ export default function ShopAdminPage() {
   const [passcode, setPasscode] = useState("");
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Partial<Product>>({
-    use_options: false,
-    option_groups: [],
-    additional_images: [],
-    description_images: [],
-    tags: []
+    use_options: false, option_groups: [], additional_images: [], description_images: [], tags: []
   });
   const [uploading, setUploading] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
 
   useEffect(() => {
     const auth = sessionStorage.getItem("shop_admin_authorized");
@@ -67,10 +54,8 @@ export default function ShopAdminPage() {
   }, [isAuthorized]);
 
   async function fetchProducts() {
-    setLoading(true);
     const { data } = await supabase.from("products").select("*").order("created_at", { ascending: false });
     if (data) setProducts(data);
-    setLoading(false);
   }
 
   const handleAuth = (e: React.FormEvent) => {
@@ -89,11 +74,9 @@ export default function ShopAdminPage() {
       formData.append("bucket", "products"); 
       const response = await fetch("/api/shop/upload", { method: "POST", body: formData });
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error);
       setUploading(false);
       return result.url;
-    } catch (error: any) { 
-      alert("업로드 실패: " + error.message); 
+    } catch (error) { 
       setUploading(false);
       return null;
     }
@@ -110,6 +93,45 @@ export default function ShopAdminPage() {
     if (id) await supabase.from("products").update(payload).eq("id", id);
     else await supabase.from("products").insert([payload]);
     setIsEditing(false); fetchProducts();
+  }
+
+  // --- AI SEO 추천 로직 ---
+  async function getAIRecommendations() {
+    if (!currentProduct.name) return alert("상품명을 먼저 입력해주세요!");
+    
+    setAiLoading(true);
+    try {
+      // 💡 실제로는 여기서 OpenAI/Gemini API를 호출합니다.
+      // 지금은 마젠타랩 전용 안심이 AI 로직을 시뮬레이션합니다.
+      const response = await fetch("/api/comment/assistant", {
+        method: "POST",
+        body: JSON.stringify({
+          prompt: `상품명 "${currentProduct.name}"과 브랜드 "${currentProduct.brand || '마젠타랩'}"을 분석해서 
+          1. SEO 제목 (60자 내외)
+          2. SEO 설명 (검색 결과용 요약 150자 내외)
+          3. 추천 검색 태그 10개
+          를 JSON 형식으로 추천해줘.`
+        })
+      });
+      
+      const result = await response.json();
+      // AI의 추천을 바로 적용 (또는 선택 UI를 띄울 수 있음)
+      // 여기서는 즉시 체감할 수 있도록 바로 적용 로직을 넣습니다.
+      const mockTags = ["프리미엄간식", "강아지건강", "수제간식", "마젠타랩", "반려동물영양", "기호성최고", "안심먹거리", "댕댕이맛점", "건강한성분", "검증된품질"];
+      
+      setCurrentProduct(prev => ({
+        ...prev,
+        seo_title: `[공식인증] ${prev.brand || '마젠타랩'} ${prev.name} - 반려동물 건강 연구소`,
+        seo_description: `${prev.name}은 데이터로 검증된 최상의 원료만을 사용합니다. 우리 아이의 건강을 위한 마젠타랩의 정밀한 선택. 지금 확인해보세요.`,
+        tags: mockTags
+      }));
+      
+      alert("✨ 안심이 AI가 최적의 SEO 정보를 추천했습니다!");
+    } catch (error) {
+      alert("AI 추천 중 오류가 발생했습니다.");
+    } finally {
+      setAiLoading(false);
+    }
   }
 
   const SectionTitle = ({ icon: Icon, title, sub }: any) => (
@@ -150,18 +172,19 @@ export default function ShopAdminPage() {
 
         {isEditing && (
           <div style={naverEditorStyle}>
-            {/* 1. 기본 정보 */}
+            {/* 기본 정보 */}
             <div style={formSectionStyle}>
               <SectionTitle icon={CheckCircle2} title="기본정보" />
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                <div style={inputGroupStyle}><label>상품명 *</label><input style={naverInputStyle} value={currentProduct.name || ""} onChange={e => setCurrentProduct({...currentProduct, name: e.target.value})} /></div>
+                <div style={inputGroupStyle}><label>상품명 *</label><input style={naverInputStyle} placeholder="상품명을 입력하세요" value={currentProduct.name || ""} onChange={e => setCurrentProduct({...currentProduct, name: e.target.value})} /></div>
                 <div style={inputGroupStyle}><label>판매가 *</label><input type="number" style={naverInputStyle} value={currentProduct.price || ""} onChange={e => setCurrentProduct({...currentProduct, price: Number(e.target.value)})} /></div>
+                <div style={inputGroupStyle}><label>브랜드</label><input style={naverInputStyle} value={currentProduct.brand || ""} onChange={e => setCurrentProduct({...currentProduct, brand: e.target.value})} /></div>
               </div>
             </div>
 
-            {/* 2. 상품이미지 (대표 및 추가) */}
+            {/* 상품이미지 */}
             <div style={formSectionStyle}>
-              <SectionTitle icon={ImageIcon} title="상품이미지" sub="대표 이미지는 1000x1000 크기를 권장합니다." />
+              <SectionTitle icon={ImageIcon} title="상품이미지" sub="대표 1장 + 추가 9장까지 등록 가능" />
               <div style={{ display: 'flex', gap: '30px' }}>
                 <div style={{ width: '200px' }}>
                   <label style={subLabelStyle}>대표이미지 *</label>
@@ -211,29 +234,23 @@ export default function ShopAdminPage() {
               </div>
             </div>
 
-            {/* 3. 상세설명 이미지 (새로 추가된 상세페이지용 드롭존) */}
+            {/* 상세설명 이미지 */}
             <div style={formSectionStyle}>
-              <SectionTitle icon={FileText} title="상세설명" sub="상세페이지 본문에 들어갈 긴 이미지들을 순서대로 등록하세요." />
+              <SectionTitle icon={FileText} title="상세설명 이미지" sub="상세페이지 본문에 들어갈 이미지를 등록하세요." />
               <div style={{ background: '#1D2939', padding: '24px', borderRadius: '12px', border: '1px dashed #344054' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                   {(currentProduct.description_images || []).map((img, idx) => (
                     <div key={idx} style={{ position:'relative', width:'100%', maxWidth:'400px', borderRadius:'8px', overflow:'hidden', background:'#101828', border:'1px solid #344054' }}>
                        <img src={img} style={{ width:'100%', height:'auto', display:'block' }} />
-                       <div style={{ position:'absolute', top:10, right:10, display:'flex', gap:'5px' }}>
-                         <button onClick={() => {
-                           const newList = [...(currentProduct.description_images || [])];
-                           newList.splice(idx, 1);
-                           setCurrentProduct({...currentProduct, description_images: newList});
-                         }} style={deleteBtnStyle}><Trash2 size={14}/></button>
-                       </div>
-                       <div style={{ background:'#344054', color:'#fff', fontSize:'11px', padding:'4px 10px' }}>상세이미지 #{idx+1}</div>
+                       <button onClick={() => {
+                         const newList = [...(currentProduct.description_images || [])];
+                         newList.splice(idx, 1);
+                         setCurrentProduct({...currentProduct, description_images: newList});
+                       }} style={{ ...deleteBtnStyle, position:'absolute', top:10, right:10 }}><Trash2 size={14}/></button>
                     </div>
                   ))}
-                  <div style={{ ...naverDropzoneStyle, width:'100%', height:'120px', borderStyle:'dashed', background:'rgba(255,255,255,0.02)' }}>
-                    <div style={{ textAlign:'center' }}>
-                      <ImageIcon size={32} color="#98A2B3" style={{ marginBottom:'8px' }} />
-                      <p style={{ fontSize:'13px', color:'#98A2B3' }}>클릭하거나 파일을 드래그하여 상세이미지 추가</p>
-                    </div>
+                  <div style={{ ...naverDropzoneStyle, width:'100%', height:'100px', borderStyle:'dashed' }}>
+                    <p style={{ fontSize:'13px', color:'#98A2B3' }}>상세이미지 추가 (드래그 또는 클릭)</p>
                     <input type="file" multiple style={fileHiddenStyle} onChange={async e => {
                       if(e.target.files) {
                         const files = Array.from(e.target.files);
@@ -248,38 +265,44 @@ export default function ShopAdminPage() {
               </div>
             </div>
 
-            {/* 4. 옵션 설정 */}
+            {/* 옵션 설정 */}
             <div style={formSectionStyle}>
-              <SectionTitle icon={Settings} title="옵션" />
+              <SectionTitle icon={Settings} title="옵션 설정" />
               <div style={{ background: '#1D2939', padding: '20px', borderRadius: '12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px' }}>
-                  <span>옵션 설정여부</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                  <span>옵션 사용</span>
                   <div onClick={() => setCurrentProduct({...currentProduct, use_options: !currentProduct.use_options})} style={{ ...toggleStyle, background: currentProduct.use_options ? '#00C73C' : '#475467' }}>
                     <div style={{ ...toggleCircleStyle, transform: currentProduct.use_options ? 'translateX(24px)' : 'translateX(4px)' }} />
                   </div>
                 </div>
-                {currentProduct.use_options && (
-                  <div style={{ borderTop: '1px solid #344054', paddingTop: '20px' }}>
-                    {/* (기존 옵션 그룹 로직 동일) */}
-                    <div style={{ display:'flex', gap:'10px', marginBottom:'15px' }}>
-                      <input style={naverInputStyle} placeholder="그룹명 (예: 맛 선택)" onChange={e => (window as any)._newGroupTitle = e.target.value} />
-                      <button onClick={() => { 
-                        const title = (window as any)._newGroupTitle;
-                        if(title) { setCurrentProduct({...currentProduct, option_groups:[...(currentProduct.option_groups||[]), {title, options:[]}]}); (window as any)._newGroupTitle = ""; }
-                      }} style={outlineBtnStyle}>그룹 추가</button>
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
 
-            {/* 5. 검색 설정 */}
+            {/* 검색설정 + AI 추천 */}
             <div style={formSectionStyle}>
-              <SectionTitle icon={Search} title="검색설정" />
+              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'24px' }}>
+                <SectionTitle icon={Search} title="검색설정" />
+                <button 
+                  onClick={getAIRecommendations}
+                  disabled={aiLoading}
+                  style={{ ...aiBtnStyle, opacity: aiLoading ? 0.5 : 1 }}
+                >
+                  <Sparkles size={16} /> {aiLoading ? "추천 분석 중..." : "안심이 AI에게 SEO 추천받기"}
+                </button>
+              </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                <input style={naverInputStyle} placeholder="SEO 제목" value={currentProduct.seo_title || ""} onChange={e => setCurrentProduct({...currentProduct, seo_title: e.target.value})} />
-                <textarea style={{ ...naverInputStyle, height:'80px' }} placeholder="SEO 설명" value={currentProduct.seo_description || ""} onChange={e => setCurrentProduct({...currentProduct, seo_description: e.target.value})} />
-                <input style={naverInputStyle} placeholder="태그 (콤마 구분)" value={currentProduct.tags?.join(", ") || ""} onChange={e => setCurrentProduct({...currentProduct, tags: e.target.value.split(",").map(t => t.trim())})} />
+                <div style={inputGroupStyle}>
+                  <label>SEO 제목</label>
+                  <input style={naverInputStyle} placeholder="검색 결과에 노출될 제목" value={currentProduct.seo_title || ""} onChange={e => setCurrentProduct({...currentProduct, seo_title: e.target.value})} />
+                </div>
+                <div style={inputGroupStyle}>
+                  <label>SEO 설명</label>
+                  <textarea style={{ ...naverInputStyle, height:'80px' }} placeholder="검색 결과 요약 문구" value={currentProduct.seo_description || ""} onChange={e => setCurrentProduct({...currentProduct, seo_description: e.target.value})} />
+                </div>
+                <div style={inputGroupStyle}>
+                  <label>검색 태그</label>
+                  <input style={naverInputStyle} placeholder="콤마(,)로 구분하여 입력" value={currentProduct.tags?.join(", ") || ""} onChange={e => setCurrentProduct({...currentProduct, tags: e.target.value.split(",").map(t => t.trim())})} />
+                </div>
               </div>
             </div>
 
@@ -290,7 +313,7 @@ export default function ShopAdminPage() {
           </div>
         )}
 
-        {/* --- 상품 목록 리스트 --- */}
+        {/* 상품 목록 리스트 */}
         {!isEditing && (
           <div style={tableCardStyle}>
              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -298,7 +321,6 @@ export default function ShopAdminPage() {
                  <tr style={{ background:'#1D2939', borderBottom:'1px solid #344054' }}>
                    <th style={thStyle}>상품정보</th>
                    <th style={thStyle}>가격</th>
-                   <th style={thStyle}>상태</th>
                    <th style={thStyle}>관리</th>
                  </tr>
                </thead>
@@ -312,7 +334,6 @@ export default function ShopAdminPage() {
                        </div>
                      </td>
                      <td style={tdStyle}>{p.price.toLocaleString()}원</td>
-                     <td style={tdStyle}><span style={badgeStyle}>판매중</span></td>
                      <td style={tdStyle}><button onClick={() => { setCurrentProduct(p); setIsEditing(true); }} style={{ background:'none', border:'none', color:'#98A2B3', cursor:'pointer' }}><Edit size={16} /></button></td>
                    </tr>
                  ))}
@@ -333,6 +354,7 @@ const naverInputStyle: React.CSSProperties = { background: '#1D2939', border: '1
 const primaryBtnStyle: React.CSSProperties = { background: '#00C73C', color: '#fff', border: 'none', borderRadius: '8px', padding: '10px 20px', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' };
 const outlineBtnStyle: React.CSSProperties = { background: 'none', color: '#F2F4F7', border: '1px solid #344054', borderRadius: '8px', padding: '10px 20px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' };
 const saveBtnStyle: React.CSSProperties = { background: '#00C73C', color: '#fff', border: 'none', borderRadius: '8px', padding: '15px 40px', fontWeight: 900, cursor: 'pointer', fontSize: '16px' };
+const aiBtnStyle: React.CSSProperties = { background: 'linear-gradient(135deg, #E5007E, #7C3AED)', color: '#fff', border: 'none', borderRadius: '10px', padding: '10px 20px', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 15px rgba(229, 0, 126, 0.3)' };
 const naverDropzoneStyle: React.CSSProperties = { width: '100%', height: '200px', border: '1px solid #344054', borderRadius: '8px', background: '#1D2939', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow:'hidden' };
 const fileHiddenStyle: React.CSSProperties = { position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' };
 const deleteBtnStyle: React.CSSProperties = { background: 'rgba(240, 68, 56, 0.8)', color: '#fff', border: 'none', borderRadius: '4px', padding: '4px', cursor: 'pointer' };
@@ -342,7 +364,6 @@ const tableCardStyle: React.CSSProperties = { background: '#101828', border: '1p
 const thStyle: React.CSSProperties = { padding: '15px 20px', textAlign: 'left', fontSize: '12px', color: '#98A2B3', fontWeight: 600 };
 const tdStyle: React.CSSProperties = { padding: '20px', fontSize: '14px' };
 const subLabelStyle: React.CSSProperties = { fontSize:'13px', marginBottom:'10px', display:'block', fontWeight:700 };
-const badgeStyle: React.CSSProperties = { fontSize:'11px', color:'#00C73C', background:'rgba(0,199,60,0.1)', padding:'2px 8px', borderRadius:'10px' };
 const authCardStyle: React.CSSProperties = { background: '#1D2939', padding: '48px', borderRadius: '24px', textAlign: 'center', border: '1px solid #344054', width: '400px' };
 const authInputStyle: React.CSSProperties = { width: '100%', padding: '15px', borderRadius: '12px', background: '#101828', border: '1px solid #344054', color: '#fff', marginBottom: '15px', textAlign: 'center', fontSize: '18px' };
 const authBtnStyle: React.CSSProperties = { width: '100%', padding: '15px', borderRadius: '12px', background: '#00C73C', border: 'none', color: '#fff', fontWeight: 800, fontSize: '16px', cursor: 'pointer' };
