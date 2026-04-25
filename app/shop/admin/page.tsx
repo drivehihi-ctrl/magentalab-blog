@@ -1,14 +1,20 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import { Camera, Trash2, Edit, PlayCircle, Image as ImageIcon, Sparkles, Plus, X, Layers, ChevronLeft, ChevronRight } from "lucide-react";
-import AICommentAssistant from "@/components/AICommentAssistant";
+import { 
+  Trash2, Edit, Plus, X, 
+  Settings, Image as ImageIcon, Search, 
+  Download, Upload, CheckCircle2, AlertCircle,
+  ChevronDown, ChevronUp, GripVertical
+} from "lucide-react";
 
+// --- Types ---
 interface ProductOption {
   name: string;
   price?: number;
+  stock?: number;
+  is_visible?: boolean;
 }
 
 interface ProductOptionGroup {
@@ -24,31 +30,36 @@ interface Product {
   original_price: number;
   image_url: string;
   category: string;
-  badge?: string;
-  stock?: number;
-  option_groups?: ProductOptionGroup[];
-  detail_images?: string[];
-  details_link?: string;
+  stock: number;
+  use_options: boolean;
+  option_groups: ProductOptionGroup[];
+  detail_images: string[];
+  tags: string[];
+  seo_title: string;
+  seo_description: string;
   created_at?: string;
 }
-
-interface Banner { id: string; title: string; sub_text: string; bg_gradient: string; emoji: string; image_url?: string; link_url?: string; order_index: number; banner_type?: "standard" | "story"; }
-interface CareGuide { id: string; title: string; subtitle: string; emoji: string; video_url: string; gradient: string; order_index: number; }
 
 const ADMIN_PASSCODE = "magenta123";
 
 export default function ShopAdminPage() {
   const [passcode, setPasscode] = useState("");
   const [isAuthorized, setIsAuthorized] = useState(false);
-  const [activeTab, setActiveTab] = useState<"products" | "banners" | "guides" | "ai">("products");
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [currentProduct, setCurrentProduct] = useState<Partial<Product>>({});
+  const [currentProduct, setCurrentProduct] = useState<Partial<Product>>({
+    use_options: false,
+    option_groups: [],
+    detail_images: [],
+    tags: []
+  });
   const [uploading, setUploading] = useState(false);
 
+  // Option UI States
   const [newGroupTitle, setNewGroupTitle] = useState("");
-  const [groupInputs, setGroupInputs] = useState<{ [key: number]: { name: string; price: number | "" } }>({});
+  const [tempOptionName, setTempOptionName] = useState("");
+  const [tempOptionPrice, setTempOptionPrice] = useState<number | "">("");
 
   useEffect(() => {
     const auth = sessionStorage.getItem("shop_admin_authorized");
@@ -74,24 +85,17 @@ export default function ShopAdminPage() {
     } else alert("비밀번호 틀림");
   };
 
-  const uploadMedia = async (file: File, folder: string, isDetail = false): Promise<string | null> => {
+  const uploadMedia = async (file: File): Promise<string | null> => {
     setUploading(true);
     try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("bucket", folder); 
-      formData.append("folder", ""); 
+      formData.append("bucket", "products"); 
       const response = await fetch("/api/shop/upload", { method: "POST", body: formData });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error);
-      const publicUrl = result.url;
-      
-      if (!isDetail) {
-        setCurrentProduct(prev => ({ ...prev, image_url: publicUrl }));
-      }
-      
       setUploading(false);
-      return publicUrl;
+      return result.url;
     } catch (error: any) { 
       alert("업로드 실패: " + error.message); 
       setUploading(false);
@@ -101,207 +105,277 @@ export default function ShopAdminPage() {
 
   async function handleSaveProduct() {
     const { id, created_at, ...updateData } = currentProduct as any;
-    const payload = { 
-      name: updateData.name,
-      brand: updateData.brand,
-      price: Number(updateData.price), 
-      original_price: Number(updateData.original_price || updateData.price), 
+    const payload = {
+      ...updateData,
+      price: Number(updateData.price || 0),
+      original_price: Number(updateData.original_price || updateData.price || 0),
       stock: Number(updateData.stock || 0),
-      category: updateData.category,
-      image_url: updateData.image_url,
-      detail_images: updateData.detail_images || [],
-      details_link: updateData.details_link || "",
-      option_groups: updateData.option_groups || []
     };
+    
     if (id) await supabase.from("products").update(payload).eq("id", id);
     else await supabase.from("products").insert([payload]);
-    setIsEditing(false); fetchProducts();
+    
+    setIsEditing(false);
+    fetchProducts();
   }
 
-  const addOptionToGroup = (groupIdx: number) => {
-    const input = groupInputs[groupIdx];
-    if (!input || !input.name) return;
-    const newList = [...(currentProduct.option_groups || [])];
-    const newOption: ProductOption = { name: input.name };
-    if (input.price !== "") newOption.price = Number(input.price);
-    newList[groupIdx].options.push(newOption);
-    setCurrentProduct({ ...currentProduct, option_groups: newList });
-    setGroupInputs({ ...groupInputs, [groupIdx]: { name: "", price: "" } });
-  };
+  // --- Render Helpers ---
+  const SectionTitle = ({ icon: Icon, title, sub }: any) => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px', borderLeft: '4px solid #00C73C', paddingLeft: '15px' }}>
+      <Icon size={20} color="#00C73C" />
+      <div>
+        <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#fff' }}>{title}</h3>
+        {sub && <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>{sub}</p>}
+      </div>
+    </div>
+  );
 
   if (!isAuthorized) return (
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#0F172A" }}>
       <form onSubmit={handleAuth} style={authCardStyle}>
-        <h1 style={{color:'#fff', marginBottom:'20px'}}>안심 관리 시스템</h1>
-        <input type="password" value={passcode} onChange={(e) => setPasscode(e.target.value)} style={authInputStyle} />
-        <button type="submit" style={authBtnStyle}>Unlock</button>
+        <h1 style={{color:'#fff', marginBottom:'20px'}}>안심 커머스 엔진</h1>
+        <input type="password" value={passcode} onChange={(e) => setPasscode(e.target.value)} style={authInputStyle} placeholder="Passcode" />
+        <button type="submit" style={authBtnStyle}>Unlock Dashboard</button>
       </form>
     </div>
   );
 
   return (
-    <div style={{ minHeight: "100vh", background: "#020617", color: "#F8FAFC", padding: "40px 24px" }}>
-      <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-        <header style={{ display: "flex", justifyContent: "space-between", marginBottom: "40px" }}>
-          <h1 style={{ fontSize: "32px", fontWeight: 900 }}>Shop Admin 2.0</h1>
-          <button onClick={() => { setIsEditing(true); setCurrentProduct({ option_groups: [], detail_images: [] }); setGroupInputs({}); }} style={addBtnStyle}>+ New Product</button>
+    <div style={{ minHeight: "100vh", background: "#101828", color: "#F2F4F7", padding: "40px 20px" }}>
+      <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
+        
+        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
+          <div>
+            <h1 style={{ fontSize: '28px', fontWeight: 900 }}>Smart Store Admin</h1>
+            <p style={{ color: '#667085', fontSize: '14px' }}>마젠타 펫 연구소 전용 상품 관리 시스템</p>
+          </div>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <button style={outlineBtnStyle}><Download size={16} /> 엑셀 다운로드</button>
+            <button style={outlineBtnStyle}><Upload size={16} /> 엑셀 일괄등록</button>
+            <button onClick={() => { setIsEditing(true); setCurrentProduct({ use_options: false, option_groups: [], detail_images: [], tags: [] }); }} style={primaryBtnStyle}>+ 상품 등록</button>
+          </div>
         </header>
 
         {isEditing && (
-          <div style={editorContainerStyle}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "32px" }}>
-              <h2 style={{ fontSize: "22px", fontWeight: 900 }}>🧪 상품 정밀 세팅</h2>
-              <button onClick={() => setIsEditing(false)}>✕ 닫기</button>
+          <div style={naverEditorStyle}>
+            {/* 1. 기본 정보 */}
+            <div style={formSectionStyle}>
+              <SectionTitle icon={CheckCircle2} title="기본정보" sub="상품의 핵심 정보를 입력하세요." />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                <div style={inputGroupStyle}>
+                  <label>상품명 <span style={{color:'#00C73C'}}>*</span></label>
+                  <input style={naverInputStyle} placeholder="예: [마젠타] 프리미엄 강아지 간식 소고기맛" value={currentProduct.name || ""} onChange={e => setCurrentProduct({...currentProduct, name: e.target.value})} />
+                </div>
+                <div style={inputGroupStyle}>
+                  <label>판매가 <span style={{color:'#00C73C'}}>*</span></label>
+                  <input type="number" style={naverInputStyle} placeholder="0" value={currentProduct.price || ""} onChange={e => setCurrentProduct({...currentProduct, price: Number(e.target.value)})} />
+                </div>
+                <div style={inputGroupStyle}>
+                  <label>브랜드</label>
+                  <input style={naverInputStyle} placeholder="마젠타연구소" value={currentProduct.brand || ""} onChange={e => setCurrentProduct({...currentProduct, brand: e.target.value})} />
+                </div>
+                <div style={inputGroupStyle}>
+                  <label>재고수량</label>
+                  <input type="number" style={naverInputStyle} value={currentProduct.stock || 0} onChange={e => setCurrentProduct({...currentProduct, stock: Number(e.target.value)})} />
+                </div>
+              </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1.5fr", gap: "40px" }}>
-              <div style={{ display:'flex', flexDirection:'column', gap:'20px' }}>
-                <div>
-                  <label style={labelStyle}>대표 썸네일 이미지</label>
-                  <div style={dropzoneStyle}>
-                    {uploading ? "업로드 중..." : (currentProduct.image_url ? <img src={currentProduct.image_url} style={{width:'100%', height:'100%', objectFit:'cover', borderRadius:'24px'}} /> : <input type="file" onChange={(e) => e.target.files && uploadMedia(e.target.files[0], "products")} />)}
+            {/* 2. 이미지 설정 */}
+            <div style={formSectionStyle}>
+              <SectionTitle icon={ImageIcon} title="상품이미지" sub="대표 이미지는 1000x1000 크기를 권장합니다." />
+              <div style={{ display: 'flex', gap: '30px' }}>
+                <div style={{ width: '200px' }}>
+                  <label style={{ fontSize:'13px', marginBottom:'10px', display:'block', fontWeight:700 }}>대표이미지</label>
+                  <div style={naverDropzoneStyle}>
+                    {currentProduct.image_url ? (
+                      <div style={{ position:'relative', width:'100%', height:'100%' }}>
+                        <img src={currentProduct.image_url} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                        <button onClick={() => setCurrentProduct({...currentProduct, image_url: ""})} style={deleteBtnStyle}><X size={12}/></button>
+                      </div>
+                    ) : (
+                      <div style={{ textAlign:'center' }}>
+                        <Plus size={24} color="#98A2B3" />
+                        <input type="file" style={fileHiddenStyle} onChange={async e => { if(e.target.files) { const url = await uploadMedia(e.target.files[0]); if(url) setCurrentProduct({...currentProduct, image_url: url}); } }} />
+                      </div>
+                    )}
                   </div>
                 </div>
-                
-                {/* 상세페이지 이미지 갤러리 복구 */}
-                <div>
-                  <label style={labelStyle}>상세페이지 이미지 갤러리 (드롭존)</label>
-                  <div style={{ ...dropzoneStyle, height: 'auto', minHeight:'120px', padding:'20px', flexWrap:'wrap', gap:'10px' }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ fontSize:'13px', marginBottom:'10px', display:'block', fontWeight:700 }}>추가이미지 (상세페이지용)</label>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
                     {(currentProduct.detail_images || []).map((img, idx) => (
-                      <div key={idx} style={{ position: 'relative', width: '80px', height: '100px', borderRadius: '8px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
-                        <img src={img} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
-                        <button 
-                          onClick={() => {
-                            const newList = (currentProduct.detail_images || []).filter((_, i) => i !== idx);
-                            setCurrentProduct({ ...currentProduct, detail_images: newList });
-                          }}
-                          style={{ position:'absolute', top:2, right:2, background:'rgba(239, 68, 68, 0.8)', border:'none', borderRadius:'4px', color:'#fff', cursor:'pointer', padding:'2px' }}
-                        >
-                          <X size={10} />
-                        </button>
+                      <div key={idx} style={{ ...naverDropzoneStyle, width:'100px', height:'100px' }}>
+                         <img src={img} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                         <button onClick={() => {
+                           const newList = [...(currentProduct.detail_images || [])];
+                           newList.splice(idx, 1);
+                           setCurrentProduct({...currentProduct, detail_images: newList});
+                         }} style={deleteBtnStyle}><X size={10}/></button>
                       </div>
                     ))}
-                    <div style={{ width:'80px', height:'100px', border:'2px dashed rgba(255,255,255,0.1)', borderRadius:'8px', display:'flex', alignItems:'center', justifyContent:'center', position:'relative', cursor:'pointer' }}>
-                      <Plus size={20} color="rgba(255,255,255,0.3)" />
-                      <input 
-                        type="file" 
-                        multiple 
-                        style={{ position:'absolute', inset:0, opacity:0, cursor:'pointer' }} 
-                        onChange={async (e) => {
-                          if (e.target.files) {
-                            const files = Array.from(e.target.files);
-                            for (const file of files) {
-                              const url = await uploadMedia(file, "products", true);
-                              if (url) {
-                                setCurrentProduct(prev => ({
-                                  ...prev,
-                                  detail_images: [...(prev.detail_images || []), url]
-                                }));
-                              }
-                            }
-                          }
-                        }}
-                      />
+                    <div style={{ ...naverDropzoneStyle, width:'100px', height:'100px', borderStyle:'dashed' }}>
+                       <Plus size={20} color="#98A2B3" />
+                       <input type="file" multiple style={fileHiddenStyle} onChange={async e => {
+                         if(e.target.files) {
+                           const files = Array.from(e.target.files);
+                           for(const f of files) {
+                             const url = await uploadMedia(f);
+                             if(url) setCurrentProduct(prev => ({ ...prev, detail_images: [...(prev.detail_images || []), url] }));
+                           }
+                         }
+                       }} />
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
-                <input style={inputStyle} placeholder="브랜드" value={currentProduct.brand || ""} onChange={(e) => setCurrentProduct({...currentProduct, brand: e.target.value})} />
-                <input style={inputStyle} placeholder="상품명" value={currentProduct.name || ""} onChange={(e) => setCurrentProduct({...currentProduct, name: e.target.value})} />
-                <input type="number" style={inputStyle} placeholder="기본 가격" value={currentProduct.price || ""} onChange={(e) => setCurrentProduct({...currentProduct, price: Number(e.target.value)})} />
-                
-                <div style={{ gridColumn: "span 2", background: "rgba(255,255,255,0.03)", padding: "24px", borderRadius: "20px", border: "1px solid rgba(255,255,255,0.05)" }}>
-                  <label style={labelStyle}>다중 옵션 그룹 설정 (맛, 용량 등)</label>
-                  <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
-                    <input style={inputStyle} placeholder="그룹명 (예: 맛 선택)" value={newGroupTitle} onChange={(e) => setNewGroupTitle(e.target.value)} />
-                    <button onClick={() => { if(newGroupTitle) { setCurrentProduct({...currentProduct, option_groups:[...(currentProduct.option_groups || []), {title:newGroupTitle, options:[]}]}); setNewGroupTitle(""); } }} style={{ ...miniBtnStyle, background: "#E5007E", padding: "0 20px" }}>그룹 추가</button>
+            {/* 3. 옵션 설정 (네이버 스타일) */}
+            <div style={formSectionStyle}>
+              <SectionTitle icon={Settings} title="옵션" sub="맛, 용량 등 상품의 옵션을 설정하세요." />
+              <div style={{ background: '#1D2939', padding: '20px', borderRadius: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px' }}>
+                  <span>옵션 설정여부</span>
+                  <div 
+                    onClick={() => setCurrentProduct({...currentProduct, use_options: !currentProduct.use_options})}
+                    style={{ ...toggleStyle, background: currentProduct.use_options ? '#00C73C' : '#475467' }}
+                  >
+                    <div style={{ ...toggleCircleStyle, transform: currentProduct.use_options ? 'translateX(24px)' : 'translateX(4px)' }} />
                   </div>
-
-                  <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-                    {(currentProduct.option_groups || []).map((group, gIdx) => (
-                      <div key={gIdx} style={{ background: "rgba(0,0,0,0.2)", padding: "20px", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.1)" }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px" }}>
-                          <h4 style={{ fontWeight: 800, color: "#E5007E" }}>{group.title}</h4>
-                          <button onClick={() => { const newList = [...(currentProduct.option_groups || [])]; newList.splice(gIdx, 1); setCurrentProduct({...currentProduct, option_groups:newList}); }} style={{ color: "#EF4444", fontSize: "12px", background:'none', border:'none', cursor:'pointer' }}>그룹 삭제</button>
-                        </div>
-                        <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
-                          <input style={{...inputStyle, padding:'8px 12px'}} placeholder="옵션명" value={groupInputs[gIdx]?.name || ""} onChange={(e) => setGroupInputs({...groupInputs, [gIdx]:{...(groupInputs[gIdx]||{name:"",price:""}), name:e.target.value}})} />
-                          <input type="number" style={{...inputStyle, padding:'8px 12px'}} placeholder="추가금" value={groupInputs[gIdx]?.price || ""} onChange={(e) => setGroupInputs({...groupInputs, [gIdx]:{...(groupInputs[gIdx]||{name:"",price:""}), price:e.target.value===""?"":Number(e.target.value)}})} />
-                          <button onClick={() => addOptionToGroup(gIdx)} style={{ background: "#334155", color: "#fff", border: "none", borderRadius: "8px", padding: "0 15px", cursor:'pointer' }}>+</button>
-                        </div>
-                        <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-                          {group.options.map((opt, oIdx) => (
-                            <div key={oIdx} style={{ background: "rgba(255,255,255,0.05)", padding: "4px 10px", borderRadius: "6px", display: "flex", alignItems: "center", gap: "6px", fontSize: "13px" }}>
-                              <span>{opt.name} {opt.price ? `(+${opt.price})` : ""}</span>
-                              <button onClick={() => { const newList = [...(currentProduct.option_groups || [])]; newList[gIdx].options.splice(oIdx,1); setCurrentProduct({...currentProduct, option_groups:newList}); }} style={{ color: "rgba(255,255,255,0.3)", border:'none', background:'none', cursor:'pointer' }}>✕</button>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  <span style={{ fontSize:'13px', color: currentProduct.use_options ? '#00C73C' : '#98A2B3' }}>
+                    {currentProduct.use_options ? "설정함" : "설정안함"}
+                  </span>
                 </div>
 
-                <button onClick={handleSaveProduct} style={{ ...saveActionBtnStyle, gridColumn: "span 2" }}>최종 저장하기 🚀</button>
+                {currentProduct.use_options && (
+                  <div style={{ borderTop: '1px solid #344054', paddingTop: '20px' }}>
+                    <div style={{ display:'flex', gap:'10px', marginBottom:'15px' }}>
+                      <input style={naverInputStyle} placeholder="옵션명 (예: 맛 선택)" value={newGroupTitle} onChange={e => setNewGroupTitle(e.target.value)} />
+                      <button onClick={() => { if(newGroupTitle) { setCurrentProduct({...currentProduct, option_groups:[...(currentProduct.option_groups||[]), {title:newGroupTitle, options:[]}]}); setNewGroupTitle(""); } }} style={outlineBtnStyle}>그룹 추가</button>
+                    </div>
+
+                    <div style={{ display:'flex', flexDirection:'column', gap:'15px' }}>
+                      {currentProduct.option_groups?.map((group, gIdx) => (
+                        <div key={gIdx} style={{ background:'#101828', padding:'15px', borderRadius:'10px', border:'1px solid #344054' }}>
+                          <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'10px' }}>
+                            <span style={{ fontWeight:800, color:'#00C73C' }}>{group.title}</span>
+                            <button onClick={() => { const newList = [...(currentProduct.option_groups||[])]; newList.splice(gIdx,1); setCurrentProduct({...currentProduct, option_groups:newList}); }} style={{ color:'#F04438', fontSize:'12px', background:'none', border:'none', cursor:'pointer' }}>삭제</button>
+                          </div>
+                          <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' }}>
+                             {group.options.map((opt, oIdx) => (
+                               <div key={oIdx} style={optionTagStyle}>
+                                 {opt.name} {opt.price ? `(+${opt.price})` : ""}
+                                 <button onClick={() => { const newList = [...(currentProduct.option_groups||[])]; newList[gIdx].options.splice(oIdx,1); setCurrentProduct({...currentProduct, option_groups:newList}); }} style={{ background:'none', border:'none', color:'#fff', marginLeft:'5px', cursor:'pointer' }}>✕</button>
+                               </div>
+                             ))}
+                             <div style={{ display:'flex', gap:'5px' }}>
+                               <input style={{ ...naverInputStyle, width:'100px', height:'30px', fontSize:'12px' }} placeholder="옵션값" value={tempOptionName} onChange={e => setTempOptionName(e.target.value)} />
+                               <button onClick={() => {
+                                 if(!tempOptionName) return;
+                                 const newList = [...(currentProduct.option_groups||[])];
+                                 newList[gIdx].options.push({ name: tempOptionName });
+                                 setCurrentProduct({...currentProduct, option_groups: newList});
+                                 setTempOptionName("");
+                               }} style={{ ...outlineBtnStyle, padding:'0 10px', height:'30px' }}>+</button>
+                             </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
+            </div>
+
+            {/* 4. 검색/SEO 설정 */}
+            <div style={formSectionStyle}>
+              <SectionTitle icon={Search} title="검색설정" sub="검색 노출을 위한 메타 정보와 태그를 입력하세요." />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                <div style={inputGroupStyle}>
+                  <label>SEO 제목 (브라우저 타이틀)</label>
+                  <input style={naverInputStyle} placeholder="미입력 시 상품명이 노출됩니다." value={currentProduct.seo_title || ""} onChange={e => setCurrentProduct({...currentProduct, seo_title: e.target.value})} />
+                </div>
+                <div style={inputGroupStyle}>
+                  <label>SEO 설명 (메타 디스크립션)</label>
+                  <textarea style={{ ...naverInputStyle, height:'80px', resize:'none' }} placeholder="검색 결과에 표시될 요약 문구를 입력하세요." value={currentProduct.seo_description || ""} onChange={e => setCurrentProduct({...currentProduct, seo_description: e.target.value})} />
+                </div>
+                <div style={inputGroupStyle}>
+                  <label>검색 태그 (콤마로 구분)</label>
+                  <input style={naverInputStyle} placeholder="예: 강아지간식, 건강간식, 연어" value={currentProduct.tags?.join(", ") || ""} onChange={e => setCurrentProduct({...currentProduct, tags: e.target.value.split(",").map(t => t.trim())})} />
+                  <p style={{ fontSize:'11px', color:'#98A2B3', marginTop:'5px' }}>* 최대 10개까지 입력 가능합니다.</p>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display:'flex', justifyContent:'flex-end', gap:'15px', marginTop:'40px' }}>
+              <button onClick={() => setIsEditing(false)} style={outlineBtnStyle}>취소</button>
+              <button onClick={handleSaveProduct} style={saveBtnStyle}>상품 저장하기</button>
             </div>
           </div>
         )}
 
-        <div style={tableWrapperStyle}>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-                <th style={thStyle}>PREVIEW</th>
-                <th style={thStyle}>PRODUCT</th>
-                <th style={thStyle}>OPTION GROUPS</th>
-                <th style={thStyle}>ACTIONS</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map(p => (
-                <tr key={p.id} style={trStyle}>
-                  <td style={tdPadding}><img src={p.image_url} style={previewImgStyle} /></td>
-                  <td style={tdPadding}>
-                    <div style={{ fontWeight: 800 }}>{p.name}</div>
-                    <div style={{ fontSize: "12px", color: "#64748B" }}>{p.price.toLocaleString()}원</div>
-                  </td>
-                  <td style={tdPadding}>
-                    {p.option_groups?.map((g, i) => (
-                      <div key={i} style={{ fontSize: "11px", marginBottom: "4px" }}>
-                        <span style={{ color: "#E5007E", fontWeight: 700 }}>{g.title}:</span> {g.options.map(o => o.name).join(", ")}
-                      </div>
-                    ))}
-                  </td>
-                  <td style={tdPadding}>
-                    <button onClick={() => { setCurrentProduct(p); setIsEditing(true); setGroupInputs({}); }} style={miniBtnStyle}>Edit</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        {/* --- 상품 목록 --- */}
+        {!isEditing && (
+          <div style={tableCardStyle}>
+             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+               <thead>
+                 <tr style={{ background:'#1D2939', borderBottom:'1px solid #344054' }}>
+                   <th style={thStyle}>상품정보</th>
+                   <th style={thStyle}>가격</th>
+                   <th style={thStyle}>재고</th>
+                   <th style={thStyle}>상태</th>
+                   <th style={thStyle}>관리</th>
+                 </tr>
+               </thead>
+               <tbody>
+                 {products.map(p => (
+                   <tr key={p.id} style={{ borderBottom:'1px solid #1D2939' }}>
+                     <td style={tdStyle}>
+                       <div style={{ display:'flex', gap:'12px', alignItems:'center' }}>
+                         <img src={p.image_url} style={{ width:'40px', height:'40px', borderRadius:'8px', objectFit:'cover' }} />
+                         <div>
+                           <div style={{ fontWeight:700 }}>{p.name}</div>
+                           <div style={{ fontSize:'12px', color:'#98A2B3' }}>{p.brand} | {p.category}</div>
+                         </div>
+                       </div>
+                     </td>
+                     <td style={tdStyle}>{p.price.toLocaleString()}원</td>
+                     <td style={tdStyle}>{p.stock}</td>
+                     <td style={tdStyle}>
+                       <span style={{ fontSize:'11px', color:'#00C73C', background:'rgba(0,199,60,0.1)', padding:'2px 8px', borderRadius:'10px' }}>판매중</span>
+                     </td>
+                     <td style={tdStyle}>
+                        <button onClick={() => { setCurrentProduct(p); setIsEditing(true); }} style={{ background:'none', border:'none', color:'#98A2B3', cursor:'pointer' }}><Edit size={16} /></button>
+                     </td>
+                   </tr>
+                 ))}
+               </tbody>
+             </table>
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-// Styles
-const authCardStyle: React.CSSProperties = { width: "100%", maxWidth: "420px", background: "rgba(30, 41, 59, 0.7)", borderRadius: "32px", padding: "48px 40px", textAlign: "center" };
-const authInputStyle: React.CSSProperties = { width: "100%", padding: "18px", borderRadius: "16px", background: "#0F172A", color: "#fff", marginBottom: "16px" };
-const authBtnStyle: React.CSSProperties = { width: "100%", padding: "18px", borderRadius: "16px", background: "#E5007E", color: "#fff", fontWeight: 800 };
-const addBtnStyle: React.CSSProperties = { padding: "12px 24px", borderRadius: "12px", background: "#E5007E", color: "#fff", fontWeight: 800 };
-const tabBtnStyle: React.CSSProperties = { padding: "10px 18px", borderRadius: "10px", color: "#fff", fontWeight: 700 };
-const editorContainerStyle: React.CSSProperties = { background: "#0F172A", borderRadius: "32px", padding: "40px", marginBottom: "40px" };
-const labelStyle: React.CSSProperties = { display: "block", fontSize: "11px", fontWeight: 900, color: "rgba(255,255,255,0.3)", marginBottom: "8px" };
-const inputStyle: React.CSSProperties = { width: "100%", padding: "14px 18px", borderRadius: "14px", background: "rgba(2, 6, 23, 0.6)", color: "#fff", border:'1px solid rgba(255,255,255,0.1)' };
-const dropzoneStyle: React.CSSProperties = { width: "100%", height: "200px", border: "2px dashed rgba(255,255,255,0.1)", borderRadius: "24px", display: "flex", alignItems: "center", justifyContent: "center" };
-const thStyle: React.CSSProperties = { padding: "16px", textAlign: "left", fontSize: "11px", color: "rgba(255,255,255,0.4)" };
-const tdPadding: React.CSSProperties = { padding: "16px", verticalAlign: "middle" };
-const tableWrapperStyle: React.CSSProperties = { background: "#0F172A", borderRadius: "32px", overflow: "hidden" };
-const trStyle: React.CSSProperties = { borderBottom: "1px solid rgba(255,255,255,0.02)" };
-const miniBtnStyle: React.CSSProperties = { padding: "10px", borderRadius: "10px", background: "rgba(255,255,255,0.05)", color: "#fff", cursor:'pointer' };
-const saveActionBtnStyle: React.CSSProperties = { width: "100%", padding: "18px", borderRadius: "16px", background: "#fff", color: "#0F172A", fontSize: "16px", fontWeight: 900, cursor: "pointer", marginTop: "20px" };
-const previewImgStyle: React.CSSProperties = { width: "80px", height: "80px", borderRadius: "16px", objectFit: "cover" };
+// --- Styles (Naver Smart Store Inspired) ---
+const naverEditorStyle: React.CSSProperties = { background: '#101828', borderRadius: '16px', border: '1px solid #344054', padding: '40px' };
+const formSectionStyle: React.CSSProperties = { marginBottom: '48px' };
+const inputGroupStyle: React.CSSProperties = { display: 'flex', flexDirection: 'column', gap: '8px' };
+const naverInputStyle: React.CSSProperties = { background: '#1D2939', border: '1px solid #344054', borderRadius: '8px', padding: '12px 16px', color: '#fff', outline: 'none', fontSize: '14px' };
+const primaryBtnStyle: React.CSSProperties = { background: '#00C73C', color: '#fff', border: 'none', borderRadius: '8px', padding: '10px 20px', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' };
+const outlineBtnStyle: React.CSSProperties = { background: 'none', color: '#F2F4F7', border: '1px solid #344054', borderRadius: '8px', padding: '10px 20px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' };
+const saveBtnStyle: React.CSSProperties = { background: '#00C73C', color: '#fff', border: 'none', borderRadius: '8px', padding: '15px 40px', fontWeight: 900, cursor: 'pointer', fontSize: '16px' };
+const naverDropzoneStyle: React.CSSProperties = { width: '100%', height: '200px', border: '1px solid #344054', borderRadius: '8px', background: '#1D2939', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow:'hidden' };
+const fileHiddenStyle: React.CSSProperties = { position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' };
+const deleteBtnStyle: React.CSSProperties = { position: 'absolute', top: 5, right: 5, background: 'rgba(240, 68, 56, 0.8)', color: '#fff', border: 'none', borderRadius: '4px', padding: '4px', cursor: 'pointer' };
+const toggleStyle: React.CSSProperties = { width: '52px', height: '28px', borderRadius: '14px', position: 'relative', cursor: 'pointer', transition: 'all 0.2s' };
+const toggleCircleStyle: React.CSSProperties = { width: '20px', height: '20px', background: '#fff', borderRadius: '50%', position: 'absolute', top: '4px', transition: 'all 0.2s' };
+const optionTagStyle: React.CSSProperties = { background: '#344054', color: '#fff', padding: '4px 10px', borderRadius: '6px', fontSize: '12px', display: 'flex', alignItems: 'center' };
+const tableCardStyle: React.CSSProperties = { background: '#101828', border: '1px solid #344054', borderRadius: '16px', overflow: 'hidden' };
+const thStyle: React.CSSProperties = { padding: '15px 20px', textAlign: 'left', fontSize: '12px', color: '#98A2B3', fontWeight: 600 };
+const tdStyle: React.CSSProperties = { padding: '20px', fontSize: '14px' };
+const authCardStyle: React.CSSProperties = { background: '#1D2939', padding: '48px', borderRadius: '24px', textAlign: 'center', border: '1px solid #344054', width: '400px' };
+const authInputStyle: React.CSSProperties = { width: '100%', padding: '15px', borderRadius: '12px', background: '#101828', border: '1px solid #344054', color: '#fff', marginBottom: '15px', textAlign: 'center', fontSize: '18px' };
+const authBtnStyle: React.CSSProperties = { width: '100%', padding: '15px', borderRadius: '12px', background: '#00C73C', border: 'none', color: '#fff', fontWeight: 800, fontSize: '16px', cursor: 'pointer' };

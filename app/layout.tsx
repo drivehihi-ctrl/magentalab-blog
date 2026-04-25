@@ -18,6 +18,12 @@ export const metadata: Metadata = {
   authors: [{ name: "Magentalab" }],
   creator: "Magentalab",
   publisher: "Magentalab",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Magentalab",
+  },
   formatDetection: {
     email: false,
     address: false,
