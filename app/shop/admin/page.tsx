@@ -98,15 +98,10 @@ export default function ShopAdminPage() {
     setIsEditing(false); fetchProducts();
   }
 
-  // --- 삭제 로직 (확인창 포함) ---
   async function handleDeleteProduct(id: number, name: string) {
-    if (confirm(`[경고] "${name}" 상품을 정말로 삭제하시겠습니까?\n삭제된 데이터는 복구할 수 없습니다.`)) {
-      const { error } = await supabase.from("products").delete().eq("id", id);
-      if (error) alert("삭제 실패: " + error.message);
-      else {
-        alert("상품이 안전하게 삭제되었습니다.");
-        fetchProducts();
-      }
+    if (confirm(`[경고] "${name}" 상품을 정말로 삭제하시겠습니까?`)) {
+      await supabase.from("products").delete().eq("id", id);
+      fetchProducts();
     }
   }
 
@@ -148,6 +143,7 @@ export default function ShopAdminPage() {
   return (
     <div style={{ minHeight: "100vh", background: "#101828", color: "#F2F4F7", padding: "40px 20px" }}>
       <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
+        
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
           <div>
             <h1 style={{ fontSize: '28px', fontWeight: 900 }}>Smart Store Admin</h1>
@@ -162,14 +158,28 @@ export default function ShopAdminPage() {
 
         {isEditing && (
           <div style={naverEditorStyle}>
+            {/* 기본 정보 복구 */}
             <div style={formSectionStyle}>
               <SectionTitle icon={CheckCircle2} title="기본정보" />
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                 <div style={inputGroupStyle}><label>상품명 *</label><input style={naverInputStyle} value={currentProduct.name || ""} onChange={e => setCurrentProduct({...currentProduct, name: e.target.value})} /></div>
+                <div style={inputGroupStyle}><label>브랜드 *</label><input style={naverInputStyle} value={currentProduct.brand || ""} onChange={e => setCurrentProduct({...currentProduct, brand: e.target.value})} /></div>
                 <div style={inputGroupStyle}><label>판매가 *</label><input type="number" style={naverInputStyle} value={currentProduct.price || ""} onChange={e => setCurrentProduct({...currentProduct, price: Number(e.target.value)})} /></div>
+                <div style={inputGroupStyle}><label>할인 전 가격 (정가)</label><input type="number" style={naverInputStyle} value={currentProduct.original_price || ""} onChange={e => setCurrentProduct({...currentProduct, original_price: Number(e.target.value)})} /></div>
+                <div style={inputGroupStyle}><label>재고수량</label><input type="number" style={naverInputStyle} value={currentProduct.stock || 0} onChange={e => setCurrentProduct({...currentProduct, stock: Number(e.target.value)})} /></div>
+                <div style={inputGroupStyle}>
+                  <label>카테고리</label>
+                  <select style={naverInputStyle} value={currentProduct.category || ""} onChange={e => setCurrentProduct({...currentProduct, category: e.target.value})}>
+                    <option value="">카테고리 선택</option>
+                    <option value="food">사료/간식</option>
+                    <option value="supplement">영양제</option>
+                    <option value="hygiene">위생/용품</option>
+                  </select>
+                </div>
               </div>
             </div>
 
+            {/* 상품이미지 */}
             <div style={formSectionStyle}>
               <SectionTitle icon={ImageIcon} title="상품이미지" />
               <div style={{ display: 'flex', gap: '30px' }}>
@@ -221,6 +231,7 @@ export default function ShopAdminPage() {
               </div>
             </div>
 
+            {/* 상세설명 이미지 */}
             <div style={formSectionStyle}>
               <SectionTitle icon={FileText} title="상세설명 이미지" />
               <div style={{ background: '#1D2939', padding: '24px', borderRadius: '12px', border: '1px dashed #344054' }}>
@@ -322,8 +333,6 @@ const actionBtnStyle: React.CSSProperties = { background: 'none', border: 'none'
 const naverDropzoneStyle: React.CSSProperties = { width: '100%', height: '200px', border: '1px solid #344054', borderRadius: '8px', background: '#1D2939', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow:'hidden' };
 const fileHiddenStyle: React.CSSProperties = { position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' };
 const deleteBtnStyle: React.CSSProperties = { background: 'rgba(240, 68, 56, 0.8)', color: '#fff', border: 'none', borderRadius: '4px', padding: '4px', cursor: 'pointer' };
-const toggleStyle: React.CSSProperties = { width: '52px', height: '28px', borderRadius: '14px', position: 'relative', cursor: 'pointer', transition: 'all 0.2s' };
-const toggleCircleStyle: React.CSSProperties = { width: '20px', height: '20px', background: '#fff', borderRadius: '50%', position: 'absolute', top: '4px', transition: 'all 0.2s' };
 const tableCardStyle: React.CSSProperties = { background: '#101828', border: '1px solid #344054', borderRadius: '16px', overflow: 'hidden' };
 const thStyle: React.CSSProperties = { padding: '15px 20px', textAlign: 'left', fontSize: '12px', color: '#98A2B3', fontWeight: 600 };
 const tdStyle: React.CSSProperties = { padding: '20px', fontSize: '14px' };
