@@ -6,7 +6,7 @@ import {
   Trash2, Edit, Plus, X, 
   Settings, ImageIcon, Search, 
   Download, Upload, CheckCircle2,
-  FileText, Sparkles
+  FileText, Sparkles, Link as LinkIcon
 } from "lucide-react";
 
 // --- Types ---
@@ -22,7 +22,9 @@ interface Product {
   additional_images: string[];
   description_images: string[];
   category: string;
+  badge: string; // [RESTORED]
   stock: number;
+  details_link: string; // [RESTORED]
   use_options: boolean;
   option_groups: ProductOptionGroup[];
   tags: string[];
@@ -40,7 +42,7 @@ export default function ShopAdminPage() {
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Partial<Product>>({
-    use_options: false, option_groups: [], additional_images: [], description_images: [], tags: []
+    use_options: false, option_groups: [], additional_images: [], description_images: [], tags: [], badge: "", details_link: ""
   });
   const [uploading, setUploading] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
@@ -152,13 +154,13 @@ export default function ShopAdminPage() {
           <div style={{ display: 'flex', gap: '12px' }}>
             <button style={outlineBtnStyle}><Download size={16} /> 엑셀 다운로드</button>
             <button style={outlineBtnStyle}><Upload size={16} /> 엑셀 일괄등록</button>
-            <button onClick={() => { setIsEditing(true); setCurrentProduct({ use_options: false, option_groups: [], additional_images: [], description_images: [], tags: [] }); }} style={primaryBtnStyle}>+ 상품 등록</button>
+            <button onClick={() => { setIsEditing(true); setCurrentProduct({ use_options: false, option_groups: [], additional_images: [], description_images: [], tags: [], badge: "", details_link: "" }); }} style={primaryBtnStyle}>+ 상품 등록</button>
           </div>
         </header>
 
         {isEditing && (
           <div style={naverEditorStyle}>
-            {/* 기본 정보 복구 */}
+            {/* 기본 정보 (전수조사 기반 완벽 복구) */}
             <div style={formSectionStyle}>
               <SectionTitle icon={CheckCircle2} title="기본정보" />
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
@@ -167,8 +169,7 @@ export default function ShopAdminPage() {
                 <div style={inputGroupStyle}><label>판매가 *</label><input type="number" style={naverInputStyle} value={currentProduct.price || ""} onChange={e => setCurrentProduct({...currentProduct, price: Number(e.target.value)})} /></div>
                 <div style={inputGroupStyle}><label>할인 전 가격 (정가)</label><input type="number" style={naverInputStyle} value={currentProduct.original_price || ""} onChange={e => setCurrentProduct({...currentProduct, original_price: Number(e.target.value)})} /></div>
                 <div style={inputGroupStyle}><label>재고수량</label><input type="number" style={naverInputStyle} value={currentProduct.stock || 0} onChange={e => setCurrentProduct({...currentProduct, stock: Number(e.target.value)})} /></div>
-                <div style={inputGroupStyle}>
-                  <label>카테고리</label>
+                <div style={inputGroupStyle}><label>카테고리</label>
                   <select style={naverInputStyle} value={currentProduct.category || ""} onChange={e => setCurrentProduct({...currentProduct, category: e.target.value})}>
                     <option value="">카테고리 선택</option>
                     <option value="food">사료/간식</option>
@@ -176,6 +177,9 @@ export default function ShopAdminPage() {
                     <option value="hygiene">위생/용품</option>
                   </select>
                 </div>
+                {/* 뱃지 및 외부링크 복구 */}
+                <div style={inputGroupStyle}><label>상품 뱃지 (예: BEST, SALE)</label><input style={naverInputStyle} value={currentProduct.badge || ""} onChange={e => setCurrentProduct({...currentProduct, badge: e.target.value})} /></div>
+                <div style={inputGroupStyle}><label>상세 외부링크 (필요 시)</label><input style={naverInputStyle} value={currentProduct.details_link || ""} onChange={e => setCurrentProduct({...currentProduct, details_link: e.target.value})} /></div>
               </div>
             </div>
 
