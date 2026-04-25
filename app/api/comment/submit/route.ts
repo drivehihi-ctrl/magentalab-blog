@@ -5,6 +5,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { post, author_name, author_email, content } = body;
 
+    const wpUrl = process.env.WORDPRESS_URL || "https://magentalab.mycafe24.com";
     const wpUser = (process.env.WP_USER || "").trim();
     // 비밀번호에서 모든 공백 제거 (워드프레스 앱 비밀번호 특성)
     const wpPassword = (process.env.WP_APP_PASSWORD || "").replace(/\s/g, "");
