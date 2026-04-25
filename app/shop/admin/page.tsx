@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { supabase } from "@/lib/supabase";
-import { Camera, Trash2, Edit, PlayCircle, Image as ImageIcon, Sparkles, Plus, X, Layers } from "lucide-react";
+import { Camera, Trash2, Edit, PlayCircle, Image as ImageIcon, Sparkles, Plus, X, Layers, ChevronLeft, ChevronRight } from "lucide-react";
 import AICommentAssistant from "@/components/AICommentAssistant";
 
 interface ProductOption {
@@ -47,10 +47,7 @@ export default function ShopAdminPage() {
   const [currentProduct, setCurrentProduct] = useState<Partial<Product>>({});
   const [uploading, setUploading] = useState(false);
 
-  // New Group Title State
   const [newGroupTitle, setNewGroupTitle] = useState("");
-  
-  // Group-specific input states (Tracked by group index)
   const [groupInputs, setGroupInputs] = useState<{ [key: number]: { name: string; price: number | "" } }>({});
 
   useEffect(() => {
@@ -77,7 +74,7 @@ export default function ShopAdminPage() {
     } else alert("비밀번호 틀림");
   };
 
-  const uploadMedia = async (file: File, folder: string): Promise<string | null> => {
+  const uploadMedia = async (file: File, folder: string, isDetail = false): Promise<string | null> => {
     setUploading(true);
     try {
       const formData = new FormData();
@@ -88,7 +85,11 @@ export default function ShopAdminPage() {
       const result = await response.json();
       if (!response.ok) throw new Error(result.error);
       const publicUrl = result.url;
-      setCurrentProduct({ ...currentProduct, image_url: publicUrl });
+      
+      if (!isDetail) {
+        setCurrentProduct(prev => ({ ...prev, image_url: publicUrl }));
+      }
+      
       setUploading(false);
       return publicUrl;
     } catch (error: any) { 
@@ -108,6 +109,8 @@ export default function ShopAdminPage() {
       stock: Number(updateData.stock || 0),
       category: updateData.category,
       image_url: updateData.image_url,
+      detail_images: updateData.detail_images || [],
+      details_link: updateData.details_link || "",
       option_groups: updateData.option_groups || []
     };
     if (id) await supabase.from("products").update(payload).eq("id", id);
@@ -115,54 +118,15 @@ export default function ShopAdminPage() {
     setIsEditing(false); fetchProducts();
   }
 
-  // --- Option Group Logic ---
-  const addGroup = () => {
-    if (!newGroupTitle) return;
-    setCurrentProduct({
-      ...currentProduct,
-      option_groups: [...(currentProduct.option_groups || []), { title: newGroupTitle, options: [] }]
-    });
-    setNewGroupTitle("");
-  };
-
-  const removeGroup = (idx: number) => {
-    const newList = (currentProduct.option_groups || []).filter((_, i) => i !== idx);
-    setCurrentProduct({ ...currentProduct, option_groups: newList });
-  };
-
   const addOptionToGroup = (groupIdx: number) => {
     const input = groupInputs[groupIdx];
     if (!input || !input.name) return;
-    
     const newList = [...(currentProduct.option_groups || [])];
     const newOption: ProductOption = { name: input.name };
     if (input.price !== "") newOption.price = Number(input.price);
-    
     newList[groupIdx].options.push(newOption);
     setCurrentProduct({ ...currentProduct, option_groups: newList });
-    
-    // Clear only this group's input
-    setGroupInputs({
-      ...groupInputs,
-      [groupIdx]: { name: "", price: "" }
-    });
-  };
-
-  const removeOptionFromGroup = (groupIdx: number, optIdx: number) => {
-    const newList = [...(currentProduct.option_groups || [])];
-    newList[groupIdx].options = newList[groupIdx].options.filter((_, i) => i !== optIdx);
-    setCurrentProduct({ ...currentProduct, option_groups: newList });
-  };
-
-  const updateGroupInput = (groupIdx: number, field: "name" | "price", value: string) => {
-    const currentInput = groupInputs[groupIdx] || { name: "", price: "" };
-    setGroupInputs({
-      ...groupInputs,
-      [groupIdx]: {
-        ...currentInput,
-        [field]: field === "price" ? (value === "" ? "" : Number(value)) : value
-      }
-    });
+    setGroupInputs({ ...groupInputs, [groupIdx]: { name: "", price: "" } });
   };
 
   if (!isAuthorized) return (
@@ -180,7 +144,7 @@ export default function ShopAdminPage() {
       <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
         <header style={{ display: "flex", justifyContent: "space-between", marginBottom: "40px" }}>
           <h1 style={{ fontSize: "32px", fontWeight: 900 }}>Shop Admin 2.0</h1>
-          <button onClick={() => { setIsEditing(true); setCurrentProduct({ option_groups: [] }); setGroupInputs({}); }} style={addBtnStyle}>+ New Product</button>
+          <button onClick={() => { setIsEditing(true); setCurrentProduct({ option_groups: [], detail_images: [] }); setGroupInputs({}); }} style={addBtnStyle}>+ New Product</button>
         </header>
 
         {isEditing && (
@@ -191,12 +155,58 @@ export default function ShopAdminPage() {
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1.5fr", gap: "40px" }}>
-              <div>
-                <label style={labelStyle}>상품 이미지</label>
-                <div style={dropzoneStyle}>
-                  {uploading ? "업로드 중..." : (currentProduct.image_url ? <img src={currentProduct.image_url} style={{width:'100%', height:'100%', objectFit:'cover', borderRadius:'24px'}} /> : <input type="file" onChange={(e) => e.target.files && uploadMedia(e.target.files[0], "products")} />)}
+              <div style={{ display:'flex', flexDirection:'column', gap:'20px' }}>
+                <div>
+                  <label style={labelStyle}>대표 썸네일 이미지</label>
+                  <div style={dropzoneStyle}>
+                    {uploading ? "업로드 중..." : (currentProduct.image_url ? <img src={currentProduct.image_url} style={{width:'100%', height:'100%', objectFit:'cover', borderRadius:'24px'}} /> : <input type="file" onChange={(e) => e.target.files && uploadMedia(e.target.files[0], "products")} />)}
+                  </div>
+                </div>
+                
+                {/* 상세페이지 이미지 갤러리 복구 */}
+                <div>
+                  <label style={labelStyle}>상세페이지 이미지 갤러리 (드롭존)</label>
+                  <div style={{ ...dropzoneStyle, height: 'auto', minHeight:'120px', padding:'20px', flexWrap:'wrap', gap:'10px' }}>
+                    {(currentProduct.detail_images || []).map((img, idx) => (
+                      <div key={idx} style={{ position: 'relative', width: '80px', height: '100px', borderRadius: '8px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
+                        <img src={img} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                        <button 
+                          onClick={() => {
+                            const newList = (currentProduct.detail_images || []).filter((_, i) => i !== idx);
+                            setCurrentProduct({ ...currentProduct, detail_images: newList });
+                          }}
+                          style={{ position:'absolute', top:2, right:2, background:'rgba(239, 68, 68, 0.8)', border:'none', borderRadius:'4px', color:'#fff', cursor:'pointer', padding:'2px' }}
+                        >
+                          <X size={10} />
+                        </button>
+                      </div>
+                    ))}
+                    <div style={{ width:'80px', height:'100px', border:'2px dashed rgba(255,255,255,0.1)', borderRadius:'8px', display:'flex', alignItems:'center', justifyContent:'center', position:'relative', cursor:'pointer' }}>
+                      <Plus size={20} color="rgba(255,255,255,0.3)" />
+                      <input 
+                        type="file" 
+                        multiple 
+                        style={{ position:'absolute', inset:0, opacity:0, cursor:'pointer' }} 
+                        onChange={async (e) => {
+                          if (e.target.files) {
+                            const files = Array.from(e.target.files);
+                            for (const file of files) {
+                              const url = await uploadMedia(file, "products", true);
+                              if (url) {
+                                setCurrentProduct(prev => ({
+                                  ...prev,
+                                  detail_images: [...(prev.detail_images || []), url]
+                                }));
+                              }
+                            }
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
+
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
                 <input style={inputStyle} placeholder="브랜드" value={currentProduct.brand || ""} onChange={(e) => setCurrentProduct({...currentProduct, brand: e.target.value})} />
                 <input style={inputStyle} placeholder="상품명" value={currentProduct.name || ""} onChange={(e) => setCurrentProduct({...currentProduct, name: e.target.value})} />
@@ -204,10 +214,9 @@ export default function ShopAdminPage() {
                 
                 <div style={{ gridColumn: "span 2", background: "rgba(255,255,255,0.03)", padding: "24px", borderRadius: "20px", border: "1px solid rgba(255,255,255,0.05)" }}>
                   <label style={labelStyle}>다중 옵션 그룹 설정 (맛, 용량 등)</label>
-                  
                   <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
                     <input style={inputStyle} placeholder="그룹명 (예: 맛 선택)" value={newGroupTitle} onChange={(e) => setNewGroupTitle(e.target.value)} />
-                    <button onClick={addGroup} style={{ ...miniBtnStyle, background: "#E5007E", padding: "0 20px" }}>그룹 추가</button>
+                    <button onClick={() => { if(newGroupTitle) { setCurrentProduct({...currentProduct, option_groups:[...(currentProduct.option_groups || []), {title:newGroupTitle, options:[]}]}); setNewGroupTitle(""); } }} style={{ ...miniBtnStyle, background: "#E5007E", padding: "0 20px" }}>그룹 추가</button>
                   </div>
 
                   <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
@@ -215,31 +224,18 @@ export default function ShopAdminPage() {
                       <div key={gIdx} style={{ background: "rgba(0,0,0,0.2)", padding: "20px", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.1)" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px" }}>
                           <h4 style={{ fontWeight: 800, color: "#E5007E" }}>{group.title}</h4>
-                          <button onClick={() => removeGroup(gIdx)} style={{ color: "#EF4444", fontSize: "12px", background:'none', border:'none', cursor:'pointer' }}>그룹 삭제</button>
+                          <button onClick={() => { const newList = [...(currentProduct.option_groups || [])]; newList.splice(gIdx, 1); setCurrentProduct({...currentProduct, option_groups:newList}); }} style={{ color: "#EF4444", fontSize: "12px", background:'none', border:'none', cursor:'pointer' }}>그룹 삭제</button>
                         </div>
-                        
                         <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
-                          <input 
-                            style={{...inputStyle, padding:'8px 12px'}} 
-                            placeholder="옵션명" 
-                            value={groupInputs[gIdx]?.name || ""} 
-                            onChange={(e) => updateGroupInput(gIdx, "name", e.target.value)} 
-                          />
-                          <input 
-                            type="number" 
-                            style={{...inputStyle, padding:'8px 12px'}} 
-                            placeholder="추가금" 
-                            value={groupInputs[gIdx]?.price || ""} 
-                            onChange={(e) => updateGroupInput(gIdx, "price", e.target.value)} 
-                          />
+                          <input style={{...inputStyle, padding:'8px 12px'}} placeholder="옵션명" value={groupInputs[gIdx]?.name || ""} onChange={(e) => setGroupInputs({...groupInputs, [gIdx]:{...(groupInputs[gIdx]||{name:"",price:""}), name:e.target.value}})} />
+                          <input type="number" style={{...inputStyle, padding:'8px 12px'}} placeholder="추가금" value={groupInputs[gIdx]?.price || ""} onChange={(e) => setGroupInputs({...groupInputs, [gIdx]:{...(groupInputs[gIdx]||{name:"",price:""}), price:e.target.value===""?"":Number(e.target.value)}})} />
                           <button onClick={() => addOptionToGroup(gIdx)} style={{ background: "#334155", color: "#fff", border: "none", borderRadius: "8px", padding: "0 15px", cursor:'pointer' }}>+</button>
                         </div>
-
                         <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
                           {group.options.map((opt, oIdx) => (
                             <div key={oIdx} style={{ background: "rgba(255,255,255,0.05)", padding: "4px 10px", borderRadius: "6px", display: "flex", alignItems: "center", gap: "6px", fontSize: "13px" }}>
                               <span>{opt.name} {opt.price ? `(+${opt.price})` : ""}</span>
-                              <button onClick={() => removeOptionFromGroup(gIdx, oIdx)} style={{ color: "rgba(255,255,255,0.3)", border:'none', background:'none', cursor:'pointer' }}>✕</button>
+                              <button onClick={() => { const newList = [...(currentProduct.option_groups || [])]; newList[gIdx].options.splice(oIdx,1); setCurrentProduct({...currentProduct, option_groups:newList}); }} style={{ color: "rgba(255,255,255,0.3)", border:'none', background:'none', cursor:'pointer' }}>✕</button>
                             </div>
                           ))}
                         </div>
