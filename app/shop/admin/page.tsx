@@ -32,7 +32,6 @@ interface Product {
   created_at?: string;
 }
 
-// ... (keep Banner and CareGuide interfaces if needed, but keeping simple for now)
 interface Banner { id: string; title: string; sub_text: string; bg_gradient: string; emoji: string; image_url?: string; link_url?: string; order_index: number; banner_type?: "standard" | "story"; }
 interface CareGuide { id: string; title: string; subtitle: string; emoji: string; video_url: string; gradient: string; order_index: number; }
 
@@ -48,10 +47,11 @@ export default function ShopAdminPage() {
   const [currentProduct, setCurrentProduct] = useState<Partial<Product>>({});
   const [uploading, setUploading] = useState(false);
 
-  // Option Group Edit States
+  // New Group Title State
   const [newGroupTitle, setNewGroupTitle] = useState("");
-  const [newOptionName, setNewOptionName] = useState("");
-  const [newOptionPrice, setNewOptionPrice] = useState<number | "">("");
+  
+  // Group-specific input states (Tracked by group index)
+  const [groupInputs, setGroupInputs] = useState<{ [key: number]: { name: string; price: number | "" } }>({});
 
   useEffect(() => {
     const auth = sessionStorage.getItem("shop_admin_authorized");
@@ -131,21 +131,38 @@ export default function ShopAdminPage() {
   };
 
   const addOptionToGroup = (groupIdx: number) => {
-    if (!newOptionName) return;
+    const input = groupInputs[groupIdx];
+    if (!input || !input.name) return;
+    
     const newList = [...(currentProduct.option_groups || [])];
-    const newOption: ProductOption = { name: newOptionName };
-    if (newOptionPrice !== "") newOption.price = Number(newOptionPrice);
+    const newOption: ProductOption = { name: input.name };
+    if (input.price !== "") newOption.price = Number(input.price);
     
     newList[groupIdx].options.push(newOption);
     setCurrentProduct({ ...currentProduct, option_groups: newList });
-    setNewOptionName("");
-    setNewOptionPrice("");
+    
+    // Clear only this group's input
+    setGroupInputs({
+      ...groupInputs,
+      [groupIdx]: { name: "", price: "" }
+    });
   };
 
   const removeOptionFromGroup = (groupIdx: number, optIdx: number) => {
     const newList = [...(currentProduct.option_groups || [])];
     newList[groupIdx].options = newList[groupIdx].options.filter((_, i) => i !== optIdx);
     setCurrentProduct({ ...currentProduct, option_groups: newList });
+  };
+
+  const updateGroupInput = (groupIdx: number, field: "name" | "price", value: string) => {
+    const currentInput = groupInputs[groupIdx] || { name: "", price: "" };
+    setGroupInputs({
+      ...groupInputs,
+      [groupIdx]: {
+        ...currentInput,
+        [field]: field === "price" ? (value === "" ? "" : Number(value)) : value
+      }
+    });
   };
 
   if (!isAuthorized) return (
@@ -163,7 +180,7 @@ export default function ShopAdminPage() {
       <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
         <header style={{ display: "flex", justifyContent: "space-between", marginBottom: "40px" }}>
           <h1 style={{ fontSize: "32px", fontWeight: 900 }}>Shop Admin 2.0</h1>
-          <button onClick={() => { setIsEditing(true); setCurrentProduct({ option_groups: [] }); }} style={addBtnStyle}>+ New Product</button>
+          <button onClick={() => { setIsEditing(true); setCurrentProduct({ option_groups: [] }); setGroupInputs({}); }} style={addBtnStyle}>+ New Product</button>
         </header>
 
         {isEditing && (
@@ -183,19 +200,16 @@ export default function ShopAdminPage() {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
                 <input style={inputStyle} placeholder="브랜드" value={currentProduct.brand || ""} onChange={(e) => setCurrentProduct({...currentProduct, brand: e.target.value})} />
                 <input style={inputStyle} placeholder="상품명" value={currentProduct.name || ""} onChange={(e) => setCurrentProduct({...currentProduct, name: e.target.value})} />
-                <input type="number" style={inputStyle} placeholder="가격" value={currentProduct.price || ""} onChange={(e) => setCurrentProduct({...currentProduct, price: Number(e.target.value)})} />
+                <input type="number" style={inputStyle} placeholder="기본 가격" value={currentProduct.price || ""} onChange={(e) => setCurrentProduct({...currentProduct, price: Number(e.target.value)})} />
                 
-                {/* 옵션 그룹 섹션 */}
                 <div style={{ gridColumn: "span 2", background: "rgba(255,255,255,0.03)", padding: "24px", borderRadius: "20px", border: "1px solid rgba(255,255,255,0.05)" }}>
-                  <label style={labelStyle}>다중 옵션 그룹 설정 (예: 맛, 용량)</label>
+                  <label style={labelStyle}>다중 옵션 그룹 설정 (맛, 용량 등)</label>
                   
-                  {/* 새 그룹 추가 */}
                   <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
-                    <input style={inputStyle} placeholder="새 옵션 그룹 이름 (예: 맛 선택)" value={newGroupTitle} onChange={(e) => setNewGroupTitle(e.target.value)} />
+                    <input style={inputStyle} placeholder="그룹명 (예: 맛 선택)" value={newGroupTitle} onChange={(e) => setNewGroupTitle(e.target.value)} />
                     <button onClick={addGroup} style={{ ...miniBtnStyle, background: "#E5007E", padding: "0 20px" }}>그룹 추가</button>
                   </div>
 
-                  {/* 추가된 그룹 목록 */}
                   <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
                     {(currentProduct.option_groups || []).map((group, gIdx) => (
                       <div key={gIdx} style={{ background: "rgba(0,0,0,0.2)", padding: "20px", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.1)" }}>
@@ -205,8 +219,19 @@ export default function ShopAdminPage() {
                         </div>
                         
                         <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
-                          <input style={{...inputStyle, padding:'8px 12px'}} placeholder="옵션명 (예: 연어)" value={newOptionName} onChange={(e) => setNewOptionName(e.target.value)} />
-                          <input type="number" style={{...inputStyle, padding:'8px 12px'}} placeholder="추가금" value={newOptionPrice} onChange={(e) => setNewOptionPrice(e.target.value === "" ? "" : Number(e.target.value))} />
+                          <input 
+                            style={{...inputStyle, padding:'8px 12px'}} 
+                            placeholder="옵션명" 
+                            value={groupInputs[gIdx]?.name || ""} 
+                            onChange={(e) => updateGroupInput(gIdx, "name", e.target.value)} 
+                          />
+                          <input 
+                            type="number" 
+                            style={{...inputStyle, padding:'8px 12px'}} 
+                            placeholder="추가금" 
+                            value={groupInputs[gIdx]?.price || ""} 
+                            onChange={(e) => updateGroupInput(gIdx, "price", e.target.value)} 
+                          />
                           <button onClick={() => addOptionToGroup(gIdx)} style={{ background: "#334155", color: "#fff", border: "none", borderRadius: "8px", padding: "0 15px", cursor:'pointer' }}>+</button>
                         </div>
 
@@ -255,7 +280,7 @@ export default function ShopAdminPage() {
                     ))}
                   </td>
                   <td style={tdPadding}>
-                    <button onClick={() => { setCurrentProduct(p); setIsEditing(true); }} style={miniBtnStyle}>Edit</button>
+                    <button onClick={() => { setCurrentProduct(p); setIsEditing(true); setGroupInputs({}); }} style={miniBtnStyle}>Edit</button>
                   </td>
                 </tr>
               ))}
@@ -267,7 +292,7 @@ export default function ShopAdminPage() {
   );
 }
 
-// Styles (same as before but simplified)
+// Styles
 const authCardStyle: React.CSSProperties = { width: "100%", maxWidth: "420px", background: "rgba(30, 41, 59, 0.7)", borderRadius: "32px", padding: "48px 40px", textAlign: "center" };
 const authInputStyle: React.CSSProperties = { width: "100%", padding: "18px", borderRadius: "16px", background: "#0F172A", color: "#fff", marginBottom: "16px" };
 const authBtnStyle: React.CSSProperties = { width: "100%", padding: "18px", borderRadius: "16px", background: "#E5007E", color: "#fff", fontWeight: 800 };
