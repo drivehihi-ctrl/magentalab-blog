@@ -30,12 +30,13 @@ export default async function CommentsSection({ postId }: CommentsSectionProps) 
       {commentList.length > 0 ? (
         <ul className="space-y-10 mb-16">
           {commentList.map((comment) => {
-            const date = new Date(comment.created_at).toLocaleDateString("ko-KR", {
+            const date = new Date(comment.created_at).toLocaleString("ko-KR", {
               year: "numeric",
               month: "long",
               day: "numeric",
               hour: "2-digit",
               minute: "2-digit",
+              timeZone: "Asia/Seoul",
             });
 
             return (
