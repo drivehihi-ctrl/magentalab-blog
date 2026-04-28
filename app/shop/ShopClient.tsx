@@ -135,6 +135,7 @@ const MOCK_PRODUCTS = [
     rating: 4.9,
     reviewCount: 312,
     tag: "관절·피모 건강에 도움",
+    health_keywords: ["joint", "skin", "eye"], // 추가됨
   },
   {
     id: 2,
@@ -149,6 +150,7 @@ const MOCK_PRODUCTS = [
     rating: 4.7,
     reviewCount: 188,
     tag: "천연 유래 성분",
+    health_keywords: ["emotion", "dental"], // 추가됨
   },
   {
     id: 3,
@@ -163,6 +165,7 @@ const MOCK_PRODUCTS = [
     rating: 4.8,
     reviewCount: 245,
     tag: "민감성 피부 전용",
+    health_keywords: ["skin"], // 추가됨
   },
   {
     id: 4,
@@ -177,6 +180,7 @@ const MOCK_PRODUCTS = [
     rating: 4.6,
     reviewCount: 92,
     tag: "고양이 본능 자극",
+    health_keywords: ["emotion"], // 추가됨
   },
   {
     id: 5,
@@ -191,6 +195,7 @@ const MOCK_PRODUCTS = [
     rating: 4.9,
     reviewCount: 421,
     tag: "세탁기 사용 가능",
+    health_keywords: ["joint", "emotion"], // 추가됨
   },
   {
     id: 6,
@@ -205,6 +210,7 @@ const MOCK_PRODUCTS = [
     rating: 4.5,
     reviewCount: 134,
     tag: "반사 소재 안전 설계",
+    health_keywords: ["joint"], // 추가됨
   },
   {
     id: 7,
@@ -219,6 +225,7 @@ const MOCK_PRODUCTS = [
     rating: 4.8,
     reviewCount: 278,
     tag: "100% 유기농 원료",
+    health_keywords: ["weight", "digestion"], // 추가됨
   },
   {
     id: 8,
@@ -233,6 +240,7 @@ const MOCK_PRODUCTS = [
     rating: 4.7,
     reviewCount: 156,
     tag: "장내 유익균 증식",
+    health_keywords: ["digestion", "kidney"], // 추가됨
   },
 ];
 
@@ -938,13 +946,9 @@ function ShopTab({ products, session, activePet, onOpenModal, logoUrl }: { produ
     if (!activePet || !activePet.keywords || activePet.keywords.length === 0) return [];
     
     return products.filter(p => {
-      // 상품 태그나 이름에 반려동물 키워드 관련 단어가 포함되어 있는지 확인
-      const petKeywords = activePet.keywords.map(k => HEALTH_KEYWORDS.find(hk => hk.id === k)?.label || "");
-      return petKeywords.some(keyword => 
-        p.name.includes(keyword) || 
-        (p.tag || "").includes(keyword) || 
-        (p.category || "").includes(keyword)
-      );
+      // 상품의 health_keywords와 아이의 keywords가 하나라도 겹치면 추천!
+      if (!p.health_keywords) return false;
+      return activePet.keywords.some(k => p.health_keywords.includes(k));
     }).slice(0, 4); // 최대 4개만 추천
   }, [activePet, products]);
 
