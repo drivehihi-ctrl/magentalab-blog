@@ -1528,21 +1528,36 @@ function MyTab({ profiles, activeId, onSelect, onOpenModal, onEditModal, setActi
         color: "#fff",
         position: "relative",
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "20px" }}>
-          <div style={{
-            width: "60px", height: "60px", borderRadius: "22px",
-            background: "rgba(255,255,255,0.2)", backdropFilter: "blur(8px)",
-            display: "flex", alignItems: "center", justifyContent: "center", fontSize: "28px",
-            border: "2px solid rgba(255,255,255,0.3)"
-          }}>
-            {session?.user?.image ? (
-              <img src={session.user.image} style={{ width: "100%", height: "100%", borderRadius: "22px" }} alt="me" />
-            ) : "👤"}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <div style={{
+              width: "60px", height: "60px", borderRadius: "22px",
+              background: "rgba(255,255,255,0.2)", backdropFilter: "blur(8px)",
+              display: "flex", alignItems: "center", justifyContent: "center", fontSize: "28px",
+              border: "2px solid rgba(255,255,255,0.3)"
+            }}>
+              {session?.user?.image ? (
+                <img src={session.user.image} style={{ width: "100%", height: "100%", borderRadius: "22px" }} alt="me" />
+              ) : "👤"}
+            </div>
+            <div>
+              <div style={{ fontSize: "18px", fontWeight: 900 }}>{session?.user?.name || "방문자"} 사장님</div>
+              <div style={{ fontSize: "12px", opacity: 0.8, marginTop: "2px" }}>연구소에 오신 것을 환영합니다!</div>
+            </div>
           </div>
-          <div>
-            <div style={{ fontSize: "18px", fontWeight: 900 }}>{session?.user?.name || "방문자"} 사장님</div>
-            <div style={{ fontSize: "12px", opacity: 0.8, marginTop: "2px" }}>연구소에 오신 것을 환영합니다!</div>
-          </div>
+          {session && (
+            <button
+              onClick={() => signOut({ callbackUrl: "/shop" })}
+              className="shop-btn-hover"
+              style={{
+                background: "rgba(255,255,255,0.2)", border: "1px solid rgba(255,255,255,0.3)", borderRadius: "10px",
+                color: "#fff", padding: "6px 12px", fontSize: "11px", fontWeight: 800, cursor: "pointer",
+                backdropFilter: "blur(4px)"
+              }}
+            >
+              로그아웃
+            </button>
+          )}
         </div>
         
         {!session && (
@@ -1692,19 +1707,21 @@ function MyTab({ profiles, activeId, onSelect, onOpenModal, onEditModal, setActi
           }} 
           className="no-scrollbar"
         >
-          {/* 아이 추가하기 버튼 (원형) */}
-          <div 
-            onClick={onOpenModal}
-            className="shop-btn-hover"
-            style={{
-              minWidth: "70px", height: "70px", borderRadius: "50%",
-              background: "#fff", border: "2px dashed #E5E7EB",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              cursor: "pointer", flexShrink: 0, color: "#9CA3AF"
-            }}
-          >
-            <Plus size={24} />
-          </div>
+          {/* 아이 추가하기 버튼 (원형) - 프로필이 1개 이상일 때만 표시 */}
+          {profiles.length > 0 && (
+            <div 
+              onClick={onOpenModal}
+              className="shop-btn-hover"
+              style={{
+                minWidth: "70px", height: "70px", borderRadius: "50%",
+                background: "#fff", border: "2px dashed #E5E7EB",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                cursor: "pointer", flexShrink: 0, color: "#9CA3AF"
+              }}
+            >
+              <Plus size={24} />
+            </div>
+          )}
 
           {/* 등록된 프로필 아바타들 */}
           {profiles.map(p => {
