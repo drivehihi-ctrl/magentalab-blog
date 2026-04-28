@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronLeft, Star, Share2, Heart, ShoppingCart } from "lucide-react";
+import type { Metadata } from "next";
 
 export const revalidate = 60; // 1분마다 캐시 갱신
 
@@ -15,6 +16,55 @@ async function getProduct(id: string) {
 
   if (error || !data) return null;
   return data;
+}
+
+export async function generateMetadata({ 
+  params 
+}: { 
+  params: Promise<{ id: string }> 
+}): Promise<Metadata> {
+  const { id } = await params;
+  const product = await getProduct(id);
+
+  if (!product) {
+    return {
+      title: "상품을 찾을 수 없습니다 | 마젠타몰",
+      description: "해당 상품이 삭제되었거나 존재하지 않습니다.",
+    };
+  }
+
+  const title = `${product.name} | 마젠타몰`;
+  const description = product.seo_description || product.description || `${product.brand}의 ${product.name} 제품을 마젠타몰에서 만나보세요.`;
+  const url = `https://www.magentalabblog.com/shop/${id}`;
+
+  return {
+    title,
+    description,
+    keywords: product.tags || [],
+    alternates: {
+      canonical: `/shop/${id}`,
+    },
+    openGraph: {
+      title,
+      description,
+      url,
+      images: [
+        {
+          url: product.image_url || "/images/favicon.png",
+          width: 800,
+          height: 800,
+          alt: product.name,
+        },
+      ],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [product.image_url || "/images/favicon.png"],
+    },
+  };
 }
 
 export default async function ProductDetailPage({ 
