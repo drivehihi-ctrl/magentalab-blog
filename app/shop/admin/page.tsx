@@ -46,6 +46,10 @@ export default function ShopAdminPage() {
   });
   const [uploading, setUploading] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("products");
+  const [banners, setBanners] = useState<any[]>([]);
+  const [isEditingBanner, setIsEditingBanner] = useState(false);
+  const [currentBanner, setCurrentBanner] = useState<any>({ image_url: "", link_url: "", order_index: 0, is_active: true });
 
   useEffect(() => {
     const auth = sessionStorage.getItem("shop_admin_authorized");
@@ -53,8 +57,16 @@ export default function ShopAdminPage() {
   }, []);
 
   useEffect(() => {
-    if (isAuthorized) fetchProducts();
+    if (isAuthorized) {
+      fetchProducts();
+      fetchBanners();
+    }
   }, [isAuthorized]);
+
+  async function fetchBanners() {
+    const { data } = await supabase.from("shop_banners").select("*").order("order_index", { ascending: true });
+    if (data) setBanners(data);
+  }
 
   async function fetchProducts() {
     setLoading(true);
@@ -107,6 +119,20 @@ export default function ShopAdminPage() {
     }
   }
 
+  async function handleSaveBanner() {
+    const { id, created_at, ...updateData } = currentBanner;
+    if (id) await supabase.from("shop_banners").update(updateData).eq("id", id);
+    else await supabase.from("shop_banners").insert([updateData]);
+    setIsEditingBanner(false); fetchBanners();
+  }
+
+  async function handleDeleteBanner(id: number) {
+    if (confirm(`배너를 삭제하시겠습니까?`)) {
+      await supabase.from("shop_banners").delete().eq("id", id);
+      fetchBanners();
+    }
+  }
+
   async function getAIRecommendations() {
     if (!currentProduct.name) return alert("상품명을 먼저 입력해주세요!");
     setAiLoading(true);
@@ -149,15 +175,29 @@ export default function ShopAdminPage() {
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
           <div>
             <h1 style={{ fontSize: '28px', fontWeight: 900 }}>Smart Store Admin</h1>
-            <p style={{ color: '#667085', fontSize: '14px' }}>마젠타 펫 연구소 전문 상품 관리</p>
+            <p style={{ color: '#667085', fontSize: '14px' }}>마젠타 펫 연구소 전문 관리</p>
           </div>
           <div style={{ display: 'flex', gap: '12px' }}>
-            <button style={outlineBtnStyle}><Download size={16} /> 엑셀 다운로드</button>
-            <button style={outlineBtnStyle}><Upload size={16} /> 엑셀 일괄등록</button>
-            <button onClick={() => { setIsEditing(true); setCurrentProduct({ use_options: false, option_groups: [], additional_images: [], description_images: [], tags: [], badge: "", details_link: "" }); }} style={primaryBtnStyle}>+ 상품 등록</button>
+            {activeTab === 'products' ? (
+              <>
+                <button style={outlineBtnStyle}><Download size={16} /> 엑셀 다운로드</button>
+                <button style={outlineBtnStyle}><Upload size={16} /> 엑셀 일괄등록</button>
+                <button onClick={() => { setIsEditing(true); setCurrentProduct({ use_options: false, option_groups: [], additional_images: [], description_images: [], tags: [], badge: "", details_link: "" }); }} style={primaryBtnStyle}>+ 상품 등록</button>
+              </>
+            ) : (
+              <button onClick={() => { setIsEditingBanner(true); setCurrentBanner({ image_url: "", link_url: "", order_index: 0, is_active: true }); }} style={primaryBtnStyle}>+ 배너 등록</button>
+            )}
           </div>
         </header>
 
+        {/* 탭 네비게이션 */}
+        <div style={{ display: 'flex', gap: '20px', marginBottom: '30px', borderBottom: '1px solid #344054', paddingBottom: '10px' }}>
+          <button onClick={() => setActiveTab('products')} style={{ ...tabBtnStyle, color: activeTab === 'products' ? '#00C73C' : '#98A2B3', borderBottom: activeTab === 'products' ? '2px solid #00C73C' : 'none' }}>상품 관리</button>
+          <button onClick={() => setActiveTab('banners')} style={{ ...tabBtnStyle, color: activeTab === 'banners' ? '#00C73C' : '#98A2B3', borderBottom: activeTab === 'banners' ? '2px solid #00C73C' : 'none' }}>메인 배너 관리</button>
+        </div>
+
+        {activeTab === 'products' && (
+          <>
         {isEditing && (
           <div style={naverEditorStyle}>
             {/* 기본 정보 (전수조사 기반 완벽 복구) */}
@@ -331,6 +371,69 @@ export default function ShopAdminPage() {
              </table>
           </div>
         )}
+        </>
+        )}
+
+        {activeTab === 'banners' && (
+          <>
+            {isEditingBanner ? (
+              <div style={naverEditorStyle}>
+                <SectionTitle icon={ImageIcon} title="배너 정보" />
+                <div style={inputGroupStyle}><label>배너 이미지 (가로형 추천) *</label>
+                  <div style={{...naverDropzoneStyle, height: '300px'}}>
+                    {currentBanner.image_url ? (
+                      <div style={{ position:'relative', width:'100%', height:'100%' }}>
+                        <img src={currentBanner.image_url} style={{ width:'100%', height:'100%', objectFit:'contain' }} />
+                        <button onClick={() => setCurrentBanner({...currentBanner, image_url: ""})} style={deleteBtnStyle}><X size={12}/></button>
+                      </div>
+                    ) : (
+                      <div style={{ textAlign:'center' }}>
+                        <Plus size={24} color="#98A2B3" />
+                        <input type="file" style={fileHiddenStyle} onChange={async e => { if(e.target.files) { const url = await uploadMedia(e.target.files[0]); if(url) setCurrentBanner({...currentBanner, image_url: url}); } }} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '20px' }}>
+                  <div style={inputGroupStyle}><label>연결할 링크 URL (예: /shop/1)</label><input style={naverInputStyle} value={currentBanner.link_url || ""} onChange={e => setCurrentBanner({...currentBanner, link_url: e.target.value})} /></div>
+                  <div style={inputGroupStyle}><label>정렬 순서 (숫자가 작을수록 먼저 노출)</label><input type="number" style={naverInputStyle} value={currentBanner.order_index || 0} onChange={e => setCurrentBanner({...currentBanner, order_index: Number(e.target.value)})} /></div>
+                </div>
+                <div style={{ display:'flex', justifyContent:'flex-end', gap:'15px', marginTop:'40px' }}>
+                  <button onClick={() => setIsEditingBanner(false)} style={outlineBtnStyle}>취소</button>
+                  <button onClick={handleSaveBanner} style={saveBtnStyle}>배너 저장하기</button>
+                </div>
+              </div>
+            ) : (
+              <div style={tableCardStyle}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ background:'#1D2939', borderBottom:'1px solid #344054' }}>
+                      <th style={thStyle}>배너 이미지</th>
+                      <th style={thStyle}>링크 URL</th>
+                      <th style={thStyle}>순서</th>
+                      <th style={thStyle}>관리</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {banners.map(b => (
+                      <tr key={b.id} style={{ borderBottom:'1px solid #1D2939' }}>
+                        <td style={tdStyle}><img src={b.image_url} style={{ height:'60px', borderRadius:'8px', objectFit:'cover' }} /></td>
+                        <td style={tdStyle}>{b.link_url}</td>
+                        <td style={tdStyle}>{b.order_index}</td>
+                        <td style={tdStyle}>
+                          <div style={{ display:'flex', gap:'15px' }}>
+                            <button onClick={() => { setCurrentBanner(b); setIsEditingBanner(true); }} style={actionBtnStyle} title="수정"><Edit size={16} /></button>
+                            <button onClick={() => handleDeleteBanner(b.id)} style={{ ...actionBtnStyle, color: '#F04438' }} title="삭제"><Trash2 size={16} /></button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );
@@ -356,3 +459,4 @@ const subLabelStyle: React.CSSProperties = { fontSize:'13px', marginBottom:'10px
 const authCardStyle: React.CSSProperties = { background: '#1D2939', padding: '48px', borderRadius: '24px', textAlign: 'center', border: '1px solid #344054', width: '400px' };
 const authInputStyle: React.CSSProperties = { width: '100%', padding: '15px', borderRadius: '12px', background: '#101828', border: '1px solid #344054', color: '#fff', marginBottom: '15px', textAlign: 'center', fontSize: '18px' };
 const authBtnStyle: React.CSSProperties = { width: '100%', padding: '15px', borderRadius: '12px', background: '#00C73C', border: 'none', color: '#fff', fontWeight: 800, fontSize: '16px', cursor: 'pointer' };
+const tabBtnStyle: React.CSSProperties = { background: 'none', padding: '10px 5px', fontSize: '16px', fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s', borderTop: 'none', borderLeft: 'none', borderRight: 'none' };
