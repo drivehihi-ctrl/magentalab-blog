@@ -80,6 +80,7 @@ export default function RootLayout({
         <meta name="google-site-verification" content="nF22SWcLm8AvJD46bLfNyKCJCMvqHS8SuYoiMeEITwE" />
         <meta name="google-site-verification" content="VfH9EadRthwV5nSVTz48foI3UEdvbXxy8cM69fhqvng" />
         <meta name="naver-site-verification" content="ea62c76d32e97c188c8c9d032fe9ae187c630fe6" />
+        <link rel="alternate" type="application/rss+xml" href="/rss.xml" title="Magentalab RSS Feed" />
         <link rel="stylesheet" as="style" crossOrigin="" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
         <script
           type="application/ld+json"

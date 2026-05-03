@@ -31,9 +31,9 @@ export default function Header() {
             />
           </div>
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-gray-900">
+            <div className="text-xl font-bold tracking-tight text-gray-900">
               Magentalab
-            </h1>
+            </div>
             <p className="text-xs font-medium text-magenta tracking-widest uppercase">
               반려동물 연구소
             </p>

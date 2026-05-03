@@ -2,6 +2,15 @@ import Image from "next/image";
 import PostCard from "@/components/PostCard";
 import Pagination from "@/components/Pagination";
 import { getPosts } from "@/lib/wp";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Magentalab 반려동물 연구소 | 홈",
+  description: "Magentalab 반려동물 연구소의 최신 연구 결과와 반려동물 건강 정보를 확인하세요.",
+  alternates: {
+    canonical: "/",
+  },
+};
 
 export default async function HomePage({
   searchParams,
@@ -42,11 +51,11 @@ export default async function HomePage({
               <span className="inline-block px-4 py-1.5 mb-6 rounded-full bg-magenta-light text-magenta text-xs font-bold uppercase tracking-widest whitespace-nowrap">
                 Latest Research & Blog
               </span>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 tracking-tight mb-8 leading-[1.1]">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 tracking-tight mb-8 leading-[1.1]">
                 반려동물을 위한 <br /> 
                 <span className="text-magenta">더 나은 미래</span>를 <br className="hidden lg:block" />
                 연구합니다.
-              </h2>
+              </h1>
               <p className="max-w-xl mx-auto lg:mx-0 text-lg md:text-xl text-gray-500 leading-relaxed font-normal">
                 Magentalab 반려동물 연구소의 최신 연구 결과와 <br className="hidden md:block" />
                 생활 속 건강 팁을 블로그에서 만나보세요.
