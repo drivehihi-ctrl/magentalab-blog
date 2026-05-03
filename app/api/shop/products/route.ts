@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { revalidatePath } from "next/cache";
 
 // 서버 사이드 마스터 키 사용 (RLS 우회)
 const supabase = createClient(
@@ -22,6 +23,10 @@ export async function POST(req: NextRequest) {
 
     if (result.error) throw result.error;
 
+    // ✅ 저장 즉시 캐시 무효화 → 새로고침 시 최신 이미지 즉시 반영
+    revalidatePath("/shop");
+    if (id) revalidatePath(`/shop/${id}`);
+
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error("Product Save API Error:", error);
@@ -37,6 +42,10 @@ export async function DELETE(req: NextRequest) {
 
     const { error } = await supabase.from("products").delete().eq("id", id);
     if (error) throw error;
+
+    // ✅ 삭제 후 즉시 캐시 무효화
+    revalidatePath("/shop");
+    revalidatePath(`/shop/${id}`);
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
