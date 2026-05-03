@@ -2,7 +2,7 @@ import { supabase } from "@/lib/supabase";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronLeft, Share2, Heart, ShoppingCart } from "lucide-react";
+import { ChevronLeft, Star, Share2, Heart, ShoppingCart } from "lucide-react";
 import type { Metadata } from "next";
 import ProductReviews from "@/components/ProductReviews";
 
