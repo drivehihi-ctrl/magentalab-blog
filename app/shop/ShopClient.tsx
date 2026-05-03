@@ -815,31 +815,65 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
         </div>
       </div>
 
-      {/* 🔥 베스트셀러 가로 스크롤 */}
-      <div style={{ paddingBottom: "24px" }}>
-        <div className="shop-section-px" style={{ padding: "0 20px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
-          <div style={{ fontWeight: 700, fontSize: "15px", color: "#111" }}>🔥 베스트셀러</div>
-          <span style={{ fontSize: "12px", color: "#E5007E", fontWeight: 600, cursor: "pointer" }}>전체보기</span>
+      {/* 🔥 베스트셀러 가로 스크롤 (실제 데이터가 있을 때만 노출) */}
+      {products.some((p: any) => p.badge === "BEST") && (
+        <div style={{ paddingBottom: "24px" }}>
+          <div className="shop-section-px" style={{ padding: "0 20px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+            <div style={{ fontWeight: 700, fontSize: "15px", color: "#111" }}>🔥 베스트셀러</div>
+            <span style={{ fontSize: "12px", color: "#E5007E", fontWeight: 600, cursor: "pointer" }}>전체보기</span>
+          </div>
+          <div className="shop-scrollbar-hide" style={{ display: "flex", gap: "12px", paddingLeft: "20px", paddingRight: "8px", overflowX: "auto" }}>
+            {products.filter((p: any) => p.badge === "BEST").map((p: any, i: number) => (
+              <ProductCard key={p.id} p={p} index={i} variant="scroll" />
+            ))}
+          </div>
         </div>
-        <div className="shop-scrollbar-hide" style={{ display: "flex", gap: "12px", paddingLeft: "20px", paddingRight: "8px", overflowX: "auto" }}>
-          {products.filter((p: any) => p.badge === "BEST").map((p: any, i: number) => (
-            <ProductCard key={p.id} p={p} index={i} variant="scroll" />
-          ))}
-        </div>
-      </div>
+      )}
 
-      {/* 🆕 신상품 가로 스크롤 */}
-      <div style={{ paddingBottom: "24px" }}>
-        <div className="shop-section-px" style={{ padding: "0 20px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
-          <div style={{ fontWeight: 700, fontSize: "15px", color: "#111" }}>🆕 신상품</div>
-          <span style={{ fontSize: "12px", color: "#7C3AED", fontWeight: 600, cursor: "pointer" }}>전체보기</span>
+      {/* 🆕 신상품 가로 스크롤 (실제 데이터가 있을 때만 노출) */}
+      {products.some((p: any) => p.badge === "NEW") && (
+        <div style={{ paddingBottom: "24px" }}>
+          <div className="shop-section-px" style={{ padding: "0 20px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+            <div style={{ fontWeight: 700, fontSize: "15px", color: "#111" }}>🆕 신상품</div>
+            <span style={{ fontSize: "12px", color: "#7C3AED", fontWeight: 600, cursor: "pointer" }}>전체보기</span>
+          </div>
+          <div className="shop-scrollbar-hide" style={{ display: "flex", gap: "12px", paddingLeft: "20px", paddingRight: "8px", overflowX: "auto" }}>
+            {products.filter((p: any) => p.badge === "NEW").map((p: any, i: number) => (
+              <ProductCard key={p.id} p={p} index={i} variant="scroll" />
+            ))}
+          </div>
         </div>
-        <div className="shop-scrollbar-hide" style={{ display: "flex", gap: "12px", paddingLeft: "20px", paddingRight: "8px", overflowX: "auto" }}>
-          {products.filter((p: any) => p.badge === "NEW").map((p: any, i: number) => (
-            <ProductCard key={p.id} p={p} index={i} variant="scroll" />
-          ))}
+      )}
+
+      {/* 🔥 HOT 뱃지 상품 (실제 데이터가 있을 때만 노출) */}
+      {products.some((p: any) => p.badge === "HOT") && (
+        <div style={{ paddingBottom: "24px" }}>
+          <div className="shop-section-px" style={{ padding: "0 20px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+            <div style={{ fontWeight: 700, fontSize: "15px", color: "#111" }}>🔥 지금 가장 핫한 연구템</div>
+            <span style={{ fontSize: "12px", color: "#F59E0B", fontWeight: 600, cursor: "pointer" }}>전체보기</span>
+          </div>
+          <div className="shop-scrollbar-hide" style={{ display: "flex", gap: "12px", paddingLeft: "20px", paddingRight: "8px", overflowX: "auto" }}>
+            {products.filter((p: any) => p.badge === "HOT").map((p: any, i: number) => (
+              <ProductCard key={p.id} p={p} index={i} variant="scroll" />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* ✨ 추천 뱃지 상품 (실제 데이터가 있을 때만 노출) */}
+      {products.some((p: any) => p.badge === "추천") && (
+        <div style={{ paddingBottom: "24px" }}>
+          <div className="shop-section-px" style={{ padding: "0 20px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+            <div style={{ fontWeight: 700, fontSize: "15px", color: "#111" }}>✨ 안심이의 강력 추천</div>
+            <span style={{ fontSize: "12px", color: "#10B981", fontWeight: 600, cursor: "pointer" }}>전체보기</span>
+          </div>
+          <div className="shop-scrollbar-hide" style={{ display: "flex", gap: "12px", paddingLeft: "20px", paddingRight: "8px", overflowX: "auto" }}>
+            {products.filter((p: any) => p.badge === "추천").map((p: any, i: number) => (
+              <ProductCard key={p.id} p={p} index={i} variant="scroll" />
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* 안심이 AI 추천 배너 */}
       <div
@@ -923,15 +957,17 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
         </div>
       )}
 
-      {/* 💰 할인 중인 상품 그리드 */}
-      <div style={{ padding: "0 20px 24px" }}>
-        <div style={{ fontWeight: 700, fontSize: "15px", marginBottom: "14px", color: "#111" }}>💰 할인 중인 상품</div>
-        <div className="shop-product-grid">
-          {products.filter((p: any) => p.original_price || p.originalPrice).map((p: any, i: number) => (
-            <ProductCard key={p.id} p={p} index={i} variant="grid" />
-          ))}
+      {/* 💰 할인 중인 상품 그리드 (실제 데이터가 있을 때만 노출) */}
+      {products.some((p: any) => p.original_price || p.originalPrice) && (
+        <div style={{ padding: "0 20px 24px" }}>
+          <div style={{ fontWeight: 700, fontSize: "15px", marginBottom: "14px", color: "#111" }}>💰 할인 중인 상품</div>
+          <div className="shop-product-grid">
+            {products.filter((p: any) => p.original_price || p.originalPrice).map((p: any, i: number) => (
+              <ProductCard key={p.id} p={p} index={i} variant="grid" />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
