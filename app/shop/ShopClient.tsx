@@ -1788,60 +1788,6 @@ function MyTab({ profiles, activeId, onSelect, onOpenModal, onEditModal, setActi
         </div>
       </div>
 
-      {/* 현재 선택된 아이 상세 요약 카드 */}
-      {activePet && (
-        <div style={{ margin: "0 16px 24px" }}>
-          <div style={{ 
-            background: "#fff", borderRadius: "24px", padding: "24px", 
-            boxShadow: "0 10px 30px rgba(0,0,0,0.04)", border: "1px solid rgba(0,0,0,0.02)",
-            position: "relative", overflow: "hidden"
-          }}>
-            {/* 배경 장식 */}
-            <div style={{ position: "absolute", right: "-10px", top: "-10px", fontSize: "60px", opacity: 0.05 }}>🧪</div>
-            
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" }}>
-              <div>
-                <h3 style={{ fontSize: "18px", fontWeight: 900, color: "#111" }}>{activePet.name} 연구원</h3>
-                <p style={{ fontSize: "13px", color: "#6B7280", marginTop: "4px" }}>
-                  {activePet.breed} · {(() => {
-                    const { years, months } = calculatePreciseAge(activePet.birthYear, activePet.birthMonth, activePet.birthDay || 1);
-                    return formatAgeString(years, months);
-                  })()}
-                </p>
-              </div>
-              <button 
-                onClick={(e) => { e.stopPropagation(); onOpenModal(); }}
-                style={{ 
-                  fontSize: "11px", color: "#E5007E", background: "#fdf2f8", 
-                  border: "none", cursor: "pointer", fontWeight: 700, 
-                  padding: "6px 12px", borderRadius: "10px" 
-                }}
-              >
-                정보 수정
-              </button>
-            </div>
-
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginBottom: "16px" }}>
-              {(activePet.keywords || []).map(k => (
-                <span key={k} style={{ 
-                  fontSize: "11px", background: "#f1f5f9", padding: "4px 10px", borderRadius: "8px", 
-                  color: "#475569", fontWeight: 600, border: "1px solid #e2e8f0" 
-                }}>
-                  #{HEALTH_KEYWORDS.find(hk => hk.id === k)?.label || k}
-                </span>
-              ))}
-            </div>
-
-            <div style={{ 
-              background: "#F9FAFB", borderRadius: "14px", padding: "14px", 
-              fontSize: "12px", color: "#4B5563", lineHeight: 1.5,
-              borderLeft: "4px solid #E5007E"
-            }}>
-              💡 <b>안심이의 처방:</b> {HEALTH_KEYWORDS.find(hk => activePet.keywords.includes(hk.id))?.tip || "정밀 분석을 위해 상담 기록을 업데이트해 주세요!"}
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* 주문 현황 카드 */}
       <div className="shop-fade-up" style={{
