@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     url: "https://www.magentalabblog.com",
     siteName: "Magentalab",
     title: "Magentalab 반려동물 연구소",
-    description: "데이터와 과학으로 반려동물의 더 나은 삶을 연구합니다.",
+    description: "데이터와 과학으로 반려동물의 더 나은 삶을 연구합니다. 마젠타랩 블로그에서 최신 연구 소식을 만나보세요.",
     images: [
       {
         url: "/images/favicon.png",
@@ -92,7 +92,9 @@ export default function RootLayout({
               "url": "https://www.magentalabblog.com",
               "logo": "https://www.magentalabblog.com/logo.png",
               "sameAs": [
-                "https://magentalab.mycafe24.com"
+                "https://magentalab.mycafe24.com",
+                "https://blog.naver.com/magentalab", // 예시: 네이버 블로그
+                "https://www.instagram.com/magentalab" // 예시: 인스타그램
               ]
             }),
           }}

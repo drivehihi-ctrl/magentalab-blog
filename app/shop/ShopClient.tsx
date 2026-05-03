@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { supabase } from "@/lib/supabase";
 import { Camera, Plus } from "lucide-react";
+import { sanitizeForSeo } from "@/lib/utils";
 
 // ─── 카테고리 (아시아허브마트 스타일 이모지 바) ──────────────────
 const CATEGORIES = [
@@ -496,7 +497,7 @@ function ProductCard({ p, index, variant = "grid" }: { p: any; index: number; va
     >
       {/* 이미지 */}
       <div style={{ position: "relative", width: "100%", paddingTop: isScroll ? undefined : "100%", height: isScroll ? "156px" : undefined }}>
-        <Image src={p.image} alt={p.name} fill style={{ objectFit: "cover" }} sizes={isScroll ? "156px" : "(max-width: 500px) 50vw, 200px"} />
+        <Image src={p.image} alt={sanitizeForSeo(p.name)} fill style={{ objectFit: "cover" }} sizes={isScroll ? "156px" : "(max-width: 500px) 50vw, 200px"} />
         {p.badge && (
           <div
             className="shop-badge-pulse"

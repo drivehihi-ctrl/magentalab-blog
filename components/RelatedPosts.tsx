@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { WPPost, getFeaturedImage, getCategories } from "@/lib/wp";
+import { sanitizeForSeo } from "@/lib/utils";
 
 interface RelatedPostsProps {
   posts: WPPost[];
@@ -19,6 +20,7 @@ export default function RelatedPosts({ posts }: RelatedPostsProps) {
         {posts.map((post) => {
           const imageUrl = getFeaturedImage(post);
           const categories = getCategories(post);
+          const sanitizedTitle = sanitizeForSeo(post.title.rendered);
           
           return (
             <Link 
@@ -29,7 +31,7 @@ export default function RelatedPosts({ posts }: RelatedPostsProps) {
               <div className="relative aspect-[16/10] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-md transition-shadow">
                 <Image
                   src={imageUrl}
-                  alt={post.title.rendered}
+                  alt={sanitizedTitle}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
                 />

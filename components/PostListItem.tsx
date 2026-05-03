@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { WPPost, getFeaturedImage, getCategories, getTags } from "@/lib/wp";
+import { sanitizeForSeo } from "@/lib/utils";
 
 interface PostListItemProps {
   post: WPPost;
@@ -10,6 +11,7 @@ export default function PostListItem({ post }: PostListItemProps) {
   const imageUrl = getFeaturedImage(post);
   const categories = getCategories(post);
   const tags = getTags(post);
+  const sanitizedTitle = sanitizeForSeo(post.title.rendered);
   const date = new Date(post.date).toLocaleDateString("ko-KR", {
     year: "numeric",
     month: "long",
@@ -64,7 +66,7 @@ export default function PostListItem({ post }: PostListItemProps) {
       <div className="relative w-full sm:w-48 md:w-64 aspect-[16/10] sm:aspect-square flex-shrink-0 rounded-xl overflow-hidden order-1 sm:order-2">
         <Image
           src={imageUrl}
-          alt={post.title.rendered}
+          alt={sanitizedTitle}
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
