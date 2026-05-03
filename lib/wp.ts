@@ -86,7 +86,8 @@ export async function getPost(id: string): Promise<WPPost> {
 }
 
 export function getFeaturedImage(post: WPPost) {
-  return post._embedded?.["wp:featuredmedia"]?.[0]?.source_url || "/placeholder-image.jpg";
+  const url = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
+  return url ? encodeURI(url) : "/placeholder-image.jpg";
 }
 
 export function getCategories(post: WPPost) {
