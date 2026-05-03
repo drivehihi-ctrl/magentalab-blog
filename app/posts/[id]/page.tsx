@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Metadata } from "next";
 import { getPost, getPosts, getFeaturedImage, getCategories, getTags, getRelatedPosts, fixWpLinks } from "@/lib/wp";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import CommentsSection from "@/components/CommentsSection";
 import RelatedPosts from "@/components/RelatedPosts";
 import AnsimiSummary from "@/components/AnsimiSummary";
@@ -55,8 +56,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function PostDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const post = await getPost(id);
-  const { posts: allPosts } = await getPosts();
+  
+  let post;
+  let allPosts;
+  try {
+    post = await getPost(id);
+    const postsRes = await getPosts();
+    allPosts = postsRes.posts;
+  } catch (error) {
+    notFound();
+  }
+
+  if (!post) notFound();
   const relatedPosts = getRelatedPosts(post, allPosts);
   
   const imageUrl = getFeaturedImage(post);
