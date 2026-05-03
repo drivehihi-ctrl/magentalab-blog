@@ -111,18 +111,18 @@ export default function ShopAdminPage() {
         original_price: Number(updateData.original_price || updateData.price || 0),
         stock: Number(updateData.stock || 0),
       };
-      
-      let result;
-      if (id) {
-        result = await supabase.from("products").update(payload).eq("id", id);
-      } else {
-        result = await supabase.from("products").insert([payload]);
-      }
 
-      if (result.error) throw result.error;
+      // ✅ 서버 API를 통해 처리 (SERVICE_ROLE_KEY로 RLS 우회)
+      const res = await fetch("/api/shop/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(id ? { id, ...payload } : payload),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || "저장 실패");
 
       alert("✅ 상품 정보가 성공적으로 저장되었습니다!");
-      setIsEditing(false); 
+      setIsEditing(false);
       fetchProducts();
     } catch (error: any) {
       console.error("Save Product Error:", error);
@@ -132,22 +132,50 @@ export default function ShopAdminPage() {
 
   async function handleDeleteProduct(id: number, name: string) {
     if (confirm(`[경고] "${name}" 상품을 정말로 삭제하시겠습니까?`)) {
-      await supabase.from("products").delete().eq("id", id);
-      fetchProducts();
+      try {
+        const res = await fetch("/api/shop/products", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id }),
+        });
+        if (!res.ok) throw new Error("삭제 실패");
+        fetchProducts();
+      } catch (error: any) {
+        alert("❌ 삭제 실패: " + error.message);
+      }
     }
   }
 
   async function handleSaveBanner() {
-    const { id, created_at, ...updateData } = currentBanner;
-    if (id) await supabase.from("shop_banners").update(updateData).eq("id", id);
-    else await supabase.from("shop_banners").insert([updateData]);
-    setIsEditingBanner(false); fetchBanners();
+    try {
+      const { id, created_at, ...updateData } = currentBanner;
+      const res = await fetch("/api/shop/banners", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(id ? { id, ...updateData } : updateData),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || "배너 저장 실패");
+      setIsEditingBanner(false);
+      fetchBanners();
+    } catch (error: any) {
+      alert("❌ 배너 저장 실패: " + error.message);
+    }
   }
 
   async function handleDeleteBanner(id: number) {
     if (confirm(`배너를 삭제하시겠습니까?`)) {
-      await supabase.from("shop_banners").delete().eq("id", id);
-      fetchBanners();
+      try {
+        const res = await fetch("/api/shop/banners", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id }),
+        });
+        if (!res.ok) throw new Error("삭제 실패");
+        fetchBanners();
+      } catch (error: any) {
+        alert("❌ 배너 삭제 실패: " + error.message);
+      }
     }
   }
 
