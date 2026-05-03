@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Metadata } from "next";
 import { getPost, getPosts, getFeaturedImage, getCategories, getTags, getRelatedPosts, fixWpLinks } from "@/lib/wp";
+import { sanitizeForSeo } from "@/lib/utils";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import CommentsSection from "@/components/CommentsSection";
@@ -17,8 +18,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   try {
     const post = await getPost(id);
     const imageUrl = getFeaturedImage(post);
-    const title = post.title.rendered.replace(/<[^>]*>?/gm, "");
-    const description = post.excerpt.rendered.replace(/<[^>]*>?/gm, "").slice(0, 160);
+    const title = sanitizeForSeo(post.title.rendered);
+    const description = sanitizeForSeo(post.excerpt.rendered, 160);
 
     return {
       title: `${title} | Magentalab`,
@@ -83,7 +84,7 @@ export default async function PostDetailPage({ params }: PageProps) {
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
-    "headline": post.title.rendered.replace(/<[^>]*>?/gm, ""),
+    "headline": sanitizeForSeo(post.title.rendered),
     "image": [imageUrl],
     "datePublished": post.date,
     "dateModified": post.modified || post.date,
@@ -126,7 +127,7 @@ export default async function PostDetailPage({ params }: PageProps) {
       {
         "@type": "ListItem",
         "position": 3,
-        "name": post.title.rendered.replace(/<[^>]*>?/gm, ""),
+        "name": sanitizeForSeo(post.title.rendered),
         "item": `https://www.magentalabblog.com/posts/${id}`
       }
     ]

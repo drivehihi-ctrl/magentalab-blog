@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { WPPost, getFeaturedImage, getCategories } from "@/lib/wp";
+import { sanitizeForSeo } from "@/lib/utils";
 
 interface PostCardProps {
   post: WPPost;
@@ -9,6 +10,7 @@ interface PostCardProps {
 export default function PostCard({ post }: PostCardProps) {
   const imageUrl = getFeaturedImage(post);
   const categories = getCategories(post);
+  const sanitizedTitle = sanitizeForSeo(post.title.rendered);
   const date = new Date(post.date).toLocaleDateString("ko-KR", {
     year: "numeric",
     month: "long",
@@ -20,7 +22,7 @@ export default function PostCard({ post }: PostCardProps) {
       <div className="relative aspect-[16/10] overflow-hidden">
         <Image
           src={imageUrl}
-          alt={post.title.rendered}
+          alt={sanitizedTitle}
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />

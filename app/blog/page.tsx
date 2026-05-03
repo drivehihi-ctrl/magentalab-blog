@@ -31,8 +31,33 @@ export default async function BlogListPage({
   const currentPage = Number(page) || 1;
   const { posts, totalPages, totalPosts } = await getPosts(currentPage, 20);
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "홈",
+        "item": "https://www.magentalabblog.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "블로그",
+        "item": "https://www.magentalabblog.com/blog"
+      }
+    ]
+  };
+
   return (
     <div className="pb-24">
+      {/* Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      
       {/* Page Header */}
       <header className="relative pt-24 pb-20 bg-white border-b border-gray-100 overflow-hidden">
         <div className="container mx-auto px-4 max-w-5xl relative z-10">

@@ -1,4 +1,5 @@
 import { getPosts } from "@/lib/wp";
+import { sanitizeForSeo } from "@/lib/utils";
 
 /**
  * 전용몰 제품이 포함되지 않은 순수 블로그 포스트 전용 RSS 피드를 생성합니다.
@@ -12,8 +13,8 @@ export async function GET() {
     
     const rssItemsXml = posts
       .map((post) => {
-        const title = post.title.rendered.replace(/<[^>]*>?/gm, "").trim();
-        const description = post.excerpt.rendered.replace(/<[^>]*>?/gm, "").trim();
+        const title = sanitizeForSeo(post.title.rendered);
+        const description = sanitizeForSeo(post.excerpt.rendered, 160);
         const postUrl = `${siteUrl}/posts/${post.id}`;
         const pubDate = new Date(post.date).toUTCString();
         

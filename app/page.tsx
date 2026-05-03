@@ -21,8 +21,27 @@ export default async function HomePage({
   const currentPage = Number(page) || 1;
   const { posts, totalPages } = await getPosts(currentPage, 20);
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "홈",
+        "item": "https://www.magentalabblog.com"
+      }
+    ]
+  };
+
   return (
     <div className="pb-20">
+      {/* Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      
       {/* Hero Section */}
       <section className="relative py-20 lg:py-32 bg-white overflow-hidden">
         {/* Background Decorative Blobs */}
