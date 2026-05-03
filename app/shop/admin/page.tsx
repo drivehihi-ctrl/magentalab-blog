@@ -269,7 +269,7 @@ export default function ShopAdminPage() {
                   <label style={subLabelStyle}>대표이미지 *</label>
                   <div style={{ ...naverDropzoneStyle, cursor: 'pointer' }}>
                     {currentProduct.image_url ? (
-                      <div style={{ position:'relative', width:'100%', height:'100%', group:'image' }}>
+                      <div style={{ position:'relative', width:'100%', height:'100%' }}>
                         <img src={currentProduct.image_url} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
                         {/* 이미지 변경 오버레이 */}
                         <div style={{ position:'absolute', inset:0, background:'rgba(0,0,0,0.4)', display:'flex', alignItems:'center', justifyContent:'center', opacity:0, transition:'opacity 0.2s' }} className="image-overlay">
