@@ -19,9 +19,11 @@ interface Product {
   brand: string;
   price: number;
   original_price: number;
+  description: string;
+  tag: string;
   image_url: string;
   additional_images: string[];
-  description_images: string[];
+  detail_images: string[];
   category: string;
   badge: string; // [RESTORED]
   stock: number;
@@ -43,7 +45,7 @@ export default function ShopAdminPage() {
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Partial<Product>>({
-    use_options: false, option_groups: [], additional_images: [], description_images: [], tags: [], badge: "", details_link: ""
+    use_options: false, option_groups: [], additional_images: [], detail_images: [], tags: [], badge: "", details_link: "", description: "", tag: ""
   });
   const [uploading, setUploading] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
@@ -101,16 +103,31 @@ export default function ShopAdminPage() {
   };
 
   async function handleSaveProduct() {
-    const { id, created_at, ...updateData } = currentProduct as any;
-    const payload = {
-      ...updateData,
-      price: Number(updateData.price || 0),
-      original_price: Number(updateData.original_price || updateData.price || 0),
-      stock: Number(updateData.stock || 0),
-    };
-    if (id) await supabase.from("products").update(payload).eq("id", id);
-    else await supabase.from("products").insert([payload]);
-    setIsEditing(false); fetchProducts();
+    try {
+      const { id, created_at, ...updateData } = currentProduct as any;
+      const payload = {
+        ...updateData,
+        price: Number(updateData.price || 0),
+        original_price: Number(updateData.original_price || updateData.price || 0),
+        stock: Number(updateData.stock || 0),
+      };
+      
+      let result;
+      if (id) {
+        result = await supabase.from("products").update(payload).eq("id", id);
+      } else {
+        result = await supabase.from("products").insert([payload]);
+      }
+
+      if (result.error) throw result.error;
+
+      alert("✅ 상품 정보가 성공적으로 저장되었습니다!");
+      setIsEditing(false); 
+      fetchProducts();
+    } catch (error: any) {
+      console.error("Save Product Error:", error);
+      alert("❌ 저장 실패: " + (error.message || "알 수 없는 오류가 발생했습니다."));
+    }
   }
 
   async function handleDeleteProduct(id: number, name: string) {
@@ -183,7 +200,7 @@ export default function ShopAdminPage() {
               <>
                 <button style={outlineBtnStyle}><Download size={16} /> 엑셀 다운로드</button>
                 <button style={outlineBtnStyle}><Upload size={16} /> 엑셀 일괄등록</button>
-                <button onClick={() => { setIsEditing(true); setCurrentProduct({ use_options: false, option_groups: [], additional_images: [], description_images: [], tags: [], badge: "", details_link: "" }); }} style={primaryBtnStyle}>+ 상품 등록</button>
+                <button onClick={() => { setIsEditing(true); setCurrentProduct({ use_options: false, option_groups: [], additional_images: [], detail_images: [], tags: [], badge: "", details_link: "", description: "", tag: "" }); }} style={primaryBtnStyle}>+ 상품 등록</button>
               </>
             ) : activeTab === 'banners' ? (
               <button onClick={() => { setIsEditingBanner(true); setCurrentBanner({ image_url: "", link_url: "", order_index: 0, is_active: true }); }} style={primaryBtnStyle}>+ 배너 등록</button>
@@ -237,6 +254,11 @@ export default function ShopAdminPage() {
                 </div>
                 <div style={inputGroupStyle}><label>상세 외부링크 (필요 시)</label><input style={naverInputStyle} value={currentProduct.details_link || ""} onChange={e => setCurrentProduct({...currentProduct, details_link: e.target.value})} /></div>
               </div>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop:'20px' }}>
+                <div style={inputGroupStyle}><label>포인트 태그 (예: 연구소 추천)</label><input style={naverInputStyle} value={currentProduct.tag || ""} onChange={e => setCurrentProduct({...currentProduct, tag: e.target.value})} /></div>
+                <div style={inputGroupStyle}><label>상품 요약 설명</label><input style={naverInputStyle} value={currentProduct.description || ""} onChange={e => setCurrentProduct({...currentProduct, description: e.target.value})} /></div>
+              </div>
             </div>
 
             {/* 상품이미지 */}
@@ -245,19 +267,29 @@ export default function ShopAdminPage() {
               <div style={{ display: 'flex', gap: '30px' }}>
                 <div style={{ width: '200px' }}>
                   <label style={subLabelStyle}>대표이미지 *</label>
-                  <div style={naverDropzoneStyle}>
+                  <div style={{ ...naverDropzoneStyle, cursor: 'pointer' }}>
                     {currentProduct.image_url ? (
-                      <div style={{ position:'relative', width:'100%', height:'100%' }}>
+                      <div style={{ position:'relative', width:'100%', height:'100%', group:'image' }}>
                         <img src={currentProduct.image_url} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
-                        <button onClick={() => setCurrentProduct({...currentProduct, image_url: ""})} style={deleteBtnStyle}><X size={12}/></button>
+                        {/* 이미지 변경 오버레이 */}
+                        <div style={{ position:'absolute', inset:0, background:'rgba(0,0,0,0.4)', display:'flex', alignItems:'center', justifyContent:'center', opacity:0, transition:'opacity 0.2s' }} className="image-overlay">
+                           <span style={{ color:'#fff', fontSize:'12px', fontWeight:800 }}>이미지 변경</span>
+                        </div>
+                        <input type="file" style={fileHiddenStyle} onChange={async e => { if(e.target.files) { const url = await uploadMedia(e.target.files[0]); if(url) setCurrentProduct({...currentProduct, image_url: url}); } }} />
+                        <button onClick={(e) => { e.stopPropagation(); setCurrentProduct({...currentProduct, image_url: ""}); }} style={{ ...deleteBtnStyle, position:'absolute', top:5, right:5, zIndex:10 }}><X size={12}/></button>
                       </div>
                     ) : (
                       <div style={{ textAlign:'center' }}>
                         <Plus size={24} color="#98A2B3" />
+                        <p style={{ fontSize:'11px', color:'#98A2B3', marginTop:'8px' }}>이미지 등록</p>
                         <input type="file" style={fileHiddenStyle} onChange={async e => { if(e.target.files) { const url = await uploadMedia(e.target.files[0]); if(url) setCurrentProduct({...currentProduct, image_url: url}); } }} />
                       </div>
                     )}
                   </div>
+                  {/* CSS 호버 효과 주입을 위해 스타일 추가 */}
+                  <style>{`
+                    div:hover > .image-overlay { opacity: 1 !important; }
+                  `}</style>
                 </div>
                 <div style={{ flex: 1 }}>
                   <label style={subLabelStyle}>추가이미지 ({currentProduct.additional_images?.length || 0}/9)</label>
@@ -291,29 +323,33 @@ export default function ShopAdminPage() {
               </div>
             </div>
 
-            {/* 상세설명 이미지 */}
+            {/* 상세설명 이미지 (detail_images로 통일) */}
             <div style={formSectionStyle}>
               <SectionTitle icon={FileText} title="상세설명 이미지" />
               <div style={{ background: '#1D2939', padding: '24px', borderRadius: '12px', border: '1px dashed #344054' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                  {(currentProduct.description_images || []).map((img, idx) => (
+                  {(currentProduct.detail_images || []).map((img, idx) => (
                     <div key={idx} style={{ position:'relative', width:'100%', maxWidth:'400px', borderRadius:'8px', overflow:'hidden', background:'#101828', border:'1px solid #344054' }}>
                        <img src={img} style={{ width:'100%', height:'auto', display:'block' }} />
                        <button onClick={() => {
-                         const newList = [...(currentProduct.description_images || [])];
+                         const newList = [...(currentProduct.detail_images || [])];
                          newList.splice(idx, 1);
-                         setCurrentProduct({...currentProduct, description_images: newList});
+                         setCurrentProduct({...currentProduct, detail_images: newList});
                        }} style={{ ...deleteBtnStyle, position:'absolute', top:10, right:10 }}><Trash2 size={14}/></button>
                     </div>
                   ))}
-                  <div style={{ ...naverDropzoneStyle, width:'100%', height:'100px', borderStyle:'dashed' }}>
-                    <p style={{ fontSize:'13px', color:'#98A2B3' }}>상세이미지 추가 (드래그 또는 클릭)</p>
+                  <div style={{ ...naverDropzoneStyle, width:'100%', height:'100%', borderStyle:'dashed', padding:'40px' }}>
+                    <div style={{ textAlign:'center' }}>
+                      <Upload size={32} color="#98A2B3" style={{ marginBottom:'12px' }} />
+                      <p style={{ fontSize:'14px', color:'#98A2B3', fontWeight:600 }}>상세 이미지 추가</p>
+                      <p style={{ fontSize:'12px', color:'rgba(152,162,179,0.6)', marginTop:'4px' }}>클릭하거나 파일을 드래그하세요</p>
+                    </div>
                     <input type="file" multiple style={fileHiddenStyle} onChange={async e => {
                       if(e.target.files) {
                         const files = Array.from(e.target.files);
                         for(const f of files) {
                           const url = await uploadMedia(f);
-                          if(url) setCurrentProduct(prev => ({ ...prev, description_images: [...(prev.description_images || []), url] }));
+                          if(url) setCurrentProduct(prev => ({ ...prev, detail_images: [...(prev.detail_images || []), url] }));
                         }
                       }
                     }} />
