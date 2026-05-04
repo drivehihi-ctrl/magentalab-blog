@@ -430,7 +430,7 @@ function IconShop({ active }: { active: boolean }) {
     </svg>
   );
 }
-function IconCart({ active }: { active: boolean }) {
+function IconCart({ active, count }: { active: boolean; count: number }) {
   const c = active ? "#E5007E" : "#94a3b8";
   return (
     <div style={{ position: "relative" }}>
@@ -440,15 +440,17 @@ function IconCart({ active }: { active: boolean }) {
         <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" />
       </svg>
       {/* 장바구니 배지 (아시아허브마트 스타일) */}
-      <span style={{
-        position: "absolute", top: "-5px", right: "-8px",
-        background: "#EF4444", color: "#fff", fontSize: "10px", fontWeight: 800,
-        width: "16px", height: "16px", borderRadius: "50%",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        border: "2px solid #fff"
-      }}>
-        3
-      </span>
+      {count > 0 && (
+        <span style={{
+          position: "absolute", top: "-5px", right: "-8px",
+          background: "#EF4444", color: "#fff", fontSize: "10px", fontWeight: 800,
+          width: "16px", height: "16px", borderRadius: "50%",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          border: "2px solid #fff"
+        }}>
+          {count}
+        </span>
+      )}
     </div>
   );
 }
@@ -475,7 +477,7 @@ function IconRequest({ active }: { active: boolean }) {
 }
 
 // ─── 프로덕트 카드 공통 ──────────────────────────────────────────
-function ProductCard({ p, index, variant = "grid" }: { p: any; index: number; variant?: "grid" | "scroll" }) {
+function ProductCard({ p, index, variant = "grid", onAddToCart }: { p: any; index: number; variant?: "grid" | "scroll"; onAddToCart?: (product: any) => void }) {
   const isScroll = variant === "scroll";
 
   return (
@@ -557,6 +559,11 @@ function ProductCard({ p, index, variant = "grid" }: { p: any; index: number; va
             </div>
           </div>
           <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (onAddToCart) onAddToCart(p);
+            }}
             className="shop-btn-hover"
             style={{
               background: "linear-gradient(135deg, #E5007E 0%, #FF4DA6 100%)",
@@ -574,7 +581,7 @@ function ProductCard({ p, index, variant = "grid" }: { p: any; index: number; va
 }
 
 // ─── 디스커버리 탭 (아시아허브마트 메인 스타일) ─────────────────────
-function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpenModal, logoUrl }: { products: any[]; banners: any[]; careGuides: any[]; session: any; activePet: PetProfile | null; onOpenModal: () => void; logoUrl: string }) {
+function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpenModal, logoUrl, onAddToCart }: { products: any[]; banners: any[]; careGuides: any[]; session: any; activePet: PetProfile | null; onOpenModal: () => void; logoUrl: string; onAddToCart: (product: any) => void }) {
   const bannerRef = useRef<HTMLDivElement>(null);
   const [bannerIdx, setBannerIdx] = useState(0);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
@@ -824,7 +831,7 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
           </div>
           <div className="shop-scrollbar-hide" style={{ display: "flex", gap: "12px", paddingLeft: "20px", paddingRight: "8px", overflowX: "auto" }}>
             {products.filter((p: any) => p.badge === "BEST").map((p: any, i: number) => (
-              <ProductCard key={p.id} p={p} index={i} variant="scroll" />
+              <ProductCard key={p.id} p={p} index={i} variant="scroll" onAddToCart={onAddToCart} />
             ))}
           </div>
         </div>
@@ -839,7 +846,7 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
           </div>
           <div className="shop-scrollbar-hide" style={{ display: "flex", gap: "12px", paddingLeft: "20px", paddingRight: "8px", overflowX: "auto" }}>
             {products.filter((p: any) => p.badge === "NEW").map((p: any, i: number) => (
-              <ProductCard key={p.id} p={p} index={i} variant="scroll" />
+              <ProductCard key={p.id} p={p} index={i} variant="scroll" onAddToCart={onAddToCart} />
             ))}
           </div>
         </div>
@@ -854,7 +861,7 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
           </div>
           <div className="shop-scrollbar-hide" style={{ display: "flex", gap: "12px", paddingLeft: "20px", paddingRight: "8px", overflowX: "auto" }}>
             {products.filter((p: any) => p.badge === "HOT").map((p: any, i: number) => (
-              <ProductCard key={p.id} p={p} index={i} variant="scroll" />
+              <ProductCard key={p.id} p={p} index={i} variant="scroll" onAddToCart={onAddToCart} />
             ))}
           </div>
         </div>
@@ -869,7 +876,7 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
           </div>
           <div className="shop-scrollbar-hide" style={{ display: "flex", gap: "12px", paddingLeft: "20px", paddingRight: "8px", overflowX: "auto" }}>
             {products.filter((p: any) => p.badge === "추천").map((p: any, i: number) => (
-              <ProductCard key={p.id} p={p} index={i} variant="scroll" />
+              <ProductCard key={p.id} p={p} index={i} variant="scroll" onAddToCart={onAddToCart} />
             ))}
           </div>
         </div>
@@ -963,7 +970,7 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
           <div style={{ fontWeight: 700, fontSize: "15px", marginBottom: "14px", color: "#111" }}>💰 할인 중인 상품</div>
           <div className="shop-product-grid">
             {products.filter((p: any) => p.original_price || p.originalPrice).map((p: any, i: number) => (
-              <ProductCard key={p.id} p={p} index={i} variant="grid" />
+              <ProductCard key={p.id} p={p} index={i} variant="grid" onAddToCart={onAddToCart} />
             ))}
           </div>
         </div>
@@ -973,7 +980,7 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
 }
 
 // ─── 샵 탭 (전체 상품, 카테고리 필터) ──────────────────────────────
-function ShopTab({ products, session, activePet, onOpenModal, logoUrl }: { products: any[]; session: any; activePet: PetProfile | null; onOpenModal: () => void; logoUrl: string }) {
+function ShopTab({ products, session, activePet, onOpenModal, logoUrl, onAddToCart }: { products: any[]; session: any; activePet: PetProfile | null; onOpenModal: () => void; logoUrl: string; onAddToCart: (product: any) => void }) {
   const [activeCategory, setActiveCategory] = useState("all");
   const [sortLabel, setSortLabel] = useState("추천순");
   const [searchQuery, setSearchQuery] = useState("");
@@ -1097,7 +1104,7 @@ function ShopTab({ products, session, activePet, onOpenModal, logoUrl }: { produ
           </div>
           <div className="shop-scrollbar-hide" style={{ display: "flex", gap: "12px", overflowX: "auto", paddingBottom: "4px" }}>
             {recommendedProducts.map((p, i) => (
-              <ProductCard key={p.id} p={p} index={i} variant="scroll" />
+              <ProductCard key={p.id} p={p} index={i} variant="scroll" onAddToCart={onAddToCart} />
             ))}
           </div>
         </div>
@@ -1190,7 +1197,7 @@ function ShopTab({ products, session, activePet, onOpenModal, logoUrl }: { produ
       {/* 상품 그리드 */}
       <div style={{ padding: "14px 16px 0" }} className="shop-product-grid">
         {sorted.map((p, i) => (
-          <ProductCard key={p.id} p={p} index={i} variant="grid" />
+          <ProductCard key={p.id} p={p} index={i} variant="grid" onAddToCart={onAddToCart} />
         ))}
       </div>
 
@@ -2173,25 +2180,100 @@ function SupportSubPage() {
 }
 
 // ─── 장바구니 탭 (Cart Tab) ──────────────────────────────────────
-function CartTab() {
-  return (
-    <div style={{ 
-      padding: "80px 20px", textAlign: "center", minHeight: "80vh",
-      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"
-    }}>
-      <div style={{ fontSize: "64px", marginBottom: "20px" }}>🛒</div>
-      <h2 style={{ fontSize: "20px", fontWeight: 800, color: "#111", marginBottom: "8px" }}>장바구니가 비어있습니다</h2>
-      <p style={{ fontSize: "14px", color: "#6B7280", marginBottom: "32px", lineHeight: 1.5 }}>
-        안심이가 추천하는 건강한 아이템들을<br />장바구니에 담아보세요!
-      </p>
-      <button style={{
-        background: "linear-gradient(135deg, #E5007E 0%, #FF4DA6 100%)",
-        color: "#fff", border: "none", borderRadius: "14px",
-        padding: "14px 32px", fontSize: "14px", fontWeight: 800, cursor: "pointer",
-        boxShadow: "0 4px 15px rgba(229,0,126,0.3)"
+function CartTab({ cartItems, onRemove, onClear }: { cartItems: any[]; onRemove: (id: number) => void; onClear: () => void }) {
+  if (cartItems.length === 0) {
+    return (
+      <div style={{ 
+        padding: "80px 20px", textAlign: "center", minHeight: "80vh",
+        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"
       }}>
-        인기 상품 보러가기
-      </button>
+        <div style={{ fontSize: "64px", marginBottom: "20px" }}>🛒</div>
+        <h2 style={{ fontSize: "20px", fontWeight: 800, color: "#111", marginBottom: "8px" }}>장바구니가 비어있습니다</h2>
+        <p style={{ fontSize: "14px", color: "#6B7280", marginBottom: "32px", lineHeight: 1.5 }}>
+          안심이가 추천하는 건강한 아이템들을<br />장바구니에 담아보세요!
+        </p>
+        <button 
+          onClick={() => {
+            if (typeof window !== "undefined") {
+              const { setActiveTab }: any = window as any;
+              if (setActiveTab) setActiveTab("shop");
+            }
+          }}
+          style={{
+            background: "linear-gradient(135deg, #E5007E 0%, #FF4DA6 100%)",
+            color: "#fff", border: "none", borderRadius: "14px",
+            padding: "14px 32px", fontSize: "14px", fontWeight: 800, cursor: "pointer",
+            boxShadow: "0 4px 15px rgba(229,0,126,0.3)"
+          }}>
+          인기 상품 보러가기
+        </button>
+      </div>
+    );
+  }
+
+  const totalPrice = cartItems.reduce((acc, item) => acc + item.price, 0);
+
+  return (
+    <div style={{ padding: "20px 20px 100px", background: "#F9FAFB", minHeight: "100vh" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+        <h2 style={{ fontSize: "20px", fontWeight: 900, color: "#111" }}>장바구니</h2>
+        <button onClick={onClear} style={{ fontSize: "12px", color: "#9CA3AF", background: "none", border: "none", cursor: "pointer" }}>전체 삭제</button>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        {cartItems.map((item, idx) => (
+          <div key={`${item.id}-${idx}`} style={{ 
+            background: "#fff", padding: "16px", borderRadius: "18px", border: "1px solid #F3F4F6",
+            display: "flex", gap: "16px", alignItems: "center", position: "relative"
+          }}>
+            <div style={{ position: "relative", width: "80px", height: "80px", borderRadius: "12px", overflow: "hidden", flexShrink: 0 }}>
+              <Image src={item.image} alt={item.name} fill style={{ objectFit: "cover" }} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: "11px", color: "#9CA3AF", marginBottom: "2px" }}>{item.brand}</div>
+              <div style={{ fontSize: "14px", fontWeight: 700, color: "#111", marginBottom: "4px", lineClamp: 1, overflow: "hidden" }}>{item.name}</div>
+              <div style={{ fontSize: "15px", fontWeight: 800, color: "#E5007E" }}>{formatPrice(item.price)}</div>
+            </div>
+            <button 
+              onClick={() => onRemove(idx)}
+              style={{ 
+                position: "absolute", top: "16px", right: "16px", 
+                background: "#F3F4F6", border: "none", borderRadius: "50%",
+                width: "24px", height: "24px", display: "flex", alignItems: "center", justifyContent: "center",
+                cursor: "pointer", color: "#9CA3AF"
+              }}
+            >
+              ✕
+            </button>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ 
+        marginTop: "32px", padding: "24px", background: "#fff", borderRadius: "24px",
+        border: "1px solid #F3F4F6", boxShadow: "0 4px 20px rgba(0,0,0,0.02)"
+      }}>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "12px", fontSize: "14px", color: "#6B7280" }}>
+          <span>상품 금액</span>
+          <span>{formatPrice(totalPrice)}</span>
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px", fontSize: "14px", color: "#6B7280" }}>
+          <span>배송비</span>
+          <span>무료</span>
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "32px", borderTop: "1px solid #F3F4F6", paddingTop: "20px" }}>
+          <span style={{ fontSize: "16px", fontWeight: 700, color: "#111" }}>총 결제 금액</span>
+          <span style={{ fontSize: "20px", fontWeight: 900, color: "#E5007E" }}>{formatPrice(totalPrice)}</span>
+        </div>
+        <button style={{
+          width: "100%", padding: "18px", borderRadius: "16px",
+          background: "linear-gradient(135deg, #E5007E 0%, #FF4DA6 100%)",
+          color: "#fff", border: "none", fontSize: "16px", fontWeight: 800,
+          cursor: "pointer", boxShadow: "0 4px 20px rgba(229,0,126,0.3)"
+        }}>
+          결제하기
+        </button>
+      </div>
     </div>
   );
 }
@@ -2360,6 +2442,40 @@ export default function ShopClient({ initialProducts = [], initialBanners = [] }
   const [activeTab, setActiveTab] = useState<"discovery" | "shop" | "cart" | "request" | "my">("discovery");
   const [activeSubPage, setActiveSubPage] = useState<string | null>(null);
   const [products, setProducts] = useState<any[]>(initialProducts.length > 0 ? initialProducts : MOCK_PRODUCTS);
+  const [cartItems, setCartItems] = useState<any[]>([]);
+
+  // 초기 장바구니 로드
+  useEffect(() => {
+    const savedCart = localStorage.getItem("magenta_cart");
+    if (savedCart) {
+      try {
+        setCartItems(JSON.parse(savedCart));
+      } catch (e) {
+        console.error("Cart load error", e);
+      }
+    }
+  }, []);
+
+  // 장바구니 변경 시 저장
+  useEffect(() => {
+    localStorage.setItem("magenta_cart", JSON.stringify(cartItems));
+  }, [cartItems]);
+
+  // 장바구니 담기 로직
+  const addToCart = (product: any) => {
+    setCartItems(prev => [...prev, product]);
+    alert(`${product.name} 상품이 장바구니에 담겼습니다! 🐾`);
+  };
+
+  const removeFromCart = (index: number) => {
+    setCartItems(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const clearCart = () => {
+    if (confirm("장바구니를 비우시겠습니까?")) {
+      setCartItems([]);
+    }
+  };
 
   // 다중 프로필 상태
   const [petProfiles, setPetProfiles] = useState<PetProfile[]>([]);
@@ -2655,9 +2771,9 @@ export default function ShopClient({ initialProducts = [], initialBanners = [] }
 
       {/* 탭 콘텐츠 */}
       <div style={{ overflowY: "auto", minHeight: "100vh" }}>
-        {activeTab === "discovery" && <DiscoveryTab products={products} banners={banners} careGuides={careGuides} session={session} activePet={activePet} onOpenModal={() => openProfileModal(null)} logoUrl={logoUrl} />}
-        {activeTab === "shop" && <ShopTab products={products} session={session} activePet={activePet} onOpenModal={() => openProfileModal(null)} logoUrl={logoUrl} />}
-        {activeTab === "cart" && <CartTab />}
+        {activeTab === "discovery" && <DiscoveryTab products={products} banners={banners} careGuides={careGuides} session={session} activePet={activePet} onOpenModal={() => openProfileModal(null)} logoUrl={logoUrl} onAddToCart={addToCart} />}
+        {activeTab === "shop" && <ShopTab products={products} session={session} activePet={activePet} onOpenModal={() => openProfileModal(null)} logoUrl={logoUrl} onAddToCart={addToCart} />}
+        {activeTab === "cart" && <CartTab cartItems={cartItems} onRemove={removeFromCart} onClear={clearCart} />}
         {activeTab === "request" && <RequestTab />}
         {activeTab === "my" && (
           <MyTab 
@@ -2708,7 +2824,7 @@ export default function ShopClient({ initialProducts = [], initialBanners = [] }
                 background: "linear-gradient(90deg, #E5007E, #FF4DA6)",
               }} />
             )}
-            <Icon active={activeTab === key} />
+            <Icon active={activeTab === key} count={key === "cart" ? cartItems.length : 0} />
             <span style={{
               fontSize: "10px", fontWeight: 700,
               color: activeTab === key ? "#E5007E" : "#9CA3AF",
