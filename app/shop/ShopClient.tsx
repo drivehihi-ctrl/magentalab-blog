@@ -2441,16 +2441,33 @@ export default function ShopClient({ initialProducts = [], initialBanners = [] }
   const logoUrl = useMemo(() => `/images/shop/logo2.png?t=${Date.now()}`, []);
   const [activeTab, setActiveTab] = useState<"discovery" | "shop" | "cart" | "request" | "my">("discovery");
 
-  // URL 파라미터에 따른 초기 탭 설정
+  // URL 파라미터에 따른 초기 탭 설정 및 상품 추가
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const tab = params.get("tab");
+      const addId = params.get("add");
+
       if (tab && ["discovery", "shop", "cart", "request", "my"].includes(tab)) {
         setActiveTab(tab as any);
       }
+
+      if (addId && products.length > 0) {
+        const productToAdd = products.find(p => String(p.id) === addId);
+        if (productToAdd) {
+          // 중복 추가 방지 (선택 사항, 여기서는 일단 추가)
+          setCartItems(prev => {
+            // 이미 담긴 상품인지 확인하고 싶다면 여기서 체크 가능
+            return [...prev, productToAdd];
+          });
+          
+          // 파라미터 제거 (뒤로가기 시 중복 추가 방지)
+          const newUrl = window.location.pathname + (tab ? `?tab=${tab}` : "");
+          window.history.replaceState({}, "", newUrl);
+        }
+      }
     }
-  }, []);
+  }, [products.length]); // products가 로드된 후 실행
 
   const [activeSubPage, setActiveSubPage] = useState<string | null>(null);
   const [products, setProducts] = useState<any[]>(initialProducts.length > 0 ? initialProducts : MOCK_PRODUCTS);

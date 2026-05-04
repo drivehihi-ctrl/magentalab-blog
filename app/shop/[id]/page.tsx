@@ -226,7 +226,7 @@ export default async function ProductDetailPage({
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-100 p-4 pb-safe md:pb-6">
         <div className="max-w-5xl mx-auto flex gap-3">
           <Link 
-            href="/shop?tab=cart"
+            href={`/shop?tab=cart&add=${product.id}`}
             className="flex-none w-14 h-14 border border-gray-200 rounded-2xl flex items-center justify-center text-gray-400 hover:text-magenta transition-colors"
           >
             <ShoppingCart className="w-6 h-6" />
