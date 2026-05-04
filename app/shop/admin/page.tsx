@@ -353,19 +353,47 @@ export default function ShopAdminPage() {
 
             {/* 상세설명 이미지 (detail_images로 통일) */}
             <div style={formSectionStyle}>
-              <SectionTitle icon={FileText} title="상세설명 이미지" />
+              <SectionTitle icon={FileText} title="상세설명 이미지" sub="이미지 옆 ↑↓ 버튼으로 순서를 변경할 수 있어요" />
               <div style={{ background: '#1D2939', padding: '24px', borderRadius: '12px', border: '1px dashed #344054' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                  {(currentProduct.detail_images || []).map((img, idx) => (
-                    <div key={idx} style={{ position:'relative', width:'100%', maxWidth:'400px', borderRadius:'8px', overflow:'hidden', background:'#101828', border:'1px solid #344054' }}>
-                       <img src={img} style={{ width:'100%', height:'auto', display:'block' }} />
-                       <button onClick={() => {
-                         const newList = [...(currentProduct.detail_images || [])];
-                         newList.splice(idx, 1);
-                         setCurrentProduct({...currentProduct, detail_images: newList});
-                       }} style={{ ...deleteBtnStyle, position:'absolute', top:10, right:10 }}><Trash2 size={14}/></button>
-                    </div>
-                  ))}
+                  {(currentProduct.detail_images || []).map((img, idx) => {
+                    const totalImages = (currentProduct.detail_images || []).length;
+                    const moveImage = (from: number, to: number) => {
+                      const newList = [...(currentProduct.detail_images || [])];
+                      const [removed] = newList.splice(from, 1);
+                      newList.splice(to, 0, removed);
+                      setCurrentProduct({ ...currentProduct, detail_images: newList });
+                    };
+                    return (
+                      <div key={idx} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                        {/* 순서 변경 버튼 */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', paddingTop: '8px' }}>
+                          <span style={{ fontSize: '11px', color: '#667085', textAlign: 'center', fontWeight: 700 }}>{idx + 1}</span>
+                          <button
+                            onClick={() => moveImage(idx, idx - 1)}
+                            disabled={idx === 0}
+                            title="위로 이동"
+                            style={{ ...orderBtnStyle, opacity: idx === 0 ? 0.25 : 1 }}
+                          >▲</button>
+                          <button
+                            onClick={() => moveImage(idx, idx + 1)}
+                            disabled={idx === totalImages - 1}
+                            title="아래로 이동"
+                            style={{ ...orderBtnStyle, opacity: idx === totalImages - 1 ? 0.25 : 1 }}
+                          >▼</button>
+                        </div>
+                        {/* 이미지 카드 */}
+                        <div style={{ position:'relative', flex: 1, maxWidth:'400px', borderRadius:'8px', overflow:'hidden', background:'#101828', border:'1px solid #344054' }}>
+                          <img src={img} style={{ width:'100%', height:'auto', display:'block' }} />
+                          <button onClick={() => {
+                            const newList = [...(currentProduct.detail_images || [])];
+                            newList.splice(idx, 1);
+                            setCurrentProduct({...currentProduct, detail_images: newList});
+                          }} style={{ ...deleteBtnStyle, position:'absolute', top:10, right:10 }}><Trash2 size={14}/></button>
+                        </div>
+                      </div>
+                    );
+                  })}
                   <div style={{ ...naverDropzoneStyle, width:'100%', height:'100%', borderStyle:'dashed', padding:'40px' }}>
                     <div style={{ textAlign:'center' }}>
                       <Upload size={32} color="#98A2B3" style={{ marginBottom:'12px' }} />
@@ -535,3 +563,4 @@ const authCardStyle: React.CSSProperties = { background: '#1D2939', padding: '48
 const authInputStyle: React.CSSProperties = { width: '100%', padding: '15px', borderRadius: '12px', background: '#101828', border: '1px solid #344054', color: '#fff', marginBottom: '15px', textAlign: 'center', fontSize: '18px' };
 const authBtnStyle: React.CSSProperties = { width: '100%', padding: '15px', borderRadius: '12px', background: '#00C73C', border: 'none', color: '#fff', fontWeight: 800, fontSize: '16px', cursor: 'pointer' };
 const tabBtnStyle: React.CSSProperties = { background: 'none', padding: '10px 5px', fontSize: '16px', fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s', borderTop: 'none', borderLeft: 'none', borderRight: 'none' };
+const orderBtnStyle: React.CSSProperties = { background: '#1D2939', border: '1px solid #344054', borderRadius: '6px', color: '#98A2B3', cursor: 'pointer', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: 800, transition: 'all 0.2s' };
