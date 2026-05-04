@@ -882,37 +882,90 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
         </div>
       )}
 
-      {/* 안심이 AI 추천 배너 */}
-      <div
-        className="shop-fade-up shop-section-px"
-        onClick={onOpenModal}
-        style={{
-          margin: "0 20px 24px",
-          background: "linear-gradient(135deg, #1A1025 0%, #2D1B4E 50%, #1A1025 100%)",
-          borderRadius: "22px", padding: "22px", display: "flex", alignItems: "center", gap: "16px",
-          position: "relative", overflow: "hidden", cursor: "pointer",
-        }}
-      >
-        {/* 데코 */}
-        <div style={{
-          position: "absolute", top: "-30px", right: "-30px", width: "120px", height: "120px",
-          borderRadius: "50%", background: "rgba(229,0,126,0.12)",
-        }} />
-        <div style={{
-          position: "absolute", bottom: "-20px", left: "40%", width: "80px", height: "80px",
-          borderRadius: "50%", background: "rgba(124,58,237,0.1)",
-        }} />
-        <div className="shop-float" style={{ fontSize: "44px", position: "relative" }}>🤖</div>
-        <div style={{ position: "relative" }}>
-          <div style={{ fontSize: "10px", color: "#E5007E", fontWeight: 700, marginBottom: "4px", textTransform: "uppercase", letterSpacing: "0.12em" }}>
-            AI 연구원 안심이
-          </div>
-          <div style={{ fontSize: "15px", fontWeight: 700, color: "#fff", marginBottom: "6px", lineHeight: 1.4 }}>
-            우리 아이 맞춤 제품<br />추천받기
-          </div>
-          <div style={{ fontSize: "11px", color: "#9CA3AF" }}>현재 3,200+ 반려인이 이용 중</div>
-        </div>
-      </div>
+      {/* 안심이 AI 추천 배너 (동적 처리) */}
+      {(() => {
+        const recommendedProducts = activePet && activePet.keywords?.length > 0 
+          ? products.filter(p => p.health_keywords?.some((k: string) => activePet.keywords.includes(k))).slice(0, 4)
+          : [];
+
+        return (
+          <>
+            <div
+              className="shop-fade-up shop-section-px"
+              onClick={onOpenModal}
+              style={{
+                margin: "0 20px 12px",
+                background: activePet 
+                  ? "linear-gradient(135deg, #2D1B4E 0%, #E5007E 100%)" 
+                  : "linear-gradient(135deg, #1A1025 0%, #2D1B4E 50%, #1A1025 100%)",
+                borderRadius: "24px", padding: "28px 24px", display: "flex", alignItems: "center", gap: "20px",
+                position: "relative", overflow: "hidden", cursor: "pointer",
+                boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
+              }}
+            >
+              {/* 데코 효과 */}
+              <div style={{
+                position: "absolute", top: "-30px", right: "-30px", width: "140px", height: "140px",
+                borderRadius: "50%", background: "rgba(255,255,255,0.1)", filter: "blur(20px)"
+              }} />
+              
+              <div className="shop-float" style={{ 
+                fontSize: "52px", position: "relative", z_index: 2,
+                filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.3))" 
+              }}>
+                {activePet ? "🧬" : "🤖"}
+              </div>
+              
+              <div style={{ position: "relative", zIndex: 2, flex: 1 }}>
+                <div style={{ 
+                  fontSize: "11px", color: "#FFB8E0", fontWeight: 800, 
+                  marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.15em" 
+                }}>
+                  {activePet ? `${activePet.name} 연구원 전용 리포트` : "AI 연구원 안심이"}
+                </div>
+                <div style={{ 
+                  fontSize: "17px", fontWeight: 900, color: "#fff", 
+                  marginBottom: "8px", lineHeight: 1.3, letterSpacing: "-0.02em" 
+                }}>
+                  {activePet ? (
+                    <>분석 완료! {activePet.name}에게<br />딱 맞는 제품을 찾았어요</>
+                  ) : (
+                    <>아이의 건강 데이터를 등록하고<br />정밀 맞춤 추천을 받으세요</>
+                  )}
+                </div>
+                <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.7)", fontWeight: 500 }}>
+                  {activePet 
+                    ? `${activePet.keywords.map(k => HEALTH_KEYWORDS.find(h => h.id === k)?.label).join(", ")} 집중 케어 솔루션`
+                    : "현재 3,200+ 반려인이 이용 중"
+                  }
+                </div>
+              </div>
+              <div style={{
+                background: "rgba(255,255,255,0.2)", borderRadius: "14px", padding: "10px",
+                backdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.1)"
+              }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3">
+                  <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+            </div>
+
+            {/* 등록된 아이가 있을 경우 추천 상품 즉시 노출 */}
+            {activePet && recommendedProducts.length > 0 && (
+              <div className="shop-fade-up" style={{ padding: "0 20px 32px" }}>
+                <div style={{ 
+                  display: "flex", gap: "12px", overflowX: "auto", paddingBottom: "4px",
+                  scrollbarWidth: "none"
+                }} className="no-scrollbar">
+                  {recommendedProducts.map((p: any, i: number) => (
+                    <ProductCard key={p.id} p={p} index={i} variant="scroll" onAddToCart={onAddToCart} />
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        );
+      })()}
 
       {/* 🧬 우리아이 연구 등록 유도 배너 (Discovery 추가) */}
       {!session ? (
@@ -2441,32 +2494,20 @@ export default function ShopClient({ initialProducts = [], initialBanners = [] }
   const logoUrl = useMemo(() => `/images/shop/logo2.png?t=${Date.now()}`, []);
   const [activeTab, setActiveTab] = useState<"discovery" | "shop" | "cart" | "request" | "my">("discovery");
 
-  const [activeSubPage, setActiveSubPage] = useState<string | null>(null);
-  const [products, setProducts] = useState<any[]>(initialProducts.length > 0 ? initialProducts : MOCK_PRODUCTS);
-  const [cartItems, setCartItems] = useState<any[]>([]);
-
-  // URL 파라미터에 따른 초기 탭 설정 및 상품 추가
+  // URL 파라미터에 따른 초기 탭 설정
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const tab = params.get("tab");
-      const addId = params.get("add");
-
       if (tab && ["discovery", "shop", "cart", "request", "my"].includes(tab)) {
         setActiveTab(tab as any);
       }
-
-      if (addId && products.length > 0) {
-        const productToAdd = products.find(p => String(p.id) === addId);
-        if (productToAdd) {
-          setCartItems(prev => [...prev, productToAdd]);
-          
-          const newUrl = window.location.pathname + (tab ? `?tab=${tab}` : "");
-          window.history.replaceState({}, "", newUrl);
-        }
-      }
     }
-  }, [products.length]);
+  }, []);
+
+  const [activeSubPage, setActiveSubPage] = useState<string | null>(null);
+  const [products, setProducts] = useState<any[]>(initialProducts.length > 0 ? initialProducts : MOCK_PRODUCTS);
+  const [cartItems, setCartItems] = useState<any[]>([]);
 
   // 초기 장바구니 로드
   useEffect(() => {
