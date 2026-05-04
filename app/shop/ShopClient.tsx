@@ -910,7 +910,7 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
               }} />
               
               <div className="shop-float" style={{ 
-                fontSize: "52px", position: "relative", z_index: 2,
+                fontSize: "52px", position: "relative", zIndex: 2,
                 filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.3))" 
               }}>
                 {activePet ? "🧬" : "🤖"}
