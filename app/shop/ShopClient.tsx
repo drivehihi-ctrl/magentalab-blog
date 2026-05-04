@@ -2440,6 +2440,18 @@ export default function ShopClient({ initialProducts = [], initialBanners = [] }
   const { data: session } = useSession();
   const logoUrl = useMemo(() => `/images/shop/logo2.png?t=${Date.now()}`, []);
   const [activeTab, setActiveTab] = useState<"discovery" | "shop" | "cart" | "request" | "my">("discovery");
+
+  // URL 파라미터에 따른 초기 탭 설정
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get("tab");
+      if (tab && ["discovery", "shop", "cart", "request", "my"].includes(tab)) {
+        setActiveTab(tab as any);
+      }
+    }
+  }, []);
+
   const [activeSubPage, setActiveSubPage] = useState<string | null>(null);
   const [products, setProducts] = useState<any[]>(initialProducts.length > 0 ? initialProducts : MOCK_PRODUCTS);
   const [cartItems, setCartItems] = useState<any[]>([]);
