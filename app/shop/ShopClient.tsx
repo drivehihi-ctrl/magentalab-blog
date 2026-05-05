@@ -2490,7 +2490,7 @@ function RequestTab() {
 }
 
 // ─── 메인 ShopClient ────────────────────────────────────────────
-export default function ShopClient({ initialProducts = [], initialBanners = [] }: { initialProducts?: any[], initialBanners?: any[] }) {
+export default function ShopClient({ initialProducts = [], initialBanners = [], initialCareGuides = [] }: { initialProducts?: any[], initialBanners?: any[], initialCareGuides?: any[] }) {
   const { data: session, status } = useSession();
 
   const logoUrl = useMemo(() => `/images/shop/logo2.png?t=${Date.now()}`, []);
@@ -2509,6 +2509,8 @@ export default function ShopClient({ initialProducts = [], initialBanners = [] }
 
   const [activeSubPage, setActiveSubPage] = useState<string | null>(null);
   const [products, setProducts] = useState<any[]>(initialProducts.length > 0 ? initialProducts : MOCK_PRODUCTS);
+  const [banners, setBanners] = useState<any[]>(initialBanners.length > 0 ? initialBanners : []);
+  const [careGuides, setCareGuides] = useState<any[]>(initialCareGuides.length > 0 ? initialCareGuides : []);
   const [cartItems, setCartItems] = useState<any[]>([]);
 
   // 초기 장바구니 로드

@@ -6,7 +6,7 @@ import {
   Trash2, Edit, Plus, X, 
   Settings, ImageIcon, Search, 
   Download, Upload, CheckCircle2,
-  FileText, Sparkles, Link as LinkIcon, Factory
+  FileText, Sparkles, Link as LinkIcon, Factory, Video, Palette
 } from "lucide-react";
 import AICommentAssistant from "@/components/AICommentAssistant";
 
@@ -52,8 +52,14 @@ export default function ShopAdminPage() {
   const [aiLoading, setAiLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("products");
   const [banners, setBanners] = useState<any[]>([]);
+  const [careGuides, setCareGuides] = useState<any[]>([]);
   const [isEditingBanner, setIsEditingBanner] = useState(false);
+  const [isEditingCareGuide, setIsEditingCareGuide] = useState(false);
   const [currentBanner, setCurrentBanner] = useState<any>({ image_url: "", link_url: "", order_index: 0, is_active: true });
+  const [currentCareGuide, setCurrentCareGuide] = useState<any>({ 
+    title: "", subtitle: "", emoji: "🐾", gradient: "linear-gradient(135deg, #E5007E 0%, #FF6B9D 100%)", 
+    video_url: "", order_index: 0 
+  });
 
   useEffect(() => {
     const auth = sessionStorage.getItem("shop_admin_authorized");
@@ -64,12 +70,18 @@ export default function ShopAdminPage() {
     if (isAuthorized) {
       fetchProducts();
       fetchBanners();
+      fetchCareGuides();
     }
   }, [isAuthorized]);
 
   async function fetchBanners() {
     const { data } = await supabase.from("shop_banners").select("*").order("order_index", { ascending: true });
     if (data) setBanners(data);
+  }
+
+  async function fetchCareGuides() {
+    const { data } = await supabase.from("shop_care_guides").select("*").order("order_index", { ascending: true });
+    if (data) setCareGuides(data);
   }
 
   async function fetchProducts() {
@@ -191,6 +203,38 @@ export default function ShopAdminPage() {
     }
   }
 
+  async function handleSaveCareGuide() {
+    try {
+      const { id, created_at, ...updateData } = currentCareGuide;
+      const res = await fetch("/api/shop/care-guides", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(id ? { id, ...updateData } : updateData),
+      });
+      if (!res.ok) throw new Error("가이드 저장 실패");
+      setIsEditingCareGuide(false);
+      fetchCareGuides();
+    } catch (error: any) {
+      alert("❌ 가이드 저장 실패: " + error.message);
+    }
+  }
+
+  async function handleDeleteCareGuide(id: number) {
+    if (confirm(`케어 가이드를 삭제하시겠습니까?`)) {
+      try {
+        const res = await fetch("/api/shop/care-guides", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id }),
+        });
+        if (!res.ok) throw new Error("삭제 실패");
+        fetchCareGuides();
+      } catch (error: any) {
+        alert("❌ 삭제 실패: " + error.message);
+      }
+    }
+  }
+
   async function getAIRecommendations() {
     if (!currentProduct.name) return alert("상품명을 먼저 입력해주세요!");
     setAiLoading(true);
@@ -240,10 +284,12 @@ export default function ShopAdminPage() {
               <>
                 <button style={outlineBtnStyle}><Download size={16} /> 엑셀 다운로드</button>
                 <button style={outlineBtnStyle}><Upload size={16} /> 엑셀 일괄등록</button>
-                <button onClick={() => { setIsEditing(true); setCurrentProduct({ use_options: false, option_groups: [], additional_images: [], detail_images: [], tags: [], badge: "", details_link: "", description: "", tag: "" }); }} style={primaryBtnStyle}>+ 상품 등록</button>
+                <button onClick={() => { setIsEditing(true); setCurrentProduct({ use_options: false, option_groups: [], additional_images: [], detail_images: [], tags: [], badge: "", details_link: "", description: "", tag: "", health_keywords: [] }); }} style={primaryBtnStyle}>+ 상품 등록</button>
               </>
             ) : activeTab === 'banners' ? (
               <button onClick={() => { setIsEditingBanner(true); setCurrentBanner({ image_url: "", link_url: "", order_index: 0, is_active: true }); }} style={primaryBtnStyle}>+ 배너 등록</button>
+            ) : activeTab === 'care-guides' ? (
+              <button onClick={() => { setIsEditingCareGuide(true); setCurrentCareGuide({ title: "", subtitle: "", emoji: "🐾", gradient: "linear-gradient(135deg, #E5007E 0%, #FF6B9D 100%)", video_url: "", order_index: 0 }); }} style={primaryBtnStyle}>+ 케어 가이드 등록</button>
             ) : (
               <div style={{ color: '#98A2B3', fontSize: '13px' }}>AI 페르소나 댓글 생성기 가동 중... 🧪</div>
             )}
@@ -254,6 +300,7 @@ export default function ShopAdminPage() {
         <div style={{ display: 'flex', gap: '20px', marginBottom: '30px', borderBottom: '1px solid #344054', paddingBottom: '10px' }}>
           <button onClick={() => setActiveTab('products')} style={{ ...tabBtnStyle, color: activeTab === 'products' ? '#00C73C' : '#98A2B3', borderBottom: activeTab === 'products' ? '2px solid #00C73C' : 'none' }}>상품 관리</button>
           <button onClick={() => setActiveTab('banners')} style={{ ...tabBtnStyle, color: activeTab === 'banners' ? '#00C73C' : '#98A2B3', borderBottom: activeTab === 'banners' ? '2px solid #00C73C' : 'none' }}>메인 배너 관리</button>
+          <button onClick={() => setActiveTab('care-guides')} style={{ ...tabBtnStyle, color: activeTab === 'care-guides' ? '#00C73C' : '#98A2B3', borderBottom: activeTab === 'care-guides' ? '2px solid #00C73C' : 'none' }}>케어 가이드 관리</button>
           <button onClick={() => setActiveTab('ai-factory')} style={{ ...tabBtnStyle, color: activeTab === 'ai-factory' ? '#E5007E' : '#98A2B3', borderBottom: activeTab === 'ai-factory' ? '2px solid #E5007E' : 'none' }}>AI 댓글 공장</button>
         </div>
 
@@ -567,6 +614,70 @@ export default function ShopAdminPage() {
                           <div style={{ display:'flex', gap:'15px' }}>
                             <button onClick={() => { setCurrentBanner(b); setIsEditingBanner(true); }} style={actionBtnStyle} title="수정"><Edit size={16} /></button>
                             <button onClick={() => handleDeleteBanner(b.id)} style={{ ...actionBtnStyle, color: '#F04438' }} title="삭제"><Trash2 size={16} /></button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
+        )}
+
+        {activeTab === 'care-guides' && (
+          <>
+            {isEditingCareGuide ? (
+              <div style={naverEditorStyle}>
+                <SectionTitle icon={Video} title="케어 가이드 정보" />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                  <div style={inputGroupStyle}><label>가이드 제목 *</label><input style={naverInputStyle} value={currentCareGuide.title || ""} onChange={e => setCurrentCareGuide({...currentCareGuide, title: e.target.value})} /></div>
+                  <div style={inputGroupStyle}><label>소제목 *</label><input style={naverInputStyle} value={currentCareGuide.subtitle || ""} onChange={e => setCurrentCareGuide({...currentCareGuide, subtitle: e.target.value})} /></div>
+                  <div style={inputGroupStyle}><label>이모지 (예: 🦷, 🦴) *</label><input style={naverInputStyle} value={currentCareGuide.emoji || ""} onChange={e => setCurrentCareGuide({...currentCareGuide, emoji: e.target.value})} /></div>
+                  <div style={inputGroupStyle}><label>정렬 순서</label><input type="number" style={naverInputStyle} value={currentCareGuide.order_index || 0} onChange={e => setCurrentCareGuide({...currentCareGuide, order_index: Number(e.target.value)})} /></div>
+                </div>
+                <div style={{ marginTop: '20px' }}>
+                  <div style={inputGroupStyle}><label>유튜브 영상 URL (예: https://www.youtube.com/watch?v=...) *</label>
+                    <input style={naverInputStyle} value={currentCareGuide.video_url || ""} onChange={e => setCurrentCareGuide({...currentCareGuide, video_url: e.target.value})} placeholder="유튜브 링크를 입력하세요" />
+                  </div>
+                </div>
+                <div style={{ marginTop: '20px' }}>
+                  <SectionTitle icon={Palette} title="배경 그라데이션" sub="CSS linear-gradient 값을 입력하세요" />
+                  <input style={naverInputStyle} value={currentCareGuide.gradient || ""} onChange={e => setCurrentCareGuide({...currentCareGuide, gradient: e.target.value})} />
+                  <div style={{ marginTop: '10px', height: '60px', borderRadius: '12px', background: currentCareGuide.gradient, border: '1px solid #344054', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>그라데이션 미리보기</div>
+                </div>
+                <div style={{ display:'flex', justifyContent:'flex-end', gap:'15px', marginTop:'40px' }}>
+                  <button onClick={() => setIsEditingCareGuide(false)} style={outlineBtnStyle}>취소</button>
+                  <button onClick={handleSaveCareGuide} style={saveBtnStyle}>가이드 저장하기</button>
+                </div>
+              </div>
+            ) : (
+              <div style={tableCardStyle}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ background:'#1D2939', borderBottom:'1px solid #344054' }}>
+                      <th style={thStyle}>가이드 정보</th>
+                      <th style={thStyle}>순서</th>
+                      <th style={thStyle}>관리</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {careGuides.map(g => (
+                      <tr key={g.id} style={{ borderBottom:'1px solid #1D2939' }}>
+                        <td style={tdStyle}>
+                          <div style={{ display:'flex', gap:'12px', alignItems:'center' }}>
+                            <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: g.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>{g.emoji}</div>
+                            <div>
+                              <div style={{ fontWeight:700 }}>{g.title}</div>
+                              <div style={{ fontSize: '12px', color: '#667085' }}>{g.subtitle}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td style={tdStyle}>{g.order_index}</td>
+                        <td style={tdStyle}>
+                          <div style={{ display:'flex', gap:'15px' }}>
+                            <button onClick={() => { setCurrentCareGuide(g); setIsEditingCareGuide(true); }} style={actionBtnStyle} title="수정"><Edit size={16} /></button>
+                            <button onClick={() => handleDeleteCareGuide(g.id)} style={{ ...actionBtnStyle, color: '#F04438' }} title="삭제"><Trash2 size={16} /></button>
                           </div>
                         </td>
                       </tr>
