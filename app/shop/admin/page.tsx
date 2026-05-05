@@ -21,6 +21,7 @@ interface Product {
   original_price: number;
   description: string;
   tag: string;
+  health_keywords: string[]; // [ADDED]
   image_url: string;
   additional_images: string[];
   detail_images: string[];
@@ -45,7 +46,7 @@ export default function ShopAdminPage() {
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Partial<Product>>({
-    use_options: false, option_groups: [], additional_images: [], detail_images: [], tags: [], badge: "", details_link: "", description: "", tag: ""
+    use_options: false, option_groups: [], additional_images: [], detail_images: [], tags: [], badge: "", details_link: "", description: "", tag: "", health_keywords: []
   });
   const [uploading, setUploading] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
@@ -145,6 +146,17 @@ export default function ShopAdminPage() {
       }
     }
   }
+
+  const HEALTH_KEYWORDS = [
+    { id: "eye", label: "눈/눈물", emoji: "👀" },
+    { id: "skin", label: "피부/모질", emoji: "🧴" },
+    { id: "joint", label: "관절/뼈", emoji: "🦴" },
+    { id: "digestion", label: "소화/장", emoji: "💩" },
+    { id: "dental", label: "구강/치아", emoji: "🦷" },
+    { id: "weight", label: "체중/다이어트", emoji: "⚖️" },
+    { id: "kidney", label: "신장/요로", emoji: "💧" },
+    { id: "emotion", label: "심리/행동", emoji: "🧠" },
+  ];
 
   async function handleSaveBanner() {
     try {
@@ -286,6 +298,41 @@ export default function ShopAdminPage() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop:'20px' }}>
                 <div style={inputGroupStyle}><label>포인트 태그 (예: 연구소 추천)</label><input style={naverInputStyle} value={currentProduct.tag || ""} onChange={e => setCurrentProduct({...currentProduct, tag: e.target.value})} /></div>
                 <div style={inputGroupStyle}><label>상품 요약 설명</label><input style={naverInputStyle} value={currentProduct.description || ""} onChange={e => setCurrentProduct({...currentProduct, description: e.target.value})} /></div>
+              </div>
+
+              {/* 건강 관심사 설정 추가 */}
+              <div style={{ marginTop: '20px' }}>
+                <label style={{ fontSize: '13px', fontWeight: 800, color: '#98A2B3', marginBottom: '10px', display: 'block' }}>건강 관심사 (맞춤 추천용)</label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {HEALTH_KEYWORDS.map(k => {
+                    const isSelected = currentProduct.health_keywords?.includes(k.id);
+                    return (
+                      <button
+                        key={k.id}
+                        onClick={() => {
+                          const current = currentProduct.health_keywords || [];
+                          const next = isSelected 
+                            ? current.filter(id => id !== k.id)
+                            : [...current, k.id];
+                          setCurrentProduct({ ...currentProduct, health_keywords: next });
+                        }}
+                        style={{
+                          padding: '8px 12px',
+                          borderRadius: '10px',
+                          fontSize: '12px',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          transition: 'all 0.2s',
+                          background: isSelected ? 'rgba(0, 199, 60, 0.2)' : '#1D2939',
+                          color: isSelected ? '#00C73C' : '#98A2B3',
+                          border: isSelected ? '1px solid #00C73C' : '1px solid #344054',
+                        }}
+                      >
+                        {k.emoji} {k.label}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
