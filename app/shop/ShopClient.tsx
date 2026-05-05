@@ -2733,8 +2733,6 @@ export default function ShopClient({ initialProducts = [], initialBanners = [], 
     loadProfiles();
   }, [session]);
 
-  const [banners, setBanners] = useState<any[]>(initialBanners);
-  const [careGuides, setCareGuides] = useState<any[]>([]);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -2766,7 +2764,7 @@ export default function ShopClient({ initialProducts = [], initialBanners = [], 
     }
 
     async function fetchCareGuides() {
-      const { data } = await supabase.from("care_guides").select("*").order("order_index", { ascending: true });
+      const { data } = await supabase.from("shop_care_guides").select("*").order("order_index", { ascending: true });
       if (data) setCareGuides(data);
     }
 
