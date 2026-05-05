@@ -253,6 +253,7 @@ let DEFAULT_CARE_GUIDES = [
     subtitle: "안심이의 치아 관리 가이드",
     emoji: "🦷",
     gradient: "linear-gradient(135deg, #E5007E 0%, #FF6B9D 100%)",
+    video_url: "https://www.youtube.com/watch?v=k5_E-o_MByI", // 마젠타랩 추천 양치 가이드
   },
 ];
 
@@ -586,8 +587,8 @@ function DiscoveryTab({ products, banners, careGuides, session, sessionStatus, a
   const [bannerIdx, setBannerIdx] = useState(0);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
 
-  const displayBanners = banners.length > 0 ? banners : DEFAULT_BANNERS;
-  const displayGuides = careGuides.length > 0 ? careGuides : DEFAULT_CARE_GUIDES;
+  const displayBanners = banners;
+  const displayGuides = careGuides;
 
   useEffect(() => {
     if (displayBanners.length <= 1) return;
@@ -2512,8 +2513,8 @@ export default function ShopClient({ initialProducts = [], initialBanners = [], 
 
   const [activeSubPage, setActiveSubPage] = useState<string | null>(null);
   const [products, setProducts] = useState<any[]>(initialProducts.length > 0 ? initialProducts : MOCK_PRODUCTS);
-  const [banners, setBanners] = useState<any[]>(initialBanners.length > 0 ? initialBanners : []);
-  const [careGuides, setCareGuides] = useState<any[]>(initialCareGuides.length > 0 ? initialCareGuides : []);
+  const [banners, setBanners] = useState<any[]>(initialBanners.length > 0 ? initialBanners : DEFAULT_BANNERS);
+  const [careGuides, setCareGuides] = useState<any[]>(initialCareGuides.length > 0 ? initialCareGuides : DEFAULT_CARE_GUIDES);
   const [cartItems, setCartItems] = useState<any[]>([]);
 
   // 초기 장바구니 로드
