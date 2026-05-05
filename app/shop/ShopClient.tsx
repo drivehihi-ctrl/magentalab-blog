@@ -1008,7 +1008,10 @@ function DiscoveryTab({ products, banners, careGuides, session, sessionStatus, a
             </button>
           </div>
         </div>
-      ) : !activePet && (
+      )}
+
+      {/* 🧬 우리아이 연구 등록 유도 배너 (로그인 후 프로필 없을 때) */}
+      {sessionStatus === "authenticated" && !activePet && (
         <div 
           onClick={onOpenModal}
           className="shop-card-hover"
