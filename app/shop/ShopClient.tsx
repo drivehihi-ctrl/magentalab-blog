@@ -581,7 +581,7 @@ function ProductCard({ p, index, variant = "grid", onAddToCart }: { p: any; inde
 }
 
 // ─── 디스커버리 탭 (아시아허브마트 메인 스타일) ─────────────────────
-function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpenModal, logoUrl, onAddToCart }: { products: any[]; banners: any[]; careGuides: any[]; session: any; activePet: PetProfile | null; onOpenModal: () => void; logoUrl: string; onAddToCart: (product: any) => void }) {
+function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpenModal, onEditModal, logoUrl, onAddToCart }: { products: any[]; banners: any[]; careGuides: any[]; session: any; activePet: PetProfile | null; onOpenModal: () => void; onEditModal: () => void; logoUrl: string; onAddToCart: (product: any) => void }) {
   const bannerRef = useRef<HTMLDivElement>(null);
   const [bannerIdx, setBannerIdx] = useState(0);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
@@ -892,7 +892,7 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
           <>
             <div
               className="shop-fade-up shop-section-px"
-              onClick={onOpenModal}
+              onClick={activePet ? onEditModal : onOpenModal}
               style={{
                 margin: "0 20px 12px",
                 background: activePet 
@@ -2836,7 +2836,7 @@ export default function ShopClient({ initialProducts = [], initialBanners = [] }
 
       {/* 탭 콘텐츠 */}
       <div style={{ overflowY: "auto", minHeight: "100vh" }}>
-        {activeTab === "discovery" && <DiscoveryTab products={products} banners={banners} careGuides={careGuides} session={session} activePet={activePet} onOpenModal={() => openProfileModal(null)} logoUrl={logoUrl} onAddToCart={addToCart} />}
+        {activeTab === "discovery" && <DiscoveryTab products={products} banners={banners} careGuides={careGuides} session={session} activePet={activePet} onOpenModal={() => openProfileModal(null)} onEditModal={() => openProfileModal(activePet)} logoUrl={logoUrl} onAddToCart={addToCart} />}
         {activeTab === "shop" && <ShopTab products={products} session={session} activePet={activePet} onOpenModal={() => openProfileModal(null)} logoUrl={logoUrl} onAddToCart={addToCart} />}
         {activeTab === "cart" && <CartTab cartItems={cartItems} onRemove={removeFromCart} onClear={clearCart} />}
         {activeTab === "request" && <RequestTab />}
