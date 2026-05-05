@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { supabase } from "@/lib/supabase";
-import { Camera, Plus } from "lucide-react";
+import { Camera, Plus, Sparkles } from "lucide-react";
 import { sanitizeForSeo } from "@/lib/utils";
 
 // ─── 카테고리 (아시아허브마트 스타일 이모지 바) ──────────────────
@@ -952,7 +952,19 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
 
             {/* 등록된 아이가 있을 경우 추천 상품 즉시 노출 */}
             {activePet && recommendedProducts.length > 0 && (
-              <div className="shop-fade-up" style={{ padding: "0 20px 32px" }}>
+              <div className="shop-fade-up" style={{ padding: "0 20px 40px" }}>
+                {/* 배너와 제품 사이의 연결 고리 */}
+                <div style={{ 
+                  display: "flex", alignItems: "center", gap: "8px", marginBottom: "16px",
+                  padding: "0 8px"
+                }}>
+                   <div style={{ width: "2px", height: "16px", background: "#E5007E", borderRadius: "1px" }} />
+                   <Sparkles size={16} color="#E5007E" />
+                   <span style={{ fontSize: "14px", fontWeight: 800, color: "#1F2937" }}>
+                     {activePet.name} 연구원에게 추천하는 맞춤 아이템
+                   </span>
+                </div>
+                
                 <div style={{ 
                   display: "flex", gap: "12px", overflowX: "auto", paddingBottom: "4px",
                   scrollbarWidth: "none"
@@ -1017,17 +1029,6 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
         </div>
       )}
 
-      {/* 💰 할인 중인 상품 그리드 (실제 데이터가 있을 때만 노출) */}
-      {products.some((p: any) => p.original_price || p.originalPrice) && (
-        <div style={{ padding: "0 20px 24px" }}>
-          <div style={{ fontWeight: 700, fontSize: "15px", marginBottom: "14px", color: "#111" }}>💰 할인 중인 상품</div>
-          <div className="shop-product-grid">
-            {products.filter((p: any) => p.original_price || p.originalPrice).map((p: any, i: number) => (
-              <ProductCard key={p.id} p={p} index={i} variant="grid" onAddToCart={onAddToCart} />
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
