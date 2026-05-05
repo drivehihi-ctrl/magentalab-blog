@@ -581,7 +581,7 @@ function ProductCard({ p, index, variant = "grid", onAddToCart }: { p: any; inde
 }
 
 // ─── 디스커버리 탭 (아시아허브마트 메인 스타일) ─────────────────────
-function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpenModal, onEditModal, logoUrl, onAddToCart }: { products: any[]; banners: any[]; careGuides: any[]; session: any; activePet: PetProfile | null; onOpenModal: () => void; onEditModal: () => void; logoUrl: string; onAddToCart: (product: any) => void }) {
+function DiscoveryTab({ products, banners, careGuides, session, sessionStatus, activePet, onOpenModal, onEditModal, logoUrl, onAddToCart }: { products: any[]; banners: any[]; careGuides: any[]; session: any; sessionStatus: string; activePet: PetProfile | null; onOpenModal: () => void; onEditModal: () => void; logoUrl: string; onAddToCart: (product: any) => void }) {
   const bannerRef = useRef<HTMLDivElement>(null);
   const [bannerIdx, setBannerIdx] = useState(0);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
@@ -979,8 +979,8 @@ function DiscoveryTab({ products, banners, careGuides, session, activePet, onOpe
         );
       })()}
 
-      {/* 🧬 우리아이 연구 등록 유도 배너 (Discovery 추가) */}
-      {!session ? (
+      {/* 🧬 우리아이 연구 등록 유도 배너 (Discovery 추가) - 세션 로딩 중에는 숨김 */}
+      {sessionStatus === "unauthenticated" && (
         <div style={{ padding: "24px 20px", background: "#f8fafc", borderRadius: "24px", margin: "0 20px 20px", border: "1px solid #e2e8f0", textAlign: "center" }}>
           <div style={{ fontSize: "24px", marginBottom: "8px" }}>🔐</div>
           <div style={{ fontSize: "15px", fontWeight: 800, color: "#111", marginBottom: "4px" }}>나만의 맞춤 연구 정보를 확인하세요</div>
@@ -2491,7 +2491,8 @@ function RequestTab() {
 
 // ─── 메인 ShopClient ────────────────────────────────────────────
 export default function ShopClient({ initialProducts = [], initialBanners = [] }: { initialProducts?: any[], initialBanners?: any[] }) {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+
   const logoUrl = useMemo(() => `/images/shop/logo2.png?t=${Date.now()}`, []);
   const [activeTab, setActiveTab] = useState<"discovery" | "shop" | "cart" | "request" | "my">("discovery");
 
@@ -2837,7 +2838,7 @@ export default function ShopClient({ initialProducts = [], initialBanners = [] }
 
       {/* 탭 콘텐츠 */}
       <div style={{ overflowY: "auto", minHeight: "100vh" }}>
-        {activeTab === "discovery" && <DiscoveryTab products={products} banners={banners} careGuides={careGuides} session={session} activePet={activePet} onOpenModal={() => openProfileModal(null)} onEditModal={() => openProfileModal(activePet)} logoUrl={logoUrl} onAddToCart={addToCart} />}
+        {activeTab === "discovery" && <DiscoveryTab products={products} banners={banners} careGuides={careGuides} session={session} sessionStatus={status} activePet={activePet} onOpenModal={() => openProfileModal(null)} onEditModal={() => openProfileModal(activePet)} logoUrl={logoUrl} onAddToCart={addToCart} />}
         {activeTab === "shop" && <ShopTab products={products} session={session} activePet={activePet} onOpenModal={() => openProfileModal(null)} logoUrl={logoUrl} onAddToCart={addToCart} />}
         {activeTab === "cart" && <CartTab cartItems={cartItems} onRemove={removeFromCart} onClear={clearCart} />}
         {activeTab === "request" && <RequestTab />}
