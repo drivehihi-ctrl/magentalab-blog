@@ -250,7 +250,6 @@ let DEFAULT_CARE_GUIDES = [
   {
     id: 1,
     title: "올바른 양치 습관 만들기",
-    subtitle: "안심이의 치아 관리 가이드",
     emoji: "🦷",
     gradient: "linear-gradient(135deg, #E5007E 0%, #FF6B9D 100%)",
     video_url: "https://www.youtube.com/watch?v=k5_E-o_MByI", // 마젠타랩 추천 양치 가이드
@@ -796,17 +795,18 @@ function DiscoveryTab({ products, banners, careGuides, session, sessionStatus, a
         </div>
         <div style={{ fontSize: "12px", color: "#64748B", marginBottom: "16px" }}>마젠타 연구소의 정밀 케어 비법을 영상으로 만나보세요!</div>
         
-        {/* 메인 비디오 플레이어 (Exposed) */}
+        {/* 메인 비디오 플레이어 (Exposed & Sized) */}
         {selectedVideo && (
           <div className="shop-fade-up" style={{ 
-            width: "100%", borderRadius: "20px", overflow: "hidden", 
-            aspectRatio: "16/9", background: "#000", marginBottom: "16px",
+            width: "100%", maxWidth: "600px", margin: "0 auto 20px",
+            borderRadius: "20px", overflow: "hidden", 
+            aspectRatio: "16/9", background: "#000",
             boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
             border: "1px solid rgba(0,0,0,0.05)"
           }}>
             <iframe
               style={{ width: "100%", height: "100%", border: "none" }}
-              src={`https://www.youtube.com/embed/${getYTId(selectedVideo)}`}
+              src={`https://www.youtube.com/embed/${getYTId(selectedVideo)}?rel=0&modestbranding=1`}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
