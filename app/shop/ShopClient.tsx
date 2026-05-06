@@ -587,15 +587,15 @@ function DiscoveryTab({ products, banners, careGuides, session, sessionStatus, a
   const [bannerIdx, setBannerIdx] = useState(0);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   
+  const displayBanners = banners;
+  const displayGuides = careGuides;
+
   // 초기 로드 시 첫 번째 가이드 영상을 기본으로 설정
   useEffect(() => {
     if (displayGuides.length > 0 && !selectedVideo) {
       setSelectedVideo(displayGuides[0].video_url);
     }
   }, [displayGuides]);
-
-  const displayBanners = banners;
-  const displayGuides = careGuides;
 
   useEffect(() => {
     if (displayBanners.length <= 1) return;
