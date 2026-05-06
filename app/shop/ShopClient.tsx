@@ -584,17 +584,11 @@ function ProductCard({ p, index, variant = "grid", onAddToCart }: { p: any; inde
 function DiscoveryTab({ products, banners, careGuides, session, sessionStatus, activePet, onOpenModal, onEditModal, logoUrl, onAddToCart }: { products: any[]; banners: any[]; careGuides: any[]; session: any; sessionStatus: string; activePet: PetProfile | null; onOpenModal: () => void; onEditModal: () => void; logoUrl: string; onAddToCart: (product: any) => void }) {
   const bannerRef = useRef<HTMLDivElement>(null);
   const [bannerIdx, setBannerIdx] = useState(0);
-  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+  const [selectedGuide, setSelectedGuide] = useState<any | null>(null);
   
   const displayBanners = banners;
   const displayGuides = careGuides;
 
-  // 초기 로드 시 첫 번째 가이드 영상을 기본으로 설정
-  useEffect(() => {
-    if (displayGuides.length > 0 && !selectedVideo) {
-      setSelectedVideo(displayGuides[0].video_url);
-    }
-  }, [displayGuides]);
 
   useEffect(() => {
     if (displayBanners.length <= 1) return;
@@ -619,6 +613,14 @@ function DiscoveryTab({ products, banners, careGuides, session, sessionStatus, a
 
   return (
     <div style={{ paddingBottom: "86px" }}>
+      {selectedGuide && (
+        <VideoModal 
+          guide={selectedGuide} 
+          products={products}
+          onClose={() => setSelectedGuide(null)} 
+          onAddToCart={onAddToCart}
+        />
+      )}
       {/* 상단 히어로 섹션 (아시아허브마트 스타일) */}
       <div 
         className="shop-section-px"
@@ -788,74 +790,44 @@ function DiscoveryTab({ products, banners, careGuides, session, sessionStatus, a
         </div>
       </div>
 
-      {/* 🎬 안심이 케어 가이드 (아시아허브마트 스타일 - 메인 플레이어 노출) */}
-      <div className="shop-section-px" style={{ padding: "0 20px 32px" }}>
+      {/* 🎬 안심이 케어 가이드 (아시아허브마트 스타일로 복구) */}
+      <div className="shop-section-px" style={{ padding: "0 20px 24px" }}>
         <div style={{ fontWeight: 800, fontSize: "16px", marginBottom: "4px", color: "#111", display: "flex", alignItems: "center", gap: "6px" }}>
           <span style={{ fontSize: "20px" }}>🎬</span> 안심이 케어 가이드
         </div>
-        <div style={{ fontSize: "12px", color: "#64748B", marginBottom: "16px" }}>마젠타 연구소의 정밀 케어 비법을 영상으로 만나보세요!</div>
+        <div style={{ fontSize: "12px", color: "#64748B", marginBottom: "16px" }}>영상을 보고, 아래 추천 제품으로 바로 케어해 보세요!</div>
         
-        {/* 메인 비디오 플레이어 (Exposed & Sized) */}
-        {selectedVideo && (
-          <div className="shop-fade-up" style={{ 
-            width: "100%", maxWidth: "600px", margin: "0 auto 20px",
-            borderRadius: "20px", overflow: "hidden", 
-            aspectRatio: "16/9", background: "#000",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
-            border: "1px solid rgba(0,0,0,0.05)"
-          }}>
-            <iframe
-              style={{ width: "100%", height: "100%", border: "none" }}
-              src={`https://www.youtube.com/embed/${getYTId(selectedVideo)}?rel=0&modestbranding=1`}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
-        )}
-
-        {/* 플레이리스트 (가로 스크롤 카드) */}
         <div className="shop-scrollbar-hide" style={{ display: "flex", gap: "12px", overflowX: "auto", paddingBottom: "8px" }}>
-          {displayGuides.map((g, i) => {
-            const isActive = selectedVideo === g.video_url;
-            return (
-              <div
-                key={g.id}
-                onClick={() => g.video_url && setSelectedVideo(g.video_url)}
-                className="shop-card-hover shop-fade-up"
-                style={{
-                  animationDelay: `${i * 0.1}s`,
-                  minWidth: "220px", borderRadius: "18px",
-                  background: g.gradient, padding: "20px 18px",
-                  color: "#fff", flex: "0 0 auto", position: "relative",
-                  overflow: "hidden", cursor: "pointer",
-                  border: isActive ? "3px solid #E5007E" : "3px solid transparent",
-                  transition: "all 0.3s ease",
-                  transform: isActive ? "scale(0.98)" : "none",
-                  opacity: isActive ? 1 : 0.85
-                }}
-              >
-                {isActive && (
-                  <div style={{
-                    position: "absolute", top: "12px", right: "12px",
-                    background: "#E5007E", color: "#fff", fontSize: "10px",
-                    padding: "3px 8px", borderRadius: "10px", fontWeight: 800
-                  }}>
-                    PLAYING
-                  </div>
-                )}
-                <div style={{ fontSize: "32px", marginBottom: "8px" }}>{g.emoji}</div>
-                <div style={{ fontSize: "14px", fontWeight: 800, marginBottom: "3px", position: "relative" }}>{g.title}</div>
-                <div style={{ fontSize: "11px", opacity: 0.9, position: "relative" }}>{g.subtitle}</div>
-                <div style={{
-                  marginTop: "12px", display: "inline-flex", alignItems: "center", gap: "5px",
-                  background: "rgba(255,255,255,0.2)", borderRadius: "8px", padding: "5px 10px",
-                  fontSize: "11px", fontWeight: 700,
-                }}>
-                  {isActive ? "✓ 시청 중" : "▶ 영상보기"}
-                </div>
+          {displayGuides.map((g, i) => (
+            <div
+              key={g.id}
+              onClick={() => g.video_url && setSelectedGuide(g)}
+              className="shop-card-hover shop-fade-up"
+              style={{
+                animationDelay: `${i * 0.1}s`,
+                minWidth: "220px", borderRadius: "18px",
+                background: g.gradient, padding: "20px 18px",
+                color: "#fff", flex: "0 0 auto", position: "relative",
+                overflow: "hidden", cursor: "pointer",
+              }}
+            >
+              <div style={{
+                position: "absolute", top: "-15px", right: "-15px",
+                width: "80px", height: "80px", borderRadius: "50%",
+                background: "rgba(255,255,255,0.15)",
+              }} />
+              <div style={{ fontSize: "36px", marginBottom: "10px" }}>{g.emoji}</div>
+              <div style={{ fontSize: "14px", fontWeight: 800, marginBottom: "4px", position: "relative" }}>{g.title}</div>
+              <div style={{ fontSize: "11px", opacity: 0.85, position: "relative" }}>{g.subtitle}</div>
+              <div style={{
+                marginTop: "14px", display: "inline-flex", alignItems: "center", gap: "5px",
+                background: "rgba(255,255,255,0.25)", borderRadius: "10px", padding: "6px 10px",
+                fontSize: "11px", fontWeight: 700,
+              }}>
+                ▶ 영상보기
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       </div>
 
@@ -1980,33 +1952,109 @@ function MyTab({ profiles, activeId, onSelect, onOpenModal, onEditModal, setActi
 // ─── 서브페이지 컴포넌트들 ──────────────────────────────────────────
 
 // ─── 비디오 모달 (YouTube Embed) ─────────────────────────────
-function VideoModal({ url, onClose }: { url: string; onClose: () => void }) {
+// ─── 비디오 모달 (YouTube Embed + Product Link) ─────────────────────
+function VideoModal({ guide, products, onClose, onAddToCart }: { guide: any; products: any[]; onClose: () => void; onAddToCart: (product: any) => void }) {
   const getYTId = (url: string) => {
-    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+    // shorts/ 포함하도록 개선된 정규식
+    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?)|(shorts\/))\??v?=?([^#&?]*).*/;
     const match = url?.match(regExp);
-    return (match && match[7] && match[7].length === 11) ? match[7] : null;
+    // shorts의 경우 8번째 그룹에 ID가 올 수 있음 (또는 7번째)
+    const id = (match && (match[7] || match[8]))?.length === 11 ? (match[7] || match[8]) : null;
+    return id;
   };
 
-  const videoId = getYTId(url);
+  const videoId = getYTId(guide.video_url);
+  const linkedProduct = guide.product_id ? products.find(p => p.id === guide.product_id) : null;
 
   return (
     <div style={{
-      position: "fixed", inset: 0, zIndex: 3000, background: "rgba(0,0,0,0.9)",
-      display: "flex", alignItems: "center", justifyContent: "center", padding: "20px"
+      position: "fixed", inset: 0, zIndex: 3000, background: "rgba(0,0,0,0.92)",
+      display: "flex", alignItems: "center", justifyContent: "center", padding: "16px",
+      backdropFilter: "blur(8px)"
     }}>
-      <div style={{ width: "100%", maxWidth: "800px", position: "relative" }}>
+      <div style={{ 
+        width: "100%", maxWidth: "540px", maxHeight: "90vh", overflowY: "auto",
+        position: "relative", background: "#fff", borderRadius: "24px",
+        boxShadow: "0 24px 64px rgba(0,0,0,0.4)"
+      }}>
+        {/* 닫기 버튼 */}
         <button onClick={onClose} style={{
-          position: "absolute", top: "-40px", right: 0, background: "none", border: "none",
-          color: "#fff", fontSize: "24px", cursor: "pointer"
+          position: "absolute", top: "16px", right: "16px", background: "rgba(0,0,0,0.5)", 
+          border: "none", color: "#fff", width: "32px", height: "32px", borderRadius: "50%",
+          cursor: "pointer", zIndex: 10, display: "flex", alignItems: "center", justifyContent: "center"
         }}>✕</button>
-        <div style={{ position: "relative", paddingBottom: "56.25%", height: 0, borderRadius: "16px", overflow: "hidden" }}>
+
+        {/* 비디오 영역 */}
+        <div style={{ position: "relative", paddingBottom: "177.78%", height: 0, background: "#000" }}>
+          {/* 세로 영상(Shorts) 최적화: 9:16 비율 (100 / 9 * 16 = 177.78) */}
           <iframe
             style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
-            src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+            src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
           ></iframe>
+        </div>
+
+        {/* 정보 영역 */}
+        <div style={{ padding: "24px 20px" }}>
+          <div style={{ display: "flex", gap: "8px", marginBottom: "12px" }}>
+            <span style={{ background: "#F1F5F9", padding: "4px 10px", borderRadius: "8px", fontSize: "12px", color: "#64748B", fontWeight: 600 }}>#CareGuide</span>
+            <span style={{ background: "#F1F5F9", padding: "4px 10px", borderRadius: "8px", fontSize: "12px", color: "#64748B", fontWeight: 600 }}>#Ansimi</span>
+          </div>
+          <h3 style={{ fontSize: "20px", fontWeight: 900, color: "#111", marginBottom: "6px" }}>{guide.title}</h3>
+          <p style={{ fontSize: "14px", color: "#64748B", marginBottom: "24px", lineHeight: 1.5 }}>{guide.subtitle}</p>
+
+          {/* 연동 상품 카드 (아시아허브마트 스타일) */}
+          {linkedProduct ? (
+            <div style={{ 
+              background: "#F8FAFC", borderRadius: "20px", padding: "16px",
+              border: "1px solid #F1F5F9", display: "flex", gap: "16px", alignItems: "center"
+            }}>
+              <div style={{ width: "80px", height: "80px", position: "relative", borderRadius: "12px", overflow: "hidden", flexShrink: 0 }}>
+                <Image src={linkedProduct.image} alt={linkedProduct.name} fill style={{ objectFit: "cover" }} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: "10px", color: "#E5007E", fontWeight: 800, marginBottom: "2px" }}>📦 추천 연구 패키지</div>
+                <div style={{ fontSize: "14px", fontWeight: 700, color: "#111", marginBottom: "4px" }}>{linkedProduct.name}</div>
+                <div style={{ fontSize: "15px", fontWeight: 900, color: "#111" }}>{formatPrice(linkedProduct.price)}</div>
+              </div>
+              <button 
+                onClick={() => onAddToCart(linkedProduct)}
+                className="shop-btn-hover"
+                style={{
+                  background: "#E5007E", color: "#fff", border: "none", borderRadius: "12px",
+                  padding: "10px 14px", fontSize: "12px", fontWeight: 800, cursor: "pointer",
+                  whiteSpace: "nowrap"
+                }}
+              >
+                장바구니
+              </button>
+            </div>
+          ) : (
+            <div style={{ 
+              background: "#F8FAFC", borderRadius: "20px", padding: "20px",
+              border: "1px dashed #CBD5E1", textAlign: "center"
+            }}>
+              <span style={{ fontSize: "13px", color: "#94A3B8" }}>이 가이드와 관련된 추천 상품 연구 중... 🔬</span>
+            </div>
+          )}
+
+          {/* 하단 통합 구매 버튼 (아시아허브마트 스타일) */}
+          {linkedProduct && (
+            <button 
+              onClick={() => onAddToCart(linkedProduct)}
+              className="shop-btn-hover"
+              style={{
+                width: "100%", marginTop: "16px", padding: "16px", borderRadius: "16px",
+                background: "linear-gradient(135deg, #0284C7 0%, #0EA5E9 100%)",
+                color: "#fff", border: "none", fontSize: "14px", fontWeight: 800,
+                cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px"
+              }}
+            >
+              🔍 지금 이 가이드 상품 구매하기
+            </button>
+          )}
         </div>
       </div>
     </div>
