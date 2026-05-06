@@ -612,9 +612,9 @@ function DiscoveryTab({ products, banners, careGuides, session, sessionStatus, a
   }, [bannerIdx, displayBanners]);
 
   const getYTId = (url: string) => {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
     const match = url?.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : null;
+    return (match && match[7] && match[7].length === 11) ? match[7] : null;
   };
 
   return (
@@ -1982,9 +1982,9 @@ function MyTab({ profiles, activeId, onSelect, onOpenModal, onEditModal, setActi
 // ─── 비디오 모달 (YouTube Embed) ─────────────────────────────
 function VideoModal({ url, onClose }: { url: string; onClose: () => void }) {
   const getYTId = (url: string) => {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
     const match = url?.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : null;
+    return (match && match[7] && match[7].length === 11) ? match[7] : null;
   };
 
   const videoId = getYTId(url);
