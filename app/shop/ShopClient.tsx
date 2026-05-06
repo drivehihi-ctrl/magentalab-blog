@@ -1959,8 +1959,8 @@ function VideoModal({ guide, products, onClose, onAddToCart }: { guide: any; pro
     const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?)|(shorts\/))\??v?=?([^#&?]*).*/;
     const match = url?.match(regExp);
     // shorts의 경우 8번째 그룹에 ID가 올 수 있음 (또는 7번째)
-    const id = (match && (match[7] || match[8]))?.length === 11 ? (match[7] || match[8]) : null;
-    return id;
+    const id = match ? (match[7] || match[8]) : null;
+    return (id && id.length === 11) ? id : null;
   };
 
   const videoId = getYTId(guide.video_url);
