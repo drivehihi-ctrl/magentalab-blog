@@ -58,7 +58,7 @@ export default function ShopAdminPage() {
   const [currentBanner, setCurrentBanner] = useState<any>({ image_url: "", link_url: "", order_index: 0, is_active: true });
   const [currentCareGuide, setCurrentCareGuide] = useState<any>({ 
     title: "", subtitle: "", emoji: "🐾", gradient: "linear-gradient(135deg, #E5007E 0%, #FF6B9D 100%)", 
-    video_url: "", order_index: 0 
+    video_url: "", order_index: 0, product_id: null
   });
 
   useEffect(() => {
@@ -289,7 +289,7 @@ export default function ShopAdminPage() {
             ) : activeTab === 'banners' ? (
               <button onClick={() => { setIsEditingBanner(true); setCurrentBanner({ image_url: "", link_url: "", order_index: 0, is_active: true }); }} style={primaryBtnStyle}>+ 배너 등록</button>
             ) : activeTab === 'care-guides' ? (
-              <button onClick={() => { setIsEditingCareGuide(true); setCurrentCareGuide({ title: "", subtitle: "", emoji: "🐾", gradient: "linear-gradient(135deg, #E5007E 0%, #FF6B9D 100%)", video_url: "", order_index: 0 }); }} style={primaryBtnStyle}>+ 케어 가이드 등록</button>
+              <button onClick={() => { setIsEditingCareGuide(true); setCurrentCareGuide({ title: "", subtitle: "", emoji: "🐾", gradient: "linear-gradient(135deg, #E5007E 0%, #FF6B9D 100%)", video_url: "", order_index: 0, product_id: null }); }} style={primaryBtnStyle}>+ 케어 가이드 등록</button>
             ) : (
               <div style={{ color: '#98A2B3', fontSize: '13px' }}>AI 페르소나 댓글 생성기 가동 중... 🧪</div>
             )}
@@ -636,9 +636,21 @@ export default function ShopAdminPage() {
                   <div style={inputGroupStyle}><label>이모지 (예: 🦷, 🦴) *</label><input style={naverInputStyle} value={currentCareGuide.emoji || ""} onChange={e => setCurrentCareGuide({...currentCareGuide, emoji: e.target.value})} /></div>
                   <div style={inputGroupStyle}><label>정렬 순서</label><input type="number" style={naverInputStyle} value={currentCareGuide.order_index || 0} onChange={e => setCurrentCareGuide({...currentCareGuide, order_index: Number(e.target.value)})} /></div>
                 </div>
-                <div style={{ marginTop: '20px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '20px' }}>
                   <div style={inputGroupStyle}><label>유튜브 영상 URL (예: https://www.youtube.com/watch?v=...) *</label>
                     <input style={naverInputStyle} value={currentCareGuide.video_url || ""} onChange={e => setCurrentCareGuide({...currentCareGuide, video_url: e.target.value})} placeholder="유튜브 링크를 입력하세요" />
+                  </div>
+                  <div style={inputGroupStyle}><label>연동할 상품 선택 (영상 아래 노출)</label>
+                    <select 
+                      style={naverInputStyle} 
+                      value={currentCareGuide.product_id || ""} 
+                      onChange={e => setCurrentCareGuide({...currentCareGuide, product_id: e.target.value ? Number(e.target.value) : null})}
+                    >
+                      <option value="">연동 상품 없음</option>
+                      {products.map(p => (
+                        <option key={p.id} value={p.id}>[{p.brand}] {p.name}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
                 <div style={{ marginTop: '20px' }}>
