@@ -18,6 +18,7 @@ export const metadata: Metadata = {
   authors: [{ name: "Magentalab" }],
   creator: "Magentalab",
   publisher: "Magentalab",
+  metadataBase: new URL("https://www.magentalabblog.com"),
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
