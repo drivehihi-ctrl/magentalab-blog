@@ -9,7 +9,8 @@ export async function GET() {
   const siteUrl = "https://www.magentalabblog.com";
   
   try {
-    const { posts } = await getPosts();
+    // 최신 글 50개를 RSS로 제공 (검색 엔진 노출 범위 확대)
+    const { posts } = await getPosts(1, 50);
     
     const rssItemsXml = posts
       .map((post) => {
