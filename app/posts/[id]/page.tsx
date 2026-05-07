@@ -48,10 +48,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         images: [imageUrl],
       },
     };
+  }
+}
+
+// 색인 하이패스: 최신 게시글 50개를 빌드 타임에 미리 렌더링하여 검색 엔진에 즉시 제공
+export async function generateStaticParams() {
+  try {
+    const { posts } = await getPosts(1, 50);
+    return posts.map((post) => ({
+      id: post.id.toString(),
+    }));
   } catch (error) {
-    return {
-      title: "Magentalab Blog Post",
-    };
+    return [];
   }
 }
 

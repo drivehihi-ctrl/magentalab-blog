@@ -41,6 +41,19 @@ export default async function HomePage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "url": "https://www.magentalabblog.com",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://www.magentalabblog.com/blog?search={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }) }}
+      />
       
       {/* Hero Section */}
       <section className="relative py-20 lg:py-32 bg-white overflow-hidden">
