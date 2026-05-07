@@ -41,11 +41,11 @@ export async function GET() {
     <atom:link href="${siteUrl}/rss.xml" rel="self" type="application/rss+xml" />
     ${rssItemsXml}
   </channel>
-</rss>`;
+</rss>`.trim();
 
     return new Response(rssXml, {
       headers: {
-        "Content-Type": "application/xml; charset=utf-8",
+        "Content-Type": "application/rss+xml; charset=utf-8",
         "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=59",
       },
     });
