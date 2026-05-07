@@ -237,12 +237,13 @@ export default async function PostDetailPage({ params }: PageProps) {
           <div className="mt-12 pt-8 border-t border-gray-100">
             <div className="flex flex-wrap gap-2 text-sm">
               {tags.map((tag: any) => (
-                <span 
+                <Link 
                   key={tag.id} 
+                  href={`/blog?search=${encodeURIComponent(tag.name)}`}
                   className="px-3 py-1 bg-gray-50 text-gray-500 rounded-lg font-medium transition-colors hover:bg-magenta-light/20 hover:text-magenta"
                 >
                   #{tag.name}
-                </span>
+                </Link>
               ))}
             </div>
           </div>

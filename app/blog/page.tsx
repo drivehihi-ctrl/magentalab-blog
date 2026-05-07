@@ -28,11 +28,11 @@ export const metadata: Metadata = {
 export default async function BlogListPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string, search?: string }>;
 }) {
-  const { page } = await searchParams;
+  const { page, search } = await searchParams;
   const currentPage = Number(page) || 1;
-  const { posts, totalPages, totalPosts } = await getPosts(currentPage, 20);
+  const { posts, totalPages, totalPosts } = await getPosts(currentPage, 20, search);
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
@@ -47,8 +47,10 @@ export default async function BlogListPage({
       {
         "@type": "ListItem",
         "position": 2,
-        "name": "블로그",
-        "item": "https://www.magentalabblog.com/blog"
+        "name": search ? `검색: ${search}` : "블로그",
+        "item": search 
+          ? `https://www.magentalabblog.com/blog?search=${encodeURIComponent(search)}`
+          : "https://www.magentalabblog.com/blog"
       }
     ]
   };
@@ -68,7 +70,15 @@ export default async function BlogListPage({
             ALL POSTS
           </span>
           <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
-            블로그 <span className="text-magenta">전체보기</span>
+            {search ? (
+              <>
+                <span className="text-magenta">'{search}'</span> 검색 결과
+              </>
+            ) : (
+              <>
+                블로그 <span className="text-magenta">전체보기</span>
+              </>
+            )}
           </h1>
         </div>
         
@@ -86,7 +96,9 @@ export default async function BlogListPage({
         
         {posts.length === 0 && (
           <div className="py-20 text-center">
-            <p className="text-gray-400 font-medium font-sans">등록된 게시글이 없습니다. 📝</p>
+            <p className="text-gray-400 font-medium font-sans">
+              {search ? `'${search}'에 대한 검색 결과가 없습니다. 🔍` : "등록된 게시글이 없습니다. 📝"}
+            </p>
           </div>
         )}
 

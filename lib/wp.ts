@@ -22,8 +22,13 @@ export interface PostsResponse {
   totalPosts: number;
 }
 
-export async function getPosts(page: number = 1, perPage: number = 20): Promise<PostsResponse> {
-  const res = await fetch(`${WP_API_URL}/posts?_embed&per_page=${perPage}&page=${page}`, {
+export async function getPosts(page: number = 1, perPage: number = 20, search?: string): Promise<PostsResponse> {
+  let url = `${WP_API_URL}/posts?_embed&per_page=${perPage}&page=${page}`;
+  if (search) {
+    url += `&search=${encodeURIComponent(search)}`;
+  }
+
+  const res = await fetch(url, {
     next: {
       revalidate: 3600,
       tags: ['posts'] // 실시간 업데이트를 위한 태그
