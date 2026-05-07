@@ -640,26 +640,62 @@ export default function ShopAdminPage() {
                   <div style={inputGroupStyle}><label>유튜브 영상 URL (예: https://www.youtube.com/watch?v=...) *</label>
                     <input style={naverInputStyle} value={currentCareGuide.video_url || ""} onChange={e => setCurrentCareGuide({...currentCareGuide, video_url: e.target.value})} placeholder="유튜브 링크를 입력하세요" />
                   </div>
-                  <div style={inputGroupStyle}><label>연동할 상품 선택 (영상 아래 노출)</label>
-                    <select 
-                      style={{...naverInputStyle, color: '#fff', cursor: 'pointer'}} 
-                      value={currentCareGuide.product_id != null ? String(currentCareGuide.product_id) : ""} 
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setCurrentCareGuide((prev: any) => ({
-                          ...prev,
-                          product_id: val === "" ? null : Number(val)
-                        }));
-                      }}
-                    >
-                      <option value="">연동 상품 없음</option>
-                      {products.length === 0 && <option disabled>상품 목록을 불러오는 중...</option>}
+                  <div style={inputGroupStyle}>
+                    <label>연동할 상품 선택 (영상 아래 노출)</label>
+                    {/* 선택된 상품 표시 */}
+                    <div style={{
+                      background: '#1D2939', border: '1px solid #344054', borderRadius: '8px',
+                      padding: '10px 14px', fontSize: '13px', color: '#fff', marginBottom: '8px',
+                      minHeight: '42px', display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+                    }}>
+                      <span>
+                        {currentCareGuide.product_id
+                          ? (() => {
+                              const p = products.find(p => p.id === currentCareGuide.product_id);
+                              return p ? `✅ [${p.brand}] ${p.name}` : '상품 찾는 중...';
+                            })()
+                          : '연동 상품 없음'
+                        }
+                      </span>
+                      {currentCareGuide.product_id && (
+                        <button
+                          onClick={() => setCurrentCareGuide((prev: any) => ({ ...prev, product_id: null }))}
+                          style={{ background: 'none', border: 'none', color: '#F04438', cursor: 'pointer', fontSize: '16px', lineHeight: 1 }}
+                        >✕</button>
+                      )}
+                    </div>
+                    {/* 상품 목록 */}
+                    <div style={{
+                      background: '#101828', border: '1px solid #344054', borderRadius: '8px',
+                      maxHeight: '180px', overflowY: 'auto'
+                    }}>
+                      <div
+                        onClick={() => setCurrentCareGuide((prev: any) => ({ ...prev, product_id: null }))}
+                        style={{
+                          padding: '10px 14px', fontSize: '13px', cursor: 'pointer',
+                          color: !currentCareGuide.product_id ? '#00C73C' : '#98A2B3',
+                          background: !currentCareGuide.product_id ? 'rgba(0,199,60,0.1)' : 'transparent',
+                          borderBottom: '1px solid #1D2939'
+                        }}
+                      >
+                        — 연동 상품 없음
+                      </div>
                       {products.map(p => (
-                        <option key={p.id} value={String(p.id)}>
-                          [{p.brand}] {p.name}
-                        </option>
+                        <div
+                          key={p.id}
+                          onClick={() => setCurrentCareGuide((prev: any) => ({ ...prev, product_id: p.id }))}
+                          style={{
+                            padding: '10px 14px', fontSize: '13px', cursor: 'pointer',
+                            color: currentCareGuide.product_id === p.id ? '#00C73C' : '#F2F4F7',
+                            background: currentCareGuide.product_id === p.id ? 'rgba(0,199,60,0.1)' : 'transparent',
+                            borderBottom: '1px solid #1D2939',
+                            transition: 'background 0.15s'
+                          }}
+                        >
+                          {currentCareGuide.product_id === p.id ? '✅ ' : ''} [{p.brand}] {p.name}
+                        </div>
                       ))}
-                    </select>
+                    </div>
                   </div>
                 </div>
                 <div style={{ marginTop: '20px' }}>
