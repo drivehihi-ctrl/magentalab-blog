@@ -48,6 +48,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         images: [imageUrl],
       },
     };
+  } catch (error) {
+    return {
+      title: "Magentalab Blog Post",
+    };
   }
 }
 
