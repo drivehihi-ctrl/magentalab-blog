@@ -67,6 +67,10 @@ export async function generateMetadata({
       description,
       images: [product.image_url || "/images/favicon.png"],
     },
+    robots: {
+      index: false,
+      follow: false,
+    },
   };
 }
 
