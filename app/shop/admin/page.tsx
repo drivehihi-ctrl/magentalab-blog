@@ -642,16 +642,22 @@ export default function ShopAdminPage() {
                   </div>
                   <div style={inputGroupStyle}><label>연동할 상품 선택 (영상 아래 노출)</label>
                     <select 
-                      style={naverInputStyle} 
-                      value={currentCareGuide.product_id?.toString() || ""} 
-                      onChange={e => {
+                      style={{...naverInputStyle, color: '#fff', cursor: 'pointer'}} 
+                      value={currentCareGuide.product_id || ""} 
+                      onChange={(e) => {
                         const val = e.target.value;
-                        setCurrentCareGuide({ ...currentCareGuide, product_id: val ? Number(val) : null });
+                        setCurrentCareGuide((prev: any) => ({
+                          ...prev,
+                          product_id: val === "" ? null : Number(val)
+                        }));
                       }}
                     >
-                      <option value="">연동 상품 없음</option>
+                      <option value="" style={{background: '#1D2939'}}>연동 상품 없음</option>
+                      {products.length === 0 && <option disabled style={{background: '#1D2939'}}>상품 목록을 불러오는 중...</option>}
                       {products.map(p => (
-                        <option key={p.id} value={p.id.toString()}>[{p.brand}] {p.name}</option>
+                        <option key={p.id} value={p.id} style={{background: '#1D2939'}}>
+                          [{p.brand}] {p.name}
+                        </option>
                       ))}
                     </select>
                   </div>
