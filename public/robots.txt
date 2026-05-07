@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
 Sitemap: https://www.magentalabblog.com/sitemap.xml
+Sitemap: https://www.magentalabblog.com/rss.xml
