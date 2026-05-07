@@ -2871,7 +2871,6 @@ export default function ShopClient({ initialProducts = [], initialBanners = [], 
     { key: "discovery" as const, label: "Discovery", Icon: IconDiscover },
     { key: "shop" as const, label: "Shop", Icon: IconShop },
     { key: "cart" as const, label: "Cart", Icon: IconCart },
-    { key: "request" as const, label: "Request", Icon: IconRequest },
     { key: "my" as const, label: "My", Icon: IconMy },
   ];
 
