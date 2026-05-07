@@ -7,7 +7,8 @@ import type { Metadata } from "next";
 import ProductReviews from "@/components/ProductReviews";
 import AddToCartButton from "@/components/AddToCartButton";
 
-export const revalidate = 0; // 항상 최신 데이터
+// 1시간마다 데이터 갱신 (ISR)
+export const revalidate = 3600; 
 
 async function getProduct(id: string) {
   const { data, error } = await supabase

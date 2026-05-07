@@ -35,7 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const productEntries: MetadataRoute.Sitemap = products.map((product) => ({
     url: `${baseUrl}/shop/${product.id}`,
     lastModified: new Date(product.created_at || new Date()),
-    changeFrequency: 'daily',
+    changeFrequency: 'weekly',
     priority: 0.8,
   }));
 
@@ -44,13 +44,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: baseUrl,
       lastModified: new Date(),
       changeFrequency: 'daily',
-      priority: 1,
+      priority: 1.0,
     },
     {
       url: `${baseUrl}/blog`,
       lastModified: new Date(),
       changeFrequency: 'daily',
-      priority: 0.8,
+      priority: 0.9,
     },
     {
       url: `${baseUrl}/shop`,
