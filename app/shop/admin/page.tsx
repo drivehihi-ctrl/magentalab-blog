@@ -651,7 +651,7 @@ export default function ShopAdminPage() {
                       <span>
                         {currentCareGuide.product_id
                           ? (() => {
-                              const p = products.find((p: any) => p.id === currentCareGuide.product_id);
+                              const p = products.find((p: any) => String(p.id) === String(currentCareGuide.product_id));
                               return p ? `✅ [${p.brand}] ${p.name}` : '상품 찾는 중...';
                             })()
                           : '연동 상품 없음'
@@ -678,7 +678,7 @@ export default function ShopAdminPage() {
                         });
                       }}
                     />
-                    {/* 상품 목록 (최대 50개 표시 + 검색 필터) */}
+                    {/* 상품 목록 */}
                     <div id="product-list-scroll" style={{
                       background: '#101828', border: '1px solid #344054', borderRadius: '8px',
                       maxHeight: '200px', overflowY: 'auto'
@@ -695,22 +695,25 @@ export default function ShopAdminPage() {
                       >
                         — 연동 상품 없음
                       </div>
-                      {products.slice(0, 50).map((p: any) => (
-                        <div
-                          key={p.id}
-                          data-search={`${(p.brand || '').toLowerCase()} ${(p.name || '').toLowerCase()}`}
-                          onClick={() => setCurrentCareGuide((prev: any) => ({ ...prev, product_id: p.id }))}
-                          style={{
-                            padding: '10px 14px', fontSize: '13px', cursor: 'pointer',
-                            color: currentCareGuide.product_id === p.id ? '#00C73C' : '#F2F4F7',
-                            background: currentCareGuide.product_id === p.id ? 'rgba(0,199,60,0.1)' : 'transparent',
-                            borderBottom: '1px solid #1D2939',
-                            transition: 'background 0.15s'
-                          }}
-                        >
-                          {currentCareGuide.product_id === p.id ? '✅ ' : ''}[{p.brand}] {p.name}
-                        </div>
-                      ))}
+                      {products.slice(0, 50).map((p: any) => {
+                        const isSelected = String(currentCareGuide.product_id) === String(p.id);
+                        return (
+                          <div
+                            key={p.id}
+                            data-search={`${(p.brand || '').toLowerCase()} ${(p.name || '').toLowerCase()}`}
+                            onClick={() => setCurrentCareGuide((prev: any) => ({ ...prev, product_id: String(p.id) }))}
+                            style={{
+                              padding: '10px 14px', fontSize: '13px', cursor: 'pointer',
+                              color: isSelected ? '#00C73C' : '#F2F4F7',
+                              background: isSelected ? 'rgba(0,199,60,0.1)' : 'transparent',
+                              borderBottom: '1px solid #1D2939',
+                              transition: 'background 0.15s'
+                            }}
+                          >
+                            {isSelected ? '✅ ' : ''}[{p.brand}] {p.name}
+                          </div>
+                        );
+                      })}
                       {products.length > 50 && (
                         <div style={{ padding: '10px 14px', fontSize: '11px', color: '#667085', textAlign: 'center' }}>
                           검색으로 더 많은 상품을 찾을 수 있어요 (전체 {products.length}개)
