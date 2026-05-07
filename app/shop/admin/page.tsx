@@ -651,7 +651,7 @@ export default function ShopAdminPage() {
                       <span>
                         {currentCareGuide.product_id
                           ? (() => {
-                              const p = products.find(p => p.id === currentCareGuide.product_id);
+                              const p = products.find((p: any) => p.id === currentCareGuide.product_id);
                               return p ? `✅ [${p.brand}] ${p.name}` : '상품 찾는 중...';
                             })()
                           : '연동 상품 없음'
@@ -664,12 +664,27 @@ export default function ShopAdminPage() {
                         >✕</button>
                       )}
                     </div>
-                    {/* 상품 목록 */}
-                    <div style={{
+                    {/* 검색창 */}
+                    <input
+                      placeholder="상품명 또는 브랜드로 검색..."
+                      style={{ ...naverInputStyle, marginBottom: '8px' }}
+                      onChange={(e) => {
+                        const q = e.target.value.toLowerCase();
+                        const listEl = document.getElementById('product-list-scroll');
+                        if (!listEl) return;
+                        Array.from(listEl.children).forEach((child: any) => {
+                          const text = child.dataset.search || '';
+                          child.style.display = text.includes(q) ? 'block' : 'none';
+                        });
+                      }}
+                    />
+                    {/* 상품 목록 (최대 50개 표시 + 검색 필터) */}
+                    <div id="product-list-scroll" style={{
                       background: '#101828', border: '1px solid #344054', borderRadius: '8px',
-                      maxHeight: '180px', overflowY: 'auto'
+                      maxHeight: '200px', overflowY: 'auto'
                     }}>
                       <div
+                        data-search="연동없음none"
                         onClick={() => setCurrentCareGuide((prev: any) => ({ ...prev, product_id: null }))}
                         style={{
                           padding: '10px 14px', fontSize: '13px', cursor: 'pointer',
@@ -680,9 +695,10 @@ export default function ShopAdminPage() {
                       >
                         — 연동 상품 없음
                       </div>
-                      {products.map(p => (
+                      {products.slice(0, 50).map((p: any) => (
                         <div
                           key={p.id}
+                          data-search={`${(p.brand || '').toLowerCase()} ${(p.name || '').toLowerCase()}`}
                           onClick={() => setCurrentCareGuide((prev: any) => ({ ...prev, product_id: p.id }))}
                           style={{
                             padding: '10px 14px', fontSize: '13px', cursor: 'pointer',
@@ -692,9 +708,14 @@ export default function ShopAdminPage() {
                             transition: 'background 0.15s'
                           }}
                         >
-                          {currentCareGuide.product_id === p.id ? '✅ ' : ''} [{p.brand}] {p.name}
+                          {currentCareGuide.product_id === p.id ? '✅ ' : ''}[{p.brand}] {p.name}
                         </div>
                       ))}
+                      {products.length > 50 && (
+                        <div style={{ padding: '10px 14px', fontSize: '11px', color: '#667085', textAlign: 'center' }}>
+                          검색으로 더 많은 상품을 찾을 수 있어요 (전체 {products.length}개)
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
