@@ -643,12 +643,15 @@ export default function ShopAdminPage() {
                   <div style={inputGroupStyle}><label>연동할 상품 선택 (영상 아래 노출)</label>
                     <select 
                       style={naverInputStyle} 
-                      value={currentCareGuide.product_id || ""} 
-                      onChange={e => setCurrentCareGuide({...currentCareGuide, product_id: e.target.value ? Number(e.target.value) : null})}
+                      value={currentCareGuide.product_id?.toString() || ""} 
+                      onChange={e => {
+                        const val = e.target.value;
+                        setCurrentCareGuide({ ...currentCareGuide, product_id: val ? Number(val) : null });
+                      }}
                     >
                       <option value="">연동 상품 없음</option>
                       {products.map(p => (
-                        <option key={p.id} value={p.id}>[{p.brand}] {p.name}</option>
+                        <option key={p.id} value={p.id.toString()}>[{p.brand}] {p.name}</option>
                       ))}
                     </select>
                   </div>
