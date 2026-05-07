@@ -643,7 +643,7 @@ export default function ShopAdminPage() {
                   <div style={inputGroupStyle}><label>연동할 상품 선택 (영상 아래 노출)</label>
                     <select 
                       style={{...naverInputStyle, color: '#fff', cursor: 'pointer'}} 
-                      value={currentCareGuide.product_id || ""} 
+                      value={currentCareGuide.product_id != null ? String(currentCareGuide.product_id) : ""} 
                       onChange={(e) => {
                         const val = e.target.value;
                         setCurrentCareGuide((prev: any) => ({
@@ -652,10 +652,10 @@ export default function ShopAdminPage() {
                         }));
                       }}
                     >
-                      <option value="" style={{background: '#1D2939'}}>연동 상품 없음</option>
-                      {products.length === 0 && <option disabled style={{background: '#1D2939'}}>상품 목록을 불러오는 중...</option>}
+                      <option value="">연동 상품 없음</option>
+                      {products.length === 0 && <option disabled>상품 목록을 불러오는 중...</option>}
                       {products.map(p => (
-                        <option key={p.id} value={p.id} style={{background: '#1D2939'}}>
+                        <option key={p.id} value={String(p.id)}>
                           [{p.brand}] {p.name}
                         </option>
                       ))}
