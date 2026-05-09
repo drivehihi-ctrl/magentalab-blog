@@ -8,6 +8,7 @@ import CommentsSection from "@/components/CommentsSection";
 import RelatedPosts from "@/components/RelatedPosts";
 import AnsimiSummary from "@/components/AnsimiSummary";
 import SocialShare from "@/components/SocialShare";
+import AffiliateStoreBanner from "@/components/AffiliateStoreBanner";
 
 // ISR: 1시간마다 재생성 (색인 하이패스 - 빠른 응답 + 최신 데이터 보장)
 export const revalidate = 3600;
@@ -233,6 +234,9 @@ export default async function PostDetailPage({ params }: PageProps) {
             className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal"
             dangerouslySetInnerHTML={{ __html: fixWpLinks(post.content.rendered) }}
           />
+
+          {/* 제휴몰 배너 (본문 직후) */}
+          <AffiliateStoreBanner />
         
         {/* Social Share Section */}
         <SocialShare url={`/posts/${id}`} title={post.title.rendered.replace(/<[^>]*>?/gm, "")} />
