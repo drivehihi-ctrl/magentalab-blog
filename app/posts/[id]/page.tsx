@@ -9,6 +9,11 @@ import RelatedPosts from "@/components/RelatedPosts";
 import AnsimiSummary from "@/components/AnsimiSummary";
 import SocialShare from "@/components/SocialShare";
 
+// ISR: 1시간마다 재생성 (색인 하이패스 - 빠른 응답 + 최신 데이터 보장)
+export const revalidate = 3600;
+// generateStaticParams 범위 밖의 동적 경로도 허용
+export const dynamicParams = true;
+
 interface PageProps {
   params: Promise<{ id: string }>;
 }
