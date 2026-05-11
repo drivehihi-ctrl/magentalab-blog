@@ -4,11 +4,21 @@ import Pagination from "@/components/Pagination";
 import { getPosts } from "@/lib/wp";
 import { Metadata } from "next";
 
+// ISR: 1시간마다 갱신
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "Magentalab 반려동물 연구소 | 홈",
   description: "Magentalab 반려동물 연구소의 최신 연구 결과와 반려동물 건강 정보를 확인하세요.",
   alternates: {
-    canonical: "/",
+    canonical: "https://www.magentalabblog.com/",
+  },
+  openGraph: {
+    title: "Magentalab 반려동물 연구소 | 홈",
+    description: "데이터와 과학으로 반려동물의 더 나은 삶을 연구합니다.",
+    url: "https://www.magentalabblog.com/",
+    type: "website",
+    images: [{ url: "/images/favicon.png", width: 1200, height: 630 }],
   },
 };
 
