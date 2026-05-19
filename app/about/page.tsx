@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: "연구소 소개 | Magentalab",
   description: "Magentalab 반려동물 연구소의 미션과 연구 분야를 소개합니다.",
   alternates: {
-    canonical: "/about",
+    canonical: "https://www.magentalabblog.com/about",
   },
 };
 

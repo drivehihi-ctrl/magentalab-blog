@@ -45,7 +45,7 @@ export async function generateMetadata({
     description,
     keywords: product.tags || [],
     alternates: {
-      canonical: `/shop/${id}`,
+      canonical: `https://www.magentalabblog.com/shop/${id}`,
     },
     openGraph: {
       title,

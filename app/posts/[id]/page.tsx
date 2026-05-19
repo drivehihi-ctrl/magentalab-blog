@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: `${title} | Magentalab`,
       description,
       alternates: {
-        canonical: `/posts/${id}`,
+        canonical: `https://www.magentalabblog.com/posts/${id}`,
       },
       openGraph: {
         title,
