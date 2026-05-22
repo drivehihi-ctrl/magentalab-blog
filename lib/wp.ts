@@ -161,13 +161,69 @@ export async function getComments(postId: number): Promise<WPComment[]> {
 /**
  * 워드프레스 목차 플러그인 등이 생성한 절대 경로 링크를 내부 앵커 링크로 변환합니다.
  * 예: https://magentalab.mycafe24.com/post-slug/#anchor -> #anchor
+ *
+ * 동시에 alt 속성이 없거나 비어있는 <img> 태그를 탐지하여
+ * title 속성 → 파일명 → fallback 순으로 의미 있는 alt를 자동 삽입합니다.
+ * (네이버/구글 서치어드바이저의 "Alt 속성 누락" SEO 오류 해결)
  */
-export function fixWpLinks(content: string) {
+export function fixWpLinks(content: string, postTitle?: string) {
   if (!content) return "";
   
-  // 워드프레스 주소와 슬러그가 포함된 앵커 링크를 찾아 #anchor 부분만 남깁니다.
+  // 1. 워드프레스 앵커 링크 변환
   const wpUrlPattern = /href="https?:\/\/magentalab\.mycafe24\.com\/[^"]+\/#([^"]+)"/g;
-  return content.replace(wpUrlPattern, 'href="#$1"');
+  let fixed = content.replace(wpUrlPattern, 'href="#$1"');
+
+  // 2. alt 속성이 없거나 빈 <img> 태그에 자동으로 alt 삽입
+  fixed = fixed.replace(/<img(\s[^>]*?)?\/?>|<img(\s[^>]*?)?>/gi, (imgTag) => {
+    // 이미 alt="..."가 있고 비어있지 않으면 그대로 유지
+    const altMatch = imgTag.match(/alt="([^"]*)"/i);
+    if (altMatch && altMatch[1].trim() !== '') {
+      return imgTag;
+    }
+
+    // alt 값 결정 우선순위: title 속성 > src 파일명 > 포스트 제목 > 기본값
+    let altText = '';
+
+    // title 속성 확인
+    const titleMatch = imgTag.match(/title="([^"]+)"/i);
+    if (titleMatch && titleMatch[1].trim()) {
+      altText = titleMatch[1].trim();
+    }
+
+    // src에서 파일명 추출
+    if (!altText) {
+      const srcMatch = imgTag.match(/src="([^"]+)"/i);
+      if (srcMatch) {
+        const filename = srcMatch[1].split('/').pop()?.split('?')[0] || '';
+        const nameWithoutExt = filename.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+        // 숫자만 있거나 너무 짧으면 스킵
+        if (nameWithoutExt && !/^\d+$/.test(nameWithoutExt) && nameWithoutExt.length > 3) {
+          altText = nameWithoutExt;
+        }
+      }
+    }
+
+    // 포스트 제목 사용
+    if (!altText && postTitle) {
+      altText = postTitle.replace(/<[^>]*>/g, '').trim();
+    }
+
+    // 최후 fallback
+    if (!altText) {
+      altText = '마젠타랩 반려동물 연구소 이미지';
+    }
+
+    // alt 속성이 없으면 추가, 비어있으면 교체
+    if (!altMatch) {
+      // alt 자체가 없음 → 추가
+      return imgTag.replace(/(<img)(\s|\/>|>)/i, `$1 alt="${altText}"$2`);
+    } else {
+      // alt="" 비어있음 → 채우기
+      return imgTag.replace(/alt=""/i, `alt="${altText}"`);
+    }
+  });
+
+  return fixed;
 }
 
 export async function getPageBySlug(slug: string): Promise<WPPost | null> {

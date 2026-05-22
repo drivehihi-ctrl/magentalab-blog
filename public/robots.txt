@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /shop
+Disallow: /shop/
+Disallow: /shop/admin
+Disallow: /api/
+
 Sitemap: https://www.magentalabblog.com/sitemap.xml
 Sitemap: https://www.magentalabblog.com/rss.xml
