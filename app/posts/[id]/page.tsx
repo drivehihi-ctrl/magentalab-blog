@@ -9,6 +9,7 @@ import RelatedPosts from "@/components/RelatedPosts";
 import AnsimiSummary from "@/components/AnsimiSummary";
 import SocialShare from "@/components/SocialShare";
 import AffiliateStoreBanner from "@/components/AffiliateStoreBanner";
+import CalculatorBanner from "@/components/CalculatorBanner";
 
 // ISR: 1시간마다 재생성 (색인 하이패스 - 빠른 응답 + 최신 데이터 보장)
 export const revalidate = 3600;
@@ -233,6 +234,12 @@ export default async function PostDetailPage({ params }: PageProps) {
           <div 
             className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal"
             dangerouslySetInnerHTML={{ __html: fixWpLinks(post.content.rendered, sanitizeForSeo(post.title.rendered)) }}
+          />
+
+          {/* 본문 주제 맞춤형 계산기 추천 배너 */}
+          <CalculatorBanner 
+            content={post.content.rendered} 
+            title={post.title.rendered} 
           />
 
           {/* 제휴몰 배너 (본문 직후) */}
