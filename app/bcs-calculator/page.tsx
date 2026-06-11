@@ -9,9 +9,7 @@ import {
   Sparkles, 
   RotateCcw, 
   Weight, 
-  Calendar,
   CheckCircle2,
-  ChevronRight,
   TrendingDown
 } from "lucide-react";
 
@@ -27,7 +25,7 @@ const DOG_STATUS_FACTORS: Record<string, { label: string; factor: number; desc: 
 
 // 고양이 상태 계수 매핑
 const CAT_STATUS_FACTORS: Record<string, { label: string; factor: number; desc: string }> = {
-  cat_neutered: { label: "중성화 완료 (성묘)", factor: 1.2, desc: "실내에서 생활하는 평범한 대사량의 성묘" },
+  cat_neutered: { label: "중성화 완료 (성묘)", factor: 1.2, desc: "실내에서 생활하는 평범한 대사량 of 성묘" },
   cat_intact: { label: "미중성화 (성묘)", factor: 1.4, desc: "중성화를 하지 않아 메이팅 에너지 등이 작동하는 성묘" },
   cat_obese_prone: { label: "비만 경향 / 중성화 후 관리", factor: 1.0, desc: "움직임이 적고 식탐이 많아 쉽게 살찌는 고양이" },
   cat_active: { label: "활동량 많음 / 활발한 아이", factor: 1.6, desc: "우다다를 자주 하거나 활동 반경이 넓은 아깽이 혹은 활발한 묘" },
@@ -120,8 +118,11 @@ const BCS_DATA: Record<number, BCSInfo> = {
 };
 
 export default function BcsCalculatorPage() {
-  // SEO 및 타이틀 설정
+  const [isMounted, setIsMounted] = useState<boolean>(false);
+
+  // 컴포넌트 마운트 완료 시 플래그 설정 및 타이틀 지정
   useEffect(() => {
+    setIsMounted(true);
     document.title = "반려동물 비만도(BCS) 및 다이어트 칼로리 계산기 | 마젠타랩";
   }, []);
 
@@ -138,7 +139,6 @@ export default function BcsCalculatorPage() {
   const [der, setDer] = useState<number>(0);
   const [feedGrams, setFeedGrams] = useState<number>(0);
   const [isValid, setIsValid] = useState<boolean>(true);
-  const [activeTab, setActiveTab] = useState<"result" | "info">("result");
 
   // 동물 종류 선택 변경 시 상태 리셋 및 기본값 매핑
   useEffect(() => {
@@ -207,7 +207,7 @@ export default function BcsCalculatorPage() {
   };
 
   // 비만 상태 스타일 테마
-  const currentBcsInfo = BCS_DATA[bcs];
+  const currentBcsInfo = BCS_DATA[bcs] || BCS_DATA[5];
   const getThemeColors = (level: BCSInfo["level"]) => {
     switch (level) {
       case "ideal":
@@ -250,6 +250,18 @@ export default function BcsCalculatorPage() {
   };
 
   const themeColors = getThemeColors(currentBcsInfo.level);
+
+  // 하이드레이션 오류 방지: 마운트 완료 전에는 스켈레톤 로더 렌더링
+  if (!isMounted) {
+    return (
+      <div className="bg-slate-50 min-h-screen py-20 px-4 flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-magenta mx-auto"></div>
+          <p className="text-slate-500 font-bold text-sm">계산기를 불러오는 중입니다...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-slate-50 min-h-screen py-10 px-4 sm:px-6">
@@ -430,7 +442,9 @@ export default function BcsCalculatorPage() {
                     step="1"
                     value={bcs}
                     onChange={(e) => setBcs(parseInt(e.target.value))}
+                    onInput={(e) => setBcs(parseInt((e.target as HTMLInputElement).value))}
                     className="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-magenta"
+                    style={{ WebkitAppearance: "slider-horizontal" }}
                   />
                 </div>
                 {/* 1-9까지 빠른 버튼 */}
@@ -443,7 +457,7 @@ export default function BcsCalculatorPage() {
                         key={score}
                         type="button"
                         onClick={() => setBcs(score)}
-                        className={`py-2 rounded-xl text-sm font-black transition-all ${
+                        className={`py-2 rounded-xl text-sm font-black transition-all cursor-pointer ${
                           isSelected
                             ? "bg-magenta text-white shadow-md shadow-magenta/20 scale-110"
                             : "bg-white text-slate-400 border border-slate-200/60 hover:bg-slate-100 hover:text-slate-600"
@@ -485,7 +499,7 @@ export default function BcsCalculatorPage() {
               <button
                 type="button"
                 onClick={handleReset}
-                className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-600 font-bold transition-all"
+                className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-600 font-bold transition-all cursor-pointer"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 설정 초기화
