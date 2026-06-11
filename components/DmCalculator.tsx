@@ -1,0 +1,553 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { 
+  Droplets, 
+  Dna, 
+  CupSoda, 
+  AlertCircle, 
+  CheckCircle2, 
+  Activity, 
+  Scale, 
+  Sparkles, 
+  RotateCcw,
+  Flame,
+  Gauge
+} from "lucide-react";
+
+export default function DmCalculator() {
+  const [isMounted, setIsMounted] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // --- 1. 하루 필수 음수량 계산기 상태 ---
+  const [petType, setPetType] = useState<"dog" | "cat">("cat");
+  const [weight, setWeight] = useState<string>("4.5");
+  const [computedWater, setComputedWater] = useState<number>(0);
+  const [cupCount, setCupCount] = useState<number>(0);
+
+  // --- 2. 사료 영양 성분 (DM) 계산기 상태 ---
+  const [moisture, setMoisture] = useState<string>("10");
+  const [crudeProtein, setCrudeProtein] = useState<string>("28");
+  const [crudeFat, setCrudeFat] = useState<string>("14");
+  const [crudeAshFiber, setCrudeAshFiber] = useState<string>("8"); // 조회분 + 조섬유 합산 권장
+
+  // 영양 성분 연산 결과
+  const [dryMatterPercent, setDryMatterPercent] = useState<number>(0);
+  const [dmProtein, setDmProtein] = useState<number>(0);
+  const [dmFat, setDmFat] = useState<number>(0);
+  const [carboPercent, setCarboPercent] = useState<number>(0); // 대략적인 탄수화물 비중 (100 - 수분 - 단백 - 지방 - 회분/섬유)
+  const [dmCarbo, setDmCarbo] = useState<number>(0);
+  const [proteinRating, setProteinRating] = useState<"low" | "standard" | "premium">("standard");
+
+  // 계산 유효성 플래그
+  const [isWaterValid, setIsWaterValid] = useState<boolean>(true);
+  const [isDmValid, setIsDmValid] = useState<boolean>(true);
+  const [activeTab, setActiveTab] = useState<"all" | "water" | "dm">("all");
+
+  // 실시간 음수량 계산
+  useEffect(() => {
+    const w = parseFloat(weight);
+    if (isNaN(w) || w <= 0) {
+      setIsWaterValid(false);
+      return;
+    }
+    setIsWaterValid(true);
+
+    // 고양이: 50ml/kg, 강아지: 60ml/kg (활동량 고려)
+    const factor = petType === "cat" ? 50 : 60;
+    const totalWater = w * factor;
+    setComputedWater(Math.round(totalWater));
+
+    // 종이컵 환산 (한국 표준 종이컵 가득 채웠을 때 약 180ml 기준)
+    const cups = totalWater / 180;
+    setCupCount(Math.round(cups * 10) / 10);
+  }, [weight, petType]);
+
+  // 실시간 사료 DM 계산
+  useEffect(() => {
+    const moist = parseFloat(moisture) || 0;
+    const protein = parseFloat(crudeProtein) || 0;
+    const fat = parseFloat(crudeFat) || 0;
+    const ashFiber = parseFloat(crudeAshFiber) || 0;
+
+    // 모든 입력이 0이거나 유효하지 않은 비율 체크
+    if (moist >= 100 || moist < 0 || protein < 0 || fat < 0 || ashFiber < 0) {
+      setIsDmValid(false);
+      return;
+    }
+
+    const totalInput = moist + protein + fat + ashFiber;
+    if (totalInput > 100) {
+      setIsDmValid(false);
+      return;
+    }
+    setIsDmValid(true);
+
+    // 1. 건물(Dry Matter) 비율 = 100 - 수분
+    const dm = 100 - moist;
+    setDryMatterPercent(dm);
+
+    if (dm > 0) {
+      // 2. 실제 단백질 DM(%) = (조단백 / DM) * 100
+      const actualProtein = (protein / dm) * 100;
+      setDmProtein(Math.round(actualProtein * 10) / 10);
+
+      // 3. 실제 지방 DM(%) = (조지방 / DM) * 100
+      const actualFat = (fat / dm) * 100;
+      setDmFat(Math.round(actualFat * 10) / 10);
+
+      // 4. 대략적인 탄수화물 계산 = 100 - 수분 - 단백 - 지방 - 회분/섬유
+      const estimatedCarbo = Math.max(0, 100 - moist - protein - fat - ashFiber);
+      setCarboPercent(Math.round(estimatedCarbo * 10) / 10);
+      setDmCarbo(Math.round((estimatedCarbo / dm) * 100 * 10) / 10);
+
+      // 5. 단백질 등급 판정
+      if (actualProtein < 30) {
+        setProteinRating("low");
+      } else if (actualProtein >= 35) {
+        setProteinRating("premium");
+      } else {
+        setProteinRating("standard");
+      }
+    } else {
+      setIsDmValid(false);
+    }
+  }, [moisture, crudeProtein, crudeFat, crudeAshFiber]);
+
+  const handleReset = () => {
+    setPetType("cat");
+    setWeight("4.5");
+    setMoisture("10");
+    setCrudeProtein("28");
+    setCrudeFat("14");
+    setCrudeAshFiber("8");
+  };
+
+  // 등급 배지 스타일 매핑
+  const getRatingBadge = (rating: typeof proteinRating) => {
+    switch (rating) {
+      case "low":
+        return {
+          text: "탄수화물 과다 사료 주의",
+          bg: "bg-rose-500/10 border-rose-500/30 text-rose-400 shadow-[0_0_12px_rgba(239,68,68,0.15)]",
+          bullet: "bg-rose-400"
+        };
+      case "premium":
+        return {
+          text: "고단백 프리미엄 사료",
+          bg: "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.15)]",
+          bullet: "bg-emerald-400"
+        };
+      default:
+        return {
+          text: "균형 잡힌 성분 사료",
+          bg: "bg-sky-500/10 border-sky-500/30 text-sky-400 shadow-[0_0_12px_rgba(14,165,233,0.15)]",
+          bullet: "bg-sky-400"
+        };
+    }
+  };
+
+  const ratingInfo = getRatingBadge(proteinRating);
+
+  if (!isMounted) {
+    return (
+      <div className="bg-slate-900 min-h-screen py-20 px-4 flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-magenta mx-auto"></div>
+          <p className="text-slate-400 font-bold text-sm">계산기를 로드 중입니다...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-slate-950 min-h-screen py-12 px-4 sm:px-6 relative overflow-hidden flex items-center justify-center">
+      
+      {/* 테크니컬 디자인용 격자 무늬 배경 장식 */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
+      
+      {/* 네온 마젠타 백그라운드 오라 */}
+      <div className="absolute top-20 left-1/4 w-80 h-80 rounded-full bg-magenta/10 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-20 right-1/4 w-96 h-96 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
+
+      <div className="max-w-5xl w-full mx-auto space-y-8 relative z-10">
+        
+        {/* 상단 타이틀 헤더 */}
+        <div className="text-center space-y-3 max-w-xl mx-auto">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/5 border border-white/10 text-magenta text-xs font-mono tracking-wider">
+            <Gauge className="w-3.5 h-3.5" />
+            <span>NUTRITION ANALYSIS ENGINE v2.6</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+            영양 성분(DM) & 하루 음수량 계산기
+          </h1>
+          <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
+            사료 패키지 뒷면의 등록 성분비를 건조 질량(DM) 기준으로 정밀 환산하고, 
+            수의학 표준 알고리즘을 통한 일일 목표 음수량을 종이컵 시각화와 함께 산출합니다.
+          </p>
+        </div>
+
+        {/* 대시보드 탭 컨트롤 (밀러의 법칙에 따른 집중 경로 제공) */}
+        <div className="flex justify-center">
+          <div className="inline-flex p-1 bg-slate-900 border border-white/5 rounded-xl text-sm font-bold text-slate-400">
+            <button
+              onClick={() => setActiveTab("all")}
+              className={`px-4 py-2 rounded-lg transition-all cursor-pointer ${activeTab === "all" ? "bg-magenta text-white" : "hover:text-slate-200"}`}
+            >
+              종합 분석 대시보드
+            </button>
+            <button
+              onClick={() => setActiveTab("water")}
+              className={`px-4 py-2 rounded-lg transition-all cursor-pointer ${activeTab === "water" ? "bg-magenta text-white" : "hover:text-slate-200"}`}
+            >
+              음수량 계산기
+            </button>
+            <button
+              onClick={() => setActiveTab("dm")}
+              className={`px-4 py-2 rounded-lg transition-all cursor-pointer ${activeTab === "dm" ? "bg-magenta text-white" : "hover:text-slate-200"}`}
+            >
+              사료 영양(DM) 계산기
+            </button>
+          </div>
+        </div>
+
+        {/* 대시보드 콘텐츠 Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          
+          {/* ==================== INPUT PANELS (입력 영역) ==================== */}
+          <div className={`lg:col-span-6 space-y-6 ${activeTab === "dm" ? "hidden lg:block lg:col-span-12" : activeTab === "water" ? "hidden lg:block lg:col-span-12" : ""}`}>
+            
+            {/* CHUNK 1: 음수량 입력 카드 */}
+            {(activeTab === "all" || activeTab === "water") && (
+              <div className="bg-slate-900/40 border border-white/10 rounded-2xl p-6 space-y-5 backdrop-blur-md">
+                <div className="flex items-center gap-2 border-b border-white/5 pb-3">
+                  <Droplets className="w-5 h-5 text-magenta" />
+                  <h2 className="text-base font-black text-white uppercase tracking-wider">
+                    01. 하루 필수 음수량 진단 데이터
+                  </h2>
+                </div>
+
+                <div className="space-y-4">
+                  {/* 축종 토글 */}
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-400 uppercase">반려동물 종류</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setPetType("cat")}
+                        className={`py-3 rounded-xl border text-sm font-bold transition-all cursor-pointer ${
+                          petType === "cat"
+                            ? "border-magenta bg-magenta/10 text-magenta"
+                            : "border-white/5 bg-white/5 text-slate-400 hover:bg-white/10"
+                        }`}
+                      >
+                        🐱 고양이 (Cat)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPetType("dog")}
+                        className={`py-3 rounded-xl border text-sm font-bold transition-all cursor-pointer ${
+                          petType === "dog"
+                            ? "border-magenta bg-magenta/10 text-magenta"
+                            : "border-white/5 bg-white/5 text-slate-400 hover:bg-white/10"
+                        }`}
+                      >
+                        🐶 강아지 (Dog)
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 몸무게 */}
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-400 uppercase flex items-center gap-1">
+                      <Scale className="w-3.5 h-3.5" /> 현재 체중 입력
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        inputMode="decimal"
+                        value={weight}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          const regex = /^\d*\.?\d*$/;
+                          if (regex.test(val)) setWeight(val);
+                        }}
+                        placeholder="예: 5.4"
+                        className="w-full pl-4 pr-12 py-3.5 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-1 focus:ring-magenta focus:border-magenta text-slate-200 font-bold text-sm"
+                      />
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-400 font-bold">
+                        kg
+                      </span>
+                    </div>
+                    {!isWaterValid && (
+                      <p className="text-[11px] text-rose-400 font-medium">올바른 체중(0보다 큰 숫자)을 입력해 주세요.</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* CHUNK 2: DM 영양성분 입력 카드 */}
+            {(activeTab === "all" || activeTab === "dm") && (
+              <div className="bg-slate-900/40 border border-white/10 rounded-2xl p-6 space-y-5 backdrop-blur-md">
+                <div className="flex items-center gap-2 border-b border-white/5 pb-3">
+                  <Dna className="w-5 h-5 text-magenta" />
+                  <h2 className="text-base font-black text-white uppercase tracking-wider">
+                    02. 사료 등록성분표 (영양 분석 데이터)
+                  </h2>
+                </div>
+
+                <div className="space-y-4">
+                  <p className="text-xs text-slate-400 leading-normal">
+                    * 사료 포장지 뒷면에 적혀 있는 수치(%)를 입력하세요. 수분 함량을 뺀 건물 기준으로 자동 변환됩니다.
+                  </p>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* 수분 */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-slate-400">수분 (%)</label>
+                      <input
+                        type="number"
+                        value={moisture}
+                        onChange={(e) => setMoisture(e.target.value)}
+                        placeholder="기본값 10"
+                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none text-slate-200 font-bold text-sm"
+                      />
+                    </div>
+                    {/* 조단백 */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-slate-400">조단백 (%)</label>
+                      <input
+                        type="number"
+                        value={crudeProtein}
+                        onChange={(e) => setCrudeProtein(e.target.value)}
+                        placeholder="예: 28"
+                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none text-slate-200 font-bold text-sm"
+                      />
+                    </div>
+                    {/* 조지방 */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-slate-400">조지방 (%)</label>
+                      <input
+                        type="number"
+                        value={crudeFat}
+                        onChange={(e) => setCrudeFat(e.target.value)}
+                        placeholder="예: 14"
+                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none text-slate-200 font-bold text-sm"
+                      />
+                    </div>
+                    {/* 조회분/조섬유 */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-slate-400">조회분+조섬유 (%)</label>
+                      <input
+                        type="number"
+                        value={crudeAshFiber}
+                        onChange={(e) => setCrudeAshFiber(e.target.value)}
+                        placeholder="예: 8"
+                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none text-slate-200 font-bold text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  {!isDmValid && (
+                    <div className="flex items-center gap-1.5 p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 text-xs">
+                      <AlertCircle className="w-4 h-4 shrink-0" />
+                      <span>성분비 합산값은 100%를 초과할 수 없으며 음수값은 허용되지 않습니다.</span>
+                    </div>
+                  )}
+
+                  <div className="flex justify-end pt-1">
+                    <button
+                      type="button"
+                      onClick={handleReset}
+                      className="flex items-center gap-1.5 text-[11px] text-slate-500 hover:text-slate-300 font-bold transition-all cursor-pointer"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      설정 리셋
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+          </div>
+
+          {/* ==================== OUTPUT PANELS (결과 출력 영역) ==================== */}
+          <div className={`lg:col-span-6 space-y-6 ${activeTab === "dm" ? "lg:col-span-12" : activeTab === "water" ? "lg:col-span-12" : ""}`}>
+            
+            {/* CHUNK 3: 음수량 진단 결과 리포트 */}
+            {(activeTab === "all" || activeTab === "water") && (
+              <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 space-y-5 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-magenta/5 rounded-full blur-2xl pointer-events-none" />
+                
+                <div className="flex items-center justify-between border-b border-white/5 pb-3">
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                    OUTPUT 01 // WATER REQUIREMENT REPORT
+                  </h3>
+                  <span className="text-[10px] font-black text-magenta px-2 py-0.5 bg-magenta/10 border border-magenta/20 rounded-full uppercase tracking-wider">
+                    정량 진단
+                  </span>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex justify-between items-baseline">
+                    <span className="text-slate-400 text-sm font-medium">일일 권장 필수 음수량</span>
+                    <div className="text-right">
+                      <span className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                        {isWaterValid ? computedWater : "--"}
+                      </span>
+                      <span className="text-slate-400 font-bold text-sm ml-1">ml</span>
+                    </div>
+                  </div>
+
+                  {/* 종이컵 환산 시각화 게이지 */}
+                  <div className="bg-slate-950 border border-white/5 rounded-xl p-4 space-y-3.5">
+                    <div className="flex justify-between text-xs font-bold">
+                      <span className="text-slate-400 flex items-center gap-1.5">
+                        <CupSoda className="w-4 h-4 text-magenta" />
+                        종이컵 환산 기준
+                      </span>
+                      <span className="text-white">약 {isWaterValid ? cupCount : "--"} 잔</span>
+                    </div>
+
+                    {/* 물방울/종이컵 채워지기 시각화 */}
+                    <div className="flex items-center gap-2 pt-1.5 justify-center">
+                      {Array.from({ length: 6 }).map((_, idx) => {
+                        const score = idx + 1;
+                        let fillPercentage = 0;
+                        if (cupCount >= score) {
+                          fillPercentage = 100;
+                        } else if (cupCount > score - 1) {
+                          fillPercentage = (cupCount - (score - 1)) * 100;
+                        }
+                        
+                        return (
+                          <div key={idx} className="relative w-8 h-10 border border-white/10 rounded-md bg-slate-900 overflow-hidden flex items-end justify-center">
+                            {/* 파란색 워터 필 채우기 */}
+                            <div 
+                              className="w-full bg-gradient-to-t from-indigo-600 to-sky-400 transition-all duration-1000"
+                              style={{ height: `${isWaterValid ? fillPercentage : 0}%` }}
+                            />
+                            <span className="absolute inset-0 flex items-center justify-center text-[10px] text-slate-400 font-bold z-10 select-none">
+                              {score}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <p className="text-[10px] text-slate-500 text-center">
+                      * 종이컵 1잔을 가득 채웠을 때(약 180ml)를 기초로 산정한 상대 비율 비주얼 가이드입니다.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* CHUNK 4: DM 영양 분석 결과 리포트 */}
+            {(activeTab === "all" || activeTab === "dm") && (
+              <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 space-y-5 relative overflow-hidden">
+                
+                {/* 판정 배지 (네온 플로팅) */}
+                <div className="absolute top-6 right-6">
+                  <span className={`inline-flex items-center gap-1.5 px-3 py-1 border rounded-full text-xs font-black tracking-wide ${ratingInfo.bg} transition-all`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${ratingInfo.bullet}`} />
+                    {ratingInfo.text}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between border-b border-white/5 pb-3">
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                    OUTPUT 02 // DRY MATTER NUTRITION REPORT
+                  </h3>
+                </div>
+
+                <div className="space-y-5">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-slate-950/50 border border-white/5 p-3 rounded-xl text-center">
+                      <p className="text-[10px] font-bold text-slate-400">건조 건물 비율(DM)</p>
+                      <p className="text-xl font-extrabold text-white mt-1">
+                        {isDmValid ? `${dryMatterPercent}%` : "--"}
+                      </p>
+                    </div>
+                    <div className="bg-slate-950/50 border border-white/5 p-3 rounded-xl text-center">
+                      <p className="text-[10px] font-bold text-slate-400">대략적인 탄수화물(DM)</p>
+                      <p className="text-xl font-extrabold text-white mt-1">
+                        {isDmValid ? `${dmCarbo}%` : "--"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 바 그래프식 함량 정보 비교 */}
+                  <div className="space-y-3.5 bg-slate-950 border border-white/5 rounded-xl p-4">
+                    {/* 단백질 */}
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-xs font-bold">
+                        <span className="text-slate-300">실제 단백질 함량 (DM)</span>
+                        <span className="text-magenta">{isDmValid ? `${dmProtein}%` : "--"}</span>
+                      </div>
+                      <div className="h-2 w-full bg-slate-900 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-magenta rounded-full transition-all duration-1000"
+                          style={{ width: `${isDmValid ? Math.min(100, dmProtein * 1.5) : 0}%` }}
+                        />
+                      </div>
+                      <div className="flex justify-between text-[9px] text-slate-500">
+                        <span>최소 권장: 25%</span>
+                        <span>프리미엄 지향: 35%+</span>
+                      </div>
+                    </div>
+
+                    {/* 지방 */}
+                    <div className="space-y-1.5 pt-1">
+                      <div className="flex justify-between text-xs font-bold">
+                        <span className="text-slate-300">실제 지방 함량 (DM)</span>
+                        <span className="text-indigo-400">{isDmValid ? `${dmFat}%` : "--"}</span>
+                      </div>
+                      <div className="h-2 w-full bg-slate-900 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-indigo-500 rounded-full transition-all duration-1000"
+                          style={{ width: `${isDmValid ? Math.min(100, dmFat * 2.5) : 0}%` }}
+                        />
+                      </div>
+                      <div className="flex justify-between text-[9px] text-slate-500">
+                        <span>다이어트 권장: 9~15%</span>
+                        <span>고에너지: 20%+</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 수의학 가이드 솔루션 */}
+                  <div className="bg-slate-950/80 border border-white/5 p-4 rounded-xl space-y-2 text-xs leading-relaxed text-slate-400">
+                    <p className="font-bold text-slate-200 flex items-center gap-1">
+                      <CheckCircle2 className="w-4 h-4 text-magenta" />
+                      성분 환산 코멘트
+                    </p>
+                    {isDmValid ? (
+                      proteinRating === "premium" ? (
+                        <p>고농축 단백질 사료로 활동성이 뛰어난 반려동물의 골격과 근력 형성에 매우 적합합니다. 다만 기저 신장 질환이 있는 아이는 주치의 수의사와 고단백 사료 급여 지속 여부를 조율하세요.</p>
+                      ) : proteinRating === "low" ? (
+                        <p className="text-rose-300">수분을 제외한 건물 내 단백질 비율이 수의학 최소 권장량인 30%를 하회하고 있습니다. 옥수수나 쌀 등 탄수화물 충전재 비중이 매우 높아 장기 급여 시 비만이나 당뇨병 유발 주의가 요구됩니다.</p>
+                      ) : (
+                        <p>표준 영양소 비율을 잘 충족하고 있는 일반 건강 유지식 사료입니다. 현재 영양 성분에 맞추어 정량 급여를 실시하고, 간식을 통한 추가 지방 섭취를 적절히 조절해 주세요.</p>
+                      )
+                    ) : (
+                      <p>올바른 사료 등록성분을 입력해 주시면 그에 따른 수의학 솔루션 분석 내용이 정밀하게 제공됩니다.</p>
+                    )}
+                  </div>
+
+                </div>
+
+              </div>
+            )}
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  );
+}
