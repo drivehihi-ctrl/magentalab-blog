@@ -46,6 +46,7 @@ export default function Header() {
           <Link href="/about" className="hover:text-magenta transition-colors">연구소 소개</Link>
           <Link href="/about-ansim" className="hover:text-magenta transition-colors">안심이 소개</Link>
           <Link href="/ask-ansimi" className="hover:text-magenta transition-colors">질문하기</Link>
+          <Link href="/bcs-calculator" className="hover:text-magenta transition-colors">칼로리 계산기</Link>
           {/* <Link href="/shop" className="hover:text-magenta transition-colors">전용몰</Link> */}
           <div className="ml-2 mr-2">
             <LiveSearch />
@@ -123,6 +124,15 @@ export default function Header() {
               onClick={() => setIsMenuOpen(false)}
             >
               질문하기
+              <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
+            </Link>
+            <div className="h-px bg-gray-50 mx-4" />
+            <Link 
+              href="/bcs-calculator" 
+              className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              칼로리 계산기
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
             </Link>
             {/* <div className="h-px bg-gray-50 mx-4" />
