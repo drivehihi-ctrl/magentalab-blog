@@ -442,14 +442,7 @@ export default function EmergencyCalculator() {
                 </p>
               </div>
 
-              {/* 전화 바로 걸기 (피츠의 법칙 모바일 최적화) */}
-              <a
-                href="tel:119" // 실제 전화가 가도록 유도하거나 응급 대기용 앵커
-                className="w-full py-4 bg-slate-900 border border-rose-500/30 hover:border-rose-500/50 rounded-2xl transition-all font-bold text-slate-200 text-sm flex items-center justify-center gap-2 cursor-pointer shadow-lg"
-              >
-                <PhoneCall className="w-4 h-4 text-rose-500 shrink-0 animate-bounce" />
-                가까운 응급 동물병원에 즉시 연락하기
-              </a>
+
 
             </div>
           </div>
