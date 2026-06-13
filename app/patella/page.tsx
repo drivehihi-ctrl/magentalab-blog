@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import PatellaDiagnoser from "@/components/PatellaDiagnoser";
+import RelatedPosts from "@/components/RelatedPosts";
+import { searchPosts } from "@/lib/wp";
 
 // 검색 엔진 노출을 위한 슬개골 자가진단기 전용 메타데이터 설정
 export const metadata: Metadata = {
@@ -38,7 +40,7 @@ export const metadata: Metadata = {
   }
 };
 
-export default function PatellaPage() {
+export default async function PatellaPage() {
   // Schema.org Structured Data - WebApplication / Diagnoser Tool
   const toolJsonLd = {
     "@context": "https://schema.org",
@@ -56,13 +58,24 @@ export default function PatellaPage() {
     "description": "반려견의 나이, 체중, 걷는 모습 행동 증상을 기반으로 슬개골 탈구 및 관절 질환 위험도를 신속하게 진단하는 자가 진단 프로그램입니다."
   };
 
+  let relatedPosts: any[] = [];
+  try {
+    const posts = await searchPosts("슬개골");
+    relatedPosts = posts.slice(0, 3);
+  } catch (error) {
+    console.error("Failed to fetch related posts for Patella:", error);
+  }
+
   return (
-    <>
+    <div className="bg-slate-50 pb-20">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(toolJsonLd) }}
       />
       <PatellaDiagnoser />
-    </>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <RelatedPosts posts={relatedPosts} />
+      </div>
+    </div>
   );
 }

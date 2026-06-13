@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import DmCalculator from "@/components/DmCalculator";
+import RelatedPosts from "@/components/RelatedPosts";
+import { searchPosts } from "@/lib/wp";
 
 // 구글 및 네이버 검색 최적화를 위한 전용 SEO 메타데이터 설정
 export const metadata: Metadata = {
@@ -39,6 +41,21 @@ export const metadata: Metadata = {
   }
 };
 
-export default function DmCalculatorPage() {
-  return <DmCalculator />;
+export default async function DmCalculatorPage() {
+  let relatedPosts: any[] = [];
+  try {
+    const posts = await searchPosts("음수량");
+    relatedPosts = posts.slice(0, 3);
+  } catch (error) {
+    console.error("Failed to fetch related posts for DM:", error);
+  }
+
+  return (
+    <div className="bg-slate-50 pb-20">
+      <DmCalculator />
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <RelatedPosts posts={relatedPosts} />
+      </div>
+    </div>
+  );
 }

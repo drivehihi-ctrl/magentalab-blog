@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import PetcareExpensesCalculator from "@/components/PetcareExpensesCalculator";
+import RelatedPosts from "@/components/RelatedPosts";
+import { searchPosts } from "@/lib/wp";
 
 // 검색 엔진 노출을 위한 반려동물 양육비 계산기 전용 메타데이터 설정
 export const metadata: Metadata = {
@@ -38,7 +40,7 @@ export const metadata: Metadata = {
   }
 };
 
-export default function PetcareExpensesPage() {
+export default async function PetcareExpensesPage() {
   // Schema.org Structured Data - WebApplication / Expense Calculator Tool
   const toolJsonLd = {
     "@context": "https://schema.org",
@@ -56,13 +58,24 @@ export default function PetcareExpensesPage() {
     "description": "반려동물(강아지/고양이)의 성장 생애주기별 사료 등급, 위생용품, 미용 및 예방 의료비를 반영하여 한 달간 고정 지출과 평생 총 유지비를 계산해주는 지출 분석 시뮬레이터입니다."
   };
 
+  let relatedPosts: any[] = [];
+  try {
+    const posts = await searchPosts("양육비");
+    relatedPosts = posts.slice(0, 3);
+  } catch (error) {
+    console.error("Failed to fetch related posts for Expenses:", error);
+  }
+
   return (
-    <>
+    <div className="bg-slate-50 pb-20">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(toolJsonLd) }}
       />
       <PetcareExpensesCalculator />
-    </>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <RelatedPosts posts={relatedPosts} />
+      </div>
+    </div>
   );
 }

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import BCSCalculator from "@/components/BCSCalculator";
+import RelatedPosts from "@/components/RelatedPosts";
+import { searchPosts } from "@/lib/wp";
 
 // 구글 및 네이버 검색 노출을 위한 상세 SEO 메타데이터 설정
 export const metadata: Metadata = {
@@ -40,6 +42,21 @@ export const metadata: Metadata = {
   }
 };
 
-export default function BcsCalculatorPage() {
-  return <BCSCalculator />;
+export default async function BcsCalculatorPage() {
+  let relatedPosts: any[] = [];
+  try {
+    const posts = await searchPosts("비만");
+    relatedPosts = posts.slice(0, 3);
+  } catch (error) {
+    console.error("Failed to fetch related posts for BCS:", error);
+  }
+
+  return (
+    <div className="bg-slate-50 pb-20">
+      <BCSCalculator />
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <RelatedPosts posts={relatedPosts} />
+      </div>
+    </div>
+  );
 }

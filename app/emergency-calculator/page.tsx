@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import EmergencyCalculator from "@/components/EmergencyCalculator";
+import RelatedPosts from "@/components/RelatedPosts";
+import { searchPosts } from "@/lib/wp";
 
 // 구글 및 네이버 검색 노출을 위한 응급 계산기 전용 SEO 메타데이터 설정
 export const metadata: Metadata = {
@@ -39,6 +41,32 @@ export const metadata: Metadata = {
   }
 };
 
-export default function EmergencyCalculatorPage() {
-  return <EmergencyCalculator />;
+export default async function EmergencyCalculatorPage() {
+  let relatedPosts: any[] = [];
+  try {
+    // 세 가지 핵심 키워드(초콜릿, 포도, 자일리톨)로 병렬 검색 수행
+    const [chocolatePosts, grapePosts, xylitolPosts] = await Promise.all([
+      searchPosts("초콜릿"),
+      searchPosts("포도"),
+      searchPosts("자일리톨")
+    ]);
+
+    // 검색된 글들을 합친 뒤 중복 제거
+    const combined = [...chocolatePosts, ...grapePosts, ...xylitolPosts];
+    const uniquePostsMap = new Map();
+    combined.forEach(post => uniquePostsMap.set(post.id, post));
+    
+    relatedPosts = Array.from(uniquePostsMap.values()).slice(0, 3);
+  } catch (error) {
+    console.error("Failed to fetch related posts for Emergency:", error);
+  }
+
+  return (
+    <div className="bg-slate-50 pb-20">
+      <EmergencyCalculator />
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <RelatedPosts posts={relatedPosts} />
+      </div>
+    </div>
+  );
 }
