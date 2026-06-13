@@ -80,17 +80,23 @@ body {
 }
 
 /* WordPress Table Styles */
+.wp-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 2.5rem 0 0.5rem 0; /* 하단 안내문구와의 간격을 좁히기 위해 조정 */
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
 .wp-content table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  margin: 2.5rem 0;
-  border: 1px solid #e5e7eb;
-  border-radius: 1rem;
-  overflow: hidden;
+  margin: 0; /* wrapper가 스타일을 담당하므로 0 */
   font-size: 0.95rem;
   color: #374151;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
 .wp-content th,
@@ -131,13 +137,49 @@ body {
   transition: background-color 0.2s ease;
 }
 
-/* Responsive Table Wrapper for mobile devices */
+/* figure.wp-block-table 스타일 리셋 */
+.wp-content figure.wp-block-table,
+.wp-content figure {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+/* 모바일 전용 드래그 안내 문구 스타일 */
+.wp-table-notice {
+  display: none; /* 데스크톱에서는 노출 안 함 */
+}
+
 @media (max-width: 768px) {
-  .wp-content table {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+  .wp-table-notice {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin-bottom: 2.5rem; /* 아래에 있는 본문 글과의 간격 확보 */
+    padding: 0.6rem 0.8rem;
+    background-color: var(--magenta-light);
+    border-radius: 0.5rem;
+    border-left: 3.5px solid var(--magenta);
+    font-weight: 600;
+  }
+
+  @keyframes swipe-hint {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(4px); }
+  }
+
+  .wp-table-notice svg {
+    animation: swipe-hint 1.5s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+
+  /* 모바일에서 테이블 찌그러짐 방지 */
+  .wp-content th,
+  .wp-content td {
+    min-width: 140px;
+    word-break: keep-all;
   }
 }
 

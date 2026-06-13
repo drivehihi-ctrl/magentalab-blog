@@ -223,6 +223,17 @@ export function fixWpLinks(content: string, postTitle?: string) {
     }
   });
 
+  // 3. 테이블 태그 래핑 및 모바일 스크롤 안내 문구 추가
+  fixed = fixed.replace(/<table([\s\S]*?)>([\s\S]*?)<\/table>/gi, (match, tableAttrs, tableContent) => {
+    return `<div class="wp-table-wrapper"><table${tableAttrs}>${tableContent}</table></div>` +
+      `<div class="wp-table-notice">` +
+        `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E5007E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">` +
+          `<path d="M5 12h14M12 5l7 7-7 7"/>` +
+        `</svg>` +
+        `<span>💡 표를 오른쪽으로 드래그(스크롤)하면 더 많은 정보가 있답니다!</span>` +
+      `</div>`;
+  });
+
   return fixed;
 }
 
