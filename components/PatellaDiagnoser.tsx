@@ -271,7 +271,8 @@ export default function PatellaDiagnoser() {
                 </div>
               </div>
 
-              {/* BOFU 퍼널 자사몰 제휴 배너 */}
+              {/* BOFU 퍼널 자사몰 제휴 배너 (제휴몰 정비 완료 시 주석 해제) */}
+              {/* 
               <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-magenta via-[#9B0D50] to-[#7B0A40] text-white p-6 sm:p-8 shadow-xl shadow-magenta/10 border border-white/10 group">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
                 <div className="absolute bottom-0 left-1/2 w-48 h-48 bg-[#E5007E]/20 rounded-full blur-2xl translate-y-1/3 pointer-events-none" />
@@ -303,6 +304,7 @@ export default function PatellaDiagnoser() {
                   </a>
                 </div>
               </div>
+              */}
 
               {/* 다시 진단하기 버튼 */}
               <button
