@@ -443,41 +443,6 @@ export default function PatellaDiagnoser() {
                     </p>
                   </div>
 
-                  {/* BOFU 전환 퍼널 배너 (옐로우/레드 단계에서 더 도드라지는 비주얼) */}
-                  {(diagnosisResult?.level === "yellow" || diagnosisResult?.level === "red") && (
-                    <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-br from-magenta via-[#c2006b] to-[#8f004f] text-white p-5.5 sm:p-6.5 shadow-lg shadow-magenta/10 border border-white/10 group transition-all duration-500 ${
-                      diagnosisResult?.level === "red" ? "ring-2 ring-rose-500 ring-offset-2 ring-offset-rose-50" : ""
-                    }`}>
-                      <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
-                      <div className="absolute bottom-0 left-1/2 w-36 h-36 bg-[#E5007E]/20 rounded-full blur-xl translate-y-1/3 pointer-events-none" />
-                      
-                      <div className="relative z-10 flex flex-col gap-3.5">
-                        <div className="flex items-center gap-1.5 w-fit px-2.5 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/10 text-white/95 text-[10px] font-black uppercase tracking-wider">
-                          <Heart className="w-3 h-3 text-pink-300 fill-pink-300 animate-pulse" />
-                          관절 손상 정지 스페셜 솔루션
-                        </div>
-                        
-                        <div className="space-y-1.5">
-                          <h4 className="text-[15px] sm:text-base font-extrabold tracking-tight leading-snug">
-                            슬개골 탈구 예방과 진행 지연의 핵심은<br />
-                            <span className="text-yellow-300">‘체중 감량’</span>과 <span className="text-yellow-300">‘연골 영양 공급’</span>입니다.
-                          </h4>
-                          <p className="text-[11px] sm:text-xs text-white/85 leading-relaxed font-semibold">
-                            우리 아이 슬개골 보호에 맞춤화된 초경량 매트와 연골 속부터 꽉 채워주는 관절 영양제로 다리 아픔을 예방해 주세요.
-                          </p>
-                        </div>
-
-                        <a 
-                          href="https://petfair.yeogida-dog.com/offline/landing?pc_seq=1727"
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center gap-2 mt-1 px-5 py-3.5 bg-yellow-300 hover:bg-white text-[#6B0836] font-black text-xs sm:text-sm rounded-xl w-full transition-all group-hover:scale-[1.01] shadow-md shadow-black/10 active:scale-[0.99] cursor-pointer"
-                        >
-                          슬개골 매트 & 관절 기능성 영양제 보러가기 ➔
-                        </a>
-                      </div>
-                    </div>
-                  )}
 
                   {/* 다시 진단하기 버튼 */}
                   <button
