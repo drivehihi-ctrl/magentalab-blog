@@ -240,6 +240,7 @@ export default async function PostDetailPage({ params }: PageProps) {
           <CalculatorBanner 
             content={post.content.rendered} 
             title={post.title.rendered} 
+            postId={id}
           />
 
           {/* 제휴몰 배너 (본문 직후) */}

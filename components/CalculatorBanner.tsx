@@ -1,14 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { Activity, Droplets, Calendar, ShieldAlert } from "lucide-react";
+import { Activity, Droplets, Calendar, ShieldAlert, Coins } from "lucide-react";
 
 interface CalculatorBannerProps {
   content: string;
   title: string;
+  postId?: string;
 }
 
-export default function CalculatorBanner({ content, title }: CalculatorBannerProps) {
+export default function CalculatorBanner({ content, title, postId }: CalculatorBannerProps) {
   // 본문과 타이틀을 합쳐 소문자로 통일하여 키워드 매칭 분석
   const textToAnalyze = (title + " " + content).toLowerCase();
 
@@ -42,19 +43,27 @@ export default function CalculatorBanner({ content, title }: CalculatorBannerPro
       "인간 나이", "사람 나이", "생애주기", "성장기", "노령기", "성숙기", 
       "아깽이", "퍼피", "시니어견", "시니어묘", "반려견 수명", "노화", 
       "개월 수", "태어난 연월", "생애 주기"
+    ]),
+    expenses: getScore([
+      "양육비", "유지비", "키우는 비용", "병원비", "사료비", "고정 지출", 
+      "누적 양육비", "용품비", "예방 접종비", "의료비 시뮬레이션", "평생 비용"
     ])
   };
 
   // 가장 점수가 높은 카테고리를 최종 매칭
-  let selected: "emergency" | "dm" | "bcs" | "age" = "bcs"; // 매칭되지 않는 경우의 기본값은 비만도 계산기
-  let maxScore = 0;
+  let selected: "emergency" | "dm" | "bcs" | "age" | "expenses" = "bcs"; // 매칭되지 않는 경우의 기본값은 비만도 계산기
 
-  (Object.entries(scores) as [typeof selected, number][]).forEach(([key, val]) => {
-    if (val > maxScore) {
-      maxScore = val;
-      selected = key;
-    }
-  });
+  if (postId === "1682") {
+    selected = "expenses";
+  } else {
+    let maxScore = 0;
+    (Object.entries(scores) as [typeof selected, number][]).forEach(([key, val]) => {
+      if (val > maxScore) {
+        maxScore = val;
+        selected = key;
+      }
+    });
+  }
 
   // 사용자가 명시적으로 전달한 텍스트 및 전용 라벨 매핑
   const bannerData = {
@@ -93,6 +102,15 @@ export default function CalculatorBanner({ content, title }: CalculatorBannerPro
       buttonText: "안심이 수석연구원의 강아지 초콜릿 / 위험 음독 성분 응급 계산기 가기 ➔",
       textAfterButton: " 링크를 통해 10초 만에 무료로 고위험 여부를 판단해 보세요.",
       bgClass: "from-rose-500/5 to-red-500/5 border-rose-500/20"
+    },
+    expenses: {
+      url: "/Petcareexpenses",
+      icon: <Coins className="w-5 h-5 text-amber-500" />,
+      tag: "💰 반려동물 평생 양육비 계산기",
+      textBeforeButton: "우리 아이 평생 키우는데 비용이 얼마나 들까요? 사료 등급, 위생용품, 의료비 시뮬레이션으로 평생 유지비와 지출 비중을 10초 만에 확인해 보세요. ",
+      buttonText: "안심이 수석연구원의 강아지 / 고양이 평생 양육비 계산기 가기 ➔",
+      textAfterButton: " 링크를 클릭해 지금 무료로 지출 구조를 진단해 보세요.",
+      bgClass: "from-amber-500/5 to-yellow-500/5 border-amber-500/20"
     }
   };
 
