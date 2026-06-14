@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import PetcareExpensesCalculator from "@/components/PetcareExpensesCalculator";
 import RelatedPosts from "@/components/RelatedPosts";
-import { searchPosts } from "@/lib/wp";
+import { getPost, searchPosts } from "@/lib/wp";
 
 // 검색 엔진 노출을 위한 반려동물 양육비 계산기 전용 메타데이터 설정
 export const metadata: Metadata = {
@@ -60,8 +60,24 @@ export default async function PetcareExpensesPage() {
 
   let relatedPosts: any[] = [];
   try {
-    const posts = await searchPosts("양육비");
-    relatedPosts = posts.slice(0, 3);
+    // 1741번 글 직접 로드와 "양육비" 키워드 검색을 병렬 수행
+    const [targetPost, searchResults] = await Promise.all([
+      getPost("1741").catch(() => null),
+      searchPosts("양육비").catch(() => [])
+    ]);
+
+    const combined: any[] = [];
+    if (targetPost) {
+      combined.push(targetPost);
+    }
+
+    searchResults.forEach((post) => {
+      if (!targetPost || post.id !== targetPost.id) {
+        combined.push(post);
+      }
+    });
+
+    relatedPosts = combined.slice(0, 3);
   } catch (error) {
     console.error("Failed to fetch related posts for Expenses:", error);
   }
