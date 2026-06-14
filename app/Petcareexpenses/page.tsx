@@ -60,19 +60,23 @@ export default async function PetcareExpensesPage() {
 
   let relatedPosts: any[] = [];
   try {
-    // 1741번 글 직접 로드와 "양육비" 키워드 검색을 병렬 수행
-    const [targetPost, searchResults] = await Promise.all([
+    // 1741번, 1750번 글 직접 로드와 "양육비" 키워드 검색을 병렬 수행
+    const [post1741, post1750, searchResults] = await Promise.all([
       getPost("1741").catch(() => null),
+      getPost("1750").catch(() => null),
       searchPosts("양육비").catch(() => [])
     ]);
 
     const combined: any[] = [];
-    if (targetPost) {
-      combined.push(targetPost);
-    }
+    if (post1741) combined.push(post1741);
+    if (post1750) combined.push(post1750);
 
     searchResults.forEach((post) => {
-      if (!targetPost || post.id !== targetPost.id) {
+      const isDuplicate = 
+        (post1741 && post.id === post1741.id) || 
+        (post1750 && post.id === post1750.id);
+        
+      if (!isDuplicate) {
         combined.push(post);
       }
     });
