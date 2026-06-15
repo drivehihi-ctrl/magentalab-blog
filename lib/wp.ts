@@ -22,10 +22,25 @@ export interface PostsResponse {
   totalPosts: number;
 }
 
-export async function getPosts(page: number = 1, perPage: number = 20, search?: string): Promise<PostsResponse> {
+export interface WPCategory {
+  id: number;
+  name: string;
+  slug: string;
+  count: number;
+}
+
+export async function getPosts(
+  page: number = 1, 
+  perPage: number = 20, 
+  search?: string,
+  category?: string
+): Promise<PostsResponse> {
   let url = `${WP_API_URL}/posts?_embed&per_page=${perPage}&page=${page}`;
   if (search) {
     url += `&search=${encodeURIComponent(search)}`;
+  }
+  if (category) {
+    url += `&categories=${category}`;
   }
 
   const res = await fetch(url, {
@@ -46,6 +61,19 @@ export async function getPosts(page: number = 1, perPage: number = 20, search?: 
     totalPages, 
     totalPosts 
   };
+}
+
+export async function getAllCategories(): Promise<WPCategory[]> {
+  const res = await fetch(`${WP_API_URL}/categories?per_page=100`, {
+    next: {
+      revalidate: 3600,
+      tags: ['categories']
+    },
+  });
+  if (!res.ok) throw new Error("Failed to fetch categories");
+  const categories: WPCategory[] = await res.json();
+  // 글 개수가 0개보다 많은 카테고리만 노출하거나, uncategorized는 제외
+  return categories.filter(c => c.count > 0 && c.slug !== 'uncategorized');
 }
 
 /**
