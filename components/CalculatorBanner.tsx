@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Activity, Droplets, Calendar, ShieldAlert, Coins } from "lucide-react";
+import { Activity, Droplets, Calendar, ShieldAlert, Coins, Bone } from "lucide-react";
 
 interface CalculatorBannerProps {
   content: string;
@@ -47,11 +47,19 @@ export default function CalculatorBanner({ content, title, postId }: CalculatorB
     expenses: getScore([
       "양육비", "유지비", "키우는 비용", "병원비", "사료비", "고정 지출", 
       "누적 양육비", "용품비", "예방 접종비", "의료비 시뮬레이션", "평생 비용"
+    ]),
+    patella: getScore([
+      "슬개골", "탈구", "슬개골 탈구", "관절", "다리", "절뚝", "다리를 절", 
+      "뒷다리", "절뚝거림", "십자인대", "쓸개골", "수술비", "영양제"
+    ]),
+    fic: getScore([
+      "방광염", "특발성 방광염", "fic", "고양이 화장실", "배변 실수", 
+      "소변 울음", "스트레스 지수", "뇨의", "혈뇨", "슬러지", "오버그루밍"
     ])
   };
 
   // 가장 점수가 높은 카테고리를 최종 매칭
-  let selected: "emergency" | "dm" | "bcs" | "age" | "expenses" = "bcs"; // 매칭되지 않는 경우의 기본값은 비만도 계산기
+  let selected: "emergency" | "dm" | "bcs" | "age" | "expenses" | "patella" | "fic" = "bcs"; // 매칭되지 않는 경우의 기본값은 비만도 계산기
 
   if (postId === "1682") {
     selected = "expenses";
@@ -111,6 +119,24 @@ export default function CalculatorBanner({ content, title, postId }: CalculatorB
       buttonText: "안심이 수석연구원의 강아지 / 고양이 평생 양육비 계산기 가기 ➔",
       textAfterButton: " 링크를 클릭해 지금 무료로 지출 구조를 진단해 보세요.",
       bgClass: "from-amber-500/5 to-yellow-500/5 border-amber-500/20"
+    },
+    patella: {
+      url: "/patella",
+      icon: <Bone className="w-5 h-5 text-emerald-500" />,
+      tag: "🦴 슬개골 탈구 & 관절 자가진단",
+      textBeforeButton: "우리 아이 걷는 모습이 평소와 다르게 절뚝거리나요? 걷는 자세와 행동 패턴만으로 슬개골 탈구 위험 단계를 10초 만에 체크해 보세요. ",
+      buttonText: "안심이 수석연구원의 강아지 슬개골 탈구 & 관절 자가 진단기 가기 ➔",
+      textAfterButton: " 링크를 클릭해 지금 즉시 무료로 진단해 볼 수 있습니다.",
+      bgClass: "from-emerald-500/5 to-teal-500/5 border-emerald-500/20"
+    },
+    fic: {
+      url: "/FIC",
+      icon: <Activity className="w-5 h-5 text-purple-500" />,
+      tag: "🐱 고양이 스트레스 & FIC 방광염 진단",
+      textBeforeButton: "최근 이사나 모래 교체 후 고양이가 화장실 실수를 하나요? 영역 동물 고양이의 스트레스 수준과 FIC 방광염 위험 단계를 10초 만에 확인해 보세요. ",
+      buttonText: "안심이 수석연구원의 고양이 FIC 방광염 및 스트레스 진단기 가기 ➔",
+      textAfterButton: " 링크를 통해 무료로 진단할 수 있습니다.",
+      bgClass: "from-purple-500/5 to-indigo-500/5 border-purple-500/20"
     }
   };
 
