@@ -42,7 +42,7 @@ export default function Header() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-gray-600">
-          <Link href="/blog" className="hover:text-magenta transition-colors">블로그</Link>
+          <Link href="/blog" className="hover:text-magenta transition-colors font-bold">블로그(카테고리)</Link>
           <Link href="/about" className="hover:text-magenta transition-colors">연구소 소개</Link>
           <Link href="/about-ansim" className="hover:text-magenta transition-colors">안심이 소개</Link>
           <Link href="/ask-ansimi" className="hover:text-magenta transition-colors">질문하기</Link>
@@ -102,7 +102,10 @@ export default function Header() {
               className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
               onClick={() => setIsMenuOpen(false)}
             >
-              블로그
+              <div>
+                <span>블로그</span>
+                <span className="block text-[10px] text-gray-400 font-normal mt-0.5">카테고리별 모아보기</span>
+              </div>
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
             </Link>
             <div className="h-px bg-gray-50 mx-4" />
