@@ -1,8 +1,7 @@
 import Image from "next/image";
-import Link from "next/link";
 import PostCard from "@/components/PostCard";
 import Pagination from "@/components/Pagination";
-import { getPosts, getAllCategories } from "@/lib/wp";
+import { getPosts } from "@/lib/wp";
 import { Metadata } from "next";
 
 // ISR: 1시간마다 갱신
@@ -26,16 +25,11 @@ export const metadata: Metadata = {
 export default async function HomePage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; category?: string }>;
+  searchParams: Promise<{ page?: string }>;
 }) {
-  const { page, category } = await searchParams;
+  const { page } = await searchParams;
   const currentPage = Number(page) || 1;
-
-  // 병렬로 포스트와 전체 카테고리 가져오기
-  const [{ posts, totalPages }, categories] = await Promise.all([
-    getPosts(currentPage, 20, undefined, category),
-    getAllCategories().catch(() => [])
-  ]);
+  const { posts, totalPages } = await getPosts(currentPage, 20);
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
@@ -115,38 +109,6 @@ export default async function HomePage({
 
       {/* Post Grid */}
       <section className="container mx-auto px-4 -mt-8">
-        {/* 카테고리 필터 칩 영역 (반응형 가로 스크롤) */}
-        <div className="flex items-center gap-2.5 overflow-x-auto pb-8 scrollbar-none max-w-5xl mx-auto">
-          {/* 전체보기 칩 */}
-          <Link
-            href="/"
-            className={`px-4.5 py-2 rounded-full text-xs sm:text-sm font-black whitespace-nowrap transition-all active:scale-95 shadow-sm ${
-              !category
-                ? "bg-magenta text-white shadow-magenta/10"
-                : "bg-gray-50 text-gray-500 border border-gray-100 hover:bg-gray-105 hover:text-gray-750"
-            }`}
-          >
-            전체보기
-          </Link>
-          {/* 개별 카테고리 칩 */}
-          {categories.map((cat) => {
-            const isSelected = category === cat.id.toString();
-            return (
-              <Link
-                key={cat.id}
-                href={`/?category=${cat.id}`}
-                className={`px-4.5 py-2 rounded-full text-xs sm:text-sm font-black whitespace-nowrap transition-all active:scale-95 shadow-sm ${
-                  isSelected
-                    ? "bg-magenta text-white shadow-magenta/10"
-                    : "bg-gray-50 text-gray-500 border border-gray-100 hover:bg-gray-105 hover:text-gray-750"
-                }`}
-              >
-                {cat.name} ({cat.count})
-              </Link>
-            );
-          })}
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {posts.map((post) => (
             <PostCard key={post.id} post={post} />
