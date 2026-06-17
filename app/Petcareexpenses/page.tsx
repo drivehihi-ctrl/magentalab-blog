@@ -61,7 +61,7 @@ export default async function PetcareExpensesPage() {
   let relatedPosts: any[] = [];
   try {
     const posts = await searchPosts("양육비");
-    relatedPosts = posts.slice(0, 3);
+    relatedPosts = posts.slice(0, 6);
   } catch (error) {
     console.error("Failed to fetch related posts for Expenses:", error);
   }

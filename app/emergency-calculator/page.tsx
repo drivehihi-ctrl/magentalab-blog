@@ -56,7 +56,7 @@ export default async function EmergencyCalculatorPage() {
     const uniquePostsMap = new Map();
     combined.forEach(post => uniquePostsMap.set(post.id, post));
     
-    relatedPosts = Array.from(uniquePostsMap.values()).slice(0, 3);
+    relatedPosts = Array.from(uniquePostsMap.values()).slice(0, 6);
   } catch (error) {
     console.error("Failed to fetch related posts for Emergency:", error);
   }

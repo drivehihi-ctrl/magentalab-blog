@@ -61,7 +61,7 @@ export default async function PatellaPage() {
   let relatedPosts: any[] = [];
   try {
     const posts = await searchPosts("슬개골");
-    relatedPosts = posts.slice(0, 3);
+    relatedPosts = posts.slice(0, 6);
   } catch (error) {
     console.error("Failed to fetch related posts for Patella:", error);
   }

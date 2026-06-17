@@ -131,7 +131,7 @@ export function getTags(post: WPPost) {
   return post._embedded?.["wp:term"]?.[1] || [];
 }
 
-export function getRelatedPosts(currentPost: WPPost, allPosts: WPPost[], limit: number = 3) {
+export function getRelatedPosts(currentPost: WPPost, allPosts: WPPost[], limit: number = 6) {
   // Get category IDs of the current post
   const currentCategoryIds = new Set(getCategories(currentPost).map(c => c.id));
   const currentTagIds = new Set(getTags(currentPost).map(t => t.id));

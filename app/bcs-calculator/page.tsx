@@ -46,7 +46,7 @@ export default async function BcsCalculatorPage() {
   let relatedPosts: any[] = [];
   try {
     const posts = await searchPosts("비만");
-    relatedPosts = posts.slice(0, 3);
+    relatedPosts = posts.slice(0, 6);
   } catch (error) {
     console.error("Failed to fetch related posts for BCS:", error);
   }

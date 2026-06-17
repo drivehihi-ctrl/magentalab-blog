@@ -62,7 +62,7 @@ export default async function FicPage() {
   let relatedPosts: any[] = [];
   try {
     const posts = await searchPosts("방광염");
-    relatedPosts = posts.slice(0, 3);
+    relatedPosts = posts.slice(0, 6);
   } catch (error) {
     console.error("Failed to fetch related posts for FIC:", error);
   }

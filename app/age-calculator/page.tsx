@@ -46,7 +46,7 @@ export default async function AgeCalculatorPage() {
   let relatedPosts: any[] = [];
   try {
     const posts = await searchPosts("나이");
-    relatedPosts = posts.slice(0, 3);
+    relatedPosts = posts.slice(0, 6);
   } catch (error) {
     console.error("Failed to fetch related posts for Age:", error);
   }
