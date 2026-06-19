@@ -74,9 +74,8 @@ export default function CommentForm({ postId }: CommentFormProps) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h4 className="text-xl font-bold text-magenta mb-2">✨ 안심이 댓글 배송 성공! ✨ {submittedId && <span className="text-xs font-normal opacity-50">(ID: {submittedId}, Post: {postId})</span>}</h4>
-        <p className="text-gray-600 mb-2">관리자 승인 후 블로그에 표시됩니다.</p>
-        <p className="text-magenta font-bold text-sm">입력하신 이메일로 '이번주의 연구소 결과 PDF'를 발송해 드릴 예정입니다! ✨</p>
+        <h4 className="text-xl font-bold text-magenta mb-2">✨ 댓글 등록 성공! ✨ {submittedId && <span className="text-xs font-normal opacity-50">(ID: {submittedId}, Post: {postId})</span>}</h4>
+        <p className="text-gray-600">관리자 승인 후 블로그에 표시됩니다.</p>
         <button 
           onClick={() => setStatus("idle")}
           className="mt-6 text-sm font-bold text-magenta hover:underline"
@@ -89,16 +88,6 @@ export default function CommentForm({ postId }: CommentFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="p-8 rounded-4xl bg-white border border-gray-100 shadow-xl shadow-gray-200/50">
-      {/* Lead Magnet Banner */}
-      <div className="mb-8 p-5 rounded-2xl bg-magenta-light/40 border border-magenta/10 flex items-center gap-4 animate-pulse">
-        <div className="text-3xl">🎁</div>
-        <div>
-          <p className="text-sm md:text-base font-bold text-magenta-dark leading-tight">
-            지금 댓글을 남겨주시면 <span className="underline decoration-2">‘이번주의 연구소 결과 PDF’</span>를 보내드려요!
-          </p>
-          <p className="text-[11px] text-magenta/70 mt-1 font-medium">관리자 확인 후 입력하신 이메일로 자동 발송됩니다.</p>
-        </div>
-      </div>
 
       <h4 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
         <span className="w-2 h-8 bg-magenta rounded-full" />
@@ -176,14 +165,14 @@ export default function CommentForm({ postId }: CommentFormProps) {
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
             </svg>
-            댓글 등록하고 PDF 받기
+            댓글 등록하기
           </>
         )}
       </button>
       
       <p className="mt-4 text-[11px] text-gray-400 text-center leading-tight">
         비방, 욕설, 광고성 댓글은 삭제될 수 있습니다. <br />
-        입력하신 이메일은 마케팅 활용 및 PDF 발송 목적으로만 사용됩니다.
+        입력하신 이메일은 마케팅 활용 목적으로만 사용됩니다.
       </p>
     </form>
 
