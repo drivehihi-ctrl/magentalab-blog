@@ -88,7 +88,7 @@ export default async function PostDetailPage({ params }: PageProps) {
   }
 
   if (!post) notFound();
-  const relatedPosts = getRelatedPosts(post, allPosts);
+  const relatedPosts = getRelatedPosts(post, allPosts, 3);
   
   const imageUrl = getFeaturedImage(post);
   const categories = getCategories(post);

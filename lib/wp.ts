@@ -136,30 +136,47 @@ export function getRelatedPosts(currentPost: WPPost, allPosts: WPPost[], limit: 
   const currentCategoryIds = new Set(getCategories(currentPost).map(c => c.id));
   const currentTagIds = new Set(getTags(currentPost).map(t => t.id));
 
-  return allPosts
-    .filter(p => p.id !== currentPost.id) // Exclude current post
+  // 1. 연관 점수가 0보다 큰 게시글 우선 추출 및 정렬
+  const related = allPosts
+    .filter(p => p.id !== currentPost.id) // 현재 포스트 제외
     .map(p => {
-      // Calculate relevance score
       let score = 0;
       const postCategories = getCategories(p);
       const postTags = getTags(p);
 
-      // Category match (High weight)
+      // 카테고리 매칭 (높은 가중치)
       postCategories.forEach(c => {
         if (currentCategoryIds.has(c.id)) score += 10;
       });
 
-      // Tag match (Medium weight)
+      // 태그 매칭 (중간 가중치)
       postTags.forEach(t => {
         if (currentTagIds.has(t.id)) score += 5;
       });
 
       return { post: p, score };
     })
-    .filter(p => p.score > 0) // Only include posts with some relevance
-    .sort((a, b) => b.score - a.score || Number(b.post.date) - Number(a.post.date))
-    .slice(0, limit)
+    .filter(p => p.score > 0)
+    .sort((a, b) => b.score - a.score || new Date(b.post.date).getTime() - new Date(a.post.date).getTime())
     .map(p => p.post);
+
+  // 연관 포스트 수가 limit(한도)를 초과하거나 같으면 바로 슬라이싱하여 반환
+  if (related.length >= limit) {
+    return related.slice(0, limit);
+  }
+
+  // 2. 연관 포스트 수가 부족하다면, 부족한 수만큼 최신 포스트로 채워 넣음 (Fallback)
+  const result = [...related];
+  const excludedIds = new Set([currentPost.id, ...related.map(p => p.id)]);
+
+  const latestPosts = allPosts
+    .filter(p => !excludedIds.has(p.id))
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  const needed = limit - result.length;
+  result.push(...latestPosts.slice(0, needed));
+
+  return result;
 }
 
 export interface WPComment {
