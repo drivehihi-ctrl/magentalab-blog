@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import { getPageBySlug, fixWpLinks, getPosts } from "@/lib/wp";
 import Link from "next/link";
 import { notFound } from "next/navigation";
