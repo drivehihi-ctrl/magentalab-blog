@@ -1,6 +1,7 @@
 import { Metadata } from "next";
-import { getPageBySlug, fixWpLinks } from "@/lib/wp";
+import { getPageBySlug, fixWpLinks, getPosts } from "@/lib/wp";
 import { notFound } from "next/navigation";
+import RelatedPosts from "@/components/RelatedPosts";
 
 export const metadata: Metadata = {
   title: "연구소 소개 | Magentalab",
@@ -12,6 +13,14 @@ export const metadata: Metadata = {
 
 export default async function AboutPage() {
   const page = await getPageBySlug("institute-introduction");
+  
+  let relatedPosts: any[] = [];
+  try {
+    const postsRes = await getPosts(1, 6);
+    relatedPosts = postsRes.posts;
+  } catch (error) {
+    console.error("Failed to fetch posts for About:", error);
+  }
 
   if (!page) {
     notFound();
@@ -42,9 +51,10 @@ export default async function AboutPage() {
       <div className="container mx-auto px-4 -mt-16 relative z-20">
         <div className="max-w-4xl mx-auto bg-white rounded-4xl shadow-2xl shadow-magenta/5 border border-gray-100 p-8 md:p-16">
           <div 
-            className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal"
+            className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal mb-12"
             dangerouslySetInnerHTML={{ __html: fixWpLinks(page.content.rendered) }}
           />
+          <RelatedPosts posts={relatedPosts} />
         </div>
       </div>
       
