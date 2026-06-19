@@ -12,19 +12,12 @@ export default function CommentForm({ postId }: CommentFormProps) {
     author_email: "",
     content: "",
   });
-  const [agreedToConsent, setAgreedToConsent] = useState(false);
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [submittedId, setSubmittedId] = useState<number | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!agreedToConsent) {
-      setErrorMessage("개인정보 수집 및 이용에 동의해주세요.");
-      setStatus("error");
-      return;
-    }
 
     setStatus("submitting");
     setErrorMessage("");
@@ -54,7 +47,6 @@ export default function CommentForm({ postId }: CommentFormProps) {
       setSubmittedId(data.id || null);
       setStatus("success");
       setFormData({ author_name: "", author_email: "", content: "" });
-      setAgreedToConsent(false);
     } catch (err: any) {
       console.error("Comment submission error:", err);
       // 에러의 상세 내용을 알림창으로 표시 (디버깅용)
@@ -131,22 +123,6 @@ export default function CommentForm({ postId }: CommentFormProps) {
         />
       </div>
 
-      {/* Privacy Consent */}
-      <div className="mb-6 px-1">
-        <label className="flex items-center gap-3 cursor-pointer group">
-          <input
-            type="checkbox"
-            required
-            checked={agreedToConsent}
-            onChange={(e) => setAgreedToConsent(e.target.checked)}
-            className="w-5 h-5 rounded border-2 border-gray-200 text-magenta focus:ring-magenta transition-all cursor-pointer"
-          />
-          <span className="text-xs md:text-sm font-medium text-gray-500 group-hover:text-gray-700 transition-colors">
-            [필수] 개인정보 수집 및 이용 동의 (이메일 마케팅 및 안내)
-          </span>
-        </label>
-      </div>
-
       {status === "error" && (
         <div className="mb-6 p-4 rounded-xl bg-red-50 text-red-600 text-sm font-medium border border-red-100 italic">
           ⚠️ {errorMessage}
@@ -171,8 +147,7 @@ export default function CommentForm({ postId }: CommentFormProps) {
       </button>
       
       <p className="mt-4 text-[11px] text-gray-400 text-center leading-tight">
-        비방, 욕설, 광고성 댓글은 삭제될 수 있습니다. <br />
-        입력하신 이메일은 마케팅 활용 목적으로만 사용됩니다.
+        비방, 욕설, 광고성 댓글은 삭제될 수 있습니다.
       </p>
     </form>
 
