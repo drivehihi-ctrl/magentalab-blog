@@ -696,24 +696,7 @@ export default function EmergencyCalculator() {
                 </p>
               </div>
 
-              {/* 비즈니스 CTA 장치: 안전 / 주의 단계일 때 노출되는 쇼핑 배너 */}
-              {(resultSeverity.level === "safe" || resultSeverity.level === "caution") && (
-                <button
-                  type="button"
-                  onClick={() => window.location.href = "/shop"}
-                  className="w-full p-6 bg-gradient-to-r from-magenta to-pink-600 hover:from-magenta/90 hover:to-pink-600/90 active:scale-[0.99] transition-all text-white font-extrabold text-sm sm:text-base rounded-2xl cursor-pointer shadow-xl shadow-magenta/10 border border-magenta-light flex items-center justify-between gap-3 text-left group"
-                >
-                  <div className="space-y-1">
-                    <span className="inline-block px-2.5 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-bold tracking-wider mb-1 uppercase">
-                      안심이의 추천 큐레이션
-                    </span>
-                    <p className="leading-tight">
-                      🧪 독소 배출과 신장/방광 필터 보호를 위한 안심이 추천 습식캔 및 보조제 보러가기
-                    </p>
-                  </div>
-                  <ChevronRight className="w-6 h-6 shrink-0 transform group-hover:translate-x-1.5 transition-transform" />
-                </button>
-              )}
+
 
             </div>
           </div>
