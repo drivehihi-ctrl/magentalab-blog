@@ -52,7 +52,15 @@ export default async function AboutPage() {
         <div className="max-w-4xl mx-auto bg-white rounded-4xl shadow-2xl shadow-magenta/5 border border-gray-100 p-8 md:p-16">
           <div 
             className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal mb-12"
-            dangerouslySetInnerHTML={{ __html: fixWpLinks(page.content.rendered) }}
+            dangerouslySetInnerHTML={{ 
+              __html: fixWpLinks(
+                page.content.rendered
+                  // "🚀 연구소 그 이상의 가치" 가 포함된 헤더나 단락 제거
+                  .replace(/<(h[1-6]|p|b|div)[^>]*>\s*(?:<[^>]+>)*\s*🚀\s*연구소\s*그\s*이상의\s*가치\s*(?:<\/[^>]+>)*\s*<\/\1>/gi, "")
+                  // "마젠타랩 연구소의 모든 데이터는..." 본문 단락 제거
+                  .replace(/<p[^>]*>[\s\S]*?마젠타랩\s*연구소의\s*모든\s*데이터는[\s\S]*?정답을\s*찾아보세요\..*?<\/p>/g, "")
+              ) 
+            }}
           />
           <RelatedPosts posts={relatedPosts} />
         </div>
