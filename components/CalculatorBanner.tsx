@@ -105,9 +105,9 @@ export default function CalculatorBanner({ content, title, postId }: CalculatorB
     emergency: {
       url: "/emergency-calculator",
       icon: <ShieldAlert className="w-5 h-5 text-rose-500" />,
-      tag: "🚨 초콜릿 & 독성 물질 자가진단",
-      textBeforeButton: "🚨 지금 아이가 위험 음식을 먹어서 당황하셨나요? 몸무게와 먹은 양만 입력하면 위험 단계를 즉시 신호등 색상으로 진단해 드립니다. ",
-      buttonText: "안심이 수석연구원의 강아지 초콜릿 / 위험 음독 성분 응급 계산기 가기 ➔",
+      tag: "🚨 반려동물 중독 응급 계산기",
+      textBeforeButton: "🚨 지금 아이가 위험 음식을 먹어서 당황하셨나요? 몸무게와 먹은 양만 입력하면 위험 단계를 즉시 4단계 등급과 게이지로 진단해 드립니다. ",
+      buttonText: "안심이 수석연구원의 반려동물 중독 응급 계산기 가기 ➔",
       textAfterButton: " 링크를 통해 10초 만에 무료로 고위험 여부를 판단해 보세요.",
       bgClass: "from-rose-500/5 to-red-500/5 border-rose-500/20"
     },
