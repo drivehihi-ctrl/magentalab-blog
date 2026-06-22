@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PatellaDiagnoser from "@/components/PatellaDiagnoser";
+import CalculatorBanner from "@/components/CalculatorBanner";
 import RelatedPosts from "@/components/RelatedPosts";
 import { searchPosts } from "@/lib/wp";
 
@@ -74,6 +75,7 @@ export default async function PatellaPage() {
       />
       <PatellaDiagnoser />
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <CalculatorBanner isRandom={true} excludeType="patella" />
         <RelatedPosts posts={relatedPosts} />
       </div>
     </div>
