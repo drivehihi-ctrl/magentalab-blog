@@ -20,7 +20,7 @@ export default function PostListItem({ post }: PostListItemProps) {
 
   return (
     <Link 
-      href={`/posts/${post.id}`} 
+      href={`/posts/${post.slug}`} 
       className="group flex flex-col sm:flex-row gap-6 py-8 border-b border-gray-100 transition-colors hover:bg-magenta-light/10"
     >
       {/* Content Side */}

@@ -1,9 +1,9 @@
 import Image from "next/image";
 import { Metadata } from "next";
-import { getPost, getPosts, getFeaturedImage, getCategories, getTags, getRelatedPosts, fixWpLinks } from "@/lib/wp";
+import { getPost, getPostBySlug, getPosts, getFeaturedImage, getCategories, getTags, getRelatedPosts, fixWpLinks } from "@/lib/wp";
 import { sanitizeForSeo } from "@/lib/utils";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import CommentsSection from "@/components/CommentsSection";
 import RelatedPosts from "@/components/RelatedPosts";
 import AnsimiSummary from "@/components/AnsimiSummary";
@@ -23,7 +23,15 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
   try {
-    const post = await getPost(id);
+    const isNumeric = /^\d+$/.test(id);
+    let post;
+    if (isNumeric) {
+      post = await getPost(id);
+    } else {
+      post = await getPostBySlug(id);
+    }
+    if (!post) throw new Error("Post not found");
+    
     const imageUrl = getFeaturedImage(post);
     const title = sanitizeForSeo(post.title.rendered);
     const description = sanitizeForSeo(post.excerpt.rendered, 160);
@@ -32,7 +40,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: `${title} | Magentalab`,
       description,
       alternates: {
-        canonical: `https://www.magentalabblog.com/posts/${id}`,
+        canonical: `https://www.magentalabblog.com/posts/${post.slug}`,
       },
       openGraph: {
         title,
@@ -67,7 +75,7 @@ export async function generateStaticParams() {
   try {
     const { posts } = await getPosts(1, 50);
     return posts.map((post) => ({
-      id: post.id.toString(),
+      id: post.slug,
     }));
   } catch (error) {
     return [];
@@ -76,11 +84,20 @@ export async function generateStaticParams() {
 
 export default async function PostDetailPage({ params }: PageProps) {
   const { id } = await params;
+  const isNumeric = /^\d+$/.test(id);
   
   let post;
   let allPosts;
   try {
-    post = await getPost(id);
+    if (isNumeric) {
+      post = await getPost(id);
+      if (post && post.slug) {
+        // 301 영구 리다이렉트
+        permanentRedirect(`/posts/${post.slug}`);
+      }
+    } else {
+      post = await getPostBySlug(id);
+    }
     const postsRes = await getPosts();
     allPosts = postsRes.posts;
   } catch (error) {
@@ -117,12 +134,12 @@ export default async function PostDetailPage({ params }: PageProps) {
       "name": "Magentalab 반려동물 연구소",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://www.magentalabblog.com/logo.png" // Assuming logo exists or path is correct
+        "url": "https://www.magentalabblog.com/logo.png"
       }
     },
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": `https://www.magentalabblog.com/posts/${id}`
+      "@id": `https://www.magentalabblog.com/posts/${post.slug}`
     }
   };
 
@@ -147,7 +164,7 @@ export default async function PostDetailPage({ params }: PageProps) {
         "@type": "ListItem",
         "position": 3,
         "name": sanitizeForSeo(post.title.rendered),
-        "item": `https://www.magentalabblog.com/posts/${id}`
+        "item": `https://www.magentalabblog.com/posts/${post.slug}`
       }
     ]
   };
@@ -240,14 +257,14 @@ export default async function PostDetailPage({ params }: PageProps) {
           <CalculatorBanner 
             content={post.content.rendered} 
             title={post.title.rendered} 
-            postId={id}
+            postId={post.id.toString()}
           />
 
           {/* 제휴몰 배너 (본문 직후) */}
           <AffiliateStoreBanner />
         
         {/* Social Share Section */}
-        <SocialShare url={`/posts/${id}`} title={post.title.rendered.replace(/<[^>]*>?/gm, "")} />
+        <SocialShare url={`/posts/${post.slug}`} title={post.title.rendered.replace(/<[^>]*>?/gm, "")} />
         
         {/* Tags Section */}
         {tags && tags.length > 0 && (
@@ -288,10 +305,8 @@ export default async function PostDetailPage({ params }: PageProps) {
           <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-magenta/20 rounded-full blur-3xl" />
         </div>
 
-
-
         {/* Comments Section */}
-        <CommentsSection postId={parseInt(id)} />
+        <CommentsSection postId={post.id} />
         </div>
       </section>
     </article>

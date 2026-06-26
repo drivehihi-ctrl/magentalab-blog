@@ -294,6 +294,19 @@ export async function getPageBySlug(slug: string): Promise<WPPost | null> {
   return pages[0] || null;
 }
 
+export async function getPostBySlug(slug: string): Promise<WPPost | null> {
+  const res = await fetch(`${WP_API_URL}/posts?slug=${slug}&_embed`, {
+    next: {
+      revalidate: 3600,
+      tags: [`post-slug-${slug.slice(0, 100)}`, 'posts']
+    },
+  });
+  if (!res.ok) throw new Error(`Failed to fetch post by slug: ${slug}`);
+  const posts = await res.json();
+  return posts[0] || null;
+}
+
+
 export async function searchPosts(query: string): Promise<WPPost[]> {
   if (!query) return [];
   const res = await fetch(`${WP_API_URL}/posts?_embed&search=${encodeURIComponent(query)}&per_page=10`, {

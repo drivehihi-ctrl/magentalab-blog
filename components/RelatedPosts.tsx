@@ -25,7 +25,7 @@ export default function RelatedPosts({ posts }: RelatedPostsProps) {
           return (
             <Link 
               key={post.id} 
-              href={`/posts/${post.id}`} 
+              href={`/posts/${post.slug}`} 
               className="group block"
             >
               <div className="relative aspect-[16/10] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-md transition-shadow">

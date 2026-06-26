@@ -92,7 +92,7 @@ export default function LiveSearch() {
                 {results.map((post) => (
                   <Link
                     key={post.id}
-                    href={`/posts/${post.id}`}
+                    href={`/posts/${post.slug}`}
                     onClick={() => setIsOpen(false)}
                     className="flex items-center gap-4 p-3 rounded-2xl hover:bg-magenta/5 transition-colors group"
                   >

@@ -16,7 +16,7 @@ export async function GET() {
       .map((post) => {
         const title = sanitizeForSeo(post.title.rendered);
         const description = sanitizeForSeo(post.excerpt.rendered, 160);
-        const postUrl = `${siteUrl}/posts/${post.id}`;
+        const postUrl = `${siteUrl}/posts/${post.slug}`;
         const pubDate = new Date(post.date).toUTCString();
         
         return `
