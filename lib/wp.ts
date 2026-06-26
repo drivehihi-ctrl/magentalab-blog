@@ -283,15 +283,23 @@ export function fixWpLinks(content: string, postTitle?: string) {
 }
 
 export async function getPageBySlug(slug: string): Promise<WPPost | null> {
-  const res = await fetch(`${WP_API_URL}/pages?slug=${slug}`, {
-    next: {
-      revalidate: 3600,
-      tags: [`page-${slug}`]
-    },
-  });
-  if (!res.ok) throw new Error(`Failed to fetch page: ${slug}`);
-  const pages = await res.json();
-  return pages[0] || null;
+  try {
+    const res = await fetch(`${WP_API_URL}/pages?slug=${slug}`, {
+      next: {
+        revalidate: 3600,
+        tags: [`page-${slug}`]
+      },
+    });
+    if (!res.ok) {
+      console.error(`Failed to fetch page: ${slug}, status: ${res.status}`);
+      return null;
+    }
+    const pages = await res.json();
+    return pages[0] || null;
+  } catch (error) {
+    console.error(`Error fetching page ${slug}:`, error);
+    return null;
+  }
 }
 
 export async function getPostBySlug(slug: string): Promise<WPPost | null> {
@@ -309,12 +317,20 @@ export async function getPostBySlug(slug: string): Promise<WPPost | null> {
 
 export async function searchPosts(query: string): Promise<WPPost[]> {
   if (!query) return [];
-  const res = await fetch(`${WP_API_URL}/posts?_embed&search=${encodeURIComponent(query)}&per_page=10`, {
-    next: {
-      revalidate: 3600,
-      tags: ['posts-search']
-    },
-  });
-  if (!res.ok) throw new Error(`Failed to search posts for query: ${query}`);
-  return res.json();
+  try {
+    const res = await fetch(`${WP_API_URL}/posts?_embed&search=${encodeURIComponent(query)}&per_page=10`, {
+      next: {
+        revalidate: 3600,
+        tags: ['posts-search']
+      },
+    });
+    if (!res.ok) {
+      console.error(`Failed to search posts for query: ${query}, status: ${res.status}`);
+      return [];
+    }
+    return res.json();
+  } catch (error) {
+    console.error(`Error searching posts for query ${query}:`, error);
+    return [];
+  }
 }

@@ -88,12 +88,15 @@ export default async function PostDetailPage({ params }: PageProps) {
   
   let post;
   let allPosts;
+  let shouldRedirect = false;
+  let targetSlug = "";
+
   try {
     if (isNumeric) {
       post = await getPost(id);
       if (post && post.slug) {
-        // 301 영구 리다이렉트
-        permanentRedirect(`/posts/${post.slug}`);
+        shouldRedirect = true;
+        targetSlug = post.slug;
       }
     } else {
       post = await getPostBySlug(id);
@@ -101,7 +104,14 @@ export default async function PostDetailPage({ params }: PageProps) {
     const postsRes = await getPosts();
     allPosts = postsRes.posts;
   } catch (error) {
+    // Next.js redirection/notfound 내부 에러는 throw되어야 하므로, 
+    // catch문 내에서 에러를 확인하여 redirect/notfound 인 경우는 다시 throw하게 할 수도 있으나,
+    // redirect 호출을 try-catch 밖으로 완전히 분리했으므로 catch에서는 일반 API 에러만 잡아 처리합니다.
     notFound();
+  }
+
+  if (shouldRedirect && targetSlug) {
+    permanentRedirect(`/posts/${targetSlug}`);
   }
 
   if (!post) notFound();
