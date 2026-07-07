@@ -10,11 +10,13 @@ export interface WPPost {
   excerpt: { rendered: string };
   featured_media: number;
   categories: number[];
+  lang?: string;
   _embedded?: {
     "wp:featuredmedia"?: Array<{ source_url: string }>;
     "wp:term"?: Array<Array<{ id: number; name: string; slug: string }>>;
   };
 }
+
 
 export interface PostsResponse {
   posts: WPPost[];
