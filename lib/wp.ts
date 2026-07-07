@@ -33,9 +33,14 @@ export async function getPosts(
   page: number = 1, 
   perPage: number = 20, 
   search?: string,
-  category?: string
+  category?: string,
+  lang: string = "ko"
 ): Promise<PostsResponse> {
   let url = `${WP_API_URL}/posts?_embed&per_page=${perPage}&page=${page}`;
+  
+  if (lang) {
+    url += `&lang=${lang}`;
+  }
   if (search) {
     url += `&search=${encodeURIComponent(search)}`;
   }
@@ -62,6 +67,7 @@ export async function getPosts(
     totalPosts 
   };
 }
+
 
 export async function getAllCategories(): Promise<WPCategory[]> {
   const res = await fetch(`${WP_API_URL}/categories?per_page=100`, {
