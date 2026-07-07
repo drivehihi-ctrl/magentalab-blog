@@ -250,7 +250,9 @@ export default async function EnglishPostDetailPage({ params }: PageProps) {
           <AnsimiSummary 
             excerpt={post.excerpt.rendered} 
             categoryNames={categories.map(c => c.name)} 
+            lang="en"
           />
+
 
           <div 
             className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal"
