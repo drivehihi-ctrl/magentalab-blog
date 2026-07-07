@@ -30,9 +30,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     } else {
       post = await getPostBySlug(id);
     }
-    if (!post || (post.lang && post.lang !== "ko")) throw new Error("Post not found");
+    if (!post) throw new Error("Post not found");
     
     const imageUrl = getFeaturedImage(post);
+
 
     const title = sanitizeForSeo(post.title.rendered);
     const description = sanitizeForSeo(post.excerpt.rendered, 160);
@@ -115,8 +116,9 @@ export default async function PostDetailPage({ params }: PageProps) {
     permanentRedirect(`/posts/${targetSlug}`);
   }
 
-  if (!post || (post.lang && post.lang !== "ko")) notFound();
+  if (!post) notFound();
   const relatedPosts = getRelatedPosts(post, allPosts, 3);
+
 
   
   const imageUrl = getFeaturedImage(post);

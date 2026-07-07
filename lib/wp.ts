@@ -60,15 +60,64 @@ export async function getPosts(
   if (!res.ok) throw new Error("Failed to fetch posts");
   
   const posts = await res.json();
-  const totalPosts = Number(res.headers.get('X-WP-Total') || posts.length);
+  
+  const englishCategorySlugs = [
+    "behavior-training",
+    "food-nutrition-en",
+    "health-disease",
+    "in-depth-breed-analysis",
+    "lifestyle-supplies",
+    "uncategorized"
+  ];
+  
+  const japaneseCategorySlugs = [
+    "uncategorized-ja",
+    "behavior-training-ja",
+    "food-nutrition-ja",
+    "health-disease-ja",
+    "in-depth-breed-analysis-ja",
+    "lifestyle-supplies-ja"
+  ];
+
+  let filteredPosts = posts;
+  
+  if (lang === "ko") {
+    filteredPosts = posts.filter((post: any) => {
+      const classes = post.class_list || [];
+      const hasEnglishCat = classes.some((cls: string) => 
+        englishCategorySlugs.some(slug => cls === `category-${slug}`)
+      );
+      const hasJapaneseCat = classes.some((cls: string) => 
+        japaneseCategorySlugs.some(slug => cls === `category-${slug}`)
+      );
+      return !hasEnglishCat && !hasJapaneseCat;
+    });
+  } else if (lang === "en") {
+    filteredPosts = posts.filter((post: any) => {
+      const classes = post.class_list || [];
+      return classes.some((cls: string) => 
+        englishCategorySlugs.some(slug => cls === `category-${slug}`)
+      );
+    });
+  } else if (lang === "ja") {
+    filteredPosts = posts.filter((post: any) => {
+      const classes = post.class_list || [];
+      return classes.some((cls: string) => 
+        japaneseCategorySlugs.some(slug => cls === `category-${slug}`)
+      );
+    });
+  }
+
+  const totalPosts = Number(res.headers.get('X-WP-Total') || filteredPosts.length);
   const totalPages = Number(res.headers.get('X-WP-TotalPages') || 1);
 
   return { 
-    posts, 
+    posts: filteredPosts, 
     totalPages, 
     totalPosts 
   };
 }
+
 
 
 export async function getAllCategories(): Promise<WPCategory[]> {
