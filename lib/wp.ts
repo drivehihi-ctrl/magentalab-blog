@@ -67,6 +67,7 @@ export async function getPosts(
     "health-disease",
     "in-depth-breed-analysis",
     "lifestyle-supplies",
+    "beginner-pet-parent-guide",
     "uncategorized"
   ];
   
@@ -76,7 +77,14 @@ export async function getPosts(
     "food-nutrition-ja",
     "health-disease-ja",
     "in-depth-breed-analysis-ja",
-    "lifestyle-supplies-ja"
+    "lifestyle-supplies-ja",
+    "beginner-pet-parent-guide-ja",
+    "behavior-training-jp",
+    "food-nutrition-jp",
+    "health-disease-jp",
+    "in-depth-breed-analysis-jp",
+    "lifestyle-supplies-jp",
+    "beginner-pet-parent-guide-jp"
   ];
 
   let filteredPosts = posts;
@@ -107,6 +115,7 @@ export async function getPosts(
       );
     });
   }
+
 
   const totalPosts = Number(res.headers.get('X-WP-Total') || filteredPosts.length);
   const totalPages = Number(res.headers.get('X-WP-TotalPages') || 1);
