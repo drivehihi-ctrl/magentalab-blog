@@ -57,6 +57,14 @@ export default function Header() {
           <div className="ml-2 mr-2">
             <LiveSearch />
           </div>
+          
+          {/* Language Switcher */}
+          <div className="flex items-center gap-1.5 border-l border-gray-200 pl-4 py-1 text-xs">
+            <Link href="/" className="hover:text-magenta transition-colors font-bold px-2 py-1 rounded bg-gray-50 hover:bg-gray-100 flex items-center gap-1">🇰🇷 KR</Link>
+            <Link href="/en" className="hover:text-magenta transition-colors font-bold px-2 py-1 rounded bg-gray-50 hover:bg-gray-100 flex items-center gap-1">🇺🇸 EN</Link>
+            <Link href="/ja" className="hover:text-magenta transition-colors font-bold px-2 py-1 rounded bg-gray-50 hover:bg-gray-100 flex items-center gap-1">🇯🇵 JP</Link>
+          </div>
+
           <a 
             href="mailto:smagentalab@gmail.com"
             className="px-5 py-2.5 bg-magenta text-white rounded-full hover:bg-magenta/90 transition-all shadow-md shadow-magenta/10 hover:shadow-lg"
@@ -94,6 +102,13 @@ export default function Header() {
           <div className="px-4 py-3 mb-1 bg-gray-50/50 rounded-2xl border border-gray-50 flex items-center justify-between">
              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">AI 검색</span>
              <LiveSearch />
+          </div>
+          
+          {/* Mobile Language Switcher */}
+          <div className="px-4 py-2 mb-2 bg-gray-50/50 rounded-2xl border border-gray-50 flex items-center justify-around">
+            <Link href="/" className="text-xs font-bold px-3 py-1.5 rounded-xl bg-white border border-gray-100 flex items-center gap-1 shadow-sm active:scale-95 transition-transform" onClick={() => setIsMenuOpen(false)}>🇰🇷 KR</Link>
+            <Link href="/en" className="text-xs font-bold px-3 py-1.5 rounded-xl bg-white border border-gray-100 flex items-center gap-1 shadow-sm active:scale-95 transition-transform" onClick={() => setIsMenuOpen(false)}>🇺🇸 EN</Link>
+            <Link href="/ja" className="text-xs font-bold px-3 py-1.5 rounded-xl bg-white border border-gray-100 flex items-center gap-1 shadow-sm active:scale-95 transition-transform" onClick={() => setIsMenuOpen(false)}>🇯🇵 JP</Link>
           </div>
 
           <nav className="flex flex-col gap-0.5">
