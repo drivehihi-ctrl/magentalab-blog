@@ -61,61 +61,27 @@ export async function getPosts(
   
   const posts = await res.json();
   
-  const englishCategorySlugs = [
-    "behavior-training",
-    "food-nutrition-en",
-    "health-disease",
-    "in-depth-breed-analysis",
-    "lifestyle-supplies",
-    "beginner-pet-parent-guide",
-    "uncategorized"
-  ];
-  
-  const japaneseCategorySlugs = [
-    "uncategorized-ja",
-    "behavior-training-ja",
-    "food-nutrition-ja",
-    "health-disease-ja",
-    "in-depth-breed-analysis-ja",
-    "lifestyle-supplies-ja",
-    "beginner-pet-parent-guide-ja",
-    "behavior-training-jp",
-    "food-nutrition-jp",
-    "health-disease-jp",
-    "in-depth-breed-analysis-jp",
-    "lifestyle-supplies-jp",
-    "beginner-pet-parent-guide-jp"
-  ];
-
   let filteredPosts = posts;
   
   if (lang === "ko") {
+    // 한국어 페이지: 슬러그가 -en 또는 -ja로 끝나는 글을 전면 배제
     filteredPosts = posts.filter((post: any) => {
-      const classes = post.class_list || [];
-      const hasEnglishCat = classes.some((cls: string) => 
-        englishCategorySlugs.some(slug => cls === `category-${slug}`)
-      );
-      const hasJapaneseCat = classes.some((cls: string) => 
-        japaneseCategorySlugs.some(slug => cls === `category-${slug}`)
-      );
-      return !hasEnglishCat && !hasJapaneseCat;
+      const slug = post.slug || "";
+      return !slug.endsWith("-en") && !slug.endsWith("-ja");
     });
   } else if (lang === "en") {
+    // 영어 페이지: 슬러그가 -en으로 끝나는 글만 필터링
     filteredPosts = posts.filter((post: any) => {
-      const classes = post.class_list || [];
-      return classes.some((cls: string) => 
-        englishCategorySlugs.some(slug => cls === `category-${slug}`)
-      );
+      const slug = post.slug || "";
+      return slug.endsWith("-en");
     });
   } else if (lang === "ja") {
+    // 일본어 페이지: 슬러그가 -ja로 끝나는 글만 필터링
     filteredPosts = posts.filter((post: any) => {
-      const classes = post.class_list || [];
-      return classes.some((cls: string) => 
-        japaneseCategorySlugs.some(slug => cls === `category-${slug}`)
-      );
+      const slug = post.slug || "";
+      return slug.endsWith("-ja");
     });
   }
-
 
   const totalPosts = Number(res.headers.get('X-WP-Total') || filteredPosts.length);
   const totalPages = Number(res.headers.get('X-WP-TotalPages') || 1);
@@ -126,6 +92,7 @@ export async function getPosts(
     totalPosts 
   };
 }
+
 
 
 
