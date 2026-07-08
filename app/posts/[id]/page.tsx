@@ -117,7 +117,18 @@ export default async function PostDetailPage({ params }: PageProps) {
   }
 
   if (!post) notFound();
+
+  // Smart multilingual redirect safety net
+  if (post.slug) {
+    if (post.slug.endsWith("-en")) {
+      permanentRedirect(`/en/posts/${post.slug}`);
+    } else if (post.slug.endsWith("-ja")) {
+      permanentRedirect(`/ja/posts/${post.slug}`);
+    }
+  }
+
   const relatedPosts = getRelatedPosts(post, allPosts, 3);
+
 
 
   
