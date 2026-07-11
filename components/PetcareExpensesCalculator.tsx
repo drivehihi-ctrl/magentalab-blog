@@ -51,7 +51,11 @@ const BASE_DEFAULTS = {
   }
 };
 
-export default function PetcareExpensesCalculator() {
+interface PetcareExpensesCalculatorProps {
+  lang?: "ko" | "en" | "ja";
+}
+
+export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpensesCalculatorProps) {
   const [petType, setPetType] = useState<PetType>("dog_small");
   
   // 나이 입력 모드: "direct" (직접 입력) | "birth" (출생연월 선택)
@@ -92,6 +96,195 @@ export default function PetcareExpensesCalculator() {
     }
   }, [ageMode, age, birthYear, birthMonth]);
 
+  // Multilingual Dictionaries
+  const dict = {
+    ko: {
+      badge: "안심 연구원 지출 진단 리포트",
+      title: "반려동물 평생 양육비 & 월간 유지비 계산기 💰",
+      desc: "나이대별 수의학 필수 예방접종 비용과 생애 의료비 시뮬레이션을 탑재하여 우리 아이 맞춤형 한 달 고정 유지비와 평생 지출의 정밀 진단서를 실시간 확인하세요.",
+      labelSelectType: "축종 및 반려동물 크기 선택",
+      dogSmall: "소형견",
+      dogSmallDesc: "10kg 미만",
+      dogMedium: "중형견",
+      dogMediumDesc: "10~25kg",
+      dogLarge: "대형견",
+      dogLargeDesc: "25kg 이상",
+      cat: "고양이",
+      catDesc: "반려묘 전체",
+      labelAgeSetup: "나이 및 예상 수명 설정",
+      ageModeDirect: "나이 직접 입력",
+      ageModeBirth: "출생연월 선택",
+      labelAgeDirect: "현재 나이 입력",
+      unitAge: "살",
+      labelBirthYear: "출생 연도",
+      unitYear: "년",
+      labelBirthMonth: "출생 월",
+      unitMonth: "월",
+      neuteredQuestion: "👶 1세 미만 기초 접종기에 중성화 수술을 하였거나 할 예정인가요?",
+      labelTargetLifespan: "목표 예상 수명",
+      unitLifespan: "세",
+      labelExpensesSetup: "월간 고정 생활 지출비 조율",
+      labelFoodQuality: "식사 사료/간식 품질",
+      foodNormal: "일반형",
+      foodPremium: "프리미엄",
+      foodMedical: "처방식/생식",
+      unitWon: "원",
+      unitWonDesc: "원 기준",
+      sliderFoodLabel: "식사 및 간식비 (월)",
+      sliderHygieneLabel: "위생 용품비 (배변패드, 고양이 모래 등 / 월)",
+      unitTenThousand: "만 원",
+      labelCareType: "미용 및 위생 관리 방식",
+      careShop: "전문 미용숍 케어",
+      careShopDesc: "월 1회 전문점 목욕/미용",
+      careHome: "홈케어 위주",
+      careHomeDesc: "셀프 목욕 및 기본 위생케어",
+      sliderCareLabel: "미용 및 케어 관리비 (월)",
+      reportTitle: "지출 종합 진단서",
+      reportRealtime: "실시간 자동 갱신 ⚡",
+      reportMonthlyTotal: "월간 고정 유지비",
+      reportMonthlyMedical: "의료비 포함",
+      reportLifetimeTotal: "평생 누적 예상 양육비",
+      reportLifetimePeriod: "생애 총합 ({remainingYears}년)",
+      simulationInfo: "현재 나이 {computedAge}세부터 예상 수명 {lifespan}세까지의 시뮬레이션입니다. 초기 용품 정착금({initCostText})이 추가되었습니다.",
+      largeCostText: "100만 원",
+      normalCostText: "50만 원",
+      chartLabelMonthly: "MONTHLY",
+      chartFood: "식비 및 간식",
+      chartHygiene: "위생용품",
+      chartCare: "미용 및 위생",
+      chartMedical: "의료비 (자동)",
+      calendarTitle: "올해 필수 예방접종 & 케어 달력 📅",
+      calendarDesc: "현재 나이인 {computedAge}세 시점에 필수 권장되는 수의학 예방 케어 및 건강검진 비용 내역입니다.",
+      calendarTag: "권장",
+      calendarDisclaimer: "* 예방접종 비용은 지역 및 동물병원 규모에 따라 상이할 수 있으며, 만 7세 이상 노령기는 주기적인 스크리닝이 아이의 갑작스러운 중증 의료비 폭탄을 방지하는 지름길입니다.",
+      btnReset: "다시 계산하기",
+    },
+    en: {
+      badge: "Ansim-i Expense Assessment",
+      title: "Pet Lifetime Expense & Monthly Maintenance Calculator 💰",
+      desc: "Simulate lifetime medical fees and recommended veterinary vaccinations. View real-time diagnostics of monthly spending and total lifetime investments.",
+      labelSelectType: "Select Pet Type & Sizing",
+      dogSmall: "Small Dog",
+      dogSmallDesc: "Under 10kg",
+      dogMedium: "Medium Dog",
+      dogMediumDesc: "10 to 25kg",
+      dogLarge: "Large Dog",
+      dogLargeDesc: "Over 25kg",
+      cat: "Cat",
+      catDesc: "All Cats",
+      labelAgeSetup: "Set Age & Lifespan",
+      ageModeDirect: "Direct Input",
+      ageModeBirth: "Birth Month/Year",
+      labelAgeDirect: "Enter Age",
+      unitAge: "yrs",
+      labelBirthYear: "Birth Year",
+      unitYear: "",
+      labelBirthMonth: "Birth Month",
+      unitMonth: "",
+      neuteredQuestion: "👶 Has your pet under 1 yr been spayed/neutered or planned to be?",
+      labelTargetLifespan: "Target Lifespan",
+      unitLifespan: "yrs",
+      labelExpensesSetup: "Adjust Monthly Living Expenses",
+      labelFoodQuality: "Food / Treats Grade",
+      foodNormal: "Standard",
+      foodPremium: "Premium",
+      foodMedical: "Medical/Raw",
+      unitWon: "KRW",
+      unitWonDesc: "standard",
+      sliderFoodLabel: "Food & Treats (Monthly)",
+      sliderHygieneLabel: "Hygiene Supplies (Pads, Litter, etc. / Monthly)",
+      unitTenThousand: "0k KRW",
+      labelCareType: "Grooming & Hygiene Care Style",
+      careShop: "Professional Salon Care",
+      careShopDesc: "Salon bath/cut once a month",
+      careHome: "Home Care Oriented",
+      careHomeDesc: "Self baths and basic hygiene care",
+      sliderCareLabel: "Grooming & Care Expense (Monthly)",
+      reportTitle: "Financial Diagnostic Report",
+      reportRealtime: "Live Updated ⚡",
+      reportMonthlyTotal: "Monthly Maintenance Cost",
+      reportMonthlyMedical: "Incl. medical simulator",
+      reportLifetimeTotal: "Est. Cumulative Lifetime Cost",
+      reportLifetimePeriod: "Total for {remainingYears} yrs",
+      simulationInfo: "Simulated from current age {computedAge} to lifespan {lifespan}. Initial equipment fees ({initCostText}) are added.",
+      largeCostText: "1M KRW",
+      normalCostText: "500k KRW",
+      chartLabelMonthly: "MONTHLY",
+      chartFood: "Food & Treats",
+      chartHygiene: "Hygiene Pads/Litter",
+      chartCare: "Grooming & Care",
+      chartMedical: "Medical (Simulated)",
+      calendarTitle: "Recommended Veterinary Vaccine & Care Calendar 📅",
+      calendarDesc: "Recommended medical screening schedules and vaccines tailored for your pet at {computedAge} years old.",
+      calendarTag: "Recommended",
+      calendarDisclaimer: "* Vaccine fees vary depending on location and clinics. Regular checkups for senior pets (7+ yrs) prevent sudden heavy medical costs.",
+      btnReset: "Reset Calculator",
+    },
+    ja: {
+      badge: "アンシム経費診断レポート",
+      title: "ペットの生涯飼育費＆月간維持費計算機 💰",
+      desc: "年齢別の獣医学的必須予防接種費用と生涯医療費シミュレーションを組み込み、愛犬・愛猫に合わせた月間コストと生涯総額の診断レポートを提示します。",
+      labelSelectType: "動物の種類とサイズを選択",
+      dogSmall: "小型犬",
+      dogSmallDesc: "10kg未満",
+      dogMedium: "中型犬",
+      dogMediumDesc: "10〜25kg",
+      dogLarge: "大型犬",
+      dogLargeDesc: "25kg以上",
+      cat: "猫",
+      catDesc: "猫全般",
+      labelAgeSetup: "年齢＆予想寿命の設定",
+      ageModeDirect: "年齢を直接入力",
+      ageModeBirth: "誕生年月を選択",
+      labelAgeDirect: "現在の年齢を入力",
+      unitAge: "歳",
+      labelBirthYear: "誕生年",
+      unitYear: "年",
+      labelBirthMonth: "誕生月",
+      unitMonth: "月",
+      neuteredQuestion: "👶 1歳未満の基礎接種期に避妊・去勢手術を行いましたか？（予定含む）",
+      labelTargetLifespan: "目標とする予想寿命",
+      unitLifespan: "歳",
+      labelExpensesSetup: "月間固定生活費의調整",
+      labelFoodQuality: "食事・おやつの品質",
+      foodNormal: "スタンダード",
+      foodPremium: "プレミアム",
+      foodMedical: "療法食/生食",
+      unitWon: "ウォン",
+      unitWonDesc: "基準",
+      sliderFoodLabel: "食事・おやつ代（月）",
+      sliderHygieneLabel: "衛生用品代（トイレシート、猫砂など / 月）",
+      unitTenThousand: "万ウォン",
+      labelCareType: "トリミング・ケア方法",
+      careShop: "サロンでのトリミング",
+      careShopDesc: "月1回サロンでシャンプー・カット",
+      careHome: "自宅でのセルフケア",
+      careHomeDesc: "自宅でシャンプーや基本ケア",
+      sliderCareLabel: "トリミング・ケア代（月）",
+      reportTitle: "飼育費総合診断書",
+      reportRealtime: "リアルタイム自動更新 ⚡",
+      reportMonthlyTotal: "月間の維持費",
+      reportMonthlyMedical: "医療費込み",
+      reportLifetimeTotal: "生涯累計の推定飼育費",
+      reportLifetimePeriod: "生涯計（残り{remainingYears}年）",
+      simulationInfo: "現在の年齢{computedAge}歳から寿命{lifespan}歳までのシミュレーションです。初期の飼育ケージ・用品代（{initCostText}）が追加されました。",
+      largeCostText: "100万ウォン",
+      normalCostText: "50万ウォン",
+      chartLabelMonthly: "MONTHLY",
+      chartFood: "フード・おやつ",
+      chartHygiene: "トイレ・衛生用品",
+      chartCare: "ケア・トリミング",
+      chartMedical: "医療費（自動計算）",
+      calendarTitle: "今年の必須予防接種＆ケアカレンダー 📅",
+      calendarDesc: "現在の年齢{computedAge}歳時点で推奨される獣医学的ケア項目および健康診断費用の目安です。",
+      calendarTag: "推奨",
+      calendarDisclaimer: "* 予防接種などの費用は地域や動物病院によって異なる場合があります。7歳以上の高齢期は定期的検査を受けることで、急な医療費負担を防げます。",
+      btnReset: "もう一度計算する",
+    }
+  };
+
+  const t = dict[lang] || dict.ko;
+
   // 축종/크기 변경 시 권장 및 기본 고정값 동기화
   const handlePetTypeChange = (type: PetType) => {
     setPetType(type);
@@ -118,28 +311,23 @@ export default function PetcareExpensesCalculator() {
     const isDog = petType !== "cat";
     let lifetimeMedical = 0;
     
-    // 현재 나이부터 예상 수명까지 매년 나이 먹어감에 따른 시뮬레이션
     for (let current = computedAge; current < lifespan; current++) {
       if (current < 1) {
-        // 기초 접종기 (1세 미만)
         lifetimeMedical += (isDog ? 350000 : 250000) + (isSpayed ? 200000 : 0);
       } else if (current < 7) {
-        // 성숙기 (1세 이상 ~ 7세 미만)
         lifetimeMedical += 300000;
       } else {
-        // 노령기 (7세 이상)
         lifetimeMedical += 600000;
       }
     }
 
-    // 현재 나이에 매칭되는 올해 월평균 의료비
     let monthlyMedical = 0;
     if (computedAge < 1) {
       monthlyMedical = Math.round(((isDog ? 350000 : 250000) + (isSpayed ? 200000 : 0)) / 12);
     } else if (computedAge < 7) {
-      monthlyMedical = Math.round(300000 / 12); // 25,000원
+      monthlyMedical = Math.round(300000 / 12);
     } else {
-      monthlyMedical = Math.round(600000 / 12); // 50,000원
+      monthlyMedical = Math.round(600000 / 12);
     }
 
     return {
@@ -159,7 +347,6 @@ export default function PetcareExpensesCalculator() {
 
   const lifetimeTotal = useMemo(() => {
     const initialCost = BASE_DEFAULTS[petType].initCost;
-    // 비의료비 평생 누계 + 평생 시뮬레이션 의료비 + 초기 용품비
     const lifetimeNonMedical = (foodCost + hygieneCost + careCost) * 12 * remainingYears;
     return lifetimeNonMedical + medicalCalculation.lifetimeMedical + initialCost;
   }, [petType, foodCost, hygieneCost, careCost, remainingYears, medicalCalculation.lifetimeMedical]);
@@ -205,47 +392,143 @@ export default function PetcareExpensesCalculator() {
     
     if (computedAge < 1) {
       return {
-        stageName: "기초 접종기 (1세 미만 베이비)",
-        desc: "면역 형성을 위한 첫 접종 단계로 평생 건강을 결정하는 가장 중요한 시기입니다.",
+        stageName: lang === "ko" ? "기초 접종기 (1세 미만 베이비)" : lang === "ja" ? "基礎接種期 (1歳未満ベビー)" : "Primary Vaccine Stage (<1 yr)",
+        desc: lang === "ko" 
+          ? "면역 형성을 위한 첫 접종 단계로 평생 건강을 결정하는 가장 중요한 시기입니다." 
+          : lang === "ja" 
+          ? "免疫形成のための最初期ワクチン期間で、一生의健康状態를決定付け는極めて重要한時期입니다." 
+          : "Initial vaccinations for immune development. Critical stage that outlines lifelong wellness.",
         items: isDog ? [
-          { name: "DHPPL 종합백신 (1~5차)", period: "생후 6~14주 (2주 간격)", cost: 150000, detail: "홍역, 간염, 파보바이러스 등 필수 치명적 전염병 전방위 예방" },
-          { name: "코로나 장염 & 켄넬코프 백신", period: "생후 8~12주", cost: 80000, detail: "단체 생활 및 산책 시 호흡기/소화기 바이러스 완벽 방어" },
-          { name: "광견병 & 신종플루(인플루엔자) 예방주사", period: "생후 14~16주", cost: 120000, detail: "법정 인수공통 전염병 및 신종 호흡기 독감 예방" },
-          { name: "종합 항체가 검사", period: "생후 16주 이후", cost: 50000, detail: "5차 접종 후 체내 면역 항체가 제대로 형성되었는지 최종 확인 검사" },
-          ...(isSpayed ? [{ name: "선택형 중성화 수술", period: "생후 6~8개월 권장", cost: 200000, detail: "생식기 질환 예방 및 행동 교정을 위한 안전한 외과적 중성화" }] : [])
+          { 
+            name: lang === "ko" ? "DHPPL 종합백신 (1~5차)" : lang === "ja" ? "DHPPL混合ワクチン (1〜5回)" : "DHPPL Core Vaccine (Doses 1-5)", 
+            period: lang === "ko" ? "생후 6~14주 (2주 간격)" : lang === "ja" ? "生後6〜14週 (2週間隔)" : "6-14 weeks old (2-wk interval)", 
+            cost: 150000, 
+            detail: lang === "ko" ? "홍역, 간염, 파보바이러스 등 필수 치명적 전염병 전방위 예방" : lang === "ja" ? "ジステンパー、肝炎、パボウイルス等の主要感染症予防" : "Immunization for distemper, infectious hepatitis, parvo, etc." 
+          },
+          { 
+            name: lang === "ko" ? "코로나 장염 & 켄넬코프 백신" : lang === "ja" ? "コロナ腸炎＆ケンネルコフ" : "Coronavirus Enteritis & Kennel Cough", 
+            period: lang === "ko" ? "생후 8~12주" : lang === "ja" ? "生後8〜12週" : "8-12 weeks old", 
+            cost: 80000, 
+            detail: lang === "ko" ? "단체 생활 및 산책 시 호흡기/소화기 바이러스 완벽 방어" : lang === "ja" ? "集団活動や散歩時の呼吸器・消化器ウイルス防御" : "Defense against respiratory and digestive system viruses." 
+          },
+          { 
+            name: lang === "ko" ? "광견병 & 신종플루(인플루엔자) 예방주사" : lang === "ja" ? "狂犬病＆犬インフルエンザ" : "Rabies & Canine Influenza", 
+            period: lang === "ko" ? "생후 14~16주" : lang === "ja" ? "生後14〜16週" : "14-16 weeks old", 
+            cost: 120000, 
+            detail: lang === "ko" ? "법정 인수공통 전염병 및 신종 호흡기 독감 예방" : lang === "ja" ? "法定伝染병및인플루엔자感染対策" : "Mandatory legal rabies shot and flu prevention." 
+          },
+          { 
+            name: lang === "ko" ? "종합 항체가 검사" : lang === "ja" ? "抗体価検査" : "Antibody Titer Test", 
+            period: lang === "ko" ? "생후 16주 이후" : lang === "ja" ? "生後16週以降" : "16 weeks old+", 
+            cost: 50000, 
+            detail: lang === "ko" ? "5차 접종 후 체내 면역 항체가 제대로 형성되었는지 최종 확인 검사" : lang === "ja" ? "各種ワクチン接種後に十分な抗体が作られたか確認する検査" : "Confirm whether antibodies successfully developed post-doses." 
+          },
+          ...(isSpayed ? [{ 
+            name: lang === "ko" ? "선택형 중성화 수술" : lang === "ja" ? "避妊・去勢手術" : "Elective Spay/Neuter", 
+            period: lang === "ko" ? "생후 6~8개월 권장" : lang === "ja" ? "生後6〜8ヶ月推奨" : "6-8 months old recommended", 
+            cost: 200000, 
+            detail: lang === "ko" ? "생식기 질환 예방 및 행동 교정을 위한 안전한 외과적 중성화" : lang === "ja" ? "生殖器疾患の予防および行動抑制のための外科的措置" : "Surgical procedures for behavior adjustments and disease prevention." 
+          }] : [])
         ] : [
-          { name: "고양이 종합백신 (FVRCP 1~3차)", period: "생후 6~12주 (3주 간격)", cost: 100000, detail: "범백혈구감소증, 허피스, 칼리시바이러스 3대 안심 예방" },
-          { name: "광견병 백신 및 필수 예방주사", period: "생후 12~14주", cost: 50000, detail: "가출 및 묘주 물림 사고 방지를 위한 의무 항체 형성 접종" },
-          { name: "종합 항체가 검사", period: "생후 14주 이후", cost: 50000, detail: "접종 완료 후 주요 치명 질환에 대한 체내 면역 수준 평가" },
-          { name: "고양이 백혈병 백신 (FeLV)", period: "생후 12주 이후 (선택)", cost: 50000, detail: "다묘 가정 혹은 실외 노출 우려 묘의 백혈병 항체 획득" },
-          ...(isSpayed ? [{ name: "선택형 중성화 수술", period: "생후 6~7개월 권장", cost: 200000, detail: "발정 스트레스 경감, 자궁축농증 및 전립선 질환 원천 예방" }] : [])
+          { 
+            name: lang === "ko" ? "고양이 종합백신 (FVRCP 1~3차)" : lang === "ja" ? "猫3種混合ワクチン (FVRCP 1〜3回)" : "FVRCP Core Feline Vaccine (Doses 1-3)", 
+            period: lang === "ko" ? "생후 6~12주 (3주 간격)" : lang === "ja" ? "生後6〜12週 (3週間隔)" : "6-12 weeks old (3-wk interval)", 
+            cost: 100000, 
+            detail: lang === "ko" ? "범백혈구감소증, 허피스, 칼리시바이러스 3대 안심 예방" : lang === "ja" ? "猫汎白血球減少症、ヘルペス、カリシウイルスの3大予防" : "Preventing panleukopenia, herpesvirus, and calicivirus." 
+          },
+          { 
+            name: lang === "ko" ? "광견병 백신 및 필수 예방주사" : lang === "ja" ? "狂犬病ワクチン" : "Rabies Vaccine", 
+            period: lang === "ko" ? "생후 12~14주" : lang === "ja" ? "生後12〜14週" : "12-14 weeks old", 
+            cost: 50000, 
+            detail: lang === "ko" ? "가출 및 묘주 물림 사고 방지를 위한 의무 항체 형성 접종" : lang === "ja" ? "万が一の脱走や噛みつき事故を想定した義務予防接種" : "Compulsory immunization for outdoor exposure safety." 
+          },
+          { 
+            name: lang === "ko" ? "종합 항체가 검사" : lang === "ja" ? "抗体価検査" : "Antibody Titer Test", 
+            period: lang === "ko" ? "생후 14주 이후" : lang === "ja" ? "生後14週以降" : "14 weeks old+", 
+            cost: 50000, 
+            detail: lang === "ko" ? "접종 완료 후 주요 치명 질환에 대한 체내 면역 수준 평가" : lang === "ja" ? "混合ワクチン完了後、主要感染症への免疫レベル測定" : "Assess antibody formation level after vaccines." 
+          },
+          { 
+            name: lang === "ko" ? "고양이 백혈병 백신 (FeLV)" : lang === "ja" ? "猫白血病ウイルスワクチン (FeLV)" : "Feline Leukemia Vaccine (FeLV)", 
+            period: lang === "ko" ? "생후 12주 이후 (선택)" : lang === "ja" ? "生後12週以降 (任意)" : "12 weeks old+ (Optional)", 
+            cost: 50000, 
+            detail: lang === "ko" ? "다묘 가정 혹은 실외 노출 우려 묘의 백혈병 항체 획득" : lang === "ja" ? "多頭飼育環境や野外露出の懸念がある場合の感染対策" : "Acquire antibodies against leukemia for multi-cat homes." 
+          },
+          ...(isSpayed ? [{ 
+            name: lang === "ko" ? "선택형 중성화 수술" : lang === "ja" ? "避妊・去勢手術" : "Elective Spay/Neuter", 
+            period: lang === "ko" ? "생후 6~7개월 권장" : lang === "ja" ? "生後6〜7ヶ月推奨" : "6-7 months old recommended", 
+            cost: 200000, 
+            detail: lang === "ko" ? "발정 스트레스 경감, 자궁축농증 및 전립선 질환 원천 예방" : lang === "ja" ? "発情ストレスの軽減、子宮蓄膿症や前立腺疾患の予防" : "Preventing pyometra, prostate issues, and mating stress." 
+          }] : [])
         ]
       };
     } else if (computedAge < 7) {
       return {
-        stageName: "매년 추가 접종기 (1세 이상 ~ 7세 미만 성숙기)",
-        desc: "튼튼한 성숙기 유지를 위해 매년 1회 면역 보강 추가 접종과 매월 내부외 기생충 관리가 권장됩니다.",
+        stageName: lang === "ko" ? "매년 추가 접종기 (1세 이상 ~ 7세 미만 성숙기)" : lang === "ja" ? "年次追加接種期 (1歳〜7歳未満成熟期)" : "Annual Booster Stage (1-6 yrs)",
+        desc: lang === "ko" 
+          ? "튼튼한 성숙기 유지를 위해 매년 1회 면역 보강 추가 접종과 매월 내부외 기생충 관리가 권장됩니다." 
+          : lang === "ja" 
+          ? "健康な成猫・成犬期の維持のため、年1回の免疫補強追加接種と毎月の内外寄生虫予防が推奨されます。" 
+          : "Annual boosters support active immunity. Monthly preventative parasite control is highly advised.",
         items: [
-          { name: "종합백신(DHPPL/FVRCP) 추가 접종", period: "매년 1회", cost: 40000, detail: "시간이 지남에 따라 소실되는 면역 항체 수치를 최고치로 유지" },
-          { name: "광견병 & 켄넬코프(강아지) 추가 접종", period: "매년 1회", cost: 60000, detail: "단체 이용/호텔링 시 필수로 검증받아야 하는 예방 접종 완료증 갱신" },
-          { name: "1년치 심장사상충 및 내외부 기생충 예방약", period: "매월 복용/바름 (연간)", cost: 200000, detail: "모기 매개 치명 심장사상충 및 진드기 매개 살인진드기병 원천 차단" }
+          { 
+            name: lang === "ko" ? "종합백신(DHPPL/FVRCP) 추가 접종" : lang === "ja" ? "混合ワクチン追加接種" : "Core Booster (DHPPL / FVRCP)", 
+            period: lang === "ko" ? "매년 1회" : lang === "ja" ? "年に1回" : "Annually", 
+            cost: 40000, 
+            detail: lang === "ko" ? "시간이 지남에 따라 소실되는 면역 항체 수치를 최고치로 유지" : lang === "ja" ? "時間の経過に伴い低下する免疫力を呼び戻すブースター" : "Re-stimulate protective titers that decline over time." 
+          },
+          { 
+            name: lang === "ko" ? "광견병 & 켄넬코프(강아지) 추가 접종" : lang === "ja" ? "狂犬病＆ケンネルコフ追加" : "Rabies & Respiratory Booster (Dogs)", 
+            period: lang === "ko" ? "매년 1회" : lang === "ja" ? "年に1回" : "Annually", 
+            cost: 60000, 
+            detail: lang === "ko" ? "단체 이용/호텔링 시 필수로 검증받아야 하는 예방 접종 완료증 갱신" : lang === "ja" ? "ドッグラン・ホテル利用時に必須となる接種証明書の更新" : "Update dynamic proof for hoteling or public dog facilities." 
+          },
+          { 
+            name: lang === "ko" ? "1년치 심장사상충 및 내외부 기생충 예방약" : lang === "ja" ? "フィラリア＆内外寄生虫予防薬 (1年分)" : "1-Yr Supply Heartworm & Tick Spot-ons", 
+            period: lang === "ko" ? "매월 복용/바름 (연간)" : lang === "ja" ? "毎月投与 (年間)" : "Monthly administrations", 
+            cost: 200000, 
+            detail: lang === "ko" ? "모기 매개 치명 심장사상충 및 진드기 매개 살인진드기병 원천 차단" : lang === "ja" ? "蚊媒介の致命的なフィラリアおよびマダニ感染症の予防" : "Blocks lethal heartworms and tick-borne diseases." 
+          }
         ]
       };
     } else {
       return {
-        stageName: "노령기 집중 종합 검진기 (7세 이상 실버케어)",
-        desc: "신체 기능 노화가 시작되는 시기로, 질환 조기 발견을 위한 혈액검사 및 영상 정밀 검진이 필수적입니다.",
+        stageName: lang === "ko" ? "노령기 집중 종합 검진기 (7세 이상 실버케어)" : lang === "ja" ? "高齢期集中検診期 (7歳以上シニアケア)" : "Senior Screening Stage (7+ yrs)",
+        desc: lang === "ko" 
+          ? "신체 기능 노화가 시작되는 시기로, 질환 조기 발견을 위한 혈액검사 및 영상 정밀 검진이 필수적입니다." 
+          : lang === "ja" 
+          ? "身体機能が低下し始める時期で、病気の早期発見のための血液検査や精密画像診断が極めて重要です。" 
+          : "As bodily systems age, routine chemistry blood tests and diagnostic imaging are key to detect conditions early.",
         items: [
-          { name: "실버 종합 혈액검사 (CBC & Chemistry 17종)", period: "매년 1회 권장", cost: 200000, detail: "간, 신장 기능 수치 및 전해질, 백혈구 적혈구 정밀 신체 장기 분석" },
-          { name: "복부 초음파 & 흉부 엑스레이 영상 정밀 검사", period: "매년 1회 권장", cost: 250000, detail: "종양 조기 발견, 심장 비대증 판정 및 복부 주요 장기 형태 분석" },
-          { name: "종합백신 및 광견병 매년 의무 접종", period: "매년 1회", cost: 50000, detail: "노화로 인한 저하된 면역계를 서포트하는 필수 기초 추가 접종" },
-          { name: "노령 맞춤형 사상충 및 기생충 안전 처방", period: "연간 지속", cost: 100000, detail: "체력이 저하된 실버견/묘의 간부하를 줄이는 저자극성 기생충 차단" }
+          { 
+            name: lang === "ko" ? "실버 종합 혈액검사 (CBC & Chemistry 17종)" : lang === "ja" ? "シニア血液スクリーニング検査 (17項目)" : "Senior Chemistry Profile (CBC & 17 channels)", 
+            period: lang === "ko" ? "매년 1회 권장" : lang === "ja" ? "年1回推奨" : "Recommended annually", 
+            cost: 200000, 
+            detail: lang === "ko" ? "간, 신장 기능 수치 및 전해질, 백혈구 적혈구 정밀 신체 장기 분석" : lang === "ja" ? "肝臓・腎臓機能数値および電解質、血球の総合分析" : "Analyzes internal liver, kidney functions, and blood cells." 
+          },
+          { 
+            name: lang === "ko" ? "복부 초음파 & 흉부 엑스레이 영상 정밀 검사" : lang === "ja" ? "腹部エコー＆胸部レントゲン精密画像検査" : "Abdomen Ultrasound & Chest X-Ray Imaging", 
+            period: lang === "ko" ? "매년 1회 권장" : lang === "ja" ? "年1回推奨" : "Recommended annually", 
+            cost: 250000, 
+            detail: lang === "ko" ? "종양 조기 발견, 심장 비대증 판정 및 복부 주요 장기 형태 분석" : lang === "ja" ? "腫瘍の早期発見、心臓肥大の検出、腹部臓器の分析" : "Detects early tumors, cardiac enlargement, and organ issues." 
+          },
+          { 
+            name: lang === "ko" ? "종합백신 및 광견병 매년 의무 접종" : lang === "ja" ? "混合ワクチン＆狂犬病の毎年接種" : "Core Booster & Rabies annual routine", 
+            period: lang === "ko" ? "매년 1회" : lang === "ja" ? "年に1回" : "Annually", 
+            cost: 50000, 
+            detail: lang === "ko" ? "노화로 인한 저하된 면역계를 서포트하는 필수 기초 추가 접종" : lang === "ja" ? "加齢に伴い低下する免疫をサポートするための予防" : "Supports aging immune systems to withstand infections." 
+          },
+          { 
+            name: lang === "ko" ? "노령 맞춤형 사상충 및 기생충 안전 처방" : lang === "ja" ? "シニア対応フィラリア・寄生虫予防" : "Senior-Safe Heartworm & Parasite Control", 
+            period: lang === "ko" ? "연간 지속" : lang === "ja" ? "年間継続" : "Continuous through the year", 
+            cost: 100000, 
+            detail: lang === "ko" ? "체력이 저하된 실버견/묘의 간부하를 줄이는 저자극성 기생충 차단" : lang === "ja" ? "体力の下がった高齢ペットの肝臓負荷を下げるマイルドな処方" : "Mild formulas to lower hepatic strain for senior pets." 
+          }
         ]
       };
     }
-  }, [petType, computedAge, isSpayed]);
+  }, [petType, computedAge, isSpayed, lang]);
 
-  // 리셋
   const handleReset = () => {
     setPetType("dog_small");
     setAgeMode("direct");
@@ -262,10 +545,11 @@ export default function PetcareExpensesCalculator() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const initCostText = petType === "dog_large" ? t.largeCostText : t.normalCostText;
+
   return (
     <div className="min-h-screen bg-[#faf8f9] py-12 px-4 sm:px-6 lg:px-8 font-sans relative overflow-hidden">
       
-      {/* 2026 트렌디 백그라운드 오라 장식 */}
       <div className="absolute top-[-5%] right-[-10%] w-[550px] h-[550px] rounded-full bg-magenta/5 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-5%] left-[-15%] w-[600px] h-[600px] rounded-full bg-indigo-500/5 blur-[130px] pointer-events-none" />
 
@@ -275,54 +559,88 @@ export default function PetcareExpensesCalculator() {
         <div className="text-center space-y-4 max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-magenta-light text-magenta text-xs font-black uppercase tracking-wider shadow-sm border border-magenta/10">
             <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-            안심 연구원 지출 진단 리포트
+            {t.badge}
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight">
-            반려동물 평생 양육비 & 월간 유지비 계산기 💰
+            {t.title}
           </h1>
           <p className="text-sm sm:text-base text-gray-500 font-bold leading-relaxed">
-            나이대별 수의학 필수 예방접종 비용과 생애 의료비 시뮬레이션을 탑재하여<br className="hidden sm:inline" />
-            우리 아이 맞춤형 한 달 고정 유지비와 평생 지출의 정밀 진단서를 실시간 확인하세요.
+            {t.desc}
           </p>
         </div>
 
-        {/* 2컬럼 레이아웃 대시보드 (입력창 & 실시간 리포트) */}
+        {/* 2컬럼 레이아웃 대시보드 */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* 좌측: 입력 카드군 (lg:col-span-7) */}
+          {/* 좌측: 입력 카드군 */}
           <div className="lg:col-span-7 space-y-6">
             
             {/* 1. 축종 및 크기 선택 */}
             <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100/80 hover:shadow-md transition-shadow duration-300 space-y-4">
               <label className="text-base font-black text-gray-900 flex items-center gap-2">
                 <span className="flex items-center justify-center w-6 h-6 rounded-lg bg-magenta-light text-magenta text-xs font-black">1</span>
-                축종 및 반려동물 크기 선택
+                {t.labelSelectType}
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {(
-                  [
-                    { id: "dog_small", label: "소형견", icon: "🐶", desc: "10kg 미만" },
-                    { id: "dog_medium", label: "중형견", icon: "🐕", desc: "10~25kg" },
-                    { id: "dog_large", label: "대형견", icon: "🐩", desc: "25kg 이상" },
-                    { id: "cat", label: "고양이", icon: "🐱", desc: "반려묘 전체" }
-                  ] as const
-                ).map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => handlePetTypeChange(item.id)}
-                    className={`p-3.5 rounded-2xl border-2 text-center transition-all duration-300 flex flex-col items-center justify-center gap-1.5 cursor-pointer ${
-                      petType === item.id
-                        ? "border-magenta bg-magenta-light/20 text-magenta font-black shadow-sm"
-                        : "border-gray-100 hover:border-gray-200 text-gray-500 font-bold bg-white"
-                    }`}
-                    style={{ minHeight: "95px" }}
-                  >
-                    <span className="text-3xl">{item.icon}</span>
-                    <span className="text-[13px] font-black">{item.label}</span>
-                    <span className="text-[10px] text-gray-400 font-medium">{item.desc}</span>
-                  </button>
-                ))}
+                <button
+                  type="button"
+                  onClick={() => handlePetTypeChange("dog_small")}
+                  className={`p-3.5 rounded-2xl border-2 text-center transition-all duration-300 flex flex-col items-center justify-center gap-1.5 cursor-pointer ${
+                    petType === "dog_small"
+                      ? "border-magenta bg-magenta-light/20 text-magenta font-black shadow-sm"
+                      : "border-gray-100 hover:border-gray-200 text-gray-500 font-bold bg-white"
+                  }`}
+                  style={{ minHeight: "95px" }}
+                >
+                  <span className="text-3xl">🐶</span>
+                  <span className="text-[13px] font-black">{t.dogSmall}</span>
+                  <span className="text-[10px] text-gray-400 font-medium">{t.dogSmallDesc}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handlePetTypeChange("dog_medium")}
+                  className={`p-3.5 rounded-2xl border-2 text-center transition-all duration-300 flex flex-col items-center justify-center gap-1.5 cursor-pointer ${
+                    petType === "dog_medium"
+                      ? "border-magenta bg-magenta-light/20 text-magenta font-black shadow-sm"
+                      : "border-gray-100 hover:border-gray-200 text-gray-500 font-bold bg-white"
+                  }`}
+                  style={{ minHeight: "95px" }}
+                >
+                  <span className="text-3xl">🐕</span>
+                  <span className="text-[13px] font-black">{t.dogMedium}</span>
+                  <span className="text-[10px] text-gray-400 font-medium">{t.dogMediumDesc}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handlePetTypeChange("dog_large")}
+                  className={`p-3.5 rounded-2xl border-2 text-center transition-all duration-300 flex flex-col items-center justify-center gap-1.5 cursor-pointer ${
+                    petType === "dog_large"
+                      ? "border-magenta bg-magenta-light/20 text-magenta font-black shadow-sm"
+                      : "border-gray-100 hover:border-gray-200 text-gray-500 font-bold bg-white"
+                  }`}
+                  style={{ minHeight: "95px" }}
+                >
+                  <span className="text-3xl">🐩</span>
+                  <span className="text-[13px] font-black">{t.dogLarge}</span>
+                  <span className="text-[10px] text-gray-400 font-medium">{t.dogLargeDesc}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handlePetTypeChange("cat")}
+                  className={`p-3.5 rounded-2xl border-2 text-center transition-all duration-300 flex flex-col items-center justify-center gap-1.5 cursor-pointer ${
+                    petType === "cat"
+                      ? "border-magenta bg-magenta-light/20 text-magenta font-black shadow-sm"
+                      : "border-gray-100 hover:border-gray-200 text-gray-500 font-bold bg-white"
+                  }`}
+                  style={{ minHeight: "95px" }}
+                >
+                  <span className="text-3xl">🐱</span>
+                  <span className="text-[13px] font-black">{t.cat}</span>
+                  <span className="text-[10px] text-gray-400 font-medium">{t.catDesc}</span>
+                </button>
               </div>
             </div>
 
@@ -330,10 +648,9 @@ export default function PetcareExpensesCalculator() {
             <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100/80 hover:shadow-md transition-shadow duration-300 space-y-5">
               <label className="text-base font-black text-gray-900 flex items-center gap-2">
                 <span className="flex items-center justify-center w-6 h-6 rounded-lg bg-magenta-light text-magenta text-xs font-black">2</span>
-                나이 및 예상 수명 설정
+                {t.labelAgeSetup}
               </label>
 
-              {/* 나이 입력 방식 전환 탭 */}
               <div className="flex border-b border-gray-100">
                 <button
                   type="button"
@@ -344,7 +661,7 @@ export default function PetcareExpensesCalculator() {
                       : "border-transparent text-gray-400 hover:text-gray-600"
                   }`}
                 >
-                  나이 직접 입력
+                  {t.ageModeDirect}
                 </button>
                 <button
                   type="button"
@@ -355,31 +672,31 @@ export default function PetcareExpensesCalculator() {
                       : "border-transparent text-gray-400 hover:text-gray-600"
                   }`}
                 >
-                  출생연월 선택
+                  {t.ageModeBirth}
                 </button>
               </div>
 
               {ageMode === "direct" ? (
                 <div className="space-y-2">
-                  <span className="text-sm font-bold text-gray-700">현재 나이 입력</span>
+                  <span className="text-sm font-bold text-gray-700">{t.labelAgeDirect}</span>
                   <div className="relative">
                     <input
                       type="number"
                       value={age}
                       onChange={(e) => setAge(e.target.value)}
-                      placeholder="예: 3"
+                      placeholder="3"
                       min="0"
                       max="30"
                       className="w-full px-5 py-4 rounded-2xl border border-gray-200 focus:border-magenta focus:ring-1 focus:ring-magenta focus:outline-none transition-all font-bold text-gray-800 text-base"
                       style={{ minHeight: "56px" }}
                     />
-                    <span className="absolute right-5 top-1/2 -translate-y-1/2 font-bold text-gray-400">살</span>
+                    <span className="absolute right-5 top-1/2 -translate-y-1/2 font-bold text-gray-400">{t.unitAge}</span>
                   </div>
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <span className="text-sm font-bold text-gray-700">출생 연도</span>
+                    <span className="text-sm font-bold text-gray-700">{t.labelBirthYear}</span>
                     <select
                       value={birthYear}
                       onChange={(e) => setBirthYear(e.target.value)}
@@ -387,12 +704,12 @@ export default function PetcareExpensesCalculator() {
                       style={{ minHeight: "56px" }}
                     >
                       {Array.from({ length: 25 }, (_, i) => CURRENT_YEAR - i).map((yr) => (
-                        <option key={yr} value={yr}>{yr}년</option>
+                        <option key={yr} value={yr}>{yr}{t.unitYear}</option>
                       ))}
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <span className="text-sm font-bold text-gray-700">출생 월</span>
+                    <span className="text-sm font-bold text-gray-700">{t.labelBirthMonth}</span>
                     <select
                       value={birthMonth}
                       onChange={(e) => setBirthMonth(e.target.value)}
@@ -400,18 +717,17 @@ export default function PetcareExpensesCalculator() {
                       style={{ minHeight: "56px" }}
                     >
                       {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-                        <option key={m} value={m}>{m}월</option>
+                        <option key={m} value={m}>{m}{t.unitMonth}</option>
                       ))}
                     </select>
                   </div>
                 </div>
               )}
 
-              {/* 중성화 옵션 - 1세 미만일 때만 체크박스 노출 */}
               {computedAge < 1 && (
                 <div className="p-4 bg-magenta-light/30 border border-magenta/10 rounded-2xl flex items-center justify-between transition-all duration-300">
                   <span className="text-xs sm:text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                    👶 1세 미만 기초 접종기에 중성화 수술을 하였거나 할 예정인가요?
+                    {t.neuteredQuestion}
                   </span>
                   <input
                     type="checkbox"
@@ -422,11 +738,10 @@ export default function PetcareExpensesCalculator() {
                 </div>
               )}
 
-              {/* 예상 수명 슬라이더 */}
               <div className="space-y-3 pt-2">
                 <div className="flex justify-between items-center text-sm font-bold">
-                  <span className="text-gray-700">목표 예상 수명</span>
-                  <span className="text-magenta font-black text-base">{lifespan}세</span>
+                  <span className="text-gray-700">{t.labelTargetLifespan}</span>
+                  <span className="text-magenta font-black text-base">{lifespan}{t.unitLifespan}</span>
                 </div>
                 <input
                   type="range"
@@ -437,9 +752,9 @@ export default function PetcareExpensesCalculator() {
                   className="w-full h-2 bg-gray-150 rounded-lg appearance-none cursor-pointer accent-magenta"
                 />
                 <div className="flex justify-between text-[10px] text-gray-400 font-bold">
-                  <span>{Math.max(1, computedAge + 1)}세</span>
-                  <span>20세</span>
-                  <span>35세</span>
+                  <span>{Math.max(1, computedAge + 1)}{t.unitLifespan}</span>
+                  <span>20{t.unitLifespan}</span>
+                  <span>35{t.unitLifespan}</span>
                 </div>
               </div>
             </div>
@@ -448,43 +763,66 @@ export default function PetcareExpensesCalculator() {
             <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100/80 hover:shadow-md transition-shadow duration-300 space-y-6">
               <label className="text-base font-black text-gray-900 flex items-center gap-2">
                 <span className="flex items-center justify-center w-6 h-6 rounded-lg bg-magenta-light text-magenta text-xs font-black">3</span>
-                월간 고정 생활 지출비 조율
+                {t.labelExpensesSetup}
               </label>
 
-              {/* 식비 등급 설정 */}
               <div className="space-y-3">
-                <span className="text-sm font-bold text-gray-700">식사 사료/간식 품질</span>
+                <span className="text-sm font-bold text-gray-700">{t.labelFoodQuality}</span>
                 <div className="grid grid-cols-3 gap-3">
-                  {(
-                    [
-                      { id: "normal", label: "일반형", val: "3만" },
-                      { id: "premium", label: "프리미엄", val: "6만" },
-                      { id: "medical", label: "처방식/생식", val: "9만" }
-                    ] as const
-                  ).map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => handleFoodGradeChange(item.id)}
-                      className={`p-3 rounded-2xl border-2 text-center transition-all active:scale-95 flex flex-col items-center justify-center gap-1 cursor-pointer ${
-                        foodGrade === item.id
-                          ? "border-magenta bg-magenta-light/20 text-magenta font-black shadow-sm"
-                          : "border-gray-100 hover:border-gray-200 text-gray-500 font-bold bg-white"
-                      }`}
-                      style={{ minHeight: "75px" }}
-                    >
-                      <span className="text-xs font-black">{item.label}</span>
-                      <span className="text-[10px] text-gray-400 font-bold">{item.val} 원 기준</span>
-                    </button>
-                  ))}
+                  <button
+                    type="button"
+                    onClick={() => handleFoodGradeChange("normal")}
+                    className={`p-3 rounded-2xl border-2 text-center transition-all active:scale-95 flex flex-col items-center justify-center gap-1 cursor-pointer ${
+                      foodGrade === "normal"
+                        ? "border-magenta bg-magenta-light/20 text-magenta font-black shadow-sm"
+                        : "border-gray-100 hover:border-gray-200 text-gray-500 font-bold bg-white"
+                    }`}
+                    style={{ minHeight: "75px" }}
+                  >
+                    <span className="text-xs font-black">{t.foodNormal}</span>
+                    <span className="text-[10px] text-gray-400 font-bold">
+                      {lang === "ko" ? "3만" : lang === "ja" ? "3万" : "30k"} {t.unitWonDesc}
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleFoodGradeChange("premium")}
+                    className={`p-3 rounded-2xl border-2 text-center transition-all active:scale-95 flex flex-col items-center justify-center gap-1 cursor-pointer ${
+                      foodGrade === "premium"
+                        ? "border-magenta bg-magenta-light/20 text-magenta font-black shadow-sm"
+                        : "border-gray-100 hover:border-gray-200 text-gray-500 font-bold bg-white"
+                    }`}
+                    style={{ minHeight: "75px" }}
+                  >
+                    <span className="text-xs font-black">{t.foodPremium}</span>
+                    <span className="text-[10px] text-gray-400 font-bold">
+                      {lang === "ko" ? "6만" : lang === "ja" ? "6万" : "60k"} {t.unitWonDesc}
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleFoodGradeChange("medical")}
+                    className={`p-3 rounded-2xl border-2 text-center transition-all active:scale-95 flex flex-col items-center justify-center gap-1 cursor-pointer ${
+                      foodGrade === "medical"
+                        ? "border-magenta bg-magenta-light/20 text-magenta font-black shadow-sm"
+                        : "border-gray-100 hover:border-gray-200 text-gray-500 font-bold bg-white"
+                    }`}
+                    style={{ minHeight: "75px" }}
+                  >
+                    <span className="text-xs font-black">{t.foodMedical}</span>
+                    <span className="text-[10px] text-gray-400 font-bold">
+                      {lang === "ko" ? "9만" : lang === "ja" ? "9万" : "90k"} {t.unitWonDesc}
+                    </span>
+                  </button>
                 </div>
               </div>
 
-              {/* 식비 미세 조율 슬라이더 */}
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-xs font-bold text-gray-500">
-                  <span>식사 및 간식비 (월)</span>
-                  <span className="text-gray-900 text-sm font-black">{foodCost.toLocaleString()} 원</span>
+                  <span>{t.sliderFoodLabel}</span>
+                  <span className="text-gray-900 text-sm font-black">{foodCost.toLocaleString()} {t.unitWon}</span>
                 </div>
                 <input
                   type="range"
@@ -499,11 +837,10 @@ export default function PetcareExpensesCalculator() {
 
               <div className="h-px bg-gray-100" />
 
-              {/* 위생용품비 (배변패드, 고양이 모래 등 2만 원~5만 원 조절 슬라이더) */}
               <div className="space-y-3">
                 <div className="flex justify-between items-center text-sm font-bold">
-                  <span className="text-gray-700">위생 용품비 (배변패드, 고양이 모래 등 / 월)</span>
-                  <span className="text-magenta font-black">{hygieneCost.toLocaleString()} 원</span>
+                  <span className="text-gray-700">{t.sliderHygieneLabel}</span>
+                  <span className="text-magenta font-black">{hygieneCost.toLocaleString()} {t.unitWon}</span>
                 </div>
                 <input
                   type="range"
@@ -515,47 +852,51 @@ export default function PetcareExpensesCalculator() {
                   className="w-full h-2 bg-gray-150 rounded-lg appearance-none cursor-pointer accent-magenta"
                 />
                 <div className="flex justify-between text-[10px] text-gray-400 font-bold">
-                  <span>2만 원</span>
-                  <span>3.5만 원</span>
-                  <span>5만 원</span>
+                  <span>2{t.unitTenThousand}</span>
+                  <span>3.5{t.unitTenThousand}</span>
+                  <span>5{t.unitTenThousand}</span>
                 </div>
               </div>
 
               <div className="h-px bg-gray-100" />
 
-              {/* 미용/케어 방식 선택 */}
               <div className="space-y-3">
-                <span className="text-sm font-bold text-gray-700">미용 및 위생 관리 방식</span>
+                <span className="text-sm font-bold text-gray-700">{t.labelCareType}</span>
                 <div className="grid grid-cols-2 gap-3">
-                  {(
-                    [
-                      { id: "shop", label: "전문 미용숍 케어", desc: "월 1회 전문점 목욕/미용" },
-                      { id: "home", label: "홈케어 위주", desc: "셀프 목욕 및 기본 위생케어" }
-                    ] as const
-                  ).map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => handleCareTypeChange(item.id)}
-                      className={`p-3.5 rounded-2xl border-2 text-center transition-all active:scale-95 flex flex-col items-center justify-center gap-1 cursor-pointer ${
-                        careType === item.id
-                          ? "border-magenta bg-magenta-light/20 text-magenta font-black shadow-sm"
-                          : "border-gray-100 hover:border-gray-200 text-gray-500 font-bold bg-white"
-                      }`}
-                      style={{ minHeight: "75px" }}
-                    >
-                      <span className="text-xs font-black">{item.label}</span>
-                      <span className="text-[10px] text-gray-400 font-normal">{item.desc}</span>
-                    </button>
-                  ))}
+                  <button
+                    type="button"
+                    onClick={() => handleCareTypeChange("shop")}
+                    className={`p-3.5 rounded-2xl border-2 text-center transition-all active:scale-95 flex flex-col items-center justify-center gap-1 cursor-pointer ${
+                      careType === "shop"
+                        ? "border-magenta bg-magenta-light/20 text-magenta font-black shadow-sm"
+                        : "border-gray-100 hover:border-gray-200 text-gray-500 font-bold bg-white"
+                    }`}
+                    style={{ minHeight: "75px" }}
+                  >
+                    <span className="text-xs font-black">{t.careShop}</span>
+                    <span className="text-[10px] text-gray-400 font-normal">{t.careShopDesc}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleCareTypeChange("home")}
+                    className={`p-3.5 rounded-2xl border-2 text-center transition-all active:scale-95 flex flex-col items-center justify-center gap-1 cursor-pointer ${
+                      careType === "home"
+                        ? "border-magenta bg-magenta-light/20 text-magenta font-black shadow-sm"
+                        : "border-gray-100 hover:border-gray-200 text-gray-500 font-bold bg-white"
+                    }`}
+                    style={{ minHeight: "75px" }}
+                  >
+                    <span className="text-xs font-black">{t.careHome}</span>
+                    <span className="text-[10px] text-gray-400 font-normal">{t.careHomeDesc}</span>
+                  </button>
                 </div>
               </div>
 
-              {/* 미용비 미세 조율 슬라이더 */}
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-xs font-bold text-gray-500">
-                  <span>미용 및 케어 관리비 (월)</span>
-                  <span className="text-gray-900 text-sm font-black">{careCost.toLocaleString()} 원</span>
+                  <span>{t.sliderCareLabel}</span>
+                  <span className="text-gray-900 text-sm font-black">{careCost.toLocaleString()} {t.unitWon}</span>
                 </div>
                 <input
                   type="range"
@@ -571,77 +912,73 @@ export default function PetcareExpensesCalculator() {
             </div>
           </div>
 
-          {/* 우측: 실시간 글래스모피즘 결과 리포트 (lg:col-span-5) */}
+          {/* 우측: 실시간 글래스모피즘 결과 리포트 */}
           <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-8">
             
-            {/* 글래스모피즘 결과 요약 카드 */}
             <div className="relative overflow-hidden rounded-3xl p-6 sm:p-8 border border-white/40 bg-white/75 backdrop-blur-xl shadow-xl shadow-slate-100">
               
-              {/* 은은한 네온 빛 무드 데코 */}
               <div className="absolute -right-20 -top-20 w-44 h-44 rounded-full bg-magenta/10 blur-3xl pointer-events-none" />
               <div className="absolute -left-20 -bottom-20 w-44 h-44 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
 
               <div className="space-y-6 relative z-10">
                 
-                {/* 상단 헤더 */}
                 <div className="flex items-center justify-between gap-4 border-b border-gray-150/40 pb-4">
                   <div>
                     <p className="text-[10px] font-black text-gray-400 tracking-widest uppercase">
                       LIFETIME EXPENSE ANALYTICS
                     </p>
                     <h2 className="text-lg font-black text-gray-900 mt-0.5">
-                      지출 종합 진단서
+                      {t.reportTitle}
                     </h2>
                   </div>
                   <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[10px] font-black bg-magenta-light text-magenta shadow-sm border border-magenta/10">
-                    실시간 자동 갱신 ⚡
+                    {t.reportRealtime}
                   </span>
                 </div>
 
-                {/* 비용 요약 인포그래픽 */}
                 <div className="space-y-4">
-                  {/* 월 고정 지출 */}
                   <div className="bg-white/90 p-4.5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between gap-4">
                     <div className="space-y-1">
                       <span className="text-xs font-bold text-gray-400 flex items-center gap-1">
                         <Coffee className="w-3.5 h-3.5 text-magenta" />
-                        월간 고정 유지비
+                        {t.reportMonthlyTotal}
                       </span>
                       <p className="text-xl sm:text-2xl font-black text-magenta">
-                        {monthlyTotal.toLocaleString()}원
+                        {monthlyTotal.toLocaleString()}{t.unitWon}
                       </p>
                     </div>
                     <div className="text-right">
-                      <span className="text-[10px] text-gray-400 font-bold">의료비 포함</span>
+                      <span className="text-[10px] text-gray-400 font-bold">{t.reportMonthlyMedical}</span>
                     </div>
                   </div>
 
-                  {/* 평생 누적 예상 양육비 */}
-                  <div className="bg-white/90 p-4.5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between gap-4">
+                  <div className="bg-white/90 p-4.5 rounded-2xl border border-gray-150 shadow-sm flex items-center justify-between gap-4">
                     <div className="space-y-1">
                       <span className="text-xs font-bold text-gray-400 flex items-center gap-1">
                         <PiggyBank className="w-3.5 h-3.5 text-indigo-500" />
-                        평생 누적 예상 양육비
+                        {t.reportLifetimeTotal}
                       </span>
                       <p className="text-xl sm:text-2xl font-black text-indigo-600">
-                        {lifetimeTotal.toLocaleString()}원
+                        {lifetimeTotal.toLocaleString()}{t.unitWon}
                       </p>
                     </div>
                     <div className="text-right">
-                      <span className="text-[10px] text-gray-400 font-bold">생애 총합 ({remainingYears}년)</span>
+                      <span className="text-[10px] text-gray-400 font-bold">
+                        {t.reportLifetimePeriod.replace("{remainingYears}", String(remainingYears))}
+                      </span>
                     </div>
                   </div>
                 </div>
 
-                {/* 나이 시뮬레이터 요약 설명 */}
                 <div className="bg-white/50 p-4 rounded-2xl border border-white/60 text-xs text-gray-500 leading-relaxed font-semibold">
                   <Info className="w-3.5 h-3.5 text-gray-400 inline-block mr-1 -mt-0.5" />
-                  현재 나이 <span className="text-gray-900 font-black">{computedAge}세</span>부터 예상 수명 <span className="text-gray-900 font-black">{lifespan}세</span>까지의 시뮬레이션입니다. 초기 용품 정착금({petType === "dog_large" ? "100만 원" : "50만 원"})이 추가되었습니다.
+                  {t.simulationInfo
+                    .replace("{computedAge}", String(computedAge))
+                    .replace("{lifespan}", String(lifespan))
+                    .replace("{initCostText}", initCostText)}
                 </div>
 
-                {/* 차트 가시화 */}
                 <div className="flex items-center gap-6 p-4 bg-white/40 border border-white/30 rounded-2xl">
-                  {/* 도넛 차트 SVG */}
                   <div className="relative w-28 h-28 flex items-center justify-center flex-shrink-0">
                     <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
                       <circle
@@ -690,29 +1027,28 @@ export default function PetcareExpensesCalculator() {
                       />
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                      <span className="text-[8px] text-gray-400 font-bold uppercase tracking-widest">MONTHLY</span>
+                      <span className="text-[8px] text-gray-400 font-bold uppercase tracking-widest">{t.chartLabelMonthly}</span>
                       <span className="text-xs font-black text-gray-800">
-                        {monthlyTotal >= 10000 ? `${(monthlyTotal/10000).toFixed(1)}만` : `${monthlyTotal.toLocaleString()}`}
+                        {monthlyTotal >= 10000 ? `${(monthlyTotal/10000).toFixed(1)}${lang === "en" ? "0k" : "만"}` : `${monthlyTotal.toLocaleString()}`}
                       </span>
                     </div>
                   </div>
 
-                  {/* 비율 브레이크다운 */}
                   <div className="flex-1 space-y-2 text-[10px] font-bold text-gray-600">
                     <div className="flex justify-between items-center">
-                      <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-magenta" /> 식비 및 간식</span>
+                      <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-magenta" /> {t.chartFood}</span>
                       <span className="text-gray-900">{chartPercents.food}%</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-sky-500" /> 위생용품</span>
+                      <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-sky-500" /> {t.chartHygiene}</span>
                       <span className="text-gray-900">{chartPercents.hygiene}%</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-indigo-500" /> 미용 및 위생</span>
+                      <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-indigo-500" /> {t.chartCare}</span>
                       <span className="text-gray-900">{chartPercents.care}%</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-orange-500" /> 의료비 (자동)</span>
+                      <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-orange-500" /> {t.chartMedical}</span>
                       <span className="text-gray-900">{chartPercents.medical}%</span>
                     </div>
                   </div>
@@ -721,30 +1057,26 @@ export default function PetcareExpensesCalculator() {
               </div>
             </div>
 
-            {/* "우리 아이 나이 맞춤형 필수 예방접종 달력" */}
             <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-150/60 space-y-5">
               <div className="space-y-1">
                 <h3 className="text-base font-black text-gray-900 flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-magenta" />
-                  올해 필수 예방접종 &amp; 케어 달력 📅
+                  {t.calendarTitle}
                 </h3>
                 <p className="text-xs text-gray-400 font-bold leading-normal">
-                  현재 나이인 <span className="text-magenta font-black">{computedAge}세</span> 시점에 필수 권장되는 수의학 예방 케어 및 건강검진 비용 내역입니다.
+                  {t.calendarDesc.replace("{computedAge}", String(computedAge))}
                 </p>
               </div>
 
-              {/* 나이 그룹 표시 */}
               <div className="bg-magenta-light/30 px-3.5 py-2.5 rounded-2xl border border-magenta/10 flex items-center justify-between text-xs font-black text-magenta">
                 <span>{vaccinationSchedule.stageName}</span>
-                <span className="text-[10px] bg-white px-2 py-0.5 rounded shadow-sm border border-magenta/5">권장</span>
+                <span className="text-[10px] bg-white px-2 py-0.5 rounded shadow-sm border border-magenta/5">{t.calendarTag}</span>
               </div>
 
-              {/* 설명 */}
               <p className="text-xs text-gray-500 leading-relaxed font-semibold whitespace-pre-line">
                 💡 {vaccinationSchedule.desc}
               </p>
 
-              {/* 접종 체크리스트 */}
               <div className="space-y-3.5 pt-2">
                 {vaccinationSchedule.items.map((item, idx) => (
                   <div key={idx} className="p-3.5 bg-slate-50 border border-gray-100 rounded-2xl space-y-2 hover:border-gray-200 transition-colors">
@@ -757,7 +1089,7 @@ export default function PetcareExpensesCalculator() {
                         </div>
                       </div>
                       <span className="text-xs font-black text-magenta flex-shrink-0">
-                        ~ {(item.cost).toLocaleString()}원
+                        ~ {(item.cost).toLocaleString()}{t.unitWon}
                       </span>
                     </div>
                     <p className="text-[10px] text-gray-500 leading-relaxed font-semibold pl-6 border-l border-gray-200">
@@ -768,11 +1100,10 @@ export default function PetcareExpensesCalculator() {
               </div>
 
               <div className="pt-2 text-[10px] text-gray-400 leading-relaxed font-bold">
-                * 예방접종 비용은 지역 및 동물병원 규모에 따라 상이할 수 있으며, 만 7세 이상 노령기는 주기적인 스크리닝이 아이의 갑작스러운 중증 의료비 폭탄을 방지하는 지름길입니다.
+                {t.calendarDisclaimer}
               </div>
             </div>
 
-            {/* 다시 계산하기 버튼 */}
             <button
               type="button"
               onClick={handleReset}
@@ -780,7 +1111,7 @@ export default function PetcareExpensesCalculator() {
               style={{ minHeight: "56px" }}
             >
               <RotateCcw className="w-4 h-4" />
-              다시 계산하기
+              {t.btnReset}
             </button>
 
           </div>

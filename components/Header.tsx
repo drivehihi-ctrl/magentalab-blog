@@ -47,25 +47,25 @@ export default function Header() {
     askLink: isEn ? "/en" : isJa ? "/ja" : "/ask-ansimi",
 
     bcs: isEn ? "BCS Calculator" : isJa ? "BCS計算機" : "칼로리 계산기",
-    bcsLink: isEn ? "/en" : isJa ? "/ja" : "/bcs-calculator",
+    bcsLink: isEn ? "/en/bcs-calculator" : isJa ? "/ja/bcs-calculator" : "/bcs-calculator",
 
     age: isEn ? "Age Calculator" : isJa ? "年齢計算機" : "나이 계산기",
-    ageLink: isEn ? "/en" : isJa ? "/ja" : "/age-calculator",
+    ageLink: isEn ? "/en/age-calculator" : isJa ? "/ja/age-calculator" : "/age-calculator",
 
     dm: isEn ? "DM Calculator" : isJa ? "栄養＆飲水量" : "영양 & 음수량",
-    dmLink: isEn ? "/en" : isJa ? "/ja" : "/dm-calculator",
+    dmLink: isEn ? "/en/dm-calculator" : isJa ? "/ja/dm-calculator" : "/dm-calculator",
 
     emergency: isEn ? "Emergency Guide" : isJa ? "応急計算機" : "응급 계산기",
-    emergencyLink: isEn ? "/en" : isJa ? "/ja" : "/emergency-calculator",
+    emergencyLink: isEn ? "/en/emergency-calculator" : isJa ? "/ja/emergency-calculator" : "/emergency-calculator",
 
     patella: isEn ? "Patella Diagnosis" : isJa ? "膝蓋骨診断" : "슬개골 진단",
-    patellaLink: isEn ? "/en" : isJa ? "/ja" : "/patella",
+    patellaLink: isEn ? "/en/patella" : isJa ? "/ja/patella" : "/patella",
 
     petCare: isEn ? "Pet Expenses" : isJa ? "養育費計算" : "양육비 계산",
-    petCareLink: isEn ? "/en" : isJa ? "/ja" : "/Petcareexpenses",
+    petCareLink: isEn ? "/en/Petcareexpenses" : isJa ? "/ja/Petcareexpenses" : "/Petcareexpenses",
 
     fic: isEn ? "Cystitis Diagnoser" : isJa ? "膀胱炎診断" : "방광염 진단",
-    ficLink: isEn ? "/en" : isJa ? "/ja" : "/FIC",
+    ficLink: isEn ? "/en/FIC" : isJa ? "/ja/FIC" : "/FIC",
 
     contact: isEn ? "Contact" : isJa ? "お問い合わせ" : "문의하기",
     searchLabel: isEn ? "AI Search" : isJa ? "AI検索" : "AI 검색",

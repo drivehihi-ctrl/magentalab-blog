@@ -13,6 +13,7 @@ interface CalculatorBannerProps {
   forceType?: CalculatorType;
   excludeType?: CalculatorType;
   isRandom?: boolean;
+  lang?: "ko" | "en" | "ja";
 }
 
 export default function CalculatorBanner({ 
@@ -21,82 +22,207 @@ export default function CalculatorBanner({
   postId,
   forceType,
   excludeType,
-  isRandom = false
+  isRandom = false,
+  lang = "ko"
 }: CalculatorBannerProps) {
   const [selected, setSelected] = useState<CalculatorType>("bcs");
   const [isMounted, setIsMounted] = useState(false);
 
-  // 사용자가 명시적으로 전달한 텍스트 및 전용 라벨 매핑
-  const bannerData: Record<CalculatorType, {
-    url: string;
+  // 다국어 라우트 매핑 헬퍼
+  const getUrl = (type: CalculatorType) => {
+    if (lang === "ko") {
+      const koMap: Record<CalculatorType, string> = {
+        bcs: "/bcs-calculator",
+        age: "/age-calculator",
+        dm: "/dm-calculator",
+        emergency: "/emergency-calculator",
+        expenses: "/Petcareexpenses",
+        patella: "/patella",
+        fic: "/FIC"
+      };
+      return koMap[type];
+    } else {
+      const globalTypeMap: Record<CalculatorType, string> = {
+        bcs: "bcs-calculator",
+        age: "age-calculator",
+        dm: "dm-calculator",
+        emergency: "emergency-calculator",
+        expenses: "petcare-expenses-calculator",
+        patella: "patella-diagnoser",
+        fic: "fic-diagnoser"
+      };
+      return `/${lang}/${globalTypeMap[type]}`;
+    }
+  };
+
+  // 사용자가 명시적으로 전달한 텍스트 및 전용 라벨 매핑 (다국어 딕셔너리)
+  const dict = {
+    ko: {
+      bcs: {
+        tag: "체중 상태 & 사료 그람수 분석",
+        textBefore: "우리 아이의 정확한 체중 상태와 오늘 먹여야 할 사료의 정확한 그람(g) 수가 궁금하다면? ",
+        button: "마젠타랩 반려동물 비만도 및 다이어트 칼로리 계산기 ➔",
+        textAfter: " 링크를 통해 10초 만에 무료로 진단해 보세요."
+      },
+      age: {
+        tag: "생애주기 & 인간 나이 진단",
+        textBefore: "우리 아이의 태어난 연월만 입력하면 인간 나이 환산은 물론, 현재 생애주기에 딱 맞춘 응급 건강 관리 팁까지 그래픽 카드로 즉시 진단해 드립니다. ",
+        button: "안심이 수석연구원의 펫 인간 나이 환산 및 생애주기 진단기 가기 ➔",
+        textAfter: " 링크를 클릭해 10초 만에 무료로 확인해 보세요."
+      },
+      dm: {
+        tag: "사료 건물(DM) & 하루 음수 요구량",
+        textBefore: "사료 뒷면의 영양성분표만 보고 속으셨나요? 수분을 뺀 진짜 고단백 사료 판정법과, 우리 아이 몸무게에 맞는 정확한 필수 음수량을 10초 만에 확인해 보세요. ",
+        button: "안심이 수석연구원의 초보 집사용 사료 DM 성분 및 음수량 계산기 가기 ➔",
+        textAfter: " 링크를 통해 지금 무료로 계산해 볼 수 있습니다."
+      },
+      emergency: {
+        tag: "🚨 반려동물 중독 응급 계산기",
+        textBefore: "🚨 지금 아이가 위험 음식을 먹어서 당황하셨나요? 몸무게와 먹은 양만 입력하면 위험 단계를 즉시 4단계 등급과 게이지로 진단해 드립니다. ",
+        button: "안심이 수석연구원의 반려동물 중독 응급 계산기 가기 ➔",
+        textAfter: " 링크를 통해 10초 만에 무료로 고위험 여부를 판단해 보세요."
+      },
+      expenses: {
+        tag: "💰 반려동물 평생 양육비 계산기",
+        textBefore: "우리 아이 평생 키우는데 비용이 얼마나 들까요? 사료 등급, 위생용품, 의료비 시뮬레이션으로 평생 유지비와 지출 비중을 10초 만에 확인해 보세요. ",
+        button: "안심이 수석연구원의 강아지 / 고양이 평생 양육비 계산기 가기 ➔",
+        textAfter: " 링크를 클릭해 지금 무료로 지출 구조를 진단해 보세요."
+      },
+      patella: {
+        tag: "🦴 슬개골 탈구 & 관절 자가진단",
+        textBefore: "우리 아이 걷는 모습이 평소와 다르게 절뚝거리나요? 걷는 자세와 행동 패턴만으로 슬개골 탈구 위험 단계를 10초 만에 체크해 보세요. ",
+        button: "안심이 수석연구원의 강아지 슬개골 탈구 & 관절 자가 진단기 가기 ➔",
+        textAfter: " 링크를 클릭해 지금 즉시 무료로 진단해 볼 수 있습니다."
+      },
+      fic: {
+        tag: "🐱 고양이 스트레스 & FIC 방광염 진단",
+        textBefore: "최근 이사나 모래 교체 후 고양이가 화장실 실수를 하나요? 영역 동물 고양이의 스트레스 수준과 FIC 방광염 위험 단계를 10초 만에 확인해 보세요. ",
+        button: "안심이 수석연구원의 고양이 FIC 방광염 및 스트레스 진단기 가기 ➔",
+        textAfter: " 링크를 통해 무료로 진단할 수 있습니다."
+      }
+    },
+    en: {
+      bcs: {
+        tag: "Obesity (BCS) & Daily Calories",
+        textBefore: "Want to calculate your pet's precise daily calories (RER/DER) and recommended kibble size (g)? ",
+        button: "Open BCS & Daily Calorie Calculator ➔",
+        textAfter: " Try it for free in just 10 seconds."
+      },
+      age: {
+        tag: "Lifespan & Human Age Calculator",
+        textBefore: "Convert your pet's age to human years and read essential health prevention tips corresponding to their life stage. ",
+        button: "Open Pet Human Age & Lifespan Calculator ➔",
+        textAfter: " View your customized lifespan diagnostics."
+      },
+      dm: {
+        tag: "Dry Matter (DM) & Daily Water Intake",
+        textBefore: "Not sure about real nutrition ratios on back labels? Identify actual dry matter protein levels and optimal daily water requirements. ",
+        button: "Open DM Nutrition & Hydration Calculator ➔",
+        textAfter: " Get your free nutritional evaluation instantly."
+      },
+      emergency: {
+        tag: "🚨 Pet Poison Emergency Calculator",
+        textBefore: "🚨 Did your dog or cat ingest potentially dangerous foods? Input weight and dosage to screen toxicity hazard levels immediately. ",
+        button: "Open Pet Toxicity Emergency Calculator ➔",
+        textAfter: " Verify hazard ratings for chocolates, onions, grapes, etc."
+      },
+      expenses: {
+        tag: "💰 Pet Lifetime Cost Simulator",
+        textBefore: "Curious about the cumulative cost of raising your companion? Adjust food quality, pads, and veterinary schedules. ",
+        button: "Open Pet Lifetime Cost Calculator ➔",
+        textAfter: " View interactive annual projections for free."
+      },
+      patella: {
+        tag: "🦴 Patella Luxation & Joint Screener",
+        textBefore: "Is your pet limping or showing awkward hind leg postures? Self-assess orthopedic risks based on clinical indicators. ",
+        button: "Open Patella Luxation 자가진단기 ➔",
+        textAfter: " Obtain recommended physical exercise tips."
+      },
+      fic: {
+        tag: "🐱 Feline FIC Cystitis Diagnoser",
+        textBefore: "Is your cat experiencing urinary issues after home changes? Check behavioral stress levels and FIC bladder concerns. ",
+        button: "Open Feline FIC Cystitis & Stress Diagnoser ➔",
+        textAfter: " Receive home stress care manuals."
+      }
+    },
+    ja: {
+      bcs: {
+        tag: "肥満度 (BCS) ＆ ダイエットカロリー",
+        textBefore: "愛犬・愛猫の理想的な体重や、1日に必要な推奨給餌量（g）を診断します。 ",
+        button: "BCS肥満度＆推奨カロリー計算機を開く ➔",
+        textAfter: " 10秒で正確な摂取エネルギー量が分かります。"
+      },
+      age: {
+        tag: "ライフステージ＆人間換算年齢",
+        textBefore: "誕生月を入力するだけで、ペットの年齢を人間用に換算し、ステージごとの予防接種スケジュールを提示します。 ",
+        button: "ペットの人間年齢換算＆ステージ診断を開く ➔",
+        textAfter: " 生涯のケアスケジュールを無料で作成します。"
+      },
+      dm: {
+        tag: "フード乾物量 (DM) ＆ 水分必要量",
+        textBefore: "パッケージ裏の成分表示に惑わされていませんか？本当のタンパク質量と、体重別の1日水分量を調べます。 ",
+        button: "フードDM値＆推奨飲水量計算機を開く ➔",
+        textAfter: " 愛用のフード情報を入力するだけ。"
+      },
+      emergency: {
+        tag: "🚨 ペット中毒症状応急判定ツール",
+        textBefore: "🚨 チョコレートやネギ類、ブドウなどの危険食品を誤食しましたか？危険レベルを4段階で判定します。 ",
+        button: "ペット中毒応急処置シミュレーターを開く ➔",
+        textAfter: " 直ちに動物病院への来院が必要かチェックします。"
+      },
+      expenses: {
+        tag: "💰 生涯飼育費シミュレーター",
+        textBefore: "ペットを一生涯育てるのに必要な総額は？フード品質や医療費の推移を含め見通しを立てます。 ",
+        button: "ペット生涯飼育費＆月間維持費計算機を開く ➔",
+        textAfter: " 10秒でグラフを含むレポートを自動生成します。"
+      },
+      patella: {
+        tag: "🦴 膝蓋骨脱臼（パテラ）自己診断",
+        textBefore: "愛犬が後ろ足を浮かせて歩くなど、関節の異常がみられますか？歩行姿勢から膝蓋骨の異常リスクを評価します。 ",
+        button: "膝蓋骨脱臼（パテラ）関節セルフ診断を開く ➔",
+        textAfter: " 自宅でできる初期関節保護法を提案します。"
+      },
+      fic: {
+        tag: "🐱 猫のFIC膀胱炎ストレス診断",
+        textBefore: "引っ越しや猫砂の変更後、トイレ以外での排尿トラブルはありませんか？ストレス状態を数値化します。 ",
+        button: "猫の特発性膀胱炎（FIC）＆ストレス診断を開く ➔",
+        textAfter: " 心理的負担を下げる環境づくりのヒントを提供します。"
+      }
+    }
+  };
+
+  const currentDict = dict[lang] || dict.ko;
+
+  const bannerDesign: Record<CalculatorType, {
     icon: React.ReactNode;
-    tag: string;
-    textBeforeButton: string;
-    buttonText: string;
-    textAfterButton: string;
     bgClass: string;
   }> = {
     bcs: {
-      url: "/bcs-calculator",
       icon: <Activity className="w-5 h-5 text-magenta" />,
-      tag: "체중 상태 & 사료 그람수 분석",
-      textBeforeButton: "우리 아이의 정확한 체중 상태와 오늘 먹여야 할 사료의 정확한 그람(g) 수가 궁금하다면? ",
-      buttonText: "마젠타랩 반려동물 비만도 및 다이어트 칼로리 계산기 ➔",
-      textAfterButton: " 링크를 통해 10초 만에 무료로 진단해 보세요.",
       bgClass: "from-magenta/5 to-pink-500/5 border-magenta/20"
     },
     age: {
-      url: "/age-calculator",
       icon: <Calendar className="w-5 h-5 text-indigo-500" />,
-      tag: "생애주기 & 인간 나이 진단",
-      textBeforeButton: "우리 아이의 태어난 연월만 입력하면 인간 나이 환산은 물론, 현재 생애주기에 딱 맞춘 응급 건강 관리 팁까지 그래픽 카드로 즉시 진단해 드립니다. ",
-      buttonText: "안심이 수석연구원의 펫 인간 나이 환산 및 생애주기 진단기 가기 ➔",
-      textAfterButton: " 링크를 클릭해 10초 만에 무료로 확인해 보세요.",
       bgClass: "from-indigo-500/5 to-purple-500/5 border-indigo-500/20"
     },
     dm: {
-      url: "/dm-calculator",
       icon: <Droplets className="w-5 h-5 text-sky-500" />,
-      tag: "사료 건물(DM) & 하루 음수 요구량",
-      textBeforeButton: "사료 뒷면의 영양성분표만 보고 속으셨나요? 수분을 뺀 진짜 고단백 사료 판정법과, 우리 아이 몸무게에 맞는 정확한 필수 음수량을 10초 만에 확인해 보세요. ",
-      buttonText: "안심이 수석연구원의 초보 집사용 사료 DM 성분 및 음수량 계산기 가기 ➔",
-      textAfterButton: " 링크를 통해 지금 무료로 계산해 볼 수 있습니다.",
       bgClass: "from-sky-500/5 to-blue-500/5 border-sky-500/20"
     },
     emergency: {
-      url: "/emergency-calculator",
       icon: <ShieldAlert className="w-5 h-5 text-rose-500" />,
-      tag: "🚨 반려동물 중독 응급 계산기",
-      textBeforeButton: "🚨 지금 아이가 위험 음식을 먹어서 당황하셨나요? 몸무게와 먹은 양만 입력하면 위험 단계를 즉시 4단계 등급과 게이지로 진단해 드립니다. ",
-      buttonText: "안심이 수석연구원의 반려동물 중독 응급 계산기 가기 ➔",
-      textAfterButton: " 링크를 통해 10초 만에 무료로 고위험 여부를 판단해 보세요.",
       bgClass: "from-rose-500/5 to-red-500/5 border-rose-500/20"
     },
     expenses: {
-      url: "/Petcareexpenses",
       icon: <Coins className="w-5 h-5 text-amber-500" />,
-      tag: "💰 반려동물 평생 양육비 계산기",
-      textBeforeButton: "우리 아이 평생 키우는데 비용이 얼마나 들까요? 사료 등급, 위생용품, 의료비 시뮬레이션으로 평생 유지비와 지출 비중을 10초 만에 확인해 보세요. ",
-      buttonText: "안심이 수석연구원의 강아지 / 고양이 평생 양육비 계산기 가기 ➔",
-      textAfterButton: " 링크를 클릭해 지금 무료로 지출 구조를 진단해 보세요.",
       bgClass: "from-amber-500/5 to-yellow-500/5 border-amber-500/20"
     },
     patella: {
-      url: "/patella",
       icon: <Bone className="w-5 h-5 text-emerald-500" />,
-      tag: "🦴 슬개골 탈구 & 관절 자가진단",
-      textBeforeButton: "우리 아이 걷는 모습이 평소와 다르게 절뚝거리나요? 걷는 자세와 행동 패턴만으로 슬개골 탈구 위험 단계를 10초 만에 체크해 보세요. ",
-      buttonText: "안심이 수석연구원의 강아지 슬개골 탈구 & 관절 자가 진단기 가기 ➔",
-      textAfterButton: " 링크를 클릭해 지금 즉시 무료로 진단해 볼 수 있습니다.",
       bgClass: "from-emerald-500/5 to-teal-500/5 border-emerald-500/20"
     },
     fic: {
-      url: "/FIC",
       icon: <Activity className="w-5 h-5 text-purple-500" />,
-      tag: "🐱 고양이 스트레스 & FIC 방광염 진단",
-      textBeforeButton: "최근 이사나 모래 교체 후 고양이가 화장실 실수를 하나요? 영역 동물 고양이의 스트레스 수준과 FIC 방광염 위험 단계를 10초 만에 확인해 보세요. ",
-      buttonText: "안심이 수석연구원의 고양이 FIC 방광염 및 스트레스 진단기 가기 ➔",
-      textAfterButton: " 링크를 통해 무료로 진단할 수 있습니다.",
       bgClass: "from-purple-500/5 to-indigo-500/5 border-purple-500/20"
     }
   };
@@ -112,10 +238,8 @@ export default function CalculatorBanner({
       const randomIndex = Math.floor(Math.random() * filtered.length);
       setSelected(filtered[randomIndex]);
     } else {
-      // 본문과 타이틀을 합쳐 소문자로 통일하여 키워드 매칭 분석
       const textToAnalyze = (title + " " + content).toLowerCase();
 
-      // 각 계산기 테마별 키워드 매칭 개수 카운트 함수
       const getScore = (keywords: string[]) => {
         return keywords.reduce((score, kw) => {
           const regex = new RegExp(kw, "gi");
@@ -160,8 +284,7 @@ export default function CalculatorBanner({
         ])
       };
 
-      // 가장 점수가 높은 카테고리를 최종 매칭
-      let sel: CalculatorType = "bcs"; // 매칭되지 않는 경우의 기본값은 비만도 계산기
+      let sel: CalculatorType = "bcs";
 
       if (postId === "1682") {
         sel = "expenses";
@@ -182,27 +305,29 @@ export default function CalculatorBanner({
     return null;
   }
 
-  const data = bannerData[selected];
+  const design = bannerDesign[selected];
+  const item = currentDict[selected];
 
   return (
-    <div className={`my-10 p-6 md:p-8 rounded-3xl border bg-gradient-to-br ${data.bgClass} space-y-4 shadow-sm hover:shadow-md transition-all`}>
+    <div className={`my-10 p-6 md:p-8 rounded-3xl border bg-gradient-to-br ${design.bgClass} space-y-4 shadow-sm hover:shadow-md transition-all`}>
       <div className="flex items-center gap-2">
-        {data.icon}
+        {design.icon}
         <span className="text-xs font-black tracking-wider text-gray-800 uppercase bg-white px-3 py-1 rounded-full shadow-sm">
-          {data.tag}
+          {item.tag}
         </span>
       </div>
       
       <div className="text-sm md:text-base text-gray-800 leading-relaxed font-bold">
-        <span>{data.textBeforeButton}</span>
+        <span>{item.textBefore}</span>
         <Link 
-          href={data.url}
+          href={getUrl(selected)}
           className="inline-block mx-1.5 px-3 py-1.5 bg-magenta text-white text-xs md:text-sm font-black rounded-xl hover:bg-magenta/95 active:scale-95 transition-all shadow-md shadow-magenta/10"
         >
-          {data.buttonText}
+          {item.button}
         </Link>
-        <span>{data.textAfterButton}</span>
+        <span>{item.textAfter}</span>
       </div>
     </div>
   );
 }
+

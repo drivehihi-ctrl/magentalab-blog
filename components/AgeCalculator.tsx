@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { 
-  Activity, 
   Sparkles, 
   Calendar, 
   Clock, 
@@ -11,10 +10,10 @@ import {
   CheckCircle,
   HelpCircle,
   RotateCcw,
-  Sparkle
+  Sparkle,
+  Activity
 } from "lucide-react";
 
-// 생애주기 분류 기준 인터페이스
 interface LifeStageInfo {
   stageName: string;
   minHumanAge: number;
@@ -25,69 +24,12 @@ interface LifeStageInfo {
   tips: string[];
 }
 
-const LIFE_STAGES: Record<string, LifeStageInfo> = {
-  growth: {
-    stageName: "성장기 (Growth / Junior)",
-    minHumanAge: 0,
-    maxHumanAge: 19,
-    colorClass: "from-sky-500/20 to-blue-500/20 border-blue-200/50 text-blue-900",
-    badgeClass: "bg-blue-500 text-white shadow-blue-500/20",
-    desc: "기초 체력과 면역 시스템이 활발하게 형성되는 생애 첫 단계입니다.",
-    tips: [
-      "성장기 전용 고단백·고칼슘 사료(초유 성분 및 L-라이신 풍부)를 급여해 주세요.",
-      "생후 3~4개월 시기의 기초 예방접종(종합백신 등) 일정을 철저히 지켜야 합니다.",
-      "올바른 사회화 교육을 위해 매일 다양한 소리, 환경, 낯선 자극을 경험하도록 유도하세요.",
-      "이갈이 시기에는 잇몸 통증 완화와 영구치 관리를 위해 안전한 터그/치석 토이를 제공해 주세요."
-    ]
-  },
-  maturity: {
-    stageName: "성숙기 (Adult / Active)",
-    minHumanAge: 20,
-    maxHumanAge: 39,
-    colorClass: "from-emerald-500/20 to-teal-500/20 border-emerald-200/50 text-emerald-900",
-    badgeClass: "bg-emerald-500 text-white shadow-emerald-500/20",
-    desc: "신체 기능이 절정에 달하고 에너지가 가장 넘치는 건강한 성년 단계입니다.",
-    tips: [
-      "중성화 수술 이후 대사량이 감소해 비만이 되기 쉬우므로 저칼로리 식단과 체중 관리가 필요합니다.",
-      "하루 최소 30분 이상(강아지는 야외 산책, 고양이는 낚싯대 사냥 놀이)의 에너지 해소가 필수적입니다.",
-      "구강 건강이 나빠지기 시작하므로 하루 1회 칫솔질 및 플라그 제거 껌 급여를 루틴화해 주세요.",
-      "매년 1회 정기 종합 백신 추가 접종 및 기본적인 심장사상충 예방을 잊지 마세요."
-    ]
-  },
-  matureAdulthood: {
-    stageName: "장년기 (Mature / Middle-aged)",
-    minHumanAge: 40,
-    maxHumanAge: 54,
-    colorClass: "from-amber-500/20 to-orange-500/20 border-amber-200/50 text-amber-900",
-    badgeClass: "bg-amber-500 text-white shadow-amber-500/20",
-    desc: "세포 노화가 천천히 시작되며 완만한 에너지 감소가 포착되는 전환 단계입니다.",
-    tips: [
-      "관절 질환(슬개골 탈구, 척추 디스크) 예방을 위해 소파/침대 밑에 전용 미끄럼 방지 계단을 설치하세요.",
-      "세포 산화 방지를 위해 비타민 C, 비타민 E, 코엔자임 Q10 등 항산화 영양 공급에 신경 써 주어야 합니다.",
-      "소화 기능 저하에 맞춰 소화 흡수율이 높고 식이섬유가 풍부한 장년기 전용 사료로 전환을 검토하세요.",
-      "외관상 질병이 보이지 않더라도 1년에 한 번 정밀 혈액 검사 및 복부 초음파 검진을 권장합니다."
-    ]
-  },
-  senior: {
-    stageName: "노령기 (Senior / Geriatric)",
-    minHumanAge: 55,
-    maxHumanAge: 200,
-    colorClass: "from-rose-500/20 to-pink-500/20 border-rose-200/50 text-rose-900",
-    badgeClass: "bg-rose-500 text-white shadow-rose-500/20",
-    desc: "세심한 밀착 케어와 만성 질환 예방관리가 최우선시되는 노후 실버 단계입니다.",
-    tips: [
-      "관절 통증 완화와 연골 보호를 위해 콘드로이친, 글루코사민, 초록입홍합 성분의 영양제를 필수로 급여하세요.",
-      "신장 및 간 기능 저하 여부를 체크하기 위해 최소 6개월 주기로 동물병원 혈액/검뇨 검사를 진행하세요.",
-      "치매(인지기능장애증후군)를 방지하기 위해 노즈워크 놀이와 가벼운 후각 자극 산책을 꾸준히 이어 가세요.",
-      "체온 조절 능력이 저하되므로 실내 온도를 항상 따뜻하게 유지하고, 푹신한 정형외과용 메모리폼 쿠션을 제공하세요."
-    ]
-  }
-};
+interface AgeCalculatorProps {
+  lang?: "ko" | "en" | "ja";
+}
 
-export default function AgeCalculator() {
+export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
   const [isMounted, setIsMounted] = useState<boolean>(false);
-
-  // 로컬 컴퓨터 날짜 기준으로 자동 설정하여 Hydration 불일치 원천 차단
   const [currentYear, setCurrentYear] = useState<number>(2026);
   const [currentMonth, setCurrentMonth] = useState<number>(6);
 
@@ -101,8 +43,6 @@ export default function AgeCalculator() {
   // 입력 폼 상태 관리
   const [petType, setPetType] = useState<"dog" | "cat">("dog");
   const [dogSize, setDogSize] = useState<"small" | "medium" | "large">("small");
-  
-  // 기본 출생일 3년 전으로 세팅
   const [birthYear, setBirthYear] = useState<string>("2023");
   const [birthMonth, setBirthMonth] = useState<string>("6");
 
@@ -113,7 +53,276 @@ export default function AgeCalculator() {
   // 최종 도출된 계산 값 저장 상태
   const [computedPetAge, setComputedPetAge] = useState<{ years: number; months: number }>({ years: 0, months: 0 });
   const [computedHumanAge, setComputedHumanAge] = useState<number>(0);
-  const [currentStage, setCurrentStage] = useState<LifeStageInfo>(LIFE_STAGES.growth);
+
+  // Multilingual translation dictionaries
+  const dict = {
+    ko: {
+      title: "반려동물 인간 나이 & 생애주기 진단기",
+      desc: "축종, 체형 크기, 정확한 출생일(개월 수) 데이터를 기반으로 수의학 표준 나이 변환 공식 및 최적의 신체 생애주기 가이드를 실시간 계산합니다.",
+      badge: "2026년형 프리미엄 스마트 진단엔진",
+      labelPetType: "반려동물 종류",
+      dog: "강아지 (Dog)",
+      cat: "고양이 (Cat)",
+      labelDogSize: "견종 크기 분류",
+      sizeSmall: "소형견",
+      sizeSmallDesc: "10kg 미만",
+      sizeMedium: "중형견",
+      sizeMediumDesc: "10~25kg",
+      sizeLarge: "대형견",
+      sizeLargeDesc: "25kg 초과",
+      labelBirth: "출생 연월 선택",
+      birthDesc: "정확한 출생 연월을 선택하면 개월 수 비례에 따라 수의학 보간법을 적용해 인간 나이로 오차 없이 미세 정산됩니다.",
+      btnCalculate: "생애주기 진단하기",
+      btnAnalyzing: "AI 생애분석 중...",
+      btnReset: "초기화",
+      resultTitle: "진단 결과서",
+      resultIntro: "올해 실제 나이 살 개월인 우리 아이는",
+      resultMain: "인간 나이로 환산 시 입니다.",
+      guideTitle: "맞춤형 영양 & 건강 솔루션",
+      guideSubtitle: "수의사 추천 건강 관리 수칙 4가지:",
+      tipTitle: "잠깐! 알고 계셨나요?",
+      tipDesc: "반려동물의 시간은 인간보다 약 5~7배 빠르게 흘러갑니다. 특히 대형견은 소형견보다 몸집이 크고 신진대사가 달라 노화 진행 속도가 훨씬 가파릅니다. 나이에 최적화된 올바른 보조 영양제 급여와 식단 관리가 건강 수명을 최대 3년 이상 연장할 수 있습니다.",
+      years: "살",
+      months: "개월",
+      yearsUnit: "세",
+      loading: "로딩 중입니다...",
+      stages: {
+        growth: {
+          stageName: "성장기 (Growth / Junior)",
+          desc: "기초 체력과 면역 시스템이 활발하게 형성되는 생애 첫 단계입니다.",
+          tips: [
+            "성장기 전용 고단백·고칼슘 사료(초유 성분 및 L-라이신 풍부)를 급여해 주세요.",
+            "생후 3~4개월 시기의 기초 예방접종(종합백신 등) 일정을 철저히 지켜야 합니다.",
+            "올바른 사회화 교육을 위해 매일 다양한 소리, 환경, 낯선 자극을 경험하도록 유도하세요.",
+            "이갈이 시기에는 잇몸 통증 완화와 영구치 관리를 위해 안전한 터그/치석 토이를 제공해 주세요."
+          ]
+        },
+        maturity: {
+          stageName: "성숙기 (Adult / Active)",
+          desc: "신체 기능이 절정에 달하고 에너지가 가장 넘치는 건강한 성년 단계입니다.",
+          tips: [
+            "중성화 수술 이후 대사량이 감소해 비만이 되기 쉬우므로 저칼로리 식단과 체중 관리가 필요합니다.",
+            "하루 최소 30분 이상(강아지는 야외 산책, 고양이는 낚싯대 사냥 놀이)의 에너지 해소가 필수적입니다.",
+            "구강 건강이 나빠지기 시작하므로 하루 1회 칫솔질 및 플라그 제거 껌 급여를 루틴화해 주세요.",
+            "매년 1회 정기 종합 백신 추가 접종 및 기본적인 심장사상충 예방을 잊지 마세요."
+          ]
+        },
+        matureAdulthood: {
+          stageName: "장년기 (Mature / Middle-aged)",
+          desc: "세포 노화가 천천히 시작되며 완만한 에너지 감소가 포착되는 전환 단계입니다.",
+          tips: [
+            "관절 질환(슬개골 탈구, 척추 디스크) 예방을 위해 소파/침대 밑에 전용 미끄럼 방지 계단을 설치하세요.",
+            "세포 산화 방지를 위해 비타민 C, 비타민 E, 코엔자임 Q10 등 항산화 영양 공급에 신경 써 주어야 합니다.",
+            "소화 기능 저하에 맞춰 소화 흡수율이 높고 식이섬유가 풍부한 장년기 전용 사료로 전환을 검토하세요.",
+            "외관상 질병이 보이지 않더라도 1년에 한 번 정밀 혈액 검사 및 복부 초음파 검진을 권장합니다."
+          ]
+        },
+        senior: {
+          stageName: "노령기 (Senior / Geriatric)",
+          desc: "세심한 밀착 케어와 만성 질환 예방관리가 최우선시되는 노후 실버 단계입니다.",
+          tips: [
+            "관절 통증 완화와 연골 보호를 위해 콘드로이친, 글루코사민, 초록입홍합 성분의 영양제를 필수로 급여하세요.",
+            "신장 및 간 기능 저하 여부를 체크하기 위해 최소 6개월 주기로 동물병원 혈액/검뇨 검사를 진행하세요.",
+            "치매(인지기능장애증후군)를 방지하기 위해 노즈워크 놀이와 가벼운 후각 자극 산책을 꾸준히 이어 가세요.",
+            "체온 조절 능력이 저하되므로 실내 온도를 항상 따뜻하게 유지하고, 푹신한 정형외과용 메모리폼 쿠션을 제공하세요."
+          ]
+        }
+      }
+    },
+    en: {
+      title: "Pet Human Age & Life Stage Diagnoser",
+      desc: "Convert your pet's age to human years based on species, breed size, and exact months of age, then receive customized veterinary life stage guides.",
+      badge: "2026 Premium Smart Diagnosis Engine",
+      labelPetType: "Pet Type",
+      dog: "Dog",
+      cat: "Cat",
+      labelDogSize: "Breed Size Classification",
+      sizeSmall: "Small Dog",
+      sizeSmallDesc: "Under 10kg",
+      sizeMedium: "Medium Dog",
+      sizeMediumDesc: "10 to 25kg",
+      sizeLarge: "Large Dog",
+      sizeLargeDesc: "Over 25kg",
+      labelBirth: "Select Date of Birth",
+      birthDesc: "Providing the exact birth year and month calculates human age equivalents without rounding errors based on linear veterinary interpolation.",
+      btnCalculate: "Diagnose Life Stage",
+      btnAnalyzing: "Analyzing AI Profile...",
+      btnReset: "Reset",
+      resultTitle: "Diagnosis Report",
+      resultIntro: "Your pet, currently years and months old,",
+      resultMain: "is equivalent to a human aged years old.",
+      guideTitle: "Tailored Nutrition & Health Guide",
+      guideSubtitle: "4 Essential Vet-Recommended Rules:",
+      tipTitle: "Did You Know?",
+      tipDesc: "A pet's time flows approximately 5 to 7 times faster than a human's. Large breeds age much quicker due to metabolism and size constraints. Providing age-appropriate food and antioxidants can extend their healthy lifespan by up to 3 years.",
+      years: " years",
+      months: " months",
+      yearsUnit: " years old",
+      loading: "Loading...",
+      stages: {
+        growth: {
+          stageName: "Growth / Junior",
+          desc: "The first developmental phase of life where basic physical stamina and immune systems are established.",
+          tips: [
+            "Feed high-protein and high-calcium kitten/puppy specific formulas rich in colostrum and L-lysine.",
+            "Carefully follow vaccination schedules at 3 to 4 months of age.",
+            "Expose them to different sounds, environments, and new stimuli daily for healthy socialization.",
+            "Provide safe chew toys to relieve teething pain and protect erupting permanent teeth."
+          ]
+        },
+        maturity: {
+          stageName: "Adult / Active",
+          desc: "A healthy prime adult stage where bodily functions peak and energy levels are highest.",
+          tips: [
+            "Monitor calories and weights post-neutering as metabolic rates drop, leading to obesity risks.",
+            "Ensure at least 30 minutes of energy release daily (outdoor walks for dogs, wand toys for cats).",
+            "Establish daily teeth brushing routines and dental chews to prevent early periodontal diseases.",
+            "Schedule annual checkups, core vaccine boosters, and heartworm preventatives."
+          ]
+        },
+        matureAdulthood: {
+          stageName: "Mature / Middle-aged",
+          desc: "A transition stage where cellular aging slowly begins and moderate energy declines occur.",
+          tips: [
+            "Install pet stairs near couches/beds to prevent joint diseases (patellar luxation, disc herniation).",
+            "Incorporate antioxidants like Vitamin C, Vitamin E, and Coenzyme Q10 into their diet.",
+            "Switch to senior-friendly diets with high digestibility and dietary fiber suited for slower digestion.",
+            "Schedule annual blood panels and abdominal ultrasounds even if they appear healthy."
+          ]
+        },
+        senior: {
+          stageName: "Senior / Geriatric",
+          desc: "A golden age where comprehensive close care and chronic disease management are top priorities.",
+          tips: [
+            "Feed joint supplements containing chondroitin, glucosamine, and green-lipped mussel.",
+            "Run geriatric blood and urine panels every 6 months to monitor renal and liver functions.",
+            "Perform nosework and light sniffing walks to prevent cognitive dysfunction syndrome (dementia).",
+            "Keep rooms warm as thermoregulation drops, and provide orthotic memory foam beds."
+          ]
+        }
+      }
+    },
+    ja: {
+      title: "ペット人間年齢＆ライフステージ診断機",
+      desc: "動物の種類、体の大きさ、正確な生月数データに基づいて、獣医学標準年齢換算式と最適なライフステージケアガイドをリアルタイムで計算します。",
+      badge: "2026年型プレミアムスマート診断エンジン",
+      labelPetType: "ペットの種類",
+      dog: "犬 (Dog)",
+      cat: "猫 (Cat)",
+      labelDogSize: "犬のサイズ分類",
+      sizeSmall: "小型犬",
+      sizeSmallDesc: "10kg 未満",
+      sizeMedium: "中型犬",
+      sizeMediumDesc: "10~25kg",
+      sizeLarge: "大型犬",
+      sizeLargeDesc: "25kg 超過",
+      labelBirth: "誕生年月選択",
+      birthDesc: "正確な誕生年月を選択すると、生月数の比率に応じて獣医学補間法を適用し、人間の年齢に誤差なく精密計算されます。",
+      btnCalculate: "ライフステージを診断する",
+      btnAnalyzing: "AI解析中...",
+      btnReset: "リセット",
+      resultTitle: "診断結果書",
+      resultIntro: "今年で実年齢が 歳 ヶ月になるうちの子は",
+      resultMain: "人間の年齢に換算すると 歳になります。",
+      guideTitle: "オーダーメイド栄養＆健康ソリューション",
+      guideSubtitle: "獣医師が推奨する健康管理の4つのルール:",
+      tipTitle: "ご存知でしたか？",
+      tipDesc: "ペットの時間は人間の約5〜7倍の速さで流れます。特に大型犬は小型犬よりも体が大きく代謝が異なるため、老化の進行が非常に早いです。年齢に最適化されたサプリメントや食事管理を行うことで、健康寿命を最大3年以上延ばすことができます。",
+      years: "歳",
+      months: "ヶ月",
+      yearsUnit: "歳",
+      loading: "ロード中...",
+      stages: {
+        growth: {
+          stageName: "成長期 (Growth / Junior)",
+          desc: "基礎体力と免疫システムが活発に形成される生涯の最初の段階です。",
+          tips: [
+            "成長期専用の高タンパク・高カルシウムフード（初乳成分やL-リジンが豊富）を与えてください。",
+            "生後3〜4ヶ月頃の基礎予防接種（混合ワクチンなど）のスケジュールを厳守してください。",
+            "適切な社会化教育のため、毎日様々な音、環境、新しい刺激を経験させてあげましょう。",
+            "歯の生え変わり時期には、歯茎の痛みの緩和と永久歯の管理のために安全な噛むおもちゃを与えてください。"
+          ]
+        },
+        maturity: {
+          stageName: "成熟期 (Adult / Active)",
+          desc: "身体機能がピークに達し、エネルギーが最も満ち溢れる健康な成犬・成猫段階です。",
+          tips: [
+            "去勢・避妊手術後は代謝量が減少し肥満になりやすいため、低カロリー食と体重管理が必要です。",
+            "一日最低30分以上（犬は散歩、猫はおもちゃでの狩りごっこ）の運動が必須です。",
+            "口腔環境が悪化しやすいため、一日1回の歯磨きやデンタルガムの給与を習慣化してください。",
+            "年に1回の定期混合ワクチンの追加接種と、基本的なフィラリア予防を忘れないでください。"
+          ]
+        },
+        matureAdulthood: {
+          stageName: "中年期 (Mature / Middle-aged)",
+          desc: "細胞の老化がゆっくり始まり、緩やかな活動量の低下が見られる移行段階です。",
+          tips: [
+            "関節疾患（膝蓋骨脱구、椎間板ヘルニア）予防のため、ソファやベッドの横にペット用スロープを設置してください。",
+            "細胞の酸化を防ぐため、ビタミンC、ビタミンE、コエンザイムQ10などの抗酸化物質を補給してください。",
+            "消化機能の低下に合わせ、消化吸収率が高く繊維質が豊富なシニア専用フードへの移行を検討してください。",
+            "外見上は健康に見えても、年に1回は血液検査や腹部超音波検査を受けることをお勧めします。"
+          ]
+        },
+        senior: {
+          stageName: "高齢期 (Senior / Geriatric)",
+          desc: "細やかなケアと慢性疾患の予防・管理が最優先されるシニア・シルバー段階です。",
+          tips: [
+            "関節痛の緩和と軟骨保護のため、コンドロイチン、グルコサミン、緑イ貝配合のサプリメントを与えてください。",
+            "腎臓や肝臓の機能低下をチェックするため、最低6ヶ月周期で動物病院で血液・尿検査を行ってください。",
+            "認知症（認知機能障害症候群）を予防するため、ノーズワーク遊びや軽い散歩を続けてください。",
+            "体温調節能力が低下するため、室温を常に暖かく保ち、体圧分散のメモリフォームベッドを用意してください。"
+          ]
+        }
+      }
+    }
+  };
+
+  const t = dict[lang] || dict.ko;
+
+  // 생애주기 분류 정보 생성기
+  const getLifeStages = () => {
+    return {
+      growth: {
+        stageName: t.stages.growth.stageName,
+        minHumanAge: 0,
+        maxHumanAge: 19,
+        colorClass: "from-sky-500/20 to-blue-500/20 border-blue-200/50 text-blue-900",
+        badgeClass: "bg-blue-500 text-white shadow-blue-500/20",
+        desc: t.stages.growth.desc,
+        tips: t.stages.growth.tips
+      },
+      maturity: {
+        stageName: t.stages.maturity.stageName,
+        minHumanAge: 20,
+        maxHumanAge: 39,
+        colorClass: "from-emerald-500/20 to-teal-500/20 border-emerald-200/50 text-emerald-900",
+        badgeClass: "bg-emerald-500 text-white shadow-emerald-500/20",
+        desc: t.stages.maturity.desc,
+        tips: t.stages.maturity.tips
+      },
+      matureAdulthood: {
+        stageName: t.stages.matureAdulthood.stageName,
+        minHumanAge: 40,
+        maxHumanAge: 54,
+        colorClass: "from-amber-500/20 to-orange-500/20 border-amber-200/50 text-amber-900",
+        badgeClass: "bg-amber-500 text-white shadow-amber-500/20",
+        desc: t.stages.matureAdulthood.desc,
+        tips: t.stages.matureAdulthood.tips
+      },
+      senior: {
+        stageName: t.stages.senior.stageName,
+        minHumanAge: 55,
+        maxHumanAge: 200,
+        colorClass: "from-rose-500/20 to-pink-500/20 border-rose-200/50 text-rose-900",
+        badgeClass: "bg-rose-500 text-white shadow-rose-500/20",
+        desc: t.stages.senior.desc,
+        tips: t.stages.senior.tips
+      }
+    };
+  };
+
+  const lifeStagesData = getLifeStages();
+  const [currentStage, setCurrentStage] = useState<LifeStageInfo>(lifeStagesData.growth);
 
   // 연도 셀렉트 박스 아이템 생성 (2000년부터 현재년도까지)
   const yearsList = Array.from({ length: currentYear - 2000 + 1 }, (_, i) => String(currentYear - i));
@@ -124,7 +333,6 @@ export default function AgeCalculator() {
     setIsAnalyzing(true);
     setShowResult(false);
 
-    // 0.6초간의 마이크로 로딩 애니메이션 실행 후 결과 노출
     setTimeout(() => {
       const birthY = parseInt(birthYear);
       const birthM = parseInt(birthMonth);
@@ -139,72 +347,60 @@ export default function AgeCalculator() {
       let humanAge = 0;
 
       if (petType === "cat") {
-        // 고양이 계산 공식 (개월 수 기반 선형 보간)
         if (diffMonths <= 1) {
-          // 0~1개월: 0세 ~ 1세 선형 매핑
           humanAge = diffMonths * 1;
         } else if (diffMonths <= 3) {
-          // 1~3개월: 1세 ~ 5세 선형 매핑
           humanAge = 1 + (diffMonths - 1) * ((5 - 1) / (3 - 1));
         } else if (diffMonths <= 6) {
-          // 3~6개월: 5세 ~ 10세 선형 매핑
           humanAge = 5 + (diffMonths - 3) * ((10 - 5) / (6 - 3));
         } else if (diffMonths <= 12) {
-          // 6~12개월: 10세 ~ 15세 선형 매핑
           humanAge = 10 + (diffMonths - 6) * ((15 - 10) / (12 - 6));
         } else if (diffMonths <= 24) {
-          // 12~24개월: 15세 ~ 24세 선형 매핑
           humanAge = 15 + (diffMonths - 12) * ((24 - 15) / (24 - 12));
         } else {
-          // 2년 이후: 1년당 +4세 추가
           humanAge = 24 + (diffMonths - 24) * (4 / 12);
         }
       } else {
-        // 강아지 계산 공식 (크기별 차등 계산)
         if (dogSize === "small") {
-          // 소형견 (<10kg)
           if (diffMonths <= 12) {
-            humanAge = diffMonths * (15 / 12); // 1년 = 15세
+            humanAge = diffMonths * (15 / 12);
           } else if (diffMonths <= 24) {
-            humanAge = 15 + (diffMonths - 12) * ((24 - 15) / (24 - 12)); // 2년 = 24세
+            humanAge = 15 + (diffMonths - 12) * ((24 - 15) / (24 - 12));
           } else {
-            humanAge = 24 + (diffMonths - 24) * (4 / 12); // 2년 이후 1년당 +4세
+            humanAge = 24 + (diffMonths - 24) * (4 / 12);
           }
         } else if (dogSize === "medium") {
-          // 중형견 (10~25kg)
           if (diffMonths <= 12) {
-            humanAge = diffMonths * (15 / 12); // 1년 = 15세
+            humanAge = diffMonths * (15 / 12);
           } else if (diffMonths <= 24) {
-            humanAge = 15 + (diffMonths - 12) * ((24 - 15) / (24 - 12)); // 2년 = 24세
+            humanAge = 15 + (diffMonths - 12) * ((24 - 15) / (24 - 12));
           } else {
-            humanAge = 24 + (diffMonths - 24) * (5 / 12); // 2년 이후 1년당 +5세
+            humanAge = 24 + (diffMonths - 24) * (5 / 12);
           }
         } else {
-          // 대형견 (>25kg)
           if (diffMonths <= 12) {
-            humanAge = diffMonths * (12 / 12); // 1년 = 12세
+            humanAge = diffMonths * (12 / 12);
           } else if (diffMonths <= 24) {
-            humanAge = 12 + (diffMonths - 12) * ((22 - 12) / (24 - 12)); // 2년 = 22세
+            humanAge = 12 + (diffMonths - 12) * ((22 - 12) / (24 - 12));
           } else {
-            humanAge = 22 + (diffMonths - 24) * (7.5 / 12); // 2년 이후 1년당 +7.5세
+            humanAge = 22 + (diffMonths - 24) * (7.5 / 12);
           }
         }
       }
 
-      // 최종 인간 나이 반올림 처리
       const finalHumanAge = Math.max(0, Math.round(humanAge * 10) / 10);
       setComputedHumanAge(finalHumanAge);
 
       // 생애주기 판정 단계 지정
-      let stage: LifeStageInfo = LIFE_STAGES.growth;
+      let stage: LifeStageInfo = lifeStagesData.growth;
       if (finalHumanAge >= 55) {
-        stage = LIFE_STAGES.senior;
+        stage = lifeStagesData.senior;
       } else if (finalHumanAge >= 40) {
-        stage = LIFE_STAGES.matureAdulthood;
+        stage = lifeStagesData.matureAdulthood;
       } else if (finalHumanAge >= 20) {
-        stage = LIFE_STAGES.maturity;
+        stage = lifeStagesData.maturity;
       } else {
-        stage = LIFE_STAGES.growth;
+        stage = lifeStagesData.growth;
       }
 
       setCurrentStage(stage);
@@ -226,7 +422,7 @@ export default function AgeCalculator() {
       <div className="bg-slate-900 min-h-screen py-20 px-4 flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-magenta mx-auto"></div>
-          <p className="text-slate-400 font-bold text-sm">로딩 중입니다...</p>
+          <p className="text-slate-400 font-bold text-sm">{t.loading}</p>
         </div>
       </div>
     );
@@ -246,14 +442,13 @@ export default function AgeCalculator() {
         <div className="text-center space-y-3 max-w-xl mx-auto">
           <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-magenta-light/10 text-magenta border border-magenta/20 text-xs font-semibold tracking-wide backdrop-blur-md">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>2026년형 프리미엄 스마트 진단엔진</span>
+            <span>{t.badge}</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight drop-shadow-md">
-            반려동물 인간 나이 & 생애주기 진단기
+            {t.title}
           </h1>
           <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
-            축종, 체형 크기, 정확한 출생일(개월 수) 데이터를 기반으로 
-            수의학 표준 나이 변환 공식 및 최적의 신체 생애주기 가이드를 실시간 계산합니다.
+            {t.desc}
           </p>
         </div>
 
@@ -268,7 +463,7 @@ export default function AgeCalculator() {
               
               {/* 축종 선택 */}
               <div className="space-y-2.5">
-                <label className="text-sm font-bold text-slate-300 block">반려동물 종류</label>
+                <label className="text-sm font-bold text-slate-300 block">{t.labelPetType}</label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
@@ -280,7 +475,7 @@ export default function AgeCalculator() {
                     }`}
                   >
                     <span className="text-lg">🐶</span>
-                    강아지 (Dog)
+                    {t.dog}
                   </button>
                   <button
                     type="button"
@@ -292,24 +487,24 @@ export default function AgeCalculator() {
                     }`}
                   >
                     <span className="text-lg">🐱</span>
-                    고양이 (Cat)
+                    {t.cat}
                   </button>
                 </div>
               </div>
 
-              {/* 강아지일 경우 견종 크기 분류 노출 (마이크로 인터랙션 애니메이션 적용) */}
+              {/* 강아지일 경우 견종 크기 분류 노출 */}
               <div 
                 className={`transition-all duration-300 overflow-hidden ${
                   petType === "dog" ? "max-h-[160px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"
                 }`}
               >
                 <div className="space-y-2.5 pt-1">
-                  <label className="text-sm font-bold text-slate-300 block">견종 크기 분류</label>
+                  <label className="text-sm font-bold text-slate-300 block">{t.labelDogSize}</label>
                   <div className="grid grid-cols-3 gap-2">
                     {[
-                      { size: "small", label: "소형견", desc: "10kg 미만" },
-                      { size: "medium", label: "중형견", desc: "10~25kg" },
-                      { size: "large", label: "대형견", desc: "25kg 초과" }
+                      { size: "small", label: t.sizeSmall, desc: t.sizeSmallDesc },
+                      { size: "medium", label: t.sizeMedium, desc: t.sizeMediumDesc },
+                      { size: "large", label: t.sizeLarge, desc: t.sizeLargeDesc }
                     ].map((item) => (
                       <button
                         key={item.size}
@@ -337,7 +532,7 @@ export default function AgeCalculator() {
               <div className="space-y-2.5">
                 <label className="text-sm font-bold text-slate-300 flex items-center gap-1.5">
                   <Calendar className="w-4 h-4 text-magenta" />
-                  출생 연월 선택
+                  {t.labelBirth}
                 </label>
                 
                 <div className="grid grid-cols-2 gap-3">
@@ -350,7 +545,7 @@ export default function AgeCalculator() {
                     >
                       {yearsList.map((y) => (
                         <option key={y} value={y} className="bg-slate-900 text-slate-200 font-bold">
-                          {y}년
+                          {y}{lang === "ko" ? "년" : lang === "ja" ? "年" : ""}
                         </option>
                       ))}
                     </select>
@@ -366,7 +561,7 @@ export default function AgeCalculator() {
                     >
                       {monthsList.map((m) => (
                         <option key={m} value={m} className="bg-slate-900 text-slate-200 font-bold">
-                          {m}월
+                          {m}{lang === "ko" ? "월" : lang === "ja" ? "月" : ""}
                         </option>
                       ))}
                     </select>
@@ -377,7 +572,7 @@ export default function AgeCalculator() {
                 <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex items-center gap-3 mt-2">
                   <Clock className="w-5 h-5 text-slate-400 shrink-0" />
                   <p className="text-xs text-slate-400 leading-normal font-medium">
-                    정확한 출생 연월을 선택하면 개월 수 비례에 따라 수의학 보간법을 적용해 인간 나이로 오차 없이 미세 정산됩니다.
+                    {t.birthDesc}
                   </p>
                 </div>
               </div>
@@ -397,12 +592,12 @@ export default function AgeCalculator() {
               {isAnalyzing ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  AI 생애분석 중...
+                  {t.btnAnalyzing}
                 </>
               ) : (
                 <>
                   <Activity className="w-5 h-5" />
-                  생애주기 진단하기
+                  {t.btnCalculate}
                 </>
               )}
             </button>
@@ -413,11 +608,11 @@ export default function AgeCalculator() {
               className="px-6 py-4 bg-white/5 hover:bg-white/10 text-slate-300 font-bold rounded-2xl cursor-pointer transition-all border border-white/10 flex items-center justify-center gap-2"
             >
               <RotateCcw className="w-4 h-4" />
-              초기화
+              {t.btnReset}
             </button>
           </div>
 
-          {/* 결과 표출 카드 (마이크로 전환 애니메이션 적용) */}
+          {/* 결과 표출 카드 */}
           <div
             className={`transition-all duration-500 transform ease-out ${
               showResult
@@ -433,22 +628,62 @@ export default function AgeCalculator() {
                 
                 <div className="space-y-4 text-center">
                   <span className="text-xs font-black tracking-widest text-magenta uppercase bg-magenta-light/10 border border-magenta/20 px-3 py-1 rounded-full">
-                    진단 결과서
+                    {t.resultTitle}
                   </span>
                   
                   <div className="space-y-2">
-                    <p className="text-slate-300 text-sm sm:text-base font-bold">
-                      올해 실제 나이 <strong className="text-white text-lg font-black">{computedPetAge.years}살 {computedPetAge.months}개월</strong>인 우리 아이는
-                    </p>
+                    {lang === "ko" && (
+                      <p className="text-slate-300 text-sm sm:text-base font-bold">
+                        올해 실제 나이 <strong className="text-white text-lg font-black">{computedPetAge.years}살 {computedPetAge.months}개월</strong>인 우리 아이는
+                      </p>
+                    )}
+                    {lang === "en" && (
+                      <p className="text-slate-300 text-sm sm:text-base font-bold">
+                        Your pet, currently <strong className="text-white text-lg font-black">{computedPetAge.years} years and {computedPetAge.months} months</strong> old,
+                      </p>
+                    )}
+                    {lang === "ja" && (
+                      <p className="text-slate-300 text-sm sm:text-base font-bold">
+                        今年で実年齢が <strong className="text-white text-lg font-black">{computedPetAge.years}歳 {computedPetAge.months}ヶ月</strong>になるうちの子は
+                      </p>
+                    )}
+                    
                     <h2 className="text-2xl sm:text-3xl font-black text-white leading-normal tracking-tight">
-                      인간 나이로 환산 시{" "}
-                      <span className="text-magenta drop-shadow-[0_0_8px_rgba(229,0,126,0.3)]">
-                        {computedHumanAge}세
-                      </span>{" "}
-                      <span className="text-slate-300">
-                        [{currentStage.stageName.split(" (")[0]}]
-                      </span>
-                      입니다.
+                      {lang === "ko" && (
+                        <>
+                          인간 나이로 환산 시{" "}
+                          <span className="text-magenta drop-shadow-[0_0_8px_rgba(229,0,126,0.3)]">
+                            {computedHumanAge}세
+                          </span>{" "}
+                          <span className="text-slate-300">
+                            [{currentStage.stageName.split(" (")[0]}]
+                          </span>
+                          입니다.
+                        </>
+                      )}
+                      {lang === "en" && (
+                        <>
+                          is equivalent to a human aged{" "}
+                          <span className="text-magenta drop-shadow-[0_0_8px_rgba(229,0,126,0.3)]">
+                            {computedHumanAge} years old
+                          </span>{" "}
+                          <span className="text-slate-300">
+                            [{currentStage.stageName.split(" (")[0]}]
+                          </span>.
+                        </>
+                      )}
+                      {lang === "ja" && (
+                        <>
+                          人間の年齢に換算すると{" "}
+                          <span className="text-magenta drop-shadow-[0_0_8px_rgba(229,0,126,0.3)]">
+                            {computedHumanAge}歳
+                          </span>{" "}
+                          <span className="text-slate-300">
+                            [{currentStage.stageName.split(" (")[0]}]
+                          </span>
+                          になります。
+                        </>
+                      )}
                     </h2>
                   </div>
                 </div>
@@ -456,20 +691,35 @@ export default function AgeCalculator() {
                 {/* 생애주기 비주얼 슬라이드바 */}
                 <div className="space-y-2 pt-2">
                   <div className="flex justify-between text-[11px] font-bold text-slate-400">
-                    <span>성장기 (~19세)</span>
-                    <span>성숙기 (20~39세)</span>
-                    <span>장년기 (40~54세)</span>
-                    <span>노령기 (55세~)</span>
+                    {lang === "ko" ? (
+                      <>
+                        <span>성장기 (~19세)</span>
+                        <span>성숙기 (20~39세)</span>
+                        <span>장년기 (40~54세)</span>
+                        <span>노령기 (55세~)</span>
+                      </>
+                    ) : lang === "ja" ? (
+                      <>
+                        <span>成長期 (~19歳)</span>
+                        <span>成熟期 (20~39歳)</span>
+                        <span>中年期 (40~54歳)</span>
+                        <span>高齢期 (55歳~)</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Growth (~19yo)</span>
+                        <span>Adult (20~39yo)</span>
+                        <span>Mature (40~54yo)</span>
+                        <span>Senior (55yo~)</span>
+                      </>
+                    )}
                   </div>
                   
-                  {/* 슬라이드 트랙 */}
                   <div className="h-3 rounded-full bg-slate-950 p-0.5 overflow-hidden flex relative">
-                    {/* 게이지 바 */}
                     <div 
                       className="h-full rounded-full bg-gradient-to-r from-blue-500 via-emerald-500 via-amber-500 to-rose-500 transition-all duration-1000"
                       style={{ width: `${Math.min(100, (computedHumanAge / 80) * 100)}%` }}
                     />
-                    {/* 현재 마커 핀 */}
                     <div 
                       className="absolute top-0.5 -mt-1 w-5 h-5 rounded-full border-2 border-white bg-magenta shadow-md shadow-magenta/50 -translate-x-1/2 transition-all duration-1000"
                       style={{ left: `${Math.min(100, (computedHumanAge / 80) * 100)}%` }}
@@ -484,7 +734,7 @@ export default function AgeCalculator() {
                 <div className="flex items-center gap-2 border-b border-white/10 pb-3">
                   <Heart className="w-5 h-5 text-rose-500" />
                   <h3 className="font-extrabold text-white text-base sm:text-lg">
-                    🩺 {currentStage.stageName.split(" (")[0]} 맞춤형 영양 & 건강 솔루션
+                    🩺 {currentStage.stageName.split(" (")[0]} {t.guideTitle}
                   </h3>
                 </div>
 
@@ -492,7 +742,7 @@ export default function AgeCalculator() {
                   <div className={`p-4 rounded-2xl border ${currentStage.colorClass} space-y-1.5`}>
                     <p className="font-bold text-slate-200 text-sm flex items-center gap-1.5">
                       <Sparkle className="w-4 h-4 text-magenta animate-pulse" />
-                      신체 주기 특징
+                      {lang === "ko" ? "신체 주기 특징" : lang === "ja" ? "身体的特徴" : "Life Stage Characteristics"}
                     </p>
                     <p className="text-xs sm:text-sm font-medium leading-relaxed">
                       {currentStage.desc}
@@ -500,7 +750,7 @@ export default function AgeCalculator() {
                   </div>
 
                   <div className="space-y-3.5 pt-1">
-                    <p className="font-bold text-slate-100 text-sm sm:text-base">💡 수의사 추천 건강 관리 수칙 4가지:</p>
+                    <p className="font-bold text-slate-100 text-sm sm:text-base">{t.guideSubtitle}</p>
                     <ul className="space-y-3 text-xs sm:text-sm font-medium">
                       {currentStage.tips.map((tip, idx) => (
                         <li key={idx} className="flex gap-2.5 items-start">
@@ -516,12 +766,10 @@ export default function AgeCalculator() {
                 <div className="bg-slate-900/40 border border-white/5 p-4 rounded-2xl text-slate-400 text-xs leading-relaxed space-y-1.5">
                   <p className="font-bold text-slate-200 flex items-center gap-1">
                     <HelpCircle className="w-3.5 h-3.5 text-magenta" />
-                    잠깐! 알고 계셨나요?
+                    {t.tipTitle}
                   </p>
                   <p>
-                    반려동물의 시간은 인간보다 약 5~7배 빠르게 흘러갑니다. 
-                    특히 대형견은 소형견보다 몸집이 크고 신진대사가 달라 노화 진행 속도가 훨씬 가파릅니다. 
-                    나이에 최적화된 올바른 보조 영양제 급여와 식단 관리가 건강 수명을 최대 3년 이상 연장할 수 있습니다.
+                    {t.tipDesc}
                   </p>
                 </div>
 
@@ -536,3 +784,4 @@ export default function AgeCalculator() {
     </div>
   );
 }
+
