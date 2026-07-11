@@ -8,7 +8,6 @@ import CommentsSection from "@/components/CommentsSection";
 import RelatedPosts from "@/components/RelatedPosts";
 import AnsimiSummary from "@/components/AnsimiSummary";
 import SocialShare from "@/components/SocialShare";
-import AffiliateStoreBanner from "@/components/AffiliateStoreBanner";
 import CalculatorBanner from "@/components/CalculatorBanner";
 
 export const revalidate = 3600;
@@ -259,15 +258,13 @@ export default async function EnglishPostDetailPage({ params }: PageProps) {
             dangerouslySetInnerHTML={{ __html: fixWpLinks(post.content.rendered, sanitizeForSeo(post.title.rendered)) }}
           />
 
-          {/* Calculator Banner */}
+          {/* CalculatorBanner */}
           <CalculatorBanner 
             content={post.content.rendered} 
             title={post.title.rendered} 
             postId={post.id.toString()}
+            lang="en"
           />
-
-          {/* Store Banner */}
-          <AffiliateStoreBanner />
         
           {/* Social Share Section */}
           <SocialShare url={`/en/posts/${post.slug}`} title={post.title.rendered.replace(/<[^>]*>?/gm, "")} />
