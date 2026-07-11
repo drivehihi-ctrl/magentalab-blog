@@ -1029,7 +1029,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
                       <span className="text-[8px] text-gray-400 font-bold uppercase tracking-widest">{t.chartLabelMonthly}</span>
                       <span className="text-xs font-black text-gray-800">
-                        {monthlyTotal >= 10000 ? `${(monthlyTotal/10000).toFixed(1)}${lang === "en" ? "0k" : "만"}` : `${monthlyTotal.toLocaleString()}`}
+                        {monthlyTotal >= 10000 ? `${(monthlyTotal/10000).toFixed(1)}${lang === "en" ? "0k" : lang === "ja" ? "万" : "만"}` : `${monthlyTotal.toLocaleString()}`}
                       </span>
                     </div>
                   </div>

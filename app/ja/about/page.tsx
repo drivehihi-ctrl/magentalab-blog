@@ -28,7 +28,7 @@ export default async function JaAboutPage() {
             ABOUT US
           </span>
           <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold text-gray-900 leading-[1.1] mb-8 tracking-tight">
-            私たちは伴侶動物と同行します、マゼンタ랩 (Magentalab)
+            私たちは伴侶動物に寄り添います、マゼンタラボ (Magentalab)
           </h1>
           <p className="text-xl text-gray-500 max-w-2xl mx-auto font-medium">
             Magentalabペット研究所は、データと科学を通じて伴侶動物のより良い生活を研究します。
