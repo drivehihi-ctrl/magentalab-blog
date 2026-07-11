@@ -63,11 +63,11 @@ export default async function JaAboutAnsimPage() {
               <li><strong>研究分野:</strong>
                 <ul>
                   <li>ペットの行動心理分析および行動矯正の処方</li>
-                  <li>小数点以下0.1%単位の精密な乾물基準(DM)および可溶無窒素物(NFE)の逆算</li>
+                  <li>小数点以下0.1%単位の精密な乾物基準(DM)および可溶無窒素物(NFE)の逆算</li>
                   <li>飼い主とペットの感情的なコミュニケーションの解読</li>
                 </ul>
               </li>
-              <li><strong>座右の銘:</strong> 「事実は妥協しない。0.0%の誤差も許さない獣医栄養学。」</li>
+              <li><strong>座右の銘:</strong> 「事実は妥協しない。0.1%の誤差も許さない獣医栄養学」</li>
             </ul>
 
             <hr />

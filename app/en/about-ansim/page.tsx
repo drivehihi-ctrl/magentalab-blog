@@ -67,7 +67,7 @@ export default async function EnAboutAnsimPage() {
                   <li>Decoding emotional communication between pet parents and pets.</li>
                 </ul>
               </li>
-              <li><strong>Motto:</strong> "Facts are non-negotiable. Veterinary nutrition that allows 0.0% margins of error."</li>
+              <li><strong>Motto:</strong> "Facts are non-negotiable. Veterinary nutrition that allows not even a 0.1% margin of error."</li>
             </ul>
 
             <hr />
