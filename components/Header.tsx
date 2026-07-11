@@ -4,10 +4,12 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Menu, X } from "lucide-react";
+import { usePathname } from "next/navigation";
 import LiveSearch from "./LiveSearch";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname() || "/";
 
   // Prevent scrolling when menu is open
   useEffect(() => {
@@ -18,10 +20,62 @@ export default function Header() {
     }
   }, [isMenuOpen]);
 
+  // Determine current language from path
+  const isEn = pathname.startsWith("/en");
+  const isJa = pathname.startsWith("/ja");
+
+  // Multilingual content mapping
+  const logoSubText = isEn 
+    ? "Pet Research Lab" 
+    : isJa 
+    ? "ペット研究所" 
+    : "반려동물 연구소";
+
+  const logoMainLink = isEn ? "/en" : isJa ? "/ja" : "/";
+
+  const menu = {
+    blog: isEn ? "Blog" : isJa ? "ブログ" : "블로그(카테고리)",
+    blogLink: isEn ? "/en" : isJa ? "/ja" : "/blog",
+
+    about: isEn ? "About Us" : isJa ? "研究所紹介" : "연구소 소개",
+    aboutLink: isEn ? "/en/about" : isJa ? "/ja/about" : "/about",
+
+    aboutAnsim: isEn ? "Meet Ansim" : isJa ? "アンシム紹介" : "안심이 소개",
+    aboutAnsimLink: isEn ? "/en/about-ansim" : isJa ? "/ja/about-ansim" : "/about-ansim",
+
+    ask: isEn ? "Ask Ansim" : isJa ? "質問する" : "질문하기",
+    askLink: isEn ? "/en" : isJa ? "/ja" : "/ask-ansimi",
+
+    bcs: isEn ? "BCS Calculator" : isJa ? "BCS計算機" : "칼로리 계산기",
+    bcsLink: isEn ? "/en" : isJa ? "/ja" : "/bcs-calculator",
+
+    age: isEn ? "Age Calculator" : isJa ? "年齢計算機" : "나이 계산기",
+    ageLink: isEn ? "/en" : isJa ? "/ja" : "/age-calculator",
+
+    dm: isEn ? "DM Calculator" : isJa ? "栄養＆飲水量" : "영양 & 음수량",
+    dmLink: isEn ? "/en" : isJa ? "/ja" : "/dm-calculator",
+
+    emergency: isEn ? "Emergency Guide" : isJa ? "応急計算機" : "응급 계산기",
+    emergencyLink: isEn ? "/en" : isJa ? "/ja" : "/emergency-calculator",
+
+    patella: isEn ? "Patella Diagnosis" : isJa ? "膝蓋骨診断" : "슬개골 진단",
+    patellaLink: isEn ? "/en" : isJa ? "/ja" : "/patella",
+
+    petCare: isEn ? "Pet Expenses" : isJa ? "養育費計算" : "양육비 계산",
+    petCareLink: isEn ? "/en" : isJa ? "/ja" : "/Petcareexpenses",
+
+    fic: isEn ? "Cystitis Diagnoser" : isJa ? "膀胱炎診断" : "방광염 진단",
+    ficLink: isEn ? "/en" : isJa ? "/ja" : "/FIC",
+
+    contact: isEn ? "Contact" : isJa ? "お問い合わせ" : "문의하기",
+    searchLabel: isEn ? "AI Search" : isJa ? "AI検索" : "AI 검색",
+    blogDesc: isEn ? "Browse categories" : isJa ? "カテゴリで表示" : "카테고리별 모아보기"
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/80 backdrop-blur-md">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 group">
+        <Link href={logoMainLink} className="flex items-center gap-2 group">
           <div className="w-12 h-12 flex items-center justify-center transition-transform group-hover:scale-110 relative">
             <Image 
               src="/images/favicon.png" 
@@ -35,25 +89,24 @@ export default function Header() {
               Magentalab
             </div>
             <p className="text-xs font-medium text-magenta tracking-widest uppercase">
-              반려동물 연구소
+              {logoSubText}
             </p>
           </div>
         </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-gray-600">
-          <Link href="/blog" className="hover:text-magenta transition-colors font-bold">블로그(카테고리)</Link>
-          <Link href="/about" className="hover:text-magenta transition-colors">연구소 소개</Link>
-          <Link href="/about-ansim" className="hover:text-magenta transition-colors">안심이 소개</Link>
-          <Link href="/ask-ansimi" className="hover:text-magenta transition-colors">질문하기</Link>
-          <Link href="/bcs-calculator" className="hover:text-magenta transition-colors">칼로리 계산기</Link>
-          <Link href="/age-calculator" className="hover:text-magenta transition-colors">나이 계산기</Link>
-          <Link href="/dm-calculator" className="hover:text-magenta transition-colors">영양 & 음수량</Link>
-          <Link href="/emergency-calculator" className="hover:text-magenta transition-colors">응급 계산기</Link>
-          <Link href="/patella" className="hover:text-magenta transition-colors">슬개골 진단</Link>
-          <Link href="/Petcareexpenses" className="hover:text-magenta transition-colors">양육비 계산</Link>
-          <Link href="/FIC" className="hover:text-magenta transition-colors">방광염 진단</Link>
-          {/* <Link href="/shop" className="hover:text-magenta transition-colors">전용몰</Link> */}
+          <Link href={menu.blogLink} className="hover:text-magenta transition-colors font-bold">{menu.blog}</Link>
+          <Link href={menu.aboutLink} className="hover:text-magenta transition-colors">{menu.about}</Link>
+          <Link href={menu.aboutAnsimLink} className="hover:text-magenta transition-colors">{menu.aboutAnsim}</Link>
+          <Link href={menu.askLink} className="hover:text-magenta transition-colors">{menu.ask}</Link>
+          <Link href={menu.bcsLink} className="hover:text-magenta transition-colors">{menu.bcs}</Link>
+          <Link href={menu.ageLink} className="hover:text-magenta transition-colors">{menu.age}</Link>
+          <Link href={menu.dmLink} className="hover:text-magenta transition-colors">{menu.dm}</Link>
+          <Link href={menu.emergencyLink} className="hover:text-magenta transition-colors">{menu.emergency}</Link>
+          <Link href={menu.patellaLink} className="hover:text-magenta transition-colors">{menu.patella}</Link>
+          <Link href={menu.petCareLink} className="hover:text-magenta transition-colors">{menu.petCare}</Link>
+          <Link href={menu.ficLink} className="hover:text-magenta transition-colors">{menu.fic}</Link>
           <div className="ml-2 mr-2">
             <LiveSearch />
           </div>
@@ -62,7 +115,7 @@ export default function Header() {
             href="mailto:smagentalab@gmail.com"
             className="px-5 py-2.5 bg-magenta text-white rounded-full hover:bg-magenta/90 transition-all shadow-md shadow-magenta/10 hover:shadow-lg"
           >
-            문의하기
+            {menu.contact}
           </a>
         </nav>
 
@@ -93,121 +146,112 @@ export default function Header() {
         <div className="flex flex-col p-2">
           {/* Mobile Search area */}
           <div className="px-4 py-3 mb-1 bg-gray-50/50 rounded-2xl border border-gray-50 flex items-center justify-between">
-             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">AI 검색</span>
+             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">{menu.searchLabel}</span>
              <LiveSearch />
           </div>
 
           <nav className="flex flex-col gap-0.5">
             <Link 
-              href="/blog" 
+              href={menu.blogLink} 
               className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
               onClick={() => setIsMenuOpen(false)}
             >
               <div>
-                <span>블로그</span>
-                <span className="block text-[10px] text-gray-400 font-normal mt-0.5">카테고리별 모아보기</span>
+                <span>{menu.blog}</span>
+                <span className="block text-[10px] text-gray-400 font-normal mt-0.5">{menu.blogDesc}</span>
               </div>
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
             </Link>
             <div className="h-px bg-gray-50 mx-4" />
             <Link 
-              href="/about" 
+              href={menu.aboutLink} 
               className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
               onClick={() => setIsMenuOpen(false)}
             >
-              연구소 소개
+              {menu.about}
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
             </Link>
             <div className="h-px bg-gray-50 mx-4" />
             <Link 
-              href="/about-ansim" 
+              href={menu.aboutAnsimLink} 
               className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
               onClick={() => setIsMenuOpen(false)}
             >
-              안심이 소개
+              {menu.aboutAnsim}
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
             </Link>
             <div className="h-px bg-gray-50 mx-4" />
             <Link 
-              href="/ask-ansimi" 
+              href={menu.askLink} 
               className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
               onClick={() => setIsMenuOpen(false)}
             >
-              질문하기
+              {menu.ask}
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
             </Link>
             <div className="h-px bg-gray-50 mx-4" />
             <Link 
-              href="/bcs-calculator" 
+              href={menu.bcsLink} 
               className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
               onClick={() => setIsMenuOpen(false)}
             >
-              칼로리 계산기
+              {menu.bcs}
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
             </Link>
             <div className="h-px bg-gray-50 mx-4" />
             <Link 
-              href="/age-calculator" 
+              href={menu.ageLink} 
               className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
               onClick={() => setIsMenuOpen(false)}
             >
-              나이 계산기
+              {menu.age}
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
             </Link>
             <div className="h-px bg-gray-50 mx-4" />
             <Link 
-              href="/dm-calculator" 
+              href={menu.dmLink} 
               className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
               onClick={() => setIsMenuOpen(false)}
             >
-              영양 & 음수량
+              {menu.dm}
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
             </Link>
             <div className="h-px bg-gray-50 mx-4" />
             <Link 
-              href="/emergency-calculator" 
+              href={menu.emergencyLink} 
               className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
               onClick={() => setIsMenuOpen(false)}
             >
-              응급 계산기
+              {menu.emergency}
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
             </Link>
             <div className="h-px bg-gray-50 mx-4" />
             <Link 
-              href="/patella" 
+              href={menu.patellaLink} 
               className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
               onClick={() => setIsMenuOpen(false)}
             >
-              슬개골 진단
+              {menu.patella}
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
             </Link>
             <div className="h-px bg-gray-50 mx-4" />
             <Link 
-              href="/Petcareexpenses" 
+              href={menu.petCareLink} 
               className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
               onClick={() => setIsMenuOpen(false)}
             >
-              양육비 계산
+              {menu.petCare}
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
             </Link>
             <div className="h-px bg-gray-50 mx-4" />
             <Link 
-              href="/FIC" 
+              href={menu.ficLink} 
               className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
               onClick={() => setIsMenuOpen(false)}
             >
-              방광염 진단
+              {menu.fic}
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
             </Link>
-            {/* <div className="h-px bg-gray-50 mx-4" />
-            <Link 
-              href="/shop" 
-              className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              전용몰
-              <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
-            </Link> */}
           </nav>
 
           <div className="mt-1.5 p-1.5 border-t border-gray-50">
@@ -216,7 +260,7 @@ export default function Header() {
               className="flex items-center justify-center w-full py-3.5 bg-magenta text-white text-[15px] font-bold rounded-xl shadow-lg shadow-magenta/10 hover:bg-magenta/90 transition-all active:scale-95"
               onClick={() => setIsMenuOpen(false)}
             >
-              문의하기
+              {menu.contact}
             </a>
           </div>
           
@@ -230,3 +274,4 @@ export default function Header() {
     </header>
   );
 }
+
