@@ -44,13 +44,13 @@ export default function AnsimiSummary({ excerpt, categoryNames, lang = "ko" }: A
   let displayExcerpt = excerpt || text.defaultExcerpt;
   let manualEmpathyMessage = "";
 
-  // Common separators: [공감], [message], [summary], ---, em-dash, en-dash, horizontal line
-  const separatorPattern = /\[공감\]|\[message\]|---|\u2014|\u2013|<\s*hr\s*\/?>/;
+  // Common separators: [공감], [Empathy], [共感], [message], [summary], ---, em-dash, en-dash, horizontal line
+  const separatorPattern = /\[공감\]|\[empathy\]|\[共感\]|\[message\]|---|\u2014|\u2013|<\s*hr\s*\/?>/i;
   
-  if (excerpt && (separatorPattern.test(excerpt) || excerpt.includes("[공감]"))) {
+  if (excerpt && separatorPattern.test(excerpt)) {
     const parts = excerpt.split(separatorPattern);
     displayExcerpt = parts[0]
-      .replace(/안심이의\s*|공감\s*|한마디\s*|[:：]\s*$/g, "")
+      .replace(/안심이의\s*|공감\s*|한마디\s*|[:：]\s*$|Empathy\s*|共感\s*/gi, "")
       .trim();
     
     if (parts.length > 1) {
