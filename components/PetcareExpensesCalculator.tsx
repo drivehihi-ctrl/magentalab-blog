@@ -222,7 +222,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
     },
     ja: {
       badge: "アンシム経費診断レポート",
-      title: "ペットの生涯飼育費＆月간維持費計算機 💰",
+      title: "ペットの生涯飼育費＆月間維持費計算機 💰",
       desc: "年齢別の獣医学的必須予防接種費用と生涯医療費シミュレーションを組み込み、愛犬・愛猫に合わせた月間コストと生涯総額の診断レポートを提示します。",
       labelSelectType: "動物の種類とサイズを選択",
       dogSmall: "小型犬",
@@ -245,7 +245,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
       neuteredQuestion: "👶 1歳未満の基礎接種期に避妊・去勢手術を行いましたか？（予定含む）",
       labelTargetLifespan: "目標とする予想寿命",
       unitLifespan: "歳",
-      labelExpensesSetup: "月間固定生活費의調整",
+      labelExpensesSetup: "月間固定生活費の調整",
       labelFoodQuality: "食事・おやつの品質",
       foodNormal: "スタンダード",
       foodPremium: "プレミアム",
@@ -396,7 +396,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
         desc: lang === "ko" 
           ? "면역 형성을 위한 첫 접종 단계로 평생 건강을 결정하는 가장 중요한 시기입니다." 
           : lang === "ja" 
-          ? "免疫形成のための最初期ワクチン期間で、一生의健康状態를決定付け는極めて重要한時期입니다." 
+          ? "免疫形成のための最初期ワクチン期間で、一生の健康状態を決定付ける極めて重要な時期です。" 
           : "Initial vaccinations for immune development. Critical stage that outlines lifelong wellness.",
         items: isDog ? [
           { 
@@ -415,7 +415,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
             name: lang === "ko" ? "광견병 & 신종플루(인플루엔자) 예방주사" : lang === "ja" ? "狂犬病＆犬インフルエンザ" : "Rabies & Canine Influenza", 
             period: lang === "ko" ? "생후 14~16주" : lang === "ja" ? "生後14〜16週" : "14-16 weeks old", 
             cost: 120000, 
-            detail: lang === "ko" ? "법정 인수공통 전염병 및 신종 호흡기 독감 예방" : lang === "ja" ? "法定伝染병및인플루엔자感染対策" : "Mandatory legal rabies shot and flu prevention." 
+            detail: lang === "ko" ? "법정 인수공통 전염병 및 신종 호흡기 독감 예방" : lang === "ja" ? "法定伝染病およびインフルエンザ感染対策" : "Mandatory legal rabies shot and flu prevention." 
           },
           { 
             name: lang === "ko" ? "종합 항체가 검사" : lang === "ja" ? "抗体価検査" : "Antibody Titer Test", 
