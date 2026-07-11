@@ -135,7 +135,7 @@ export default function CalculatorBanner({
       patella: {
         tag: "🦴 Patella Luxation & Joint Screener",
         textBefore: "Is your pet limping or showing awkward hind leg postures? Self-assess orthopedic risks based on clinical indicators. ",
-        button: "Open Patella Luxation 자가진단기 ➔",
+        button: "Open Patella Luxation Screener ➔",
         textAfter: " Obtain recommended physical exercise tips."
       },
       fic: {

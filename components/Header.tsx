@@ -59,13 +59,13 @@ export default function Header() {
     emergencyLink: isEn ? "/en/emergency-calculator" : isJa ? "/ja/emergency-calculator" : "/emergency-calculator",
 
     patella: isEn ? "Patella Diagnosis" : isJa ? "膝蓋骨診断" : "슬개골 진단",
-    patellaLink: isEn ? "/en/patella" : isJa ? "/ja/patella" : "/patella",
+    patellaLink: isEn ? "/en/patella-diagnoser" : isJa ? "/ja/patella-diagnoser" : "/patella",
 
     petCare: isEn ? "Pet Expenses" : isJa ? "養育費計算" : "양육비 계산",
-    petCareLink: isEn ? "/en/Petcareexpenses" : isJa ? "/ja/Petcareexpenses" : "/Petcareexpenses",
+    petCareLink: isEn ? "/en/petcare-expenses-calculator" : isJa ? "/ja/petcare-expenses-calculator" : "/Petcareexpenses",
 
     fic: isEn ? "Cystitis Diagnoser" : isJa ? "膀胱炎診断" : "방광염 진단",
-    ficLink: isEn ? "/en/FIC" : isJa ? "/ja/FIC" : "/FIC",
+    ficLink: isEn ? "/en/fic-diagnoser" : isJa ? "/ja/fic-diagnoser" : "/FIC",
 
     contact: isEn ? "Contact" : isJa ? "お問い合わせ" : "문의하기",
     searchLabel: isEn ? "AI Search" : isJa ? "AI検索" : "AI 검색",
