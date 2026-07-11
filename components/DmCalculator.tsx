@@ -90,6 +90,8 @@ export default function DmCalculator({ lang = "ko" }: DmCalculatorProps) {
       badgePremium: "고단백 프리미엄 사료",
       badgeStandard: "균형 잡힌 성분 사료",
       loading: "계산기를 로드 중입니다...",
+      labelApprox: "약",
+      labelCupUnit: "잔",
     },
     en: {
       title: "Nutritional DM & Hydration Calculator",
@@ -131,6 +133,8 @@ export default function DmCalculator({ lang = "ko" }: DmCalculatorProps) {
       badgePremium: "High Protein Premium",
       badgeStandard: "Balanced Formulation",
       loading: "Loading Calculator...",
+      labelApprox: "Approx.",
+      labelCupUnit: "cups",
     },
     ja: {
       title: "栄養成分(DM)＆一日飲水量計算機",
@@ -172,6 +176,8 @@ export default function DmCalculator({ lang = "ko" }: DmCalculatorProps) {
       badgePremium: "高タンパク質フード",
       badgeStandard: "バランス栄養フード",
       loading: "計算機をロードしています...",
+      labelApprox: "約",
+      labelCupUnit: "杯",
     }
   };
 
@@ -536,7 +542,7 @@ export default function DmCalculator({ lang = "ko" }: DmCalculatorProps) {
                         <CupSoda className="w-4 h-4 text-magenta" />
                         {t.outputCupTitle}
                       </span>
-                      <span className="text-white">약 {isWaterValid ? cupCount : "--"} 잔</span>
+                      <span className="text-white">{t.labelApprox} {isWaterValid ? cupCount : "--"} {t.labelCupUnit}</span>
                     </div>
 
                     {/* 물방울/종이컵 채워지기 시각화 */}

@@ -189,11 +189,11 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
       foodNormal: "Standard",
       foodPremium: "Premium",
       foodMedical: "Medical/Raw",
-      unitWon: "KRW",
-      unitWonDesc: "standard",
+      unitWon: "",
+      unitWonDesc: "",
       sliderFoodLabel: "Food & Treats (Monthly)",
       sliderHygieneLabel: "Hygiene Supplies (Pads, Litter, etc. / Monthly)",
-      unitTenThousand: "0k KRW",
+      unitTenThousand: "",
       labelCareType: "Grooming & Hygiene Care Style",
       careShop: "Professional Salon Care",
       careShopDesc: "Salon bath/cut once a month",
@@ -207,8 +207,8 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
       reportLifetimeTotal: "Est. Cumulative Lifetime Cost",
       reportLifetimePeriod: "Total for {remainingYears} yrs",
       simulationInfo: "Simulated from current age {computedAge} to lifespan {lifespan}. Initial equipment fees ({initCostText}) are added.",
-      largeCostText: "1M KRW",
-      normalCostText: "500k KRW",
+      largeCostText: "$770",
+      normalCostText: "$385",
       chartLabelMonthly: "MONTHLY",
       chartFood: "Food & Treats",
       chartHygiene: "Hygiene Pads/Litter",
@@ -223,7 +223,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
     ja: {
       badge: "アンシム経費診断レポート",
       title: "ペットの生涯飼育費＆月間維持費計算機 💰",
-      desc: "年齢別の獣医学的必須予防接種費用と生涯医療費シミュレーションを組み込み、愛犬・愛猫に合わせた月間コストと生涯総額の診断レポートを提示します。",
+      desc: "年齢別の獣医学적필수예방접종비용과생애의료비시뮬레이션을組み込み、愛犬・愛猫に合わせた月간코스트와생애총액의진단레포트를제시합니다.",
       labelSelectType: "動物の種類とサイズを選択",
       dogSmall: "小型犬",
       dogSmallDesc: "10kg未満",
@@ -242,19 +242,19 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
       unitYear: "年",
       labelBirthMonth: "誕生月",
       unitMonth: "月",
-      neuteredQuestion: "👶 1歳未満の基礎接種期に避妊・去勢手術を行いましたか？（予定含む）",
+      neuteredQuestion: "👶 1歳未満의기초접종기에避妊・去勢手術を行いましたか？（予定含む）",
       labelTargetLifespan: "目標とする予想寿命",
       unitLifespan: "歳",
-      labelExpensesSetup: "月間固定生活費の調整",
+      labelExpensesSetup: "月間固定生活費의조정",
       labelFoodQuality: "食事・おやつの品質",
       foodNormal: "スタンダード",
       foodPremium: "プレミアム",
       foodMedical: "療法食/生食",
-      unitWon: "ウォン",
-      unitWonDesc: "基準",
+      unitWon: "",
+      unitWonDesc: "",
       sliderFoodLabel: "食事・おやつ代（月）",
       sliderHygieneLabel: "衛生用品代（トイレシート、猫砂など / 月）",
-      unitTenThousand: "万ウォン",
+      unitTenThousand: "",
       labelCareType: "トリミング・ケア方法",
       careShop: "サロンでのトリミング",
       careShopDesc: "月1回サロンでシャンプー・カット",
@@ -265,18 +265,18 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
       reportRealtime: "リアルタイム自動更新 ⚡",
       reportMonthlyTotal: "月間の維持費",
       reportMonthlyMedical: "医療費込み",
-      reportLifetimeTotal: "生涯累計の推定飼育費",
+      reportLifetimeTotal: "生涯累計의추정사육비",
       reportLifetimePeriod: "生涯計（残り{remainingYears}年）",
       simulationInfo: "現在の年齢{computedAge}歳から寿命{lifespan}歳までのシミュレーションです。初期の飼育ケージ・用品代（{initCostText}）が追加されました。",
-      largeCostText: "100万ウォン",
-      normalCostText: "50万ウォン",
+      largeCostText: "約11万円",
+      normalCostText: "約5.5万円",
       chartLabelMonthly: "MONTHLY",
       chartFood: "フード・おやつ",
       chartHygiene: "トイレ・衛生用品",
       chartCare: "ケア・トリミング",
       chartMedical: "医療費（自動計算）",
       calendarTitle: "今年の必須予防接種＆ケアカレンダー 📅",
-      calendarDesc: "現在の年齢{computedAge}歳時点で推奨される獣医学的ケア項目および健康診断費用の目安です。",
+      calendarDesc: "現在の年齢{computedAge}歳時点で推奨される獣医学적케어항목및건강검진비용의목표입니다.",
       calendarTag: "推奨",
       calendarDisclaimer: "* 予防接種などの費用は地域や動物病院によって異なる場合があります。7歳以上の高齢期は定期的検査を受けることで、急な医療費負担を防げます。",
       btnReset: "もう一度計算する",
@@ -284,6 +284,19 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
   };
 
   const t = dict[lang] || dict.ko;
+
+  // 화폐 환전 포맷터 헬퍼 함수
+  const formatCurrency = (amountKrw: number) => {
+    if (lang === "en") {
+      const usd = Math.round(amountKrw / 1300);
+      return `$${usd.toLocaleString()}`;
+    } else if (lang === "ja") {
+      const jpy = Math.round(amountKrw / 10); // 원-엔 10:1 (100엔 = 1000원) 고정 환율 적용
+      return `¥${jpy.toLocaleString()}`;
+    } else {
+      return `${amountKrw.toLocaleString()}원`;
+    }
+  };
 
   // 축종/크기 변경 시 권장 및 기본 고정값 동기화
   const handlePetTypeChange = (type: PetType) => {
@@ -781,7 +794,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
                   >
                     <span className="text-xs font-black">{t.foodNormal}</span>
                     <span className="text-[10px] text-gray-400 font-bold">
-                      {lang === "ko" ? "3만" : lang === "ja" ? "3万" : "30k"} {t.unitWonDesc}
+                      {lang === "ko" ? "3만 원" : lang === "ja" ? "約3,000円" : "Approx. $23"}
                     </span>
                   </button>
 
@@ -797,7 +810,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
                   >
                     <span className="text-xs font-black">{t.foodPremium}</span>
                     <span className="text-[10px] text-gray-400 font-bold">
-                      {lang === "ko" ? "6만" : lang === "ja" ? "6万" : "60k"} {t.unitWonDesc}
+                      {lang === "ko" ? "6만 원" : lang === "ja" ? "約6,000円" : "Approx. $46"}
                     </span>
                   </button>
 
@@ -813,7 +826,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
                   >
                     <span className="text-xs font-black">{t.foodMedical}</span>
                     <span className="text-[10px] text-gray-400 font-bold">
-                      {lang === "ko" ? "9만" : lang === "ja" ? "9万" : "90k"} {t.unitWonDesc}
+                      {lang === "ko" ? "9만 원" : lang === "ja" ? "約9,000円" : "Approx. $69"}
                     </span>
                   </button>
                 </div>
@@ -822,7 +835,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-xs font-bold text-gray-500">
                   <span>{t.sliderFoodLabel}</span>
-                  <span className="text-gray-900 text-sm font-black">{foodCost.toLocaleString()} {t.unitWon}</span>
+                  <span className="text-gray-900 text-sm font-black">{formatCurrency(foodCost)}</span>
                 </div>
                 <input
                   type="range"
@@ -840,7 +853,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
               <div className="space-y-3">
                 <div className="flex justify-between items-center text-sm font-bold">
                   <span className="text-gray-700">{t.sliderHygieneLabel}</span>
-                  <span className="text-magenta font-black">{hygieneCost.toLocaleString()} {t.unitWon}</span>
+                  <span className="text-magenta font-black">{formatCurrency(hygieneCost)}</span>
                 </div>
                 <input
                   type="range"
@@ -852,9 +865,9 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
                   className="w-full h-2 bg-gray-150 rounded-lg appearance-none cursor-pointer accent-magenta"
                 />
                 <div className="flex justify-between text-[10px] text-gray-400 font-bold">
-                  <span>2{t.unitTenThousand}</span>
-                  <span>3.5{t.unitTenThousand}</span>
-                  <span>5{t.unitTenThousand}</span>
+                  <span>{formatCurrency(20000)}</span>
+                  <span>{formatCurrency(35000)}</span>
+                  <span>{formatCurrency(50000)}</span>
                 </div>
               </div>
 
@@ -896,7 +909,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-xs font-bold text-gray-500">
                   <span>{t.sliderCareLabel}</span>
-                  <span className="text-gray-900 text-sm font-black">{careCost.toLocaleString()} {t.unitWon}</span>
+                  <span className="text-gray-900 text-sm font-black">{formatCurrency(careCost)}</span>
                 </div>
                 <input
                   type="range"
@@ -944,7 +957,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
                         {t.reportMonthlyTotal}
                       </span>
                       <p className="text-xl sm:text-2xl font-black text-magenta">
-                        {monthlyTotal.toLocaleString()}{t.unitWon}
+                        {formatCurrency(monthlyTotal)}
                       </p>
                     </div>
                     <div className="text-right">
@@ -959,7 +972,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
                         {t.reportLifetimeTotal}
                       </span>
                       <p className="text-xl sm:text-2xl font-black text-indigo-600">
-                        {lifetimeTotal.toLocaleString()}{t.unitWon}
+                        {formatCurrency(lifetimeTotal)}
                       </p>
                     </div>
                     <div className="text-right">
@@ -1089,7 +1102,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
                         </div>
                       </div>
                       <span className="text-xs font-black text-magenta flex-shrink-0">
-                        ~ {(item.cost).toLocaleString()}{t.unitWon}
+                        ~ {formatCurrency(item.cost)}
                       </span>
                     </div>
                     <p className="text-[10px] text-gray-500 leading-relaxed font-semibold pl-6 border-l border-gray-200">
