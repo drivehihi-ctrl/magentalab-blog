@@ -118,7 +118,7 @@ export async function getAllPostsForSitemap(): Promise<WPPost[]> {
   const perPage = 100;
   // 1페이지를 먼저 가져와 전체 페이지 수 확인
   const firstRes = await fetch(
-    `${WP_API_URL}/posts?_fields=id,date,modified&per_page=${perPage}&page=1`,
+    `${WP_API_URL}/posts?_fields=id,date,modified,slug&per_page=${perPage}&page=1`,
     { next: { revalidate: 0 } } // 사이트맵은 항상 최신 데이터
   );
   if (!firstRes.ok) throw new Error("Failed to fetch posts for sitemap");
@@ -131,7 +131,7 @@ export async function getAllPostsForSitemap(): Promise<WPPost[]> {
   // 2페이지 이상이 있으면 병렬로 나머지 모두 가져오기
   const remainingFetches = Array.from({ length: totalPages - 1 }, (_, i) =>
     fetch(
-      `${WP_API_URL}/posts?_fields=id,date,modified&per_page=${perPage}&page=${i + 2}`,
+      `${WP_API_URL}/posts?_fields=id,date,modified,slug&per_page=${perPage}&page=${i + 2}`,
       { next: { revalidate: 0 } }
     ).then(res => res.ok ? res.json() as Promise<WPPost[]> : [])
   );
