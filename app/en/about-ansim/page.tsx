@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default async function EnAboutAnsimPage() {
   let relatedPosts: any[] = [];
   try {
-    const postsRes = await getPosts(1, 6, "en");
+    const postsRes = await getPosts(1, 6, undefined, undefined, "en");
     relatedPosts = postsRes.posts;
   } catch (error) {
     console.error("Failed to fetch posts for English About Ansim:", error);
@@ -95,7 +95,7 @@ export default async function EnAboutAnsimPage() {
             </blockquote>
           </div>
           
-          <RelatedPosts posts={relatedPosts} />
+          <RelatedPosts posts={relatedPosts} lang="en" />
           
           {/* CTA / Footer */}
           <div className="mt-20 pt-12 border-t border-gray-100 text-center">

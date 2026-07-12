@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import PetcareExpensesCalculator from "@/components/PetcareExpensesCalculator";
 import CalculatorBanner from "@/components/CalculatorBanner";
+import RelatedPosts from "@/components/RelatedPosts";
+import { getPosts } from "@/lib/wp";
 
 export const metadata: Metadata = {
   title: "ペットの生涯飼育費＆月間維持費シミュレーター | マゼンタラボ",
@@ -22,12 +24,21 @@ export const metadata: Metadata = {
   }
 };
 
-export default function PetcareExpensesCalculatorPageJa() {
+export default async function PetcareExpensesCalculatorPageJa() {
+  let relatedPosts: any[] = [];
+  try {
+    const postsRes = await getPosts(1, 6, undefined, undefined, "ja");
+    relatedPosts = postsRes.posts;
+  } catch (error) {
+    console.error("Failed to fetch related posts for Petcare Expenses (ja):", error);
+  }
+
   return (
     <div className="bg-slate-50 pb-20">
       <PetcareExpensesCalculator lang="ja" />
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <CalculatorBanner isRandom={true} excludeType="expenses" lang="ja" />
+        <RelatedPosts posts={relatedPosts} lang="ja" />
       </div>
     </div>
   );

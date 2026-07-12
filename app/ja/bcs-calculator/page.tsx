@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import BCSCalculator from "@/components/BCSCalculator";
 import CalculatorBanner from "@/components/CalculatorBanner";
+import RelatedPosts from "@/components/RelatedPosts";
+import { getPosts } from "@/lib/wp";
 
 export const metadata: Metadata = {
   title: "ペット의肥満度(BCS)＆ダイエットカロリー計算機 | マゼンタラボ",
@@ -22,12 +24,21 @@ export const metadata: Metadata = {
   }
 };
 
-export default function BcsCalculatorPageJa() {
+export default async function BcsCalculatorPageJa() {
+  let relatedPosts: any[] = [];
+  try {
+    const postsRes = await getPosts(1, 6, undefined, undefined, "ja");
+    relatedPosts = postsRes.posts;
+  } catch (error) {
+    console.error("Failed to fetch related posts for BCS (ja):", error);
+  }
+
   return (
     <div className="bg-slate-50 pb-20">
       <BCSCalculator lang="ja" />
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <CalculatorBanner isRandom={true} excludeType="bcs" lang="ja" />
+        <RelatedPosts posts={relatedPosts} lang="ja" />
       </div>
     </div>
   );

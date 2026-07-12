@@ -286,7 +286,7 @@ export default async function EnglishPostDetailPage({ params }: PageProps) {
             </div>
           )}
 
-          <RelatedPosts posts={relatedPosts} />
+          <RelatedPosts posts={relatedPosts} lang="en" />
           
           {/* Post Footer / CTA */}
           <div className="mt-20 p-8 md:p-12 rounded-3xl bg-gray-900 text-white text-center relative overflow-hidden">
