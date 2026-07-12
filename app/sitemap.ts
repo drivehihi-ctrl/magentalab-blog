@@ -57,6 +57,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/en/fic-diagnoser`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
     { url: `${baseUrl}/en/patella-diagnoser`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
     { url: `${baseUrl}/en/petcare-expenses-calculator`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${baseUrl}/en/privacy`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
+    { url: `${baseUrl}/en/terms`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
 
     // 일본어 페이지
     { url: `${baseUrl}/ja`, lastModified: new Date(), changeFrequency: 'daily', priority: 1.0 },
@@ -69,6 +71,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/ja/fic-diagnoser`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
     { url: `${baseUrl}/ja/patella-diagnoser`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
     { url: `${baseUrl}/ja/petcare-expenses-calculator`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${baseUrl}/ja/privacy`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
+    { url: `${baseUrl}/ja/terms`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
   ];
 
   return [...staticPages, ...postEntries];
