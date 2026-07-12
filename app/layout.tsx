@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import { Analytics } from "@vercel/analytics/react";
 import { GoogleTagManager } from "@next/third-parties/google";
 
@@ -100,36 +101,7 @@ export default function RootLayout({
           <Header />
           <main>{children}</main>
           <Analytics />
-          <footer className="bg-gray-50 border-t border-gray-100 py-16 text-gray-600">
-            <div className="container mx-auto px-4 max-w-5xl">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12 text-left">
-                <div className="space-y-4">
-                  <p className="text-gray-900 font-bold">마젠타랩 (MagentaLab)</p>
-                  <div className="text-[11px] text-gray-500 leading-relaxed space-y-1 font-medium">
-                    <p>대표이사 : 김범준 | 사업자등록번호 : 448-07-03101</p>
-                    <p>통신판매업 신고 : 제 2025-경기김포-1339호 | 호스팅 : Vercel Inc.</p>
-                    <p>주소 : 경기도 김포시 김포한강11로255번길 149, 112동 701호</p>
-                    <p>고객센터 : 0502-1933-8452 | 이메일 : smagentalab@gmail.com</p>
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <p className="text-gray-900 font-bold text-sm">Magentalab 반려동물 연구소</p>
-                  <p className="text-[10px] text-gray-400 leading-relaxed">
-                    본 정보는 참고용이며, 정확한 진단은 반드시 수의사와 상담하십시오. <br />
-                    Magentalab은 데이터에 기반한 정보 제공을 목적으로 합니다.
-                  </p>
-                  <nav className="flex flex-wrap gap-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest pt-2">
-                    <Link href="/privacy" className="hover:text-magenta transition-colors">개인정보처리방침</Link>
-                    <Link href="/terms" className="hover:text-magenta transition-colors">이용약관</Link>
-                    <Link href="/about" className="hover:text-magenta transition-colors">연구소 소개</Link>
-                  </nav>
-                </div>
-              </div>
-              <div className="pt-8 border-t border-gray-100 text-center text-gray-400 text-[10px] uppercase tracking-[0.2em]">
-                &copy; 2026 Magentalab. All rights reserved.
-              </div>
-            </div>
-          </footer>
+          <Footer />
         </SessionProvider>
       </body>
     </html>
