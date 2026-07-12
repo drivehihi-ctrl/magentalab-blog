@@ -39,13 +39,10 @@ export async function getPosts(
   lang: string = "ko"
 ): Promise<PostsResponse> {
   const isKo = lang === "ko" || !lang;
-  // 한국어가 아닌 다국어(ja, en)의 경우, API가 언어 필터링을 제대로 수행하지 않으므로 
+  // 워드프레스 API가 언어 필터링을 제대로 수행하지 않으므로, 
   // 우선 per_page=100으로 충분히 많은 데이터를 한 번에 가져와 필터링한 후 JS 단에서 페이지네이션 처리를 합니다.
-  const apiPerPage = isKo ? perPage : 100;
-  const apiPage = isKo ? page : 1;
-
   // Next.js 캐시 용량 초과(2MB) 문제를 방지하기 위해, 리스트 조회에 불필요한 content 필드를 제외하고 필요한 필드만 가져옵니다.
-  let url = `${WP_API_URL}/posts?_embed&per_page=${apiPerPage}&page=${apiPage}&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`;
+  let url = `${WP_API_URL}/posts?_embed&per_page=100&page=1&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`;
   
   if (lang) {
     url += `&lang=${lang}`;
@@ -90,29 +87,19 @@ export async function getPosts(
     });
   }
 
-  if (isKo) {
-    const totalPosts = Number(res.headers.get('X-WP-Total') || filteredPosts.length);
-    const totalPages = Number(res.headers.get('X-WP-TotalPages') || 1);
-    return { 
-      posts: filteredPosts, 
-      totalPages, 
-      totalPosts 
-    };
-  } else {
-    // 다국어 페이지: 필터링된 전체 글 수 기준으로 totalPosts, totalPages 계산
-    const totalPosts = filteredPosts.length;
-    const totalPages = Math.ceil(totalPosts / perPage) || 1;
+  // 필터링된 전체 글 수 기준으로 totalPosts, totalPages 계산
+  const totalPosts = filteredPosts.length;
+  const totalPages = Math.ceil(totalPosts / perPage) || 1;
 
-    // 요청한 page, perPage 크기에 맞게 데이터 슬라이싱
-    const startIndex = (page - 1) * perPage;
-    const paginatedPosts = filteredPosts.slice(startIndex, startIndex + perPage);
+  // 요청한 page, perPage 크기에 맞게 데이터 슬라이싱
+  const startIndex = (page - 1) * perPage;
+  const paginatedPosts = filteredPosts.slice(startIndex, startIndex + perPage);
 
-    return {
-      posts: paginatedPosts,
-      totalPages,
-      totalPosts
-    };
-  }
+  return {
+    posts: paginatedPosts,
+    totalPages,
+    totalPosts
+  };
 }
 
 
