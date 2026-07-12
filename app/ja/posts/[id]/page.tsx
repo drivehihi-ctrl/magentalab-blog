@@ -308,7 +308,7 @@ export default async function JapanesePostDetailPage({ params }: PageProps) {
           </div>
 
           {/* Comments Section */}
-          <CommentsSection postId={post.id} />
+          <CommentsSection postId={post.id} lang="ja" />
         </div>
       </section>
     </article>
