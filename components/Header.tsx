@@ -99,7 +99,9 @@ export default function Header() {
           <Link href={menu.blogLink} className="hover:text-magenta transition-colors font-bold">{menu.blog}</Link>
           <Link href={menu.aboutLink} className="hover:text-magenta transition-colors">{menu.about}</Link>
           <Link href={menu.aboutAnsimLink} className="hover:text-magenta transition-colors">{menu.aboutAnsim}</Link>
-          <Link href={menu.askLink} className="hover:text-magenta transition-colors">{menu.ask}</Link>
+          {!isEn && !isJa && (
+            <Link href={menu.askLink} className="hover:text-magenta transition-colors">{menu.ask}</Link>
+          )}
           <Link href={menu.bcsLink} className="hover:text-magenta transition-colors">{menu.bcs}</Link>
           <Link href={menu.ageLink} className="hover:text-magenta transition-colors">{menu.age}</Link>
           <Link href={menu.dmLink} className="hover:text-magenta transition-colors">{menu.dm}</Link>
@@ -181,15 +183,19 @@ export default function Header() {
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
             </Link>
             <div className="h-px bg-gray-50 mx-4" />
-            <Link 
-              href={menu.askLink} 
-              className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              {menu.ask}
-              <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
-            </Link>
-            <div className="h-px bg-gray-50 mx-4" />
+            {!isEn && !isJa && (
+              <>
+                <Link 
+                  href={menu.askLink} 
+                  className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {menu.ask}
+                  <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
+                </Link>
+                <div className="h-px bg-gray-50 mx-4" />
+              </>
+            )}
             <Link 
               href={menu.bcsLink} 
               className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
