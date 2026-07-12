@@ -18,9 +18,18 @@ export default function PostListItem({ post }: PostListItemProps) {
     day: "numeric",
   });
 
+  const isJa = post.slug && post.slug.endsWith("-ja");
+  const isEn = post.slug && post.slug.endsWith("-en");
+
+  const href = isJa 
+    ? `/ja/posts/${post.slug}` 
+    : isEn 
+      ? `/en/posts/${post.slug}` 
+      : `/posts/${post.slug}`;
+
   return (
     <Link 
-      href={`/posts/${post.slug}`} 
+      href={href} 
       className="group flex flex-col sm:flex-row gap-6 py-8 border-b border-gray-100 transition-colors hover:bg-magenta-light/10"
     >
       {/* Content Side */}

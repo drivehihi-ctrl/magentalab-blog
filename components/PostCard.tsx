@@ -17,8 +17,23 @@ export default function PostCard({ post }: PostCardProps) {
     day: "numeric",
   });
 
+  const isJa = post.slug && post.slug.endsWith("-ja");
+  const isEn = post.slug && post.slug.endsWith("-en");
+
+  const href = isJa 
+    ? `/ja/posts/${post.slug}` 
+    : isEn 
+      ? `/en/posts/${post.slug}` 
+      : `/posts/${post.slug}`;
+
+  const readMoreText = isJa 
+    ? "続きを読む" 
+    : isEn 
+      ? "Read More" 
+      : "더 보기";
+
   return (
-    <Link href={`/posts/${post.slug}`} className="group h-full flex flex-col bg-white rounded-2xl overflow-hidden border border-gray-100 transition-all duration-300 hover:shadow-2xl hover:shadow-magenta/10 hover:-translate-y-1">
+    <Link href={href} className="group h-full flex flex-col bg-white rounded-2xl overflow-hidden border border-gray-100 transition-all duration-300 hover:shadow-2xl hover:shadow-magenta/10 hover:-translate-y-1">
       <div className="relative aspect-[16/10] overflow-hidden">
         <Image
           src={imageUrl}
@@ -54,7 +69,7 @@ export default function PostCard({ post }: PostCardProps) {
         />
         
         <div className="mt-auto flex items-center text-xs font-bold text-magenta uppercase tracking-widest">
-          더 보기
+          {readMoreText}
           <svg className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
           </svg>
