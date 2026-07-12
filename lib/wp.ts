@@ -44,7 +44,8 @@ export async function getPosts(
   const apiPerPage = isKo ? perPage : 100;
   const apiPage = isKo ? page : 1;
 
-  let url = `${WP_API_URL}/posts?_embed&per_page=${apiPerPage}&page=${apiPage}`;
+  // Next.js 캐시 용량 초과(2MB) 문제를 방지하기 위해, 리스트 조회에 불필요한 content 필드를 제외하고 필요한 필드만 가져옵니다.
+  let url = `${WP_API_URL}/posts?_embed&per_page=${apiPerPage}&page=${apiPage}&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`;
   
   if (lang) {
     url += `&lang=${lang}`;
