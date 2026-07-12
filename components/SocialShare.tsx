@@ -28,6 +28,42 @@ export default function SocialShare({ url, title }: SocialShareProps) {
   const encodedUrl = encodeURIComponent(shareUrl);
   const encodedTitle = encodeURIComponent(title);
 
+  // 현재 경로 혹은 url을 통해 언어 자동 감지
+  let currentLang: "ko" | "en" | "ja" = "ko";
+  if (typeof window !== "undefined") {
+    if (window.location.pathname.startsWith("/ja/")) {
+      currentLang = "ja";
+    } else if (window.location.pathname.startsWith("/en/")) {
+      currentLang = "en";
+    }
+  } else {
+    if (url.startsWith("/ja/")) {
+      currentLang = "ja";
+    } else if (url.startsWith("/en/")) {
+      currentLang = "en";
+    }
+  }
+
+  const textMap = {
+    ko: {
+      share: "지식 공유하기",
+      copy: "링크 복사",
+      copied: "링크 복사됨!",
+    },
+    en: {
+      share: "Share Knowledge",
+      copy: "Copy Link",
+      copied: "Link Copied!",
+    },
+    ja: {
+      share: "知識を共有する",
+      copy: "リンクをコピー",
+      copied: "コピー完了!",
+    },
+  };
+
+  const currentText = textMap[currentLang] || textMap.ko;
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(shareUrl);
@@ -59,7 +95,7 @@ export default function SocialShare({ url, title }: SocialShareProps) {
     <div className="flex flex-col gap-4 py-8">
       <div className="flex items-center gap-2 text-xs font-black text-gray-400 uppercase tracking-widest mb-1">
         <Share2 size={12} className="text-magenta" />
-        지식 공유하기
+        {currentText.share}
       </div>
       
       <div className="flex flex-wrap gap-3">
@@ -86,7 +122,7 @@ export default function SocialShare({ url, title }: SocialShareProps) {
           }`}
         >
           {copied ? <Check size={18} /> : <LinkIcon size={18} />}
-          <span className="text-sm font-bold">{copied ? "링크 복사됨!" : "링크 복사"}</span>
+          <span className="text-sm font-bold">{copied ? currentText.copied : currentText.copy}</span>
         </button>
       </div>
     </div>
