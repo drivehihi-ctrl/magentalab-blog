@@ -267,7 +267,7 @@ export default async function JapanesePostDetailPage({ params }: PageProps) {
           />
         
           {/* Social Share Section */}
-          <SocialShare url={`/ja/posts/${post.slug}`} title={post.title.rendered.replace(/<[^>]*>?/gm, "")} />
+          <SocialShare url={`/ja/posts/${post.slug}`} title={post.title.rendered.replace(/<[^>]*>?/gm, "")} lang="ja" />
           
           {/* Tags Section */}
           {tags && tags.length > 0 && (

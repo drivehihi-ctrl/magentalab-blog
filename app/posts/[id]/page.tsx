@@ -291,7 +291,7 @@ export default async function PostDetailPage({ params }: PageProps) {
           <AffiliateStoreBanner />
         
         {/* Social Share Section */}
-        <SocialShare url={`/posts/${post.slug}`} title={post.title.rendered.replace(/<[^>]*>?/gm, "")} />
+        <SocialShare url={`/posts/${post.slug}`} title={post.title.rendered.replace(/<[^>]*>?/gm, "")} lang="ko" />
         
         {/* Tags Section */}
         {tags && tags.length > 0 && (

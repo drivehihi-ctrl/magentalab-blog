@@ -267,7 +267,7 @@ export default async function EnglishPostDetailPage({ params }: PageProps) {
           />
         
           {/* Social Share Section */}
-          <SocialShare url={`/en/posts/${post.slug}`} title={post.title.rendered.replace(/<[^>]*>?/gm, "")} />
+          <SocialShare url={`/en/posts/${post.slug}`} title={post.title.rendered.replace(/<[^>]*>?/gm, "")} lang="en" />
           
           {/* Tags Section */}
           {tags && tags.length > 0 && (

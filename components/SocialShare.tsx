@@ -19,9 +19,10 @@ const TwitterIcon = () => (
 interface SocialShareProps {
   url: string;
   title: string;
+  lang?: "ko" | "en" | "ja";
 }
 
-export default function SocialShare({ url, title }: SocialShareProps) {
+export default function SocialShare({ url, title, lang }: SocialShareProps) {
   const [copied, setCopied] = useState(false);
 
   const shareUrl = typeof window !== "undefined" ? window.location.origin + url : url;
@@ -29,18 +30,20 @@ export default function SocialShare({ url, title }: SocialShareProps) {
   const encodedTitle = encodeURIComponent(title);
 
   // 현재 경로 혹은 url을 통해 언어 자동 감지
-  let currentLang: "ko" | "en" | "ja" = "ko";
-  if (typeof window !== "undefined") {
-    if (window.location.pathname.startsWith("/ja/")) {
-      currentLang = "ja";
-    } else if (window.location.pathname.startsWith("/en/")) {
-      currentLang = "en";
-    }
-  } else {
-    if (url.startsWith("/ja/")) {
-      currentLang = "ja";
-    } else if (url.startsWith("/en/")) {
-      currentLang = "en";
+  let currentLang: "ko" | "en" | "ja" = lang || "ko";
+  if (!lang) {
+    if (typeof window !== "undefined") {
+      if (window.location.pathname.startsWith("/ja/")) {
+        currentLang = "ja";
+      } else if (window.location.pathname.startsWith("/en/")) {
+        currentLang = "en";
+      }
+    } else {
+      if (url.startsWith("/ja/")) {
+        currentLang = "ja";
+      } else if (url.startsWith("/en/")) {
+        currentLang = "en";
+      }
     }
   }
 
