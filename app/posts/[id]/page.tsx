@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Metadata } from "next";
 import { getPost, getPostBySlug, getPosts, getFeaturedImage, getCategories, getTags, getRelatedPosts, fixWpLinks } from "@/lib/wp";
-import { sanitizeForSeo } from "@/lib/utils";
+import { sanitizeForSeo, decodeHtmlEntities } from "@/lib/utils";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import CommentsSection from "@/components/CommentsSection";
@@ -222,7 +222,7 @@ export default async function PostDetailPage({ params }: PageProps) {
           <div className="flex flex-wrap gap-3 mb-6">
             {categories.map((cat) => (
               <span key={cat.id} className="px-4 py-1.5 rounded-full bg-magenta-light text-magenta text-xs font-bold uppercase tracking-widest">
-                {cat.name}
+                {decodeHtmlEntities(cat.name)}
               </span>
             ))}
           </div>

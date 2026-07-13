@@ -3,6 +3,7 @@ import Pagination from "@/components/Pagination";
 import { getPosts, getAllCategories } from "@/lib/wp";
 import { Metadata } from "next";
 import Link from "next/link";
+import { decodeHtmlEntities } from "@/lib/utils";
 
 // 1시간마다 데이터 갱신 (ISR)
 export const revalidate = 3600;
@@ -55,7 +56,7 @@ export default async function BlogListPage({
       {
         "@type": "ListItem",
         "position": 2,
-        "name": search ? `검색: ${search}` : currentCategory ? `카테고리: ${currentCategory.name}` : "블로그",
+        "name": search ? `검색: ${search}` : currentCategory ? `카테고리: ${decodeHtmlEntities(currentCategory.name)}` : "블로그",
         "item": search 
           ? `https://www.magentalabblog.com/blog?search=${encodeURIComponent(search)}`
           : category
@@ -77,7 +78,7 @@ export default async function BlogListPage({
       <header className="relative pt-24 pb-20 bg-white border-b border-gray-100 overflow-hidden">
         <div className="container mx-auto px-4 max-w-5xl relative z-10">
           <span className="inline-block px-4 py-1.5 mb-6 rounded-full bg-magenta-light text-magenta text-xs font-bold uppercase tracking-widest animate-pulse">
-            {currentCategory ? currentCategory.name : "ALL POSTS"}
+            {currentCategory ? decodeHtmlEntities(currentCategory.name) : "ALL POSTS"}
           </span>
           <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mb-8">
             {search ? (
@@ -86,7 +87,7 @@ export default async function BlogListPage({
               </>
             ) : currentCategory ? (
               <>
-                <span className="text-magenta">{currentCategory.name}</span> 연구 데이터
+                <span className="text-magenta">{decodeHtmlEntities(currentCategory.name)}</span> 연구 데이터
               </>
             ) : (
               <>
@@ -125,7 +126,7 @@ export default async function BlogListPage({
                       : "bg-gray-50 text-gray-500 border border-gray-100 hover:bg-gray-105 hover:text-gray-750"
                   }`}
                 >
-                  {cat.name} ({cat.count})
+                  {decodeHtmlEntities(cat.name)} ({cat.count})
                 </Link>
               );
             })}

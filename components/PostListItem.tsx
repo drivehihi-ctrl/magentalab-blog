@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { WPPost, getFeaturedImage, getCategories, getTags } from "@/lib/wp";
-import { sanitizeForSeo } from "@/lib/utils";
+import { sanitizeForSeo, decodeHtmlEntities } from "@/lib/utils";
 
 interface PostListItemProps {
   post: WPPost;
@@ -40,7 +40,7 @@ export default function PostListItem({ post }: PostListItemProps) {
               key={cat.id}
               className="px-0 py-0 text-sm font-bold text-magenta uppercase tracking-tight"
             >
-              {cat.name}
+              {decodeHtmlEntities(cat.name)}
             </span>
           ))}
         </div>

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { WPPost, getFeaturedImage, getCategories } from "@/lib/wp";
-import { sanitizeForSeo } from "@/lib/utils";
+import { sanitizeForSeo, decodeHtmlEntities } from "@/lib/utils";
 
 interface PostCardProps {
   post: WPPost;
@@ -47,7 +47,7 @@ export default function PostCard({ post }: PostCardProps) {
               key={cat.id}
               className="px-3 py-1 rounded-full bg-white/90 backdrop-blur text-[10px] font-bold text-magenta uppercase tracking-wider"
             >
-              {cat.name}
+              {decodeHtmlEntities(cat.name)}
             </span>
           ))}
         </div>
