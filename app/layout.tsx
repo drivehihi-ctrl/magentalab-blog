@@ -103,14 +103,12 @@ export default function RootLayout({
           <main>{children}</main>
           <Analytics />
           <Footer />
-          {process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID && (
-            <Script
-              async
-              src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID}`}
-              crossOrigin="anonymous"
-              strategy="afterInteractive"
-            />
-          )}
+          <Script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || "ca-pub-1405155205468219"}`}
+            crossOrigin="anonymous"
+            strategy="afterInteractive"
+          />
         </SessionProvider>
       </body>
     </html>
