@@ -76,6 +76,7 @@ export default function RootLayout({
         <meta name="google-site-verification" content="nF22SWcLm8AvJD46bLfNyKCJCMvqHS8SuYoiMeEITwE" />
         <meta name="google-site-verification" content="VfH9EadRthwV5nSVTz48foI3UEdvbXxy8cM69fhqvng" />
         <meta name="naver-site-verification" content="ea62c76d32e97c188c8c9d032fe9ae187c630fe6" />
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1405155205468219" crossOrigin="anonymous"></script>
         <link rel="alternate" type="application/rss+xml" href="/rss.xml" title="Magentalab RSS Feed" />
         <link rel="stylesheet" as="style" crossOrigin="" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
         <script
@@ -103,12 +104,6 @@ export default function RootLayout({
           <main>{children}</main>
           <Analytics />
           <Footer />
-          <Script
-            async
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || "ca-pub-1405155205468219"}`}
-            crossOrigin="anonymous"
-            strategy="afterInteractive"
-          />
         </SessionProvider>
       </body>
     </html>
