@@ -115,7 +115,6 @@ export default function Header() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-gray-600">
-          <Link href={menu.blogLink} className="hover:text-magenta transition-colors font-bold">{menu.blog}</Link>
           <Link href={menu.aboutLink} className="hover:text-magenta transition-colors">{menu.about}</Link>
           <Link href={menu.aboutAnsimLink} className="hover:text-magenta transition-colors">{menu.aboutAnsim}</Link>
           <Link href={menu.bcsLink} className="hover:text-magenta transition-colors">{menu.bcs}</Link>
@@ -177,18 +176,6 @@ export default function Header() {
           </div>
 
           <nav className="flex flex-col gap-0.5">
-            <Link 
-              href={menu.blogLink} 
-              className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <div>
-                <span>{menu.blog}</span>
-                <span className="block text-[10px] text-gray-400 font-normal mt-0.5">{menu.blogDesc}</span>
-              </div>
-              <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
-            </Link>
-            <div className="h-px bg-gray-50 mx-4" />
             <Link 
               href={menu.aboutLink} 
               className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
