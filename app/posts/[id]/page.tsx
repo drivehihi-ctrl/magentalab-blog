@@ -12,7 +12,7 @@ import AffiliateStoreBanner from "@/components/AffiliateStoreBanner";
 import CalculatorBanner from "@/components/CalculatorBanner";
 
 // ISR: 1시간마다 재생성 (색인 하이패스 - 빠른 응답 + 최신 데이터 보장)
-export const revalidate = 3600;
+export const revalidate = 86400;
 // generateStaticParams 범위 밖의 동적 경로도 허용
 export const dynamicParams = true;
 

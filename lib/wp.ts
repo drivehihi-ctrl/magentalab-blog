@@ -56,7 +56,7 @@ export async function getPosts(
 
   const res = await fetch(url, {
     next: {
-      revalidate: 3600,
+      revalidate: 86400,
       tags: ['posts'] // 실시간 업데이트를 위한 태그
     },
   });
@@ -108,7 +108,7 @@ export async function getPosts(
 export async function getAllCategories(): Promise<WPCategory[]> {
   const res = await fetch(`${WP_API_URL}/categories?per_page=100`, {
     next: {
-      revalidate: 3600,
+      revalidate: 86400,
       tags: ['categories']
     },
   });
@@ -152,7 +152,7 @@ export async function getAllPostsForSitemap(): Promise<WPPost[]> {
 export async function getPost(id: string): Promise<WPPost> {
   const res = await fetch(`${WP_API_URL}/posts/${id}?_embed`, {
     next: {
-      revalidate: 3600,
+      revalidate: 86400,
       tags: [`post-${id}`, 'posts']
     },
   });
@@ -387,7 +387,7 @@ export async function searchPosts(query: string, lang: string = "ko"): Promise<W
     }
     const res = await fetch(url, {
       next: {
-        revalidate: 3600,
+        revalidate: 86400,
         tags: ['posts-search']
       },
     });

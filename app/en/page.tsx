@@ -4,7 +4,7 @@ import Pagination from "@/components/Pagination";
 import { getPosts } from "@/lib/wp";
 import { Metadata } from "next";
 
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: "Magentalab Pet Research Institute | Home",

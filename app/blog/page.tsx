@@ -6,7 +6,7 @@ import Link from "next/link";
 import { decodeHtmlEntities } from "@/lib/utils";
 
 // 1시간마다 데이터 갱신 (ISR)
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: "전체 글 목록 | Magentalab",

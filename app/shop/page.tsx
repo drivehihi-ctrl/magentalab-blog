@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase";
 
 // 항상 최신 데이터를 서버에서 가져옴 (캐시 비활성화)
 // 1시간마다 정적 페이지 재생성 (ISR 도입으로 서버 부하 감소 및 SEO 최적화)
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: "마젠타몰 | 반려동물 연구소 에디션",

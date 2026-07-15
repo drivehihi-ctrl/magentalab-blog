@@ -10,7 +10,7 @@ import AnsimiSummary from "@/components/AnsimiSummary";
 import SocialShare from "@/components/SocialShare";
 import CalculatorBanner from "@/components/CalculatorBanner";
 
-export const revalidate = 3600;
+export const revalidate = 86400;
 export const dynamicParams = true;
 
 interface PageProps {

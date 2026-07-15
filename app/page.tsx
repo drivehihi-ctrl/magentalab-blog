@@ -5,7 +5,7 @@ import { getPosts } from "@/lib/wp";
 import { Metadata } from "next";
 
 // ISR: 1시간마다 갱신
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: "Magentalab 반려동물 연구소 | 홈",
