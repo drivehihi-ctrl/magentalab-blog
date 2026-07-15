@@ -48,6 +48,11 @@ export default async function JaAboutAnsimPage() {
       <main className="container mx-auto px-4 max-w-4xl mt-12">
         <div className="bg-white rounded-[2rem] p-8 md:p-16 shadow-2xl shadow-gray-200/50 border border-gray-100">
           <div className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal mb-16">
+            <img 
+              src="https://magentalab.mycafe24.com/wp-content/uploads/2026/04/33-17-1024x572.jpeg" 
+              alt="Researcher Ansim" 
+              className="rounded-3xl w-full mb-8 shadow-md"
+            />
             <p>
               こんにちは！Magentalabペット研究所の主任研究員であり、ダックスフンドの『アンシム』です。
             </p>

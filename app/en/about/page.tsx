@@ -44,6 +44,11 @@ export default async function EnAboutPage() {
       <div className="container mx-auto px-4 -mt-16 relative z-20">
         <div className="max-w-4xl mx-auto bg-white rounded-4xl shadow-2xl shadow-magenta/5 border border-gray-100 p-8 md:p-16">
           <div className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal mb-12">
+            <img 
+              src="https://magentalab.mycafe24.com/wp-content/uploads/2026/04/Magentalab_logo_We_202604050029.jpeg" 
+              alt="Magentalab Lab" 
+              className="rounded-3xl w-full mb-8 shadow-md"
+            />
             <p>
               Magentalab is not just about conveying simple information. We aim to be the ultimate companion guide for the happiness and wellness of your beloved family members.
             </p>
