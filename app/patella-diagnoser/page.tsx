@@ -8,6 +8,14 @@ import { searchPosts } from "@/lib/wp";
 export const metadata: Metadata = {
   title: "강아지 슬개골 탈구 및 관절 건강 자가 진단기 | 마젠타랩",
   description: "우리 아이의 걷는 자세가 이상한가요? 소형견/대형견 맞춤형 슬개골 탈구 자가 진단기로 관절 건강 위험도를 10초 만에 체크하고 수의학 관절 보호 가이드를 확인해 보세요.",
+  alternates: {
+    canonical: "https://www.magentalabblog.com/patella-diagnoser",
+    languages: {
+      ko: "https://www.magentalabblog.com/patella-diagnoser",
+      en: "https://www.magentalabblog.com/en/patella-diagnoser",
+      ja: "https://www.magentalabblog.com/ja/patella-diagnoser",
+    },
+  },
   keywords: [
     "슬개골 탈구 계산기", 
     "강아지 슬개골 탈구 자가진단", 
@@ -21,7 +29,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "강아지 슬개골 탈구 및 관절 건강 자가 진단기 | 마젠타랩",
     description: "아이의 견종, 나이, 몸무게 및 행동 변화 체크를 통해 관절 건강 상태와 위험 단계를 0초 만에 분석 진단해 보세요.",
-    url: "https://www.magentalabblog.com/patella",
+    url: "https://www.magentalabblog.com/patella-diagnoser",
     type: "website",
     siteName: "Magentalab 반려동물 연구소",
     images: [

@@ -8,6 +8,14 @@ import { searchPosts } from "@/lib/wp";
 export const metadata: Metadata = {
   title: "반려동물 사료 영양성분(DM) 및 하루 필수 음수량 계산기 | 마젠타랩",
   description: "사료 등록성분표의 조단백, 조지방 함량을 수분이 없는 건물(Dry Matter) 기준으로 자동 환산합니다. 또한 개와 고양이의 체중별 표준 일일 필수 음수량(ml)과 종이컵 환산 가이드를 제공합니다.",
+  alternates: {
+    canonical: "https://www.magentalabblog.com/dm-calculator",
+    languages: {
+      ko: "https://www.magentalabblog.com/dm-calculator",
+      en: "https://www.magentalabblog.com/en/dm-calculator",
+      ja: "https://www.magentalabblog.com/ja/dm-calculator",
+    },
+  },
   keywords: [
     "사료 DM 계산기", 
     "사료 영양성분 계산기", 

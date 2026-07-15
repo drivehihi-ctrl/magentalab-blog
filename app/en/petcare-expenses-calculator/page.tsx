@@ -7,6 +7,14 @@ import { getPosts } from "@/lib/wp";
 export const metadata: Metadata = {
   title: "Pet Lifetime Cost & Monthly Budget Simulator | Magentalab",
   description: "Calculate the monthly maintenance and cumulative lifetime cost of raising dogs and cats. Custom simulator for food grades and vet healthcare schedules.",
+  alternates: {
+    canonical: "https://www.magentalabblog.com/en/petcare-expenses-calculator",
+    languages: {
+      ko: "https://www.magentalabblog.com/petcare-expenses-calculator",
+      en: "https://www.magentalabblog.com/en/petcare-expenses-calculator",
+      ja: "https://www.magentalabblog.com/ja/petcare-expenses-calculator",
+    },
+  },
   keywords: ["pet cost calculator", "cost of owning a dog", "cat budget simulator", "pet monthly expenses", "lifetime pet cost", "puppy vaccines price", "Magentalab"],
   openGraph: {
     title: "Pet Lifetime Cost & Monthly Budget Simulator | Magentalab",

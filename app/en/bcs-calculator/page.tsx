@@ -7,6 +7,14 @@ import { getPosts } from "@/lib/wp";
 export const metadata: Metadata = {
   title: "Pet BCS & Diet Calorie Calculator | Magentalab",
   description: "Calculate your dog or cat's daily recommended calories (DER/RER) and kibble feeding amounts based on current weight, neutering status, activity, and BCS 9-step obesity grade.",
+  alternates: {
+    canonical: "https://www.magentalabblog.com/en/bcs-calculator",
+    languages: {
+      ko: "https://www.magentalabblog.com/bcs-calculator",
+      en: "https://www.magentalabblog.com/en/bcs-calculator",
+      ja: "https://www.magentalabblog.com/ja/bcs-calculator",
+    },
+  },
   keywords: ["pet obesity calculator", "dog calorie calculator", "cat calorie calculator", "dog diet", "cat diet", "RER calculator", "DER calculator", "BCS 9 steps", "pet food calculator", "Magentalab"],
   openGraph: {
     title: "Pet BCS & Diet Calorie Calculator | Magentalab",

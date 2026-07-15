@@ -7,6 +7,14 @@ import { getPosts } from "@/lib/wp";
 export const metadata: Metadata = {
   title: "Pet Age to Human Years Calculator | Magentalab",
   description: "Easily convert your puppy, kitten, or senior dog/cat's age into human years and receive life stage specific healthcare tips.",
+  alternates: {
+    canonical: "https://www.magentalabblog.com/en/age-calculator",
+    languages: {
+      ko: "https://www.magentalabblog.com/age-calculator",
+      en: "https://www.magentalabblog.com/en/age-calculator",
+      ja: "https://www.magentalabblog.com/ja/age-calculator",
+    },
+  },
   keywords: ["pet age converter", "dog age in human years", "cat age in human years", "puppy age chart", "senior pet care", "pet lifespan", "puppy milestones", "Magentalab"],
   openGraph: {
     title: "Pet Age to Human Years Calculator | Magentalab",

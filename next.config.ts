@@ -25,6 +25,21 @@ const nextConfig: NextConfig = {
         destination: "/",
         permanent: false,
       },
+      {
+        source: "/patella",
+        destination: "/patella-diagnoser",
+        permanent: true,
+      },
+      {
+        source: "/Petcareexpenses",
+        destination: "/petcare-expenses-calculator",
+        permanent: true,
+      },
+      {
+        source: "/FIC",
+        destination: "/fic-diagnoser",
+        permanent: true,
+      },
     ];
   },
 };

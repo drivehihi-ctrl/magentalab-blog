@@ -10,8 +10,9 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    const lang = searchParams.get("lang") || "ko";
     // searchPosts in lib/wp.ts uses the server-side WORDPRESS_URL
-    const results = await searchPosts(query);
+    const results = await searchPosts(query, lang);
     return NextResponse.json(results);
   } catch (error) {
     console.error("API Search Error:", error);

@@ -7,6 +7,14 @@ import { getPosts } from "@/lib/wp";
 export const metadata: Metadata = {
   title: "犬の膝蓋骨脱臼(パテラ)＆関節健康チェック | マゼンタラボ",
   description: "犬の歩行姿勢や行動シグナルから、膝蓋骨脱臼(パテラ)リスクをセルフチェックし、獣医師推奨の関節ケア対策を紹介します。",
+  alternates: {
+    canonical: "https://www.magentalabblog.com/ja/patella-diagnoser",
+    languages: {
+      ko: "https://www.magentalabblog.com/patella-diagnoser",
+      en: "https://www.magentalabblog.com/en/patella-diagnoser",
+      ja: "https://www.magentalabblog.com/ja/patella-diagnoser",
+    },
+  },
   keywords: ["犬の膝蓋骨脱臼パテラ", "犬関節健康セルフチェック", "犬が後ろ足をあげる", "小型犬関節炎予防", "マゼンタラボ"],
   openGraph: {
     title: "犬の膝蓋骨脱臼(パテラ)＆関節健康チェック | マゼンタラボ",

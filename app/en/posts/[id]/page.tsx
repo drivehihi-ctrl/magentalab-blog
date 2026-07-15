@@ -29,6 +29,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
     if (!post) throw new Error("Post not found");
     
+    // Prevent metadata generation for non-English posts under /en path
+    if (post.slug && !post.slug.endsWith("-en")) {
+      throw new Error("Not an English post");
+    }
+    
     const imageUrl = getFeaturedImage(post);
     const title = sanitizeForSeo(post.title.rendered);
     const description = sanitizeForSeo(post.excerpt.rendered, 160);
@@ -90,7 +95,7 @@ export default async function EnglishPostDetailPage({ params }: PageProps) {
   try {
     if (isNumeric) {
       post = await getPost(id);
-      if (post && post.slug) {
+      if (post && post.slug && post.slug.endsWith("-en")) {
         shouldRedirect = true;
         targetSlug = post.slug;
       }
@@ -110,6 +115,11 @@ export default async function EnglishPostDetailPage({ params }: PageProps) {
   }
 
   if (!post) notFound();
+
+  // Prevent serving non-English content under English URLs
+  if (post.slug && !post.slug.endsWith("-en")) {
+    notFound();
+  }
   const relatedPosts = getRelatedPosts(post, allPosts, 3);
   
   const imageUrl = getFeaturedImage(post);

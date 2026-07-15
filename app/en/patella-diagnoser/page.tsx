@@ -7,6 +7,14 @@ import { getPosts } from "@/lib/wp";
 export const metadata: Metadata = {
   title: "Dog Patella Luxation & Orthopedic Screener | Magentalab",
   description: "Self-assess patella luxation risk grades for dogs based on walking postures and behavioral patterns. Clinical joint management guidelines.",
+  alternates: {
+    canonical: "https://www.magentalabblog.com/en/patella-diagnoser",
+    languages: {
+      ko: "https://www.magentalabblog.com/patella-diagnoser",
+      en: "https://www.magentalabblog.com/en/patella-diagnoser",
+      ja: "https://www.magentalabblog.com/ja/patella-diagnoser",
+    },
+  },
   keywords: ["dog patella luxation calculator", "canine joint health screening", "dog limping test", "patellar subluxation", "small dog orthopedic care", "Magentalab"],
   openGraph: {
     title: "Dog Patella Luxation & Orthopedic Screener | Magentalab",

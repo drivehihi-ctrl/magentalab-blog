@@ -8,6 +8,14 @@ import { searchPosts } from "@/lib/wp";
 export const metadata: Metadata = {
   title: "반려동물 인간 나이 계산기 및 생애주기 진단기 | 마젠타랩",
   description: "우리 강아지와 고양이의 출생년도 및 체형 크기를 반영하여 정확한 인간 환산 나이를 도출합니다. 생후 개월 수 비례 수의학 보간 공식을 적용하며, 생애주기별(성장기/성숙기/장년기/노령기) 맞춤 건강 가이드를 제공합니다.",
+  alternates: {
+    canonical: "https://www.magentalabblog.com/age-calculator",
+    languages: {
+      ko: "https://www.magentalabblog.com/age-calculator",
+      en: "https://www.magentalabblog.com/en/age-calculator",
+      ja: "https://www.magentalabblog.com/ja/age-calculator",
+    },
+  },
   keywords: [
     "반려동물 나이 계산기",
     "강아지 인간 나이",

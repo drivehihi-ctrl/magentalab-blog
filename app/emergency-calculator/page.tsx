@@ -8,6 +8,14 @@ import { searchPosts } from "@/lib/wp";
 export const metadata: Metadata = {
   title: "반려동물 응급 독성 계산기 (강아지 초콜릿/고양이 백합 위험 물질 판정) | 마젠타랩",
   description: "강아지나 고양이가 초콜릿(밀크/다크), 포도, 자일리톨, 양파, 백합 등 위험 물질을 섭취했을 때 체중 대비 치사 독성 농도를 즉시 계산합니다. 4단계 위험도 신호 및 신속 대처 레벨 수록.",
+  alternates: {
+    canonical: "https://www.magentalabblog.com/emergency-calculator",
+    languages: {
+      ko: "https://www.magentalabblog.com/emergency-calculator",
+      en: "https://www.magentalabblog.com/en/emergency-calculator",
+      ja: "https://www.magentalabblog.com/ja/emergency-calculator",
+    },
+  },
   keywords: [
     "반려동물 중독 계산기",
     "강아지 초콜릿 계산기", 

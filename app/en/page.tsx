@@ -11,6 +11,11 @@ export const metadata: Metadata = {
   description: "Check out the latest research findings and pet health tips from Magentalab Pet Research Institute.",
   alternates: {
     canonical: "https://www.magentalabblog.com/en/",
+    languages: {
+      ko: "https://www.magentalabblog.com/",
+      en: "https://www.magentalabblog.com/en/",
+      ja: "https://www.magentalabblog.com/ja/",
+    },
   },
   openGraph: {
     title: "Magentalab Pet Research Institute | Home",

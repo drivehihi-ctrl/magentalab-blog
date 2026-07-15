@@ -8,6 +8,14 @@ import { searchPosts } from "@/lib/wp";
 export const metadata: Metadata = {
   title: "반려동물 비만도(BCS) 및 다이어트 칼로리 계산기 | 마젠타랩",
   description: "강아지와 고양이의 현재 체중, 중성화 여부, 활동량 및 BCS 9단계 비만도를 반영하여 하루 권장 칼로리(DER/RER)와 사료 급여량(g)을 정밀하게 연산합니다. 수의학 표준 가이드라인 제공.",
+  alternates: {
+    canonical: "https://www.magentalabblog.com/bcs-calculator",
+    languages: {
+      ko: "https://www.magentalabblog.com/bcs-calculator",
+      en: "https://www.magentalabblog.com/en/bcs-calculator",
+      ja: "https://www.magentalabblog.com/ja/bcs-calculator",
+    },
+  },
   keywords: [
     "반려동물 비만도 계산기", 
     "강아지 칼로리 계산기", 

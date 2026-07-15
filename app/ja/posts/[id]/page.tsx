@@ -29,6 +29,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
     if (!post) throw new Error("Post not found");
     
+    // Prevent metadata generation for non-Japanese posts under /ja path
+    if (post.slug && !post.slug.endsWith("-ja")) {
+      throw new Error("Not a Japanese post");
+    }
+    
     const imageUrl = getFeaturedImage(post);
     const title = sanitizeForSeo(post.title.rendered);
     const description = sanitizeForSeo(post.excerpt.rendered, 160);
@@ -90,7 +95,7 @@ export default async function JapanesePostDetailPage({ params }: PageProps) {
   try {
     if (isNumeric) {
       post = await getPost(id);
-      if (post && post.slug) {
+      if (post && post.slug && post.slug.endsWith("-ja")) {
         shouldRedirect = true;
         targetSlug = post.slug;
       }
@@ -110,6 +115,11 @@ export default async function JapanesePostDetailPage({ params }: PageProps) {
   }
 
   if (!post) notFound();
+
+  // Prevent serving non-Japanese content under Japanese URLs
+  if (post.slug && !post.slug.endsWith("-ja")) {
+    notFound();
+  }
   const relatedPosts = getRelatedPosts(post, allPosts, 3);
   
   const imageUrl = getFeaturedImage(post);

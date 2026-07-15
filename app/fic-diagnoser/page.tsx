@@ -8,6 +8,14 @@ import { searchPosts } from "@/lib/wp";
 export const metadata: Metadata = {
   title: "고양이 스트레스 및 특발성 방광염(FIC) 자가 진단기 | 마젠타랩",
   description: "최근 이사나 모래 교체 등 영역 환경 변화가 있었나요? 고양이의 기본 프로필, 행동 시그널 및 환경 스트레스 요소를 종합 분석하여 특발성 방광염(FIC) 위험 단계를 무료로 실시간 진단해 드립니다.",
+  alternates: {
+    canonical: "https://www.magentalabblog.com/fic-diagnoser",
+    languages: {
+      ko: "https://www.magentalabblog.com/fic-diagnoser",
+      en: "https://www.magentalabblog.com/en/fic-diagnoser",
+      ja: "https://www.magentalabblog.com/ja/fic-diagnoser",
+    },
+  },
   keywords: [
     "고양이 방광염 계산기", 
     "고양이 FIC 자가진단", 
@@ -22,7 +30,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "고양이 스트레스 및 특발성 방광염(FIC) 자가 진단기 | 마젠타랩",
     description: "아이의 나이, 체형 및 스트레스 환경 체크를 통해 방광염 위험 단계를 10초 만에 분석 진단해 보세요.",
-    url: "https://www.magentalabblog.com/FIC",
+    url: "https://www.magentalabblog.com/fic-diagnoser",
     type: "website",
     siteName: "Magentalab 반려동물 연구소",
     images: [

@@ -7,6 +7,14 @@ import { getPosts } from "@/lib/wp";
 export const metadata: Metadata = {
   title: "ペットの生涯飼育費＆月間維持費シミュレーター | マゼンタラボ",
   description: "犬・猫の生涯飼育費と月々の固定生活費を見える化。フードグレード,消耗品,ライフステージ別の医療費・ワクチン接種費用をリアルタイム計算。",
+  alternates: {
+    canonical: "https://www.magentalabblog.com/ja/petcare-expenses-calculator",
+    languages: {
+      ko: "https://www.magentalabblog.com/petcare-expenses-calculator",
+      en: "https://www.magentalabblog.com/en/petcare-expenses-calculator",
+      ja: "https://www.magentalabblog.com/ja/petcare-expenses-calculator",
+    },
+  },
   keywords: ["ペット生涯費用", "犬を飼う費用", "猫の生涯コスト", "ペット月間固定費", "動物ワクチン接種代", "マゼンタラボ"],
   openGraph: {
     title: "ペットの生涯飼育費＆月間維持費シミュレーター | マゼンタラボ",

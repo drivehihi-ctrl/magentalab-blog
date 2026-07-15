@@ -6,7 +6,15 @@ import { getPosts } from "@/lib/wp";
 
 export const metadata: Metadata = {
   title: "猫の特発性膀胱炎(FIC)＆ストレス自律判定器 | マゼンタラボ",
-  description: "猫의排尿トラブルや排泄姿勢から、特発性膀胱炎(FIC)リスクおよび心理的ストレスレベルを評価し、自宅での生活環境改善ガイドを提示します。",
+  description: "猫の排尿トラブルや排泄姿勢から、特発性膀胱炎(FIC)リスクおよび心理的ストレスレベルを評価し、自宅での生活環境改善ガイドを提示します。",
+  alternates: {
+    canonical: "https://www.magentalabblog.com/ja/fic-diagnoser",
+    languages: {
+      ko: "https://www.magentalabblog.com/fic-diagnoser",
+      en: "https://www.magentalabblog.com/en/fic-diagnoser",
+      ja: "https://www.magentalabblog.com/ja/fic-diagnoser",
+    },
+  },
   keywords: ["猫の特発性膀胱炎", "猫の尿路結石症状", "猫トイレ失敗原因", "猫ストレス解消", "マゼンタラボ"],
   openGraph: {
     title: "猫の特発性膀胱炎(FIC)＆ストレス自律判定器 | マゼンタラボ",

@@ -59,17 +59,36 @@ export default function Header() {
     emergencyLink: isEn ? "/en/emergency-calculator" : isJa ? "/ja/emergency-calculator" : "/emergency-calculator",
 
     patella: isEn ? "Patella Diagnosis" : isJa ? "膝蓋骨診断" : "슬개골 진단",
-    patellaLink: isEn ? "/en/patella-diagnoser" : isJa ? "/ja/patella-diagnoser" : "/patella",
+    patellaLink: isEn ? "/en/patella-diagnoser" : isJa ? "/ja/patella-diagnoser" : "/patella-diagnoser",
 
     petCare: isEn ? "Pet Expenses" : isJa ? "養育費計算" : "양육비 계산",
-    petCareLink: isEn ? "/en/petcare-expenses-calculator" : isJa ? "/ja/petcare-expenses-calculator" : "/Petcareexpenses",
+    petCareLink: isEn ? "/en/petcare-expenses-calculator" : isJa ? "/ja/petcare-expenses-calculator" : "/petcare-expenses-calculator",
 
     fic: isEn ? "Cystitis Diagnoser" : isJa ? "膀胱炎診断" : "방광염 진단",
-    ficLink: isEn ? "/en/fic-diagnoser" : isJa ? "/ja/fic-diagnoser" : "/FIC",
+    ficLink: isEn ? "/en/fic-diagnoser" : isJa ? "/ja/fic-diagnoser" : "/fic-diagnoser",
 
     contact: isEn ? "Contact" : isJa ? "お問い合わせ" : "문의하기",
     searchLabel: isEn ? "AI Search" : isJa ? "AI検索" : "AI 검색",
     blogDesc: isEn ? "Browse categories" : isJa ? "カテゴリで表示" : "카테고리별 모아보기"
+  };
+
+  const handleLanguageChange = (lang: string) => {
+    const pathSegments = pathname.split("/").filter(Boolean);
+    let targetPath = "";
+    
+    if (pathSegments[0] === "en" || pathSegments[0] === "ja") {
+      pathSegments.shift();
+    }
+    
+    if (lang === "en") {
+      targetPath = `/en/${pathSegments.join("/")}`;
+    } else if (lang === "ja") {
+      targetPath = `/ja/${pathSegments.join("/")}`;
+    } else {
+      targetPath = `/${pathSegments.join("/")}`;
+    }
+    
+    return targetPath.replace(/\/$/, "") || "/";
   };
 
   return (
@@ -111,6 +130,14 @@ export default function Header() {
           <Link href={menu.ficLink} className="hover:text-magenta transition-colors">{menu.fic}</Link>
           <div className="ml-2 mr-2">
             <LiveSearch />
+          </div>
+
+          <div className="flex items-center gap-2 border border-gray-200 bg-gray-50/50 rounded-full px-3 py-1.5 text-xs font-semibold mr-1">
+            <Link href={handleLanguageChange("ko")} className={`transition-colors hover:text-magenta ${!isEn && !isJa ? "text-magenta font-black" : "text-gray-400 font-medium"}`}>KO</Link>
+            <span className="text-gray-250 select-none">|</span>
+            <Link href={handleLanguageChange("en")} className={`transition-colors hover:text-magenta ${isEn ? "text-magenta font-black" : "text-gray-400 font-medium"}`}>EN</Link>
+            <span className="text-gray-250 select-none">|</span>
+            <Link href={handleLanguageChange("ja")} className={`transition-colors hover:text-magenta ${isJa ? "text-magenta font-black" : "text-gray-400 font-medium"}`}>JA</Link>
           </div>
 
           <a 
@@ -259,6 +286,17 @@ export default function Header() {
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
             </Link>
           </nav>
+
+          <div className="px-4 py-3 mb-2 flex items-center justify-between bg-gray-50/50 rounded-2xl border border-gray-50 mx-1">
+            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Language</span>
+            <div className="flex items-center gap-3 text-xs font-bold">
+              <Link href={handleLanguageChange("ko")} className={`transition-colors hover:text-magenta ${!isEn && !isJa ? "text-magenta font-black" : "text-gray-400"}`} onClick={() => setIsMenuOpen(false)}>한국어</Link>
+              <span className="text-gray-200">|</span>
+              <Link href={handleLanguageChange("en")} className={`transition-colors hover:text-magenta ${isEn ? "text-magenta font-black" : "text-gray-400"}`} onClick={() => setIsMenuOpen(false)}>English</Link>
+              <span className="text-gray-200">|</span>
+              <Link href={handleLanguageChange("ja")} className={`transition-colors hover:text-magenta ${isJa ? "text-magenta font-black" : "text-gray-400"}`} onClick={() => setIsMenuOpen(false)}>日本語</Link>
+            </div>
+          </div>
 
           <div className="mt-1.5 p-1.5 border-t border-gray-50">
             <a 

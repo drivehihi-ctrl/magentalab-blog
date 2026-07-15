@@ -7,6 +7,14 @@ import { getPosts } from "@/lib/wp";
 export const metadata: Metadata = {
   title: "ペットフード乾物量(DM)栄養＆水分摂取量計算機 | マゼンタラボ",
   description: "キャットフード・ドッグフード表示の水分を除いた真の栄養構成比と、ペットの健康状態に適した1日の推奨飲水量を自動測定します。",
+  alternates: {
+    canonical: "https://www.magentalabblog.com/ja/dm-calculator",
+    languages: {
+      ko: "https://www.magentalabblog.com/dm-calculator",
+      en: "https://www.magentalabblog.com/en/dm-calculator",
+      ja: "https://www.magentalabblog.com/ja/dm-calculator",
+    },
+  },
   keywords: ["フード乾物量計算", "犬の水分補給", "猫の飲水量", "キャットフード栄養基準", "ペット脱水予防", "マゼンタラボ"],
   openGraph: {
     title: "ペットフード乾物量(DM)栄養＆水分摂取量計算機 | マゼンタラボ",

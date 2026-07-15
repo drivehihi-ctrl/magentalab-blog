@@ -7,6 +7,14 @@ import { getPosts } from "@/lib/wp";
 export const metadata: Metadata = {
   title: "Feline FIC Cystitis & Stress Diagnoser | Magentalab",
   description: "Evaluate your cat's behavioral stress factors and Feline Idiopathic Cystitis (FIC) hazard levels. Veterinary-backed home stress care instructions.",
+  alternates: {
+    canonical: "https://www.magentalabblog.com/en/fic-diagnoser",
+    languages: {
+      ko: "https://www.magentalabblog.com/fic-diagnoser",
+      en: "https://www.magentalabblog.com/en/fic-diagnoser",
+      ja: "https://www.magentalabblog.com/ja/fic-diagnoser",
+    },
+  },
   keywords: ["feline idiopathic cystitis", "cat bladder stress diagnoser", "FIC index cat", "cat urination accident", "feline stress behaviors", "urinary tract infection cat", "Magentalab"],
   openGraph: {
     title: "Feline FIC Cystitis & Stress Diagnoser | Magentalab",

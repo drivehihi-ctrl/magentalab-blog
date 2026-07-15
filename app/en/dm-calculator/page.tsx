@@ -7,6 +7,14 @@ import { getPosts } from "@/lib/wp";
 export const metadata: Metadata = {
   title: "Dry Matter (DM) Nutrition & Hydration Calculator | Magentalab",
   description: "Uncover real nutrition percentages of your pet's pet food and compute the recommended daily water intake for dogs and cats.",
+  alternates: {
+    canonical: "https://www.magentalabblog.com/en/dm-calculator",
+    languages: {
+      ko: "https://www.magentalabblog.com/dm-calculator",
+      en: "https://www.magentalabblog.com/en/dm-calculator",
+      ja: "https://www.magentalabblog.com/ja/dm-calculator",
+    },
+  },
   keywords: ["dry matter calculator", "dog water intake calculator", "cat water intake calculator", "pet food nutrition analysis", "carb content in kibble", "pet hydration guide", "Magentalab"],
   openGraph: {
     title: "Dry Matter (DM) Nutrition & Hydration Calculator | Magentalab",

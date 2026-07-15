@@ -11,6 +11,11 @@ export const metadata: Metadata = {
   description: "Magentalabペット研究所の最新の研究成果と、ペットの健康に役立つヒントをお届けします。",
   alternates: {
     canonical: "https://www.magentalabblog.com/ja/",
+    languages: {
+      ko: "https://www.magentalabblog.com/",
+      en: "https://www.magentalabblog.com/en/",
+      ja: "https://www.magentalabblog.com/ja/",
+    },
   },
   openGraph: {
     title: "Magentalab ペット研究所 | ホーム",

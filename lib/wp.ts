@@ -377,10 +377,15 @@ export async function getPostBySlug(slug: string): Promise<WPPost | null> {
 }
 
 
-export async function searchPosts(query: string): Promise<WPPost[]> {
+export async function searchPosts(query: string, lang: string = "ko"): Promise<WPPost[]> {
   if (!query) return [];
   try {
-    const res = await fetch(`${WP_API_URL}/posts?_embed&search=${encodeURIComponent(query)}&per_page=10`, {
+    const isKo = lang === "ko" || !lang;
+    let url = `${WP_API_URL}/posts?_embed&search=${encodeURIComponent(query)}&per_page=100`;
+    if (lang) {
+      url += `&lang=${lang}`;
+    }
+    const res = await fetch(url, {
       next: {
         revalidate: 3600,
         tags: ['posts-search']
@@ -390,7 +395,31 @@ export async function searchPosts(query: string): Promise<WPPost[]> {
       console.error(`Failed to search posts for query: ${query}, status: ${res.status}`);
       return [];
     }
-    return res.json();
+    const posts = await res.json();
+    
+    let filteredPosts = posts;
+    
+    if (isKo) {
+      // 한국어 페이지: 슬러그가 -en 또는 -ja로 끝나는 글을 전면 배제
+      filteredPosts = posts.filter((post: any) => {
+        const slug = post.slug || "";
+        return !slug.endsWith("-en") && !slug.endsWith("-ja");
+      });
+    } else if (lang === "en") {
+      // 영어 페이지: 슬러그가 -en으로 끝나는 글만 필터링
+      filteredPosts = posts.filter((post: any) => {
+        const slug = post.slug || "";
+        return slug.endsWith("-en");
+      });
+    } else if (lang === "ja") {
+      // 일본어 페이지: 슬러그가 -ja로 끝나는 글만 필터링
+      filteredPosts = posts.filter((post: any) => {
+        const slug = post.slug || "";
+        return slug.endsWith("-ja");
+      });
+    }
+    
+    return filteredPosts.slice(0, 10);
   } catch (error) {
     console.error(`Error searching posts for query ${query}:`, error);
     return [];

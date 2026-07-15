@@ -12,6 +12,11 @@ export const metadata: Metadata = {
   description: "Magentalab 반려동물 연구소의 최신 연구 결과와 반려동물 건강 정보를 확인하세요.",
   alternates: {
     canonical: "https://www.magentalabblog.com/",
+    languages: {
+      ko: "https://www.magentalabblog.com/",
+      en: "https://www.magentalabblog.com/en/",
+      ja: "https://www.magentalabblog.com/ja/",
+    },
   },
   openGraph: {
     title: "Magentalab 반려동물 연구소 | 홈",
