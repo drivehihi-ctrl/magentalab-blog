@@ -36,10 +36,16 @@ export default async function BlogListPage({
   const currentPage = Number(page) || 1;
 
   // 병렬로 포스트와 전체 카테고리 가져오기
-  const [{ posts, totalPages, totalPosts }, categories] = await Promise.all([
+  const [{ posts, totalPages, totalPosts }, allCategories] = await Promise.all([
     getPosts(currentPage, 20, search, category),
     getAllCategories().catch(() => [])
   ]);
+
+  // 한국어 전용 카테고리 필터링 (한글 포함 혹은 slug가 food-nutrition 인 경우)
+  const categories = allCategories.filter((cat: any) => {
+    const hasKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(cat.name);
+    return hasKorean || cat.slug === 'food-nutrition';
+  });
 
   const currentCategory = categories.find((c) => c.id.toString() === category);
 
