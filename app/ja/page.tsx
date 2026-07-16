@@ -96,16 +96,15 @@ export default async function JapaneseHomePage({
             {/* Right Column: Hero Text */}
             <div className="w-full lg:w-1/2 text-center lg:text-left">
               <span className="inline-block px-4 py-1.5 mb-6 rounded-full bg-magenta-light text-magenta text-xs font-bold uppercase tracking-widest whitespace-nowrap">
-                Latest Research & Blog
+                Latest Research & Smart Tools
               </span>
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 tracking-tight mb-8 leading-[1.1]">
-                ペットのための <br /> 
-                <span className="text-magenta">より良い未来</span>を <br />
-                研究します。
+                科学的エビデンスで築く <br /> 
+                ペットの<span className="text-magenta">健康な未来</span>。
               </h1>
               <p className="max-w-xl mx-auto lg:mx-0 text-lg md:text-xl text-gray-500 leading-relaxed font-normal">
-                Magentalabペット研究所の最新の研究結果と <br />
-                生活に役立つ健康の秘訣をご紹介します。
+                Magentalabペット研究所がお届けする、 <br />
+                科学的根拠に基づいた獣医医学研究と日々のケアガイド。
               </p>
             </div>
           </div>

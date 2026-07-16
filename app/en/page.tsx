@@ -96,16 +96,16 @@ export default async function EnglishHomePage({
             {/* Right Column: Hero Text */}
             <div className="w-full lg:w-1/2 text-center lg:text-left">
               <span className="inline-block px-4 py-1.5 mb-6 rounded-full bg-magenta-light text-magenta text-xs font-bold uppercase tracking-widest whitespace-nowrap">
-                Latest Research & Blog
+                Latest Research & Smart Tools
               </span>
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 tracking-tight mb-8 leading-[1.1]">
-                Studying a <br /> 
-                <span className="text-magenta">Better Future</span> for <br />
-                Our Pets.
+                Science-Backed <br /> 
+                <span className="text-magenta">Insights</span> for a <br />
+                Healthier Pet Future.
               </h1>
               <p className="max-w-xl mx-auto lg:mx-0 text-lg md:text-xl text-gray-500 leading-relaxed font-normal">
-                Discover the latest research and daily care tips <br />
-                from Magentalab Pet Research Institute.
+                Discover evidence-based veterinary research <br />
+                and daily care guides from Magentalab Pet Research Institute.
               </p>
             </div>
           </div>
