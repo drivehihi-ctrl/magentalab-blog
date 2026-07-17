@@ -56,7 +56,7 @@ export default async function AboutAnsimPage() {
         <div className="bg-white rounded-[2rem] p-8 md:p-16 shadow-2xl shadow-gray-200/50 border border-gray-100">
           <div 
             className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal mb-16"
-            dangerouslySetInnerHTML={{ __html: fixWpLinks(page.content.rendered) }}
+            dangerouslySetInnerHTML={{ __html: fixWpLinks(page.content.rendered, undefined, 'ko') }}
           />
           
           <RelatedPosts posts={relatedPosts} />

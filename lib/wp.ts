@@ -273,7 +273,7 @@ export async function getComments(postId: number): Promise<WPComment[]> {
  * title 속성 → 파일명 → fallback 순으로 의미 있는 alt를 자동 삽입합니다.
  * (네이버/구글 서치어드바이저의 "Alt 속성 누락" SEO 오류 해결)
  */
-export function fixWpLinks(content: string, postTitle?: string) {
+export function fixWpLinks(content: string, postTitle?: string, lang: string = 'ko') {
   if (!content) return "";
   
   // 1. 워드프레스 앵커 링크 변환
@@ -330,6 +330,14 @@ export function fixWpLinks(content: string, postTitle?: string) {
     }
   });
 
+  // 언어별 모바일 테이블 스크롤 안내 문구 분기 처리
+  let noticeText = "💡 표를 오른쪽으로 드래그(스크롤)하면 더 많은 정보가 있답니다!";
+  if (lang === "en") {
+    noticeText = "💡 Scroll right to view more details.";
+  } else if (lang === "ja") {
+    noticeText = "💡 表を右にスクロールすると、より詳しい情報が表示されます。";
+  }
+
   // 3. 테이블 태그 래핑 및 모바일 스크롤 안내 문구 추가
   fixed = fixed.replace(/<table([\s\S]*?)>([\s\S]*?)<\/table>/gi, (match, tableAttrs, tableContent) => {
     return `<div class="wp-table-wrapper"><table${tableAttrs}>${tableContent}</table></div>` +
@@ -337,7 +345,7 @@ export function fixWpLinks(content: string, postTitle?: string) {
         `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E5007E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">` +
           `<path d="M5 12h14M12 5l7 7-7 7"/>` +
         `</svg>` +
-        `<span>💡 표를 오른쪽으로 드래그(스크롤)하면 더 많은 정보가 있답니다!</span>` +
+        `<span>${noticeText}</span>` +
       `</div>`;
   });
 

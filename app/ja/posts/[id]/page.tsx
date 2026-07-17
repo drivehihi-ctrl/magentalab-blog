@@ -265,7 +265,7 @@ export default async function JapanesePostDetailPage({ params }: PageProps) {
 
           <div 
             className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal"
-            dangerouslySetInnerHTML={{ __html: fixWpLinks(post.content.rendered, sanitizeForSeo(post.title.rendered)) }}
+            dangerouslySetInnerHTML={{ __html: fixWpLinks(post.content.rendered, sanitizeForSeo(post.title.rendered), 'ja') }}
           />
 
           {/* CalculatorBanner */}
