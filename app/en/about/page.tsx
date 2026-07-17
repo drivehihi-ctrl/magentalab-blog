@@ -27,11 +27,11 @@ export default async function EnAboutPage() {
           <span className="inline-block px-4 py-1.5 rounded-full bg-magenta-light text-magenta text-xs font-bold uppercase tracking-widest mb-6">
             ABOUT US
           </span>
-          <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold text-gray-900 leading-[1.1] mb-8 tracking-tight">
-            We walk alongside your companion pets, Magentalab.
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-[1.2] mb-8 tracking-tight">
+            Researching Tomorrow for Pets with Data and Love, Magentalab
           </h1>
-          <p className="text-xl text-gray-500 max-w-2xl mx-auto font-medium">
-            Magentalab Pet Research Lab studies better lives for companion animals through data and science.
+          <p className="text-xl text-gray-500 max-w-2xl mx-auto font-medium italic">
+            "Why should we study the language of our pets?"
           </p>
         </div>
         
@@ -50,35 +50,45 @@ export default async function EnAboutPage() {
               className="rounded-3xl w-full mb-8 shadow-md"
             />
             <p>
-              Magentalab is not just about conveying simple information. We aim to be the ultimate companion guide for the happiness and wellness of your beloved family members.
+              The Magentalab Pet Research Institute is not just a place that lists random information. In a flood of pet information, we were founded to provide the "verified medical knowledge" and "practical lifestyle solutions" that pet parents need the most.
             </p>
             <p>
-              By leveraging global AI technologies, we analyze pet health information in-depth and share verified knowledge under strict editorial responsibility.
+              We utilize global AI technology to rapidly collect vast amounts of worldwide veterinary data, publishing the most accurate and heartwarming content through the precise Editorial Responsibility of our Lead Researcher.
             </p>
 
-            <h2>🔬 Our Three Main Research Pillars</h2>
+            <h2>🔬 Magentalab’s 3 Core Research Areas</h2>
             
             <p>
-              <strong>🧬 Breed Archive</strong><br />
-              We anatomically analyze breed-specific genetic traits, behavior, and activity levels to offer highly tailored information.
+              <strong>① Precise Breed Analysis (Breed Archive)</strong><br />
+              Beyond simple physical traits, we analyze genetic characteristics, behavioral personalities, and anatomical risks based on activity levels to propose optimal care solutions tailored to each breed.
             </p>
 
             <p>
-              <strong>🏥 Health Wiki</strong><br />
-              We deliver immediate veterinary guidelines for daily emergency situations, nutritional imbalances, and chronic illnesses to empower pet parents.
+              <strong>② Disease Prevention and Health Encyclopedia (Health Wiki)</strong><br />
+              We meticulously organize disease mechanisms and emergency prevention guidelines so that pet parents can access immediate medical clues during moments of panic in daily life (such as urinary abnormalities, acute poisoning, or joint diseases).
             </p>
 
             <p>
-              <strong>🌱 Life Science</strong><br />
-              We study and suggest the latest veterinary trends and lifestyle habits to promote a healthy and joyful companion life.
+              <strong>③ Pet Life Science (Life Science)</strong><br />
+              From information on pet-friendly infrastructures where you can travel together to the latest nutritional trends, we scientifically research ways to elevate the quality of life you share with your pet.
             </p>
 
-            <h2>🔍 Our Action Mechanisms (E-E-A-T)</h2>
+            <h2>💖 Magentalab’s Behavioral Governance (E-E-A-T)</h2>
             <ul>
-              <li><strong>Experience:</strong> Represented by our chief researcher "Dachshund Ansim", we share practical pet care tips tested in everyday life.</li>
-              <li><strong>Expertise:</strong> We quantify and explain complex veterinary nutrition data such as Dry Matter (DM) and Nitrogen-Free Extract (NFE) calculations.</li>
-              <li><strong>Authoritativeness:</strong> We strictly adhere to YMYL guidelines to publish accurate anatomical and disease information.</li>
-              <li><strong>Trust:</strong> Meticulous fact checks are executed before publishing, prioritizing pet health above all.</li>
+              <li><strong>Experience:</strong> Through the eyes of our mascot and Lead Researcher, Ansimi the Dachshund, we deeply capture the realistic nursing concerns and behavioral contexts that actual pet parents face in their daily lives.</li>
+              <li><strong>Expertise:</strong> Based on advanced data analysis tools and veterinary Dry Matter (DM) conversion formulas, we precisely reverse-calculate Nitrogen-Free Extract (NFE) and essential daily water requirements to build absolute numerical reliability in our information.</li>
+              <li><strong>Authoritativeness:</strong> We strictly comply with Google's YMYL (Your Money or Your Life) standards, aiming to serve as the standard technical guide for managing pet health scores and urinary/endocrine diseases.</li>
+              <li><strong>Trust:</strong> We consider the life and health of pets as our absolute highest priority, promising to connect you only with flawless, verified knowledge that has passed our strict Fact Check.</li>
+            </ul>
+
+            <h2>🧪 Magentalab’s 3-Step Content Screening Protocol</h2>
+            <p>
+              To meet the reliability standards of Google search engines and AI answer overviews, all knowledge reports from Magentalab are published only after consistently passing the following 3-step screening protocol:
+            </p>
+            <ul>
+              <li><strong>[API Collection]</strong> Real-time traffic analysis of global medical academic metrics and AAFCO feeding guidelines.</li>
+              <li><strong>[Fact Check]</strong> Removal of AI draft text slop and correction for the absolute integrity of veterinary clinical metrics.</li>
+              <li><strong>[Human Intervention]</strong> Insights drawn from actual pet parents' experiences and the optimization of intuitive structured data (Schema).</li>
             </ul>
           </div>
 
