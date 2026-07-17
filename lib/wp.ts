@@ -39,14 +39,9 @@ export async function getPosts(
   lang: string = "ko"
 ): Promise<PostsResponse> {
   const isKo = lang === "ko" || !lang;
-  // 워드프레스 API가 언어 필터링을 제대로 수행하지 않으므로, 
-  // 우선 per_page=100으로 충분히 많은 데이터를 한 번에 가져와 필터링한 후 JS 단에서 페이지네이션 처리를 합니다.
-  // Next.js 캐시 용량 초과(2MB) 문제를 방지하기 위해, 리스트 조회에 불필요한 content 필드를 제외하고 필요한 필드만 가져옵니다.
+
+  // 1페이지를 먼저 요청하여 전체 페이지 수(X-WP-TotalPages) 및 헤더 정보를 가져옵니다.
   let url = `${WP_API_URL}/posts?_embed&per_page=100&page=1&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`;
-  
-  if (lang) {
-    url += `&lang=${lang}`;
-  }
   if (search) {
     url += `&search=${encodeURIComponent(search)}`;
   }
@@ -54,34 +49,61 @@ export async function getPosts(
     url += `&categories=${category}`;
   }
 
-  const res = await fetch(url, {
+  const firstRes = await fetch(url, {
     next: {
       revalidate: 86400,
-      tags: ['posts'] // 실시간 업데이트를 위한 태그
+      tags: ['posts']
     },
   });
-  
-  if (!res.ok) throw new Error("Failed to fetch posts");
-  
-  const posts = await res.json();
-  
-  let filteredPosts = posts;
-  
+
+  if (!firstRes.ok) throw new Error("Failed to fetch posts");
+
+  const totalPagesHeader = Number(firstRes.headers.get('X-WP-TotalPages') || 1);
+  const firstPagePosts = await firstRes.json();
+
+  let allPosts = [...firstPagePosts];
+
+  // 2페이지 이상이 존재하면 나머지 페이지 데이터를 병렬로 모두 가져옵니다.
+  if (totalPagesHeader > 1) {
+    const remainingUrls = [];
+    for (let i = 2; i <= totalPagesHeader; i++) {
+      let rUrl = `${WP_API_URL}/posts?_embed&per_page=100&page=${i}&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`;
+      if (search) rUrl += `&search=${encodeURIComponent(search)}`;
+      if (category) rUrl += `&categories=${category}`;
+      remainingUrls.push(rUrl);
+    }
+
+    const remainingFetches = remainingUrls.map(rUrl =>
+      fetch(rUrl, {
+        next: {
+          revalidate: 86400,
+          tags: ['posts']
+        }
+      }).then(res => res.ok ? res.json() : [])
+    );
+
+    const remainingPagesPosts = await Promise.all(remainingFetches);
+    allPosts = allPosts.concat(remainingPagesPosts.flat());
+  }
+
+  // 이제 모든 포스트(allPosts)를 확보했으므로 언어 필터링을 수행합니다.
+  let filteredPosts = allPosts;
+
   if (isKo) {
     // 한국어 페이지: 슬러그가 -en 또는 -ja로 끝나는 글을 전면 배제
-    filteredPosts = posts.filter((post: any) => {
+    filteredPosts = allPosts.filter((post: any) => {
       const slug = post.slug || "";
       return !slug.endsWith("-en") && !slug.endsWith("-ja");
     });
   } else if (lang === "en") {
     // 영어 페이지: 슬러그가 -en으로 끝나는 글만 필터링
-    filteredPosts = posts.filter((post: any) => {
+    filteredPosts = allPosts.filter((post: any) => {
       const slug = post.slug || "";
       return slug.endsWith("-en");
     });
   } else if (lang === "ja") {
     // 일본어 페이지: 슬러그가 -ja로 끝나는 글만 필터링
-    filteredPosts = posts.filter((post: any) => {
+    filteredPosts = allPosts.filter((post: any) => {
       const slug = post.slug || "";
       return slug.endsWith("-ja");
     });
