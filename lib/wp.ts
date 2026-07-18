@@ -31,6 +31,14 @@ export interface WPCategory {
   count: number;
 }
 
+// global memory cache for posts to prevent high serverless compute costs and rate-limiting
+let postsCache: {
+  allPosts: WPPost[];
+  timestamp: number;
+} | null = null;
+
+const CACHE_TTL = 1000 * 60 * 30; // 30 minutes in-memory cache
+
 export async function getPosts(
   page: number = 1, 
   perPage: number = 20, 
@@ -39,51 +47,67 @@ export async function getPosts(
   lang: string = "ko"
 ): Promise<PostsResponse> {
   const isKo = lang === "ko" || !lang;
+  const now = Date.now();
+  const isMainFetch = !search && !category;
 
-  // 1페이지를 먼저 요청하여 전체 페이지 수(X-WP-TotalPages) 및 헤더 정보를 가져옵니다.
-  let url = `${WP_API_URL}/posts?_embed&per_page=100&page=1&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`;
-  if (search) {
-    url += `&search=${encodeURIComponent(search)}`;
-  }
-  if (category) {
-    url += `&categories=${category}`;
-  }
+  let allPosts: WPPost[] = [];
 
-  const firstRes = await fetch(url, {
-    next: {
-      revalidate: 86400,
-      tags: ['posts']
-    },
-  });
-
-  if (!firstRes.ok) throw new Error("Failed to fetch posts");
-
-  const totalPagesHeader = Number(firstRes.headers.get('X-WP-TotalPages') || 1);
-  const firstPagePosts = await firstRes.json();
-
-  let allPosts = [...firstPagePosts];
-
-  // 2페이지 이상이 존재하면 나머지 페이지 데이터를 병렬로 모두 가져옵니다.
-  if (totalPagesHeader > 1) {
-    const remainingUrls = [];
-    for (let i = 2; i <= totalPagesHeader; i++) {
-      let rUrl = `${WP_API_URL}/posts?_embed&per_page=100&page=${i}&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`;
-      if (search) rUrl += `&search=${encodeURIComponent(search)}`;
-      if (category) rUrl += `&categories=${category}`;
-      remainingUrls.push(rUrl);
+  if (isMainFetch && postsCache && (now - postsCache.timestamp < CACHE_TTL)) {
+    allPosts = postsCache.allPosts;
+  } else {
+    // 1페이지를 먼저 요청하여 전체 페이지 수(X-WP-TotalPages) 및 헤더 정보를 가져옵니다.
+    let url = `${WP_API_URL}/posts?_embed&per_page=100&page=1&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`;
+    if (search) {
+      url += `&search=${encodeURIComponent(search)}`;
+    }
+    if (category) {
+      url += `&categories=${category}`;
     }
 
-    const remainingFetches = remainingUrls.map(rUrl =>
-      fetch(rUrl, {
-        next: {
-          revalidate: 86400,
-          tags: ['posts']
-        }
-      }).then(res => res.ok ? res.json() : [])
-    );
+    const firstRes = await fetch(url, {
+      next: {
+        revalidate: 86400,
+        tags: ['posts']
+      },
+    });
 
-    const remainingPagesPosts = await Promise.all(remainingFetches);
-    allPosts = allPosts.concat(remainingPagesPosts.flat());
+    if (!firstRes.ok) throw new Error("Failed to fetch posts");
+
+    const totalPagesHeader = Number(firstRes.headers.get('X-WP-TotalPages') || 1);
+    const firstPagePosts = await firstRes.json();
+
+    allPosts = [...firstPagePosts];
+
+    // 2페이지 이상이 존재하면 나머지 페이지 데이터를 병렬로 모두 가져옵니다.
+    if (totalPagesHeader > 1) {
+      const remainingUrls = [];
+      for (let i = 2; i <= totalPagesHeader; i++) {
+        let rUrl = `${WP_API_URL}/posts?_embed&per_page=100&page=${i}&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`;
+        if (search) rUrl += `&search=${encodeURIComponent(search)}`;
+        if (category) rUrl += `&categories=${category}`;
+        remainingUrls.push(rUrl);
+      }
+
+      const remainingFetches = remainingUrls.map(rUrl =>
+        fetch(rUrl, {
+          next: {
+            revalidate: 86400,
+            tags: ['posts']
+          }
+        }).then(res => res.ok ? res.json() : [])
+      );
+
+      const remainingPagesPosts = await Promise.all(remainingFetches);
+      allPosts = allPosts.concat(remainingPagesPosts.flat());
+    }
+
+    // 메인 조회일 때만 메모리에 캐시 적재
+    if (isMainFetch) {
+      postsCache = {
+        allPosts,
+        timestamp: now
+      };
+    }
   }
 
   // 이제 모든 포스트(allPosts)를 확보했으므로 언어 필터링을 수행합니다.
