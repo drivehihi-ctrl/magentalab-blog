@@ -240,53 +240,67 @@ export default function CalculatorBanner({
     } else {
       const textToAnalyze = (title + " " + content).toLowerCase();
 
-      const getScore = (keywords: string[]) => {
-        return keywords.reduce((score, kw) => {
-          const regex = new RegExp(kw, "gi");
+      // 다국어 키워드 딕셔너리 정의
+      const getScore = (koKeywords: string[], enKeywords: string[], jaKeywords: string[]) => {
+        let score = 0;
+        const targetKeywords = lang === "en" ? enKeywords : (lang === "ja" ? jaKeywords : koKeywords);
+        
+        // 추가로 공통적으로 매칭될 수 있는 영문 약어나 핵심어는 언어 무관하게 보조 집계
+        const allKeywords = [...targetKeywords];
+        
+        allKeywords.forEach(kw => {
+          if (!kw) return;
+          const regex = new RegExp(kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), "gi");
           const matches = textToAnalyze.match(regex);
-          return score + (matches ? matches.length : 0);
-        }, 0);
+          score += matches ? matches.length : 0;
+        });
+        return score;
       };
 
       const scores = {
-        emergency: getScore([
-          "초콜릿", "다크초콜릿", "밀크초콜릿", "포도", "건포도", "자일리톨", 
-          "독성 물질", "음독", "치사량", "응급실", "응급 처치", "먹으면 안 되는", 
-          "피해야 할 음식", "치명적인", "양파", "대파", "쪽파", "마늘", 
-          "먹었을 때", "삼켰을 때", "초콜렛", "중독 증상", "동물병원 응급"
-        ]),
-        dm: getScore([
-          "음수량", "식수", "탈수 증상", "조단백", "조지방", "수분 함량", 
-          "건물 기준", "dm 성분", "등록성분", "영양성분표", "음수 요구량", 
-          "건식 사료", "탄수화물 함량", "조회분"
-        ]),
-        bcs: getScore([
-          "비만", "과체중", "다이어트", "체중 조절", "체중 감량", "몸무게", 
-          "뚱냥", "뚱견", "이상적 체중", "칼로리 계산", "칼로리 요구량", 
-          "rer 계산", "der 계산", "bcs 단계", "비만도"
-        ]),
-        age: getScore([
-          "인간 나이", "사람 나이", "생애주기", "성장기", "노령기", "성숙기", 
-          "아깽이", "퍼피", "시니어견", "시니어묘", "반려견 수명", "노화", 
-          "개월 수", "태어난 연월", "생애 주기"
-        ]),
-        expenses: getScore([
-          "양육비", "유지비", "키우는 비용", "병원비", "사료비", "고정 지출", 
-          "누적 양육비", "용품비", "예방 접종비", "의료비 시뮬레이션", "평생 비용"
-        ]),
-        patella: getScore([
-          "슬개골", "탈구", "슬개골 탈구", "관절", "다리", "절뚝", "다리를 절", 
-          "뒷다리", "절뚝거림", "십자인대", "쓸개골", "수술비", "영양제"
-        ]),
-        fic: getScore([
-          "방광염", "특발성 방광염", "fic", "고양이 화장실", "배변 실수", 
-          "소변 울음", "스트레스 지수", "뇨의", "혈뇨", "슬러지", "오버그루밍"
-        ])
+        emergency: getScore(
+          ["초콜릿", "다크초콜릿", "밀크초콜릿", "포도", "건포도", "자일리톨", "독성 물질", "음독", "치사량", "응급실", "응급 처치", "먹으면 안 되는", "피해야 할 음식", "양파", "대파", "쪽파", "마늘", "중독 증상", "동물병원 응급"],
+          ["chocolate", "grape", "raisin", "xylitol", "poison", "toxic", "emergency", "onion", "garlic", "ingest", "should not eat"],
+          ["チョコレート", "ブドウ", "レーズン", "キシリトール", "中毒", "誤食", "応急", "ネギ", "ニンニク", "救急"]
+        ),
+        dm: getScore(
+          ["음수량", "식수", "탈수 증상", "조단백", "조지방", "수분 함량", "건물 기준", "dm 성분", "등록성분", "영양성분표", "음수 요구량", "건식 사료", "탄수화물 함량", "조회분"],
+          ["dry matter", "dm", "moisture", "crude protein", "crude fat", "water requirement", "hydration", "ash", "kibble", "water intake"],
+          ["乾物量", "水分量", "飲水量", "水分必要量", "粗蛋白質", "粗脂肪", "ドライフード", "水分含有量"]
+        ),
+        bcs: getScore(
+          ["비만", "과체중", "다이어트", "체중 조절", "체중 감량", "몸무게", "뚱냥", "뚱견", "이상적 체중", "칼로리 계산", "칼로리 요구량", "rer 계산", "der 계산", "bcs 단계", "비만도"],
+          ["obesity", "overweight", "diet", "weight control", "calories", "rer", "der", "bcs", "fat dog", "fat cat"],
+          ["肥満", "過体重", "ダイエット", "体重管理", "カロリー", "理想体重", "bcs"]
+        ),
+        age: getScore(
+          ["인간 나이", "사람 나이", "생애주기", "성장기", "노령기", "성숙기", "아깽이", "퍼피", "시니어견", "시니어묘", "반려견 수명", "노화", "개월 수", "태어난 연월", "생애 주기"],
+          ["human age", "lifespan", "life stage", "puppy", "kitten", "senior", "months", "aging", "birth year"],
+          ["人間年齢", "換算年齢", "ライフステージ", "寿命", "子犬", "子猫", "シニア"]
+        ),
+        expenses: getScore(
+          ["양육비", "유지비", "키우는 비용", "병원비", "사료비", "고정 지출", "누적 양육비", "용품비", "예방 접종비", "의료비 시뮬레이션", "평생 비용"],
+          ["cost", "expense", "lifetime cost", "veterinary cost", "food cost", "annual projection", "spending"],
+          ["飼育費", "生涯費用", "維持費", "医療費", "病院代", "フード代"]
+        ),
+        patella: getScore(
+          ["슬개골", "탈구", "슬개골 탈구", "관절", "다리", "절뚝", "다리를 절", "뒷다리", "절뚝거림", "십자인대", "쓸개골", "수술비", "영양제"],
+          ["patella", "luxation", "limping", "joint", "hind leg", "orthopedic", "knee cap"],
+          ["膝蓋骨", "パテラ", "脱臼", "関節", "後ろ足", "跛行"]
+        ),
+        fic: getScore(
+          ["방광염", "특발성 방광염", "fic", "고양이 화장실", "배변 실수", "소변 울음", "스트레스 지수", "뇨의", "혈뇨", "슬러지", "오버그루밍"],
+          ["cystitis", "urinary", "bladder", "stress level", "inappropriate urination", "feline fic", "feline cystitis"],
+          ["膀胱炎", "特発性膀胱炎", "尿路", "尿石", "血尿", "排尿"]
+        )
       };
 
       let sel: CalculatorType = "bcs";
 
-      if (postId === "1682") {
+      // 특정 포스트 수동 예외 처리 (한국어/영어/일본어)
+      const isExpensesPost = postId === "1682" || title.toLowerCase().includes("expenses") || title.toLowerCase().includes("양육비") || title.toLowerCase().includes("費用");
+      
+      if (isExpensesPost) {
         sel = "expenses";
       } else {
         let maxScore = 0;
