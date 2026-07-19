@@ -31,6 +31,15 @@ export interface WPCategory {
   count: number;
 }
 
+// 안전하게 JSON을 파싱하는 헬퍼 함수 (비JSON 응답으로 인한 크래시 방지)
+async function safeJson(res: Response): Promise<any> {
+  const contentType = res.headers.get("content-type") || "";
+  if (!contentType.includes("application/json")) {
+    throw new Error(`Received non-JSON content: ${contentType}`);
+  }
+  return res.json();
+}
+
 // global memory cache for posts to prevent high serverless compute costs and rate-limiting
 let postsCache: {
   allPosts: WPPost[];
@@ -52,61 +61,82 @@ export async function getPosts(
 
   let allPosts: WPPost[] = [];
 
-  if (isMainFetch && postsCache && (now - postsCache.timestamp < CACHE_TTL)) {
-    allPosts = postsCache.allPosts;
-  } else {
-    // 1페이지를 먼저 요청하여 전체 페이지 수(X-WP-TotalPages) 및 헤더 정보를 가져옵니다.
-    let url = `${WP_API_URL}/posts?_embed&per_page=100&page=1&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`;
-    if (search) {
-      url += `&search=${encodeURIComponent(search)}`;
-    }
-    if (category) {
-      url += `&categories=${category}`;
-    }
-
-    const firstRes = await fetch(url, {
-      next: {
-        revalidate: 86400,
-        tags: ['posts']
-      },
-    });
-
-    if (!firstRes.ok) throw new Error("Failed to fetch posts");
-
-    const totalPagesHeader = Number(firstRes.headers.get('X-WP-TotalPages') || 1);
-    const firstPagePosts = await firstRes.json();
-
-    allPosts = [...firstPagePosts];
-
-    // 2페이지 이상이 존재하면 나머지 페이지 데이터를 병렬로 모두 가져옵니다.
-    if (totalPagesHeader > 1) {
-      const remainingUrls = [];
-      for (let i = 2; i <= totalPagesHeader; i++) {
-        let rUrl = `${WP_API_URL}/posts?_embed&per_page=100&page=${i}&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`;
-        if (search) rUrl += `&search=${encodeURIComponent(search)}`;
-        if (category) rUrl += `&categories=${category}`;
-        remainingUrls.push(rUrl);
+  try {
+    if (isMainFetch && postsCache && (now - postsCache.timestamp < CACHE_TTL)) {
+      allPosts = postsCache.allPosts;
+    } else {
+      // 1페이지를 먼저 요청하여 전체 페이지 수(X-WP-TotalPages) 및 헤더 정보를 가져옵니다.
+      let url = `${WP_API_URL}/posts?_embed&per_page=100&page=1&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`;
+      if (search) {
+        url += `&search=${encodeURIComponent(search)}`;
+      }
+      if (category) {
+        url += `&categories=${category}`;
       }
 
-      const remainingFetches = remainingUrls.map(rUrl =>
-        fetch(rUrl, {
-          next: {
-            revalidate: 86400,
-            tags: ['posts']
+      const firstRes = await fetch(url, {
+        next: {
+          revalidate: 86400,
+          tags: ['posts']
+        },
+      });
+
+      if (!firstRes.ok) {
+        console.error(`Failed to fetch posts from WP: ${firstRes.status}`);
+        // 캐시 데이터가 있으면 에러 상태에서도 이전 캐시를 재활용하여 다운 방지
+        if (postsCache) {
+          allPosts = postsCache.allPosts;
+        } else {
+          return { posts: [], totalPages: 1, totalPosts: 0 };
+        }
+      } else {
+        const totalPagesHeader = Number(firstRes.headers.get('X-WP-TotalPages') || 1);
+        const firstPagePosts = await safeJson(firstRes);
+
+        allPosts = Array.isArray(firstPagePosts) ? [...firstPagePosts] : [];
+
+        // 2페이지 이상이 존재하면 나머지 페이지 데이터를 병렬로 모두 가져옵니다.
+        if (totalPagesHeader > 1) {
+          const remainingUrls = [];
+          for (let i = 2; i <= totalPagesHeader; i++) {
+            let rUrl = `${WP_API_URL}/posts?_embed&per_page=100&page=${i}&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`;
+            if (search) rUrl += `&search=${encodeURIComponent(search)}`;
+            if (category) rUrl += `&categories=${category}`;
+            remainingUrls.push(rUrl);
           }
-        }).then(res => res.ok ? res.json() : [])
-      );
 
-      const remainingPagesPosts = await Promise.all(remainingFetches);
-      allPosts = allPosts.concat(remainingPagesPosts.flat());
+          const remainingFetches = remainingUrls.map(rUrl =>
+            fetch(rUrl, {
+              next: {
+                revalidate: 86400,
+                tags: ['posts']
+              }
+            }).then(res => res.ok ? safeJson(res) : [])
+              .catch(err => {
+                console.error(`Failed to fetch next page posts at ${rUrl}:`, err);
+                return [];
+              })
+          );
+
+          const remainingPagesPosts = await Promise.all(remainingFetches);
+          allPosts = allPosts.concat(remainingPagesPosts.flat().filter(Boolean));
+        }
+
+        // 메인 조회이고 글이 정상 수집되었을 때만 메모리에 캐시 적재
+        if (isMainFetch && allPosts.length > 0) {
+          postsCache = {
+            allPosts,
+            timestamp: now
+          };
+        }
+      }
     }
-
-    // 메인 조회일 때만 메모리에 캐시 적재
-    if (isMainFetch) {
-      postsCache = {
-        allPosts,
-        timestamp: now
-      };
+  } catch (error) {
+    console.error("Critical network or parsing error in getPosts:", error);
+    if (postsCache) {
+      allPosts = postsCache.allPosts;
+    } else {
+      return { posts: [], totalPages: 1, totalPosts: 0 };
     }
   }
 
@@ -152,16 +182,20 @@ export async function getPosts(
 
 
 export async function getAllCategories(): Promise<WPCategory[]> {
-  const res = await fetch(`${WP_API_URL}/categories?per_page=100`, {
-    next: {
-      revalidate: 86400,
-      tags: ['categories']
-    },
-  });
-  if (!res.ok) throw new Error("Failed to fetch categories");
-  const categories: WPCategory[] = await res.json();
-  // 글 개수가 0개보다 많은 카테고리만 노출하거나, uncategorized는 제외
-  return categories.filter(c => c.count > 0 && c.slug !== 'uncategorized');
+  try {
+    const res = await fetch(`${WP_API_URL}/categories?per_page=100`, {
+      next: {
+        revalidate: 86400,
+        tags: ['categories']
+      },
+    });
+    if (!res.ok) throw new Error("Failed to fetch categories");
+    const categories: WPCategory[] = await safeJson(res);
+    return categories.filter(c => c.count > 0 && c.slug !== 'uncategorized');
+  } catch (err) {
+    console.error("Error in getAllCategories:", err);
+    return [];
+  }
 }
 
 /**
@@ -170,40 +204,54 @@ export async function getAllCategories(): Promise<WPCategory[]> {
  * revalidate: 0 → Vercel 배포 시 항상 최신 데이터로 사이트맵 생성.
  */
 export async function getAllPostsForSitemap(): Promise<WPPost[]> {
-  const perPage = 100;
-  // 1페이지를 먼저 가져와 전체 페이지 수 확인
-  const firstRes = await fetch(
-    `${WP_API_URL}/posts?_fields=id,date,modified,slug&per_page=${perPage}&page=1`,
-    { next: { revalidate: 0 } } // 사이트맵은 항상 최신 데이터
-  );
-  if (!firstRes.ok) throw new Error("Failed to fetch posts for sitemap");
-
-  const totalPages = Number(firstRes.headers.get('X-WP-TotalPages') || 1);
-  const firstPagePosts: WPPost[] = await firstRes.json();
-
-  if (totalPages <= 1) return firstPagePosts;
-
-  // 2페이지 이상이 있으면 병렬로 나머지 모두 가져오기
-  const remainingFetches = Array.from({ length: totalPages - 1 }, (_, i) =>
-    fetch(
-      `${WP_API_URL}/posts?_fields=id,date,modified,slug&per_page=${perPage}&page=${i + 2}`,
+  try {
+    const perPage = 100;
+    // 1페이지를 먼저 가져와 전체 페이지 수 확인
+    const firstRes = await fetch(
+      `${WP_API_URL}/posts?_fields=id,date,modified,slug&per_page=${perPage}&page=1`,
       { next: { revalidate: 0 } }
-    ).then(res => res.ok ? res.json() as Promise<WPPost[]> : [])
-  );
+    );
+    if (!firstRes.ok) throw new Error("Failed to fetch posts for sitemap");
 
-  const remainingPages = await Promise.all(remainingFetches);
-  return [firstPagePosts, ...remainingPages].flat();
+    const totalPages = Number(firstRes.headers.get('X-WP-TotalPages') || 1);
+    const firstPagePosts: WPPost[] = await safeJson(firstRes);
+
+    if (totalPages <= 1) return firstPagePosts;
+
+    // 2페이지 이상이 있으면 병렬로 나머지 모두 가져오기
+    const remainingFetches = Array.from({ length: totalPages - 1 }, (_, i) =>
+      fetch(
+        `${WP_API_URL}/posts?_fields=id,date,modified,slug&per_page=${perPage}&page=${i + 2}`,
+        { next: { revalidate: 0 } }
+      ).then(res => res.ok ? safeJson(res) as Promise<WPPost[]> : [])
+       .catch(err => {
+         console.error("Error fetching sitemap page:", err);
+         return [];
+       })
+    );
+
+    const remainingPages = await Promise.all(remainingFetches);
+    return [firstPagePosts, ...remainingPages].flat().filter(Boolean);
+  } catch (err) {
+    console.error("Error in getAllPostsForSitemap:", err);
+    return [];
+  }
 }
 
-export async function getPost(id: string): Promise<WPPost> {
-  const res = await fetch(`${WP_API_URL}/posts/${id}?_embed`, {
-    next: {
-      revalidate: 86400,
-      tags: [`post-${id}`, 'posts']
-    },
-  });
-  if (!res.ok) throw new Error(`Failed to fetch post: ${id}`);
-  return res.json();
+export async function getPost(id: string): Promise<WPPost | null> {
+  try {
+    const res = await fetch(`${WP_API_URL}/posts/${id}?_embed`, {
+      next: {
+        revalidate: 86400,
+        tags: [`post-${id}`, 'posts']
+      },
+    });
+    if (!res.ok) throw new Error(`Failed to fetch post: ${id}`);
+    return await safeJson(res);
+  } catch (err) {
+    console.error(`Error in getPost for ID ${id}:`, err);
+    return null;
+  }
 }
 
 export function getFeaturedImage(post: WPPost) {
@@ -301,14 +349,19 @@ export interface WPComment {
 }
 
 export async function getComments(postId: number): Promise<WPComment[]> {
-  const res = await fetch(`${WP_API_URL}/comments?post=${postId}&order=asc`, {
-    next: {
-      revalidate: 3600,
-      tags: [`comments-${postId}`]
-    },
-  });
-  if (!res.ok) throw new Error(`Failed to fetch comments for post: ${postId}`);
-  return res.json();
+  try {
+    const res = await fetch(`${WP_API_URL}/comments?post=${postId}&order=asc`, {
+      next: {
+        revalidate: 3600,
+        tags: [`comments-${postId}`]
+      },
+    });
+    if (!res.ok) throw new Error(`Failed to fetch comments for post: ${postId}`);
+    return await safeJson(res);
+  } catch (err) {
+    console.error(`Error in getComments for post ${postId}:`, err);
+    return [];
+  }
 }
 
 /**
@@ -410,7 +463,7 @@ export async function getPageBySlug(slug: string): Promise<WPPost | null> {
       console.error(`Failed to fetch page: ${slug}, status: ${res.status}`);
       return null;
     }
-    const pages = await res.json();
+    const pages = await safeJson(res);
     return pages[0] || null;
   } catch (error) {
     console.error(`Error fetching page ${slug}:`, error);
@@ -419,15 +472,20 @@ export async function getPageBySlug(slug: string): Promise<WPPost | null> {
 }
 
 export async function getPostBySlug(slug: string): Promise<WPPost | null> {
-  const res = await fetch(`${WP_API_URL}/posts?slug=${slug}&_embed`, {
-    next: {
-      revalidate: 3600,
-      tags: [`post-slug-${slug.slice(0, 100)}`, 'posts']
-    },
-  });
-  if (!res.ok) throw new Error(`Failed to fetch post by slug: ${slug}`);
-  const posts = await res.json();
-  return posts[0] || null;
+  try {
+    const res = await fetch(`${WP_API_URL}/posts?slug=${slug}&_embed`, {
+      next: {
+        revalidate: 3600,
+        tags: [`post-slug-${slug.slice(0, 100)}`, 'posts']
+      },
+    });
+    if (!res.ok) throw new Error(`Failed to fetch post by slug: ${slug}`);
+    const posts = await safeJson(res);
+    return posts[0] || null;
+  } catch (err) {
+    console.error(`Error in getPostBySlug for slug ${slug}:`, err);
+    return null;
+  }
 }
 
 
@@ -449,7 +507,7 @@ export async function searchPosts(query: string, lang: string = "ko"): Promise<W
       console.error(`Failed to search posts for query: ${query}, status: ${res.status}`);
       return [];
     }
-    const posts = await res.json();
+    const posts = await safeJson(res);
     
     let filteredPosts = posts;
     
