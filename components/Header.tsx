@@ -74,12 +74,27 @@ export default function Header() {
 
   const handleLanguageChange = (lang: string) => {
     const pathSegments = pathname.split("/").filter(Boolean);
-    let targetPath = "";
     
+    // 현재 언어 코드 세그먼트 제거 (en/ja)
     if (pathSegments[0] === "en" || pathSegments[0] === "ja") {
       pathSegments.shift();
     }
     
+    // 만약 포스트 상세 페이지(/posts/[slug])인 경우 슬러그 접미사(-en, -ja) 변환 처리
+    if (pathSegments[0] === "posts" && pathSegments[1]) {
+      const slug = pathSegments[1];
+      const baseSlug = slug.replace(/-en$|-ja$/, "");
+      
+      if (lang === "en") {
+        pathSegments[1] = `${baseSlug}-en`;
+      } else if (lang === "ja") {
+        pathSegments[1] = `${baseSlug}-ja`;
+      } else {
+        pathSegments[1] = baseSlug;
+      }
+    }
+    
+    let targetPath = "";
     if (lang === "en") {
       targetPath = `/en/${pathSegments.join("/")}`;
     } else if (lang === "ja") {
