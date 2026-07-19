@@ -448,33 +448,15 @@ export function fixWpLinks(content: string, postTitle?: string, lang: string = '
       `</div>`;
   });
 
-  // 4. DM 계산기 관련 포스트 링크 교정 및 동적 하단 배너 주입 (영어/일본어)
+  // 4. DM 계산기 관련 포스트 링크 교정 (중복 배너 제거, 텍스트 링크 치환만 유지)
   if (lang === "en") {
     const enDmLink = "https://www.magentalabblog.com/en/dm-calculator";
     fixed = fixed.replace(/href="https?:\/\/(?:www\.)?magentalabblog\.com\/dm-calculator"/gi, `href="${enDmLink}"`)
                  .replace(/href="\/dm-calculator"/gi, `href="${enDmLink}"`);
-    
-    if (content.includes("id210-en") || postTitle?.toLowerCase().includes("dry matter") || postTitle?.toLowerCase().includes("dm")) {
-      fixed += `\n\n<div class="my-8 p-6 bg-magenta-light/30 rounded-2xl border border-magenta/10 text-center">` +
-        `<p class="text-gray-900 font-bold mb-2">🐾 Check the dry matter content and correct daily water intake immediately!</p>` +
-        `<a href="${enDmLink}" class="inline-block px-6 py-3 bg-magenta hover:bg-magenta/90 text-white font-bold rounded-xl transition-all shadow-md">` +
-          `Go to the Dog Food DM Calculator ➔` +
-        `</a>` +
-      `</div>`;
-    }
   } else if (lang === "ja") {
     const jaDmLink = "https://www.magentalabblog.com/ja/dm-calculator";
     fixed = fixed.replace(/href="https?:\/\/(?:www\.)?magentalabblog\.com\/dm-calculator"/gi, `href="${jaDmLink}"`)
                  .replace(/href="\/dm-calculator"/gi, `href="${jaDmLink}"`);
-                 
-    if (content.includes("id210-ja") || postTitle?.includes("乾物量") || postTitle?.includes("DM")) {
-      fixed += `\n\n<div class="my-8 p-6 bg-magenta-light/30 rounded-2xl border border-magenta/10 text-center">` +
-        `<p class="text-gray-900 font-bold mb-2">🐾 フードの乾物量（DM）と1日の必要水分量を今すぐチェック！</p>` +
-        `<a href="${jaDmLink}" class="inline-block px-6 py-3 bg-magenta hover:bg-magenta/90 text-white font-bold rounded-xl transition-all shadow-md">` +
-          `ドッグフードDM成分＆水分量計算機へ ➔` +
-        `</a>` +
-      `</div>`;
-    }
   }
 
   return fixed;
