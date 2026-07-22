@@ -24,45 +24,49 @@ export default function PetMapViewer({
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
+  const userMarkerRef = useRef<any>(null);
 
   const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
   const [isKakaoReady, setIsKakaoReady] = useState(false);
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
 
-  // 1. Kakao Map SDK Script Injection
+  // 1. Load Kakao Map SDK Script with explicit HTTPS
   useEffect(() => {
     const kakaoApiKey = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY || '186380c4d2f6974b4c29d1be55963a4a';
-    
+
     if (typeof window !== 'undefined') {
+      const initKakao = () => {
+        if (window.kakao && window.kakao.maps) {
+          window.kakao.maps.load(() => {
+            setIsKakaoReady(true);
+          });
+        }
+      };
+
       if (window.kakao && window.kakao.maps) {
-        window.kakao.maps.load(() => {
-          setIsKakaoReady(true);
-        });
+        initKakao();
       } else {
         const existingScript = document.getElementById('kakao-map-sdk');
         if (!existingScript) {
           const script = document.createElement('script');
           script.id = 'kakao-map-sdk';
-          script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoApiKey}&autoload=false&libraries=services`;
+          script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoApiKey}&autoload=false&libraries=services`;
           script.async = true;
           script.onload = () => {
-            if (window.kakao && window.kakao.maps) {
-              window.kakao.maps.load(() => {
-                setIsKakaoReady(true);
-              });
-            }
+            initKakao();
           };
           document.head.appendChild(script);
+        } else {
+          initKakao();
         }
       }
     }
   }, []);
 
-  // 2. Initialize Kakao Map & Render Markers
+  // 2. Initialize Map & Render Markers
   useEffect(() => {
     if (!isKakaoReady || !mapContainerRef.current || viewMode !== 'map') return;
 
-    // Default center (Seoul/Bucheon area)
     const initialLat = places.length > 0 ? places[0].lat : 37.5665;
     const initialLng = places.length > 0 ? places[0].lng : 126.9780;
 
@@ -77,15 +81,21 @@ export default function PetMapViewer({
       // Add Zoom Control
       const zoomControl = new window.kakao.maps.ZoomControl();
       map.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
+
+      // Force relayout after rendering
+      setTimeout(() => {
+        map.relayout();
+      }, 200);
     }
 
     const map = mapInstanceRef.current;
+    map.relayout();
 
     // Clear existing markers
     markersRef.current.forEach((m) => m.setMap(null));
     markersRef.current = [];
 
-    // Create markers for current places
+    // Create markers for places
     const bounds = new window.kakao.maps.LatLngBounds();
 
     places.forEach((place) => {
@@ -114,7 +124,7 @@ export default function PetMapViewer({
     }
   }, [isKakaoReady, places, viewMode, onSelectPlace]);
 
-  // 3. Pan to selected place when user clicks card or drawer
+  // 3. Pan to selected place
   useEffect(() => {
     if (selectedPlace && mapInstanceRef.current && isKakaoReady) {
       const position = new window.kakao.maps.LatLng(selectedPlace.lat, selectedPlace.lng);
@@ -122,24 +132,40 @@ export default function PetMapViewer({
     }
   }, [selectedPlace, isKakaoReady]);
 
-  // Request user geolocation
+  // 4. Request user geolocation & Drop User Location Pin
   const handleMyLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
           setUserCoords(coords);
+
           if (mapInstanceRef.current && isKakaoReady) {
+            const map = mapInstanceRef.current;
             const moveLatLon = new window.kakao.maps.LatLng(coords.lat, coords.lng);
-            mapInstanceRef.current.panTo(moveLatLon);
-            mapInstanceRef.current.setLevel(4);
-          } else {
-            alert(`내 위치가 탐색되었습니다! (${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)})`);
+
+            map.relayout();
+            map.setCenter(moveLatLon);
+            map.setLevel(4);
+
+            // Remove existing user marker if any
+            if (userMarkerRef.current) {
+              userMarkerRef.current.setMap(null);
+            }
+
+            // Create distinct User Marker
+            const userMarker = new window.kakao.maps.Marker({
+              position: moveLatLon,
+              title: '내 위치',
+            });
+            userMarker.setMap(map);
+            userMarkerRef.current = userMarker;
           }
         },
         () => {
           alert('위치 권한을 허용해 주시면 현재 위치 근처 애견동반 장소를 찾을 수 있습니다.');
-        }
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
       );
     }
   };
@@ -161,7 +187,7 @@ export default function PetMapViewer({
       <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
         <button
           onClick={handleMyLocation}
-          className="flex items-center gap-1.5 px-3.5 py-2 bg-white/90 backdrop-blur hover:bg-white text-gray-800 text-xs font-bold rounded-full shadow-lg border border-purple-100 transition"
+          className="flex items-center gap-1.5 px-3.5 py-2 bg-white/90 backdrop-blur hover:bg-white text-gray-800 text-xs font-bold rounded-full shadow-lg border border-purple-100 transition active:scale-95"
           title="내 위치 찾기"
         >
           <Navigation className="w-3.5 h-3.5 text-purple-600" />
@@ -169,8 +195,13 @@ export default function PetMapViewer({
         </button>
 
         <button
-          onClick={() => setViewMode(viewMode === 'map' ? 'list' : 'map')}
-          className="flex items-center gap-1.5 px-3.5 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-full shadow-lg transition"
+          onClick={() => {
+            setViewMode(viewMode === 'map' ? 'list' : 'map');
+            if (viewMode === 'list' && mapInstanceRef.current) {
+              setTimeout(() => mapInstanceRef.current.relayout(), 100);
+            }
+          }}
+          className="flex items-center gap-1.5 px-3.5 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-full shadow-lg transition active:scale-95"
         >
           {viewMode === 'map' ? (
             <>
@@ -190,7 +221,7 @@ export default function PetMapViewer({
       {viewMode === 'map' ? (
         <div className="w-full h-full relative">
           {/* Kakao Map Real Canvas Container */}
-          <div ref={mapContainerRef} className="w-full h-full" />
+          <div ref={mapContainerRef} className="w-full h-full min-h-[500px]" />
 
           {/* Floating POI Summary Count Badge */}
           <div className="absolute top-4 left-4 z-10 pointer-events-none">
