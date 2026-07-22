@@ -18,6 +18,9 @@ export default function Header() {
     } else {
       document.body.style.overflow = "unset";
     }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
   }, [isMenuOpen]);
 
   // Determine current language from path
@@ -179,7 +182,7 @@ export default function Header() {
 
       {/* Mobile Menu - Sleek Top-Right Dropdown */}
       <div 
-        className={`absolute top-[70px] right-4 z-50 w-72 bg-white md:hidden transition-all duration-300 origin-top-right border border-gray-100 shadow-[0_20px_50px_rgba(0,0,0,0.15)] rounded-3xl overflow-hidden ${
+        className={`fixed top-[75px] right-4 z-50 w-72 max-w-[calc(100vw-32px)] bg-white md:hidden transition-all duration-300 origin-top-right border border-gray-100 shadow-[0_20px_50px_rgba(0,0,0,0.15)] rounded-3xl max-h-[calc(100dvh-90px)] overflow-y-auto overscroll-contain ${
           isMenuOpen ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
         }`}
       >
