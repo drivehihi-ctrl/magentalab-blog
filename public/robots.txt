@@ -4,6 +4,9 @@ Disallow: /shop
 Disallow: /shop/
 Disallow: /shop/admin
 Disallow: /api/
+Disallow: /map
+Disallow: /map/
+
 
 # Block aggressive AI scrapers and bots
 User-agent: GPTBot

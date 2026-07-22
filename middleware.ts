@@ -1,35 +1,76 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+// 네이버, 구글, 빙 등 검색엔진 봇 User-Agent 목록
+const BOT_USER_AGENTS = [
+  'googlebot',
+  'yeti',          // 네이버 검색봇
+  'naverbot',
+  'bingbot',
+  'slurp',
+  'baiduspider',
+  'duckduckbot',
+  'gptbot',
+  'chatgpt-user',
+  'claudebot',
+  'perplexitybot',
+];
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const host = request.headers.get('host') || '';
+  const userAgent = (request.headers.get('user-agent') || '').toLowerCase();
+
+  const isMapDomain = host.startsWith('map.') || host.startsWith('map-') || pathname.startsWith('/map');
+
+  // 1. 봇 차단 및 noindex 헤더 설정 (map 서브도메인 & /map 경로 대상)
+  if (isMapDomain) {
+    // 봇 크롤러 접근 시 즉시 차단 (403 Forbidden)
+    const isBot = BOT_USER_AGENTS.some((bot) => userAgent.includes(bot));
+    if (isBot) {
+      return new NextResponse('Access Denied for Search Crawlers', {
+        status: 403,
+        headers: {
+          'X-Robots-Tag': 'noindex, nofollow, noarchive, nosnippet',
+        },
+      });
+    }
+
+    let response: NextResponse;
+
+    if ((host.startsWith('map.') || host.startsWith('map-')) && !pathname.startsWith('/map')) {
+      const url = request.nextUrl.clone();
+      url.pathname = `/map${pathname === '/' ? '' : pathname}`;
+      response = NextResponse.rewrite(url);
+    } else {
+      response = NextResponse.next();
+    }
+
+    // 강력한 검색엔진 차단 HTTP 헤더 부여
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
+    return response;
+  }
   
-  // 오직 메인 루트('/') 경로로 최초 접속했을 때만 동작하도록 제어
+  // 2. 메인 루트('/') 경로 접속 시 언어별(en, ja) 자동 감지 리다이렉트
   if (pathname === '/') {
-    // 사용자가 강제로 한국어 메인으로 재접속하거나, 이미 처리된 경우 무한 루프를 방지하기 위해 쿠키 검사
     const hasRedirected = request.cookies.get('lang_redirected');
     if (hasRedirected) {
       return NextResponse.next();
     }
 
     const acceptLanguage = request.headers.get('accept-language') || '';
-    
     let targetUrl = null;
     
-    // 영어권 사용자 감지 (Accept-Language 헤더 분석)
     if (acceptLanguage.startsWith('en') || acceptLanguage.includes(',en')) {
       targetUrl = new URL('/en', request.url);
-    } 
-    // 일본어 사용자 감지
-    else if (acceptLanguage.startsWith('ja') || acceptLanguage.includes(',ja')) {
+    } else if (acceptLanguage.startsWith('ja') || acceptLanguage.includes(',ja')) {
       targetUrl = new URL('/ja', request.url);
     }
 
     if (targetUrl) {
-      const response = NextResponse.redirect(targetUrl);
-      // 쿠키를 하루(24시간) 동안 설정하여 반복적인 자동 리다이렉트를 막고 사용자 자유도를 보장
-      response.cookies.set('lang_redirected', 'true', { maxAge: 60 * 60 * 24 });
-      return response;
+      const res = NextResponse.redirect(targetUrl);
+      res.cookies.set('lang_redirected', 'true', { maxAge: 60 * 60 * 24 });
+      return res;
     }
   }
 
@@ -38,7 +79,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // 루트 경로('/') 접속 시에만 미들웨어를 실행하여 최상의 컴파일/렌더링 성능 보장
-    '/',
+    '/((?!_next/static|_next/image|favicon.ico).*)',
   ],
 };
