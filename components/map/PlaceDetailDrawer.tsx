@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { PetPlacePOI } from '@/lib/map/types';
-import { X, MapPin, Clock, Phone, Navigation, ShieldAlert, CheckCircle2, Share2, ExternalLink, MessageSquareQuote } from 'lucide-react';
-
+import { X, MapPin, Clock, Phone, Navigation, ShieldAlert, CheckCircle2, Share2, ExternalLink, MessageSquareQuote, Info } from 'lucide-react';
 import Link from 'next/link';
 import AIBriefingReviews from '@/components/map/AIBriefingReviews';
+
 
 
 
@@ -82,15 +82,22 @@ export default function PlaceDetailDrawer({ place, onClose }: PlaceDetailDrawerP
 
         {/* Thumbnail Banner */}
         {place.imageUrl && (
-          <div className="relative h-44 w-full rounded-2xl overflow-hidden shadow-inner bg-gray-100">
-            {/* eslint-disable-next-html-element-suppression */}
-            <img
-              src={place.imageUrl}
-              alt={place.name}
-              className="w-full h-full object-cover"
-            />
+          <div className="space-y-1.5">
+            <div className="relative h-44 w-full rounded-2xl overflow-hidden shadow-inner bg-gray-100">
+              {/* eslint-disable-next-html-element-suppression */}
+              <img
+                src={place.imageUrl}
+                alt={place.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <p className="text-[11px] text-gray-400 text-right pr-1 flex items-center justify-end gap-1 font-medium">
+              <Info className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+              <span>※ 상기 대표 이미지는 카테고리 분위기 이해를 돕기 위한 예시 컷이며, 해당 매장의 실제 전경과 다를 수 있습니다.</span>
+            </p>
           </div>
         )}
+
 
         {/* Description */}
         {place.description && (
