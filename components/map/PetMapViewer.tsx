@@ -13,6 +13,7 @@ interface PetMapViewerProps {
 declare global {
   interface Window {
     kakao: any;
+    L: any;
   }
 }
 
@@ -23,143 +24,220 @@ export default function PetMapViewer({
 }: PetMapViewerProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
-  const markersRef = useRef<any[]>([]);
+  const leafletMarkersRef = useRef<any[]>([]);
+  const kakaoMarkersRef = useRef<any[]>([]);
   const userMarkerRef = useRef<any>(null);
 
   const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
-  const [isKakaoReady, setIsKakaoReady] = useState(false);
-  const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [mapEngine, setMapEngine] = useState<'kakao' | 'leaflet'>('leaflet');
+  const [isMapReady, setIsMapReady] = useState(false);
 
-  // 1. Load Kakao Map SDK Script with explicit HTTPS
+  // 1. Dynamic Script Loader (Loads Leaflet & Kakao)
   useEffect(() => {
-    const kakaoApiKey = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY || '186380c4d2f6974b4c29d1be55963a4a';
+    if (typeof window === 'undefined') return;
 
-    if (typeof window !== 'undefined') {
-      const initKakao = () => {
-        if (window.kakao && window.kakao.maps) {
-          window.kakao.maps.load(() => {
-            setIsKakaoReady(true);
-          });
-        }
-      };
+    // Load Leaflet (Guaranteed Universal Map Engine - No Domain Restrictions)
+    const loadLeaflet = () => {
+      if (!document.getElementById('leaflet-css')) {
+        const link = document.createElement('link');
+        link.id = 'leaflet-css';
+        link.rel = 'stylesheet';
+        link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+        document.head.appendChild(link);
+      }
 
-      if (window.kakao && window.kakao.maps) {
-        initKakao();
+      if (window.L) {
+        setIsMapReady(true);
       } else {
-        const existingScript = document.getElementById('kakao-map-sdk');
+        const existingScript = document.getElementById('leaflet-js');
         if (!existingScript) {
           const script = document.createElement('script');
-          script.id = 'kakao-map-sdk';
-          script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoApiKey}&autoload=false&libraries=services`;
+          script.id = 'leaflet-js';
+          script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
           script.async = true;
           script.onload = () => {
-            initKakao();
+            setIsMapReady(true);
           };
           document.head.appendChild(script);
         } else {
-          initKakao();
+          existingScript.addEventListener('load', () => setIsMapReady(true));
         }
       }
+    };
+
+    // Load Kakao Map SDK
+    const kakaoApiKey = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY || '186380c4d2f6974b4c29d1be55963a4a';
+    if (!document.getElementById('kakao-map-sdk')) {
+      const script = document.createElement('script');
+      script.id = 'kakao-map-sdk';
+      script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoApiKey}&autoload=false&libraries=services`;
+      script.async = true;
+      script.onload = () => {
+        if (window.kakao && window.kakao.maps) {
+          window.kakao.maps.load(() => {
+            setMapEngine('kakao');
+          });
+        }
+      };
+      document.head.appendChild(script);
     }
+
+    loadLeaflet();
   }, []);
 
-  // 2. Initialize Map & Render Markers
+  // 2. Initialize Leaflet Map (Universal Fallback)
   useEffect(() => {
-    if (!isKakaoReady || !mapContainerRef.current || viewMode !== 'map') return;
+    if (!isMapReady || !mapContainerRef.current || viewMode !== 'map') return;
 
     const initialLat = places.length > 0 ? places[0].lat : 37.5665;
     const initialLng = places.length > 0 ? places[0].lng : 126.9780;
 
-    if (!mapInstanceRef.current) {
-      const options = {
-        center: new window.kakao.maps.LatLng(initialLat, initialLng),
-        level: 6,
-      };
-      const map = new window.kakao.maps.Map(mapContainerRef.current, options);
-      mapInstanceRef.current = map;
+    // Use Leaflet if Kakao is not ready/authenticated
+    if (mapEngine === 'leaflet' && window.L) {
+      const L = window.L;
 
-      // Add Zoom Control
-      const zoomControl = new window.kakao.maps.ZoomControl();
-      map.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
+      if (!mapInstanceRef.current) {
+        const map = L.map(mapContainerRef.current).setView([initialLat, initialLng], 12);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '© OpenStreetMap | MagentaLab Map',
+        }).addTo(map);
 
-      // Force relayout after rendering
-      setTimeout(() => {
+        mapInstanceRef.current = map;
+      }
+
+      const map = mapInstanceRef.current;
+      map.invalidateSize();
+
+      // Clear existing markers
+      leafletMarkersRef.current.forEach((m) => m.remove());
+      leafletMarkersRef.current = [];
+
+      const group = L.featureGroup();
+
+      places.forEach((place) => {
+        const marker = L.marker([place.lat, place.lng]).addTo(map);
+        marker.bindPopup(`
+          <div style="font-family: sans-serif; padding: 4px;">
+            <strong style="font-size: 13px; color: #4c1d95;">${place.name}</strong><br/>
+            <span style="font-size: 11px; color: #6b7280;">${place.categoryName} • ${place.operatingHours}</span><br/>
+            <span style="font-size: 11px; color: #374151;">${place.address}</span>
+          </div>
+        `);
+
+        marker.on('click', () => {
+          onSelectPlace(place);
+          map.setView([place.lat, place.lng], 15);
+        });
+
+        group.addLayer(marker);
+        leafletMarkersRef.current.push(marker);
+      });
+
+      if (places.length > 0) {
+        map.fitBounds(group.getBounds().pad(0.2));
+      }
+    }
+    // Use Kakao Maps if ready
+    else if (mapEngine === 'kakao' && window.kakao && window.kakao.maps) {
+      try {
+        if (!mapInstanceRef.current || !mapInstanceRef.current.setCenter) {
+          mapContainerRef.current.innerHTML = '';
+          const options = {
+            center: new window.kakao.maps.LatLng(initialLat, initialLng),
+            level: 6,
+          };
+          const map = new window.kakao.maps.Map(mapContainerRef.current, options);
+          mapInstanceRef.current = map;
+
+          const zoomControl = new window.kakao.maps.ZoomControl();
+          map.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
+        }
+
+        const map = mapInstanceRef.current;
         map.relayout();
-      }, 200);
+
+        kakaoMarkersRef.current.forEach((m) => m.setMap(null));
+        kakaoMarkersRef.current = [];
+
+        const bounds = new window.kakao.maps.LatLngBounds();
+
+        places.forEach((place) => {
+          const position = new window.kakao.maps.LatLng(place.lat, place.lng);
+          bounds.extend(position);
+
+          const marker = new window.kakao.maps.Marker({
+            position,
+            title: place.name,
+          });
+
+          marker.setMap(map);
+
+          window.kakao.maps.event.addListener(marker, 'click', () => {
+            onSelectPlace(place);
+            map.panTo(position);
+          });
+
+          kakaoMarkersRef.current.push(marker);
+        });
+
+        if (places.length > 1) {
+          map.setBounds(bounds);
+        } else if (places.length === 1) {
+          map.setCenter(new window.kakao.maps.LatLng(places[0].lat, places[0].lng));
+        }
+      } catch (err) {
+        console.warn('Kakao map fallback to Leaflet:', err);
+        setMapEngine('leaflet');
+      }
     }
-
-    const map = mapInstanceRef.current;
-    map.relayout();
-
-    // Clear existing markers
-    markersRef.current.forEach((m) => m.setMap(null));
-    markersRef.current = [];
-
-    // Create markers for places
-    const bounds = new window.kakao.maps.LatLngBounds();
-
-    places.forEach((place) => {
-      const position = new window.kakao.maps.LatLng(place.lat, place.lng);
-      bounds.extend(position);
-
-      const marker = new window.kakao.maps.Marker({
-        position,
-        title: place.name,
-      });
-
-      marker.setMap(map);
-
-      window.kakao.maps.event.addListener(marker, 'click', () => {
-        onSelectPlace(place);
-        map.panTo(position);
-      });
-
-      markersRef.current.push(marker);
-    });
-
-    if (places.length > 1) {
-      map.setBounds(bounds);
-    } else if (places.length === 1) {
-      map.setCenter(new window.kakao.maps.LatLng(places[0].lat, places[0].lng));
-    }
-  }, [isKakaoReady, places, viewMode, onSelectPlace]);
+  }, [isMapReady, mapEngine, places, viewMode, onSelectPlace]);
 
   // 3. Pan to selected place
   useEffect(() => {
-    if (selectedPlace && mapInstanceRef.current && isKakaoReady) {
+    if (!selectedPlace || !mapInstanceRef.current) return;
+
+    if (mapEngine === 'leaflet' && window.L) {
+      mapInstanceRef.current.setView([selectedPlace.lat, selectedPlace.lng], 15);
+    } else if (mapEngine === 'kakao' && window.kakao && window.kakao.maps) {
       const position = new window.kakao.maps.LatLng(selectedPlace.lat, selectedPlace.lng);
       mapInstanceRef.current.panTo(position);
     }
-  }, [selectedPlace, isKakaoReady]);
+  }, [selectedPlace, mapEngine]);
 
-  // 4. Request user geolocation & Drop User Location Pin
+  // 4. Request user geolocation & Pan Map
   const handleMyLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-          setUserCoords(coords);
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
 
-          if (mapInstanceRef.current && isKakaoReady) {
-            const map = mapInstanceRef.current;
-            const moveLatLon = new window.kakao.maps.LatLng(coords.lat, coords.lng);
+          if (mapInstanceRef.current) {
+            if (mapEngine === 'leaflet' && window.L) {
+              const L = window.L;
+              mapInstanceRef.current.setView([lat, lng], 15);
 
-            map.relayout();
-            map.setCenter(moveLatLon);
-            map.setLevel(4);
+              if (userMarkerRef.current) userMarkerRef.current.remove();
+              userMarkerRef.current = L.marker([lat, lng])
+                .addTo(mapInstanceRef.current)
+                .bindPopup('<strong>내 현재 위치</strong>')
+                .openPopup();
+            } else if (mapEngine === 'kakao' && window.kakao && window.kakao.maps) {
+              const map = mapInstanceRef.current;
+              const moveLatLon = new window.kakao.maps.LatLng(lat, lng);
+              map.relayout();
+              map.setCenter(moveLatLon);
+              map.setLevel(4);
 
-            // Remove existing user marker if any
-            if (userMarkerRef.current) {
-              userMarkerRef.current.setMap(null);
+              if (userMarkerRef.current) userMarkerRef.current.setMap(null);
+              userMarkerRef.current = new window.kakao.maps.Marker({
+                position: moveLatLon,
+                title: '내 위치',
+              });
+              userMarkerRef.current.setMap(map);
             }
-
-            // Create distinct User Marker
-            const userMarker = new window.kakao.maps.Marker({
-              position: moveLatLon,
-              title: '내 위치',
-            });
-            userMarker.setMap(map);
-            userMarkerRef.current = userMarker;
           }
         },
         () => {
@@ -198,7 +276,10 @@ export default function PetMapViewer({
           onClick={() => {
             setViewMode(viewMode === 'map' ? 'list' : 'map');
             if (viewMode === 'list' && mapInstanceRef.current) {
-              setTimeout(() => mapInstanceRef.current.relayout(), 100);
+              setTimeout(() => {
+                if (mapEngine === 'leaflet') mapInstanceRef.current.invalidateSize();
+                else if (mapEngine === 'kakao') mapInstanceRef.current.relayout();
+              }, 100);
             }
           }}
           className="flex items-center gap-1.5 px-3.5 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-full shadow-lg transition active:scale-95"
@@ -220,7 +301,7 @@ export default function PetMapViewer({
       {/* VIEW MODE: MAP */}
       {viewMode === 'map' ? (
         <div className="w-full h-full relative">
-          {/* Kakao Map Real Canvas Container */}
+          {/* Map Container */}
           <div ref={mapContainerRef} className="w-full h-full min-h-[500px]" />
 
           {/* Floating POI Summary Count Badge */}
