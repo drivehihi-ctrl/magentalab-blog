@@ -47,13 +47,21 @@ export default function AnsimLabCertification({ placeName, category, placeId }: 
   const { data: session } = useSession();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [answers, setAnswers] = useState<Record<number, boolean | null>>({});
-  const [hasSubmitted, setHasSubmitted] = useState(false);
-  const [submittedScore, setSubmittedScore] = useState<number | null>(null);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [userBadgeEarned, setUserBadgeEarned] = useState(false);
+  const [cumulativeScore, setCumulativeScore] = useState<number | null>(null);
+  const [totalEvaluationsCount, setTotalEvaluationsCount] = useState<number>(0);
 
-  // Load previous user evaluation from localStorage
+  // Fetch cumulative evaluations for this place
   useEffect(() => {
+    fetch(`/api/map/evaluations?placeId=${encodeURIComponent(placeId)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.averageScore !== null) {
+          setCumulativeScore(data.averageScore);
+          setTotalEvaluationsCount(data.totalEvaluations || 0);
+        }
+      })
+      .catch(() => {});
+
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem(`ansim_eval_${placeId}`);
       if (saved) {
@@ -83,7 +91,7 @@ export default function AnsimLabCertification({ placeName, category, placeId }: 
     }
   };
 
-  const handleSubmitEvaluation = () => {
+  const handleSubmitEvaluation = async () => {
     const answeredKeys = Object.keys(answers).filter((k) => answers[Number(k)] !== null);
     if (answeredKeys.length < 5) {
       alert('5가지 질문에 모두 답해주시면 감사하겠습니다! 😊');
@@ -109,7 +117,27 @@ export default function AnsimLabCertification({ placeName, category, placeId }: 
         })
       );
     }
+
+    // Submit to server API
+    try {
+      const res = await fetch('/api/map/evaluations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          placeId,
+          score: calculatedScore,
+          answers,
+          userId: (session?.user as any)?.id || session?.user?.email || 'anonymous',
+        }),
+      });
+      const data = await res.json();
+      if (data && data.averageScore !== undefined) {
+        setCumulativeScore(data.averageScore);
+        setTotalEvaluationsCount(data.totalEvaluations || 1);
+      }
+    } catch (e) {}
   };
+
 
   return (
     <div className="bg-gradient-to-br from-purple-950 via-indigo-950 to-slate-900 text-white rounded-3xl p-5 shadow-xl border border-purple-700/50 font-sans space-y-4 relative overflow-hidden">
@@ -141,20 +169,21 @@ export default function AnsimLabCertification({ placeName, category, placeId }: 
           </div>
         </div>
 
-        {hasSubmitted && submittedScore !== null && (
+        {(hasSubmitted || cumulativeScore !== null) && (
           <div className="flex flex-col items-end">
             <div className="flex items-baseline gap-0.5">
               <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-200 to-white">
-                {submittedScore}
+                {cumulativeScore !== null ? cumulativeScore : submittedScore}
               </span>
               <span className="text-xs font-bold text-purple-200">/100점</span>
             </div>
             <span className="text-[10px] font-semibold text-emerald-400 flex items-center gap-1">
               <CheckCircle2 className="w-3 h-3" />
-              내 제보 반영 완료
+              {totalEvaluationsCount > 0 ? `${totalEvaluationsCount}명의 연구원 제보 누적` : '내 제보 반영 완료'}
             </span>
           </div>
         )}
+
       </div>
 
       {/* Main Call To Action Banner */}
