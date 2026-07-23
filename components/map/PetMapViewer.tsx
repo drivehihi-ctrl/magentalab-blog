@@ -2,7 +2,8 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { PetPlacePOI } from '@/lib/map/types';
-import { MapPin, Navigation, List, Map as MapIcon, Coffee, Utensils, Trees, Hospital, Hotel, ExternalLink } from 'lucide-react';
+import { MapPin, Navigation, List, Map as MapIcon, Coffee, Utensils, Trees, Hospital, Hotel, ExternalLink, Lock, Unlock, Hand } from 'lucide-react';
+
 
 interface PetMapViewerProps {
   places: PetPlacePOI[];
@@ -31,6 +32,8 @@ export default function PetMapViewer({
   const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
   const [mapEngine, setMapEngine] = useState<'kakao' | 'leaflet'>('leaflet');
   const [isMapReady, setIsMapReady] = useState(false);
+  const [isTouchLocked, setIsTouchLocked] = useState(true);
+
 
   // 1. Dynamic Script Loader (Loads Leaflet & Kakao)
   useEffect(() => {
@@ -301,9 +304,49 @@ export default function PetMapViewer({
 
       {/* VIEW MODE: MAP */}
       {viewMode === 'map' ? (
-        <div className="w-full h-full relative">
+        <div className="w-full h-full relative overflow-hidden rounded-3xl border border-purple-100 shadow-md">
           {/* Map Container */}
           <div ref={mapContainerRef} className="w-full h-full min-h-[500px]" />
+
+          {/* Touch Lock Protection Overlay for Smooth Mobile Page Scroll */}
+          {isTouchLocked && (
+            <div 
+              onClick={() => setIsTouchLocked(false)}
+              className="absolute inset-0 z-20 bg-purple-950/15 backdrop-blur-[0.5px] flex items-center justify-center cursor-pointer transition-all hover:bg-purple-950/25"
+            >
+              <div className="bg-purple-950/90 text-white px-5 py-3 rounded-2xl shadow-2xl border border-purple-400/50 flex items-center gap-2.5 text-xs font-black animate-bounce text-center mx-4">
+                <Hand className="w-5 h-5 text-amber-300 shrink-0" />
+                <div>
+                  <p className="text-amber-300 font-bold">터치 시 지도 자유 이동 🔓</p>
+                  <p className="text-[10px] text-purple-200/90 font-normal">현재 페이지 스크롤 보호 모드 (클릭하여 지도 이동 활성화)</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Map Touch Lock Control Toggle Button (Top Right) */}
+          <div className="absolute top-4 right-4 z-30">
+            <button
+              onClick={() => setIsTouchLocked(!isTouchLocked)}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold shadow-lg border backdrop-blur transition flex items-center gap-1.5 ${
+                isTouchLocked
+                  ? 'bg-purple-900/90 text-white border-purple-400/40 hover:bg-purple-950'
+                  : 'bg-emerald-600/90 text-white border-emerald-400/40 hover:bg-emerald-700'
+              }`}
+            >
+              {isTouchLocked ? (
+                <>
+                  <Lock className="w-3.5 h-3.5 text-amber-300" />
+                  <span>지도 이동 켜기 🔓</span>
+                </>
+              ) : (
+                <>
+                  <Unlock className="w-3.5 h-3.5 text-emerald-200" />
+                  <span>페이지 스크롤 고정 🔒</span>
+                </>
+              )}
+            </button>
+          </div>
 
           {/* Floating POI Summary Count Badge */}
           <div className="absolute top-4 left-4 z-10 pointer-events-none">
@@ -311,6 +354,7 @@ export default function PetMapViewer({
               📍 지도에 <strong>{places.length}개</strong>의 애견동반 스팟이 표시중입니다.
             </div>
           </div>
+
 
           {/* Interactive Bottom Carousel Bar */}
           <div className="absolute bottom-4 left-4 right-4 z-10 overflow-x-auto pb-2 flex gap-3 snap-x scrollbar-none">
