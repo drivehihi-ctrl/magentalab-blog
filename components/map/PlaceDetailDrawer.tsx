@@ -3,8 +3,9 @@
 import React from 'react';
 import { PetPlacePOI } from '@/lib/map/types';
 import { X, MapPin, Clock, Phone, Navigation, ShieldAlert, CheckCircle2, Share2, ExternalLink, MessageSquareQuote, Info } from 'lucide-react';
-import Link from 'next/link';
 import AIBriefingReviews from '@/components/map/AIBriefingReviews';
+import AnsimLabCertification from '@/components/map/AnsimLabCertification';
+
 
 
 
@@ -160,8 +161,16 @@ export default function PlaceDetailDrawer({ place, onClose }: PlaceDetailDrawerP
           ))}
         </div>
 
+        {/* Ansim Lab Certification & Safety Index */}
+        <AnsimLabCertification
+          placeName={place.name}
+          category={place.category}
+          placeId={place.id}
+        />
+
         {/* AI Briefing Review Section */}
         <AIBriefingReviews placeName={place.name} address={place.address} />
+
 
 
         {/* Navigation Action Buttons */}
