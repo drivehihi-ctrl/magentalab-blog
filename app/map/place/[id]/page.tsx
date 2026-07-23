@@ -2,6 +2,8 @@ import React from 'react';
 import { getPetPlaceById, INITIAL_PET_PLACES } from '@/lib/map/places';
 import { MapPin, Clock, Phone, Navigation, ArrowLeft, Star, ShieldAlert, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
+import NaverBlogReviews from '@/components/map/NaverBlogReviews';
+
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 
@@ -164,7 +166,11 @@ export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) 
             ))}
           </div>
 
+          {/* Real Naver Blog Reviews */}
+          <NaverBlogReviews placeName={place.name} address={place.address} />
+
           <div className="grid grid-cols-2 gap-3 pt-2">
+
             {place.directionsUrls?.kakao && (
               <a
                 href={place.directionsUrls.kakao}
