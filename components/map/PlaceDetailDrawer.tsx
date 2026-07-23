@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { PetPlacePOI } from '@/lib/map/types';
-import { X, MapPin, Clock, Phone, Navigation, Star, ShieldAlert, CheckCircle2, Share2, ExternalLink } from 'lucide-react';
+import { X, MapPin, Clock, Phone, Navigation, ShieldAlert, CheckCircle2, Share2, ExternalLink, MessageSquareQuote } from 'lucide-react';
+
 import Link from 'next/link';
 import AIBriefingReviews from '@/components/map/AIBriefingReviews';
 
@@ -44,13 +45,13 @@ export default function PlaceDetailDrawer({ place, onClose }: PlaceDetailDrawerP
               <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-700">
                 {place.categoryName}
               </span>
-              {place.rating && (
-                <div className="flex items-center gap-1 text-amber-500 font-semibold text-xs">
-                  <Star className="w-3.5 h-3.5 fill-amber-400" />
-                  <span>{place.rating}</span>
-                  {place.reviewCount && <span className="text-gray-400 font-normal">(블로그 리뷰 {place.reviewCount.toLocaleString()}개)</span>}
+              {place.reviewCount && (
+                <div className="flex items-center gap-1 text-purple-700 font-semibold text-xs bg-purple-50 px-2.5 py-0.5 rounded-full border border-purple-100">
+                  <MessageSquareQuote className="w-3.5 h-3.5 text-purple-600 shrink-0" />
+                  <span>블로그 리뷰 {place.reviewCount.toLocaleString()}개</span>
                 </div>
               )}
+
 
             </div>
 
