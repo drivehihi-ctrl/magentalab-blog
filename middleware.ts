@@ -23,6 +23,13 @@ export function middleware(request: NextRequest) {
 
   const isMapDomain = host.startsWith('map.') || host.startsWith('map-') || pathname.startsWith('/map');
 
+  // 스태틱 파일(이미지, 폰트 등) 요청은 서브도메인 리라이트 대상에서 제외
+  const isStaticAsset =
+    pathname.startsWith('/images/') ||
+    pathname.startsWith('/_next/') ||
+    pathname.startsWith('/api/') ||
+    /\.(png|jpg|jpeg|gif|webp|svg|ico|css|js|woff|woff2|ttf|json|xml|txt)$/i.test(pathname);
+
   // 1. 봇 차단 및 noindex 헤더 설정 (map 서브도메인 & /map 경로 대상)
   if (isMapDomain) {
     // 봇 크롤러 접근 시 즉시 차단 (403 Forbidden)
@@ -38,7 +45,7 @@ export function middleware(request: NextRequest) {
 
     let response: NextResponse;
 
-    if ((host.startsWith('map.') || host.startsWith('map-')) && !pathname.startsWith('/map')) {
+    if ((host.startsWith('map.') || host.startsWith('map-')) && !pathname.startsWith('/map') && !isStaticAsset) {
       const url = request.nextUrl.clone();
       url.pathname = `/map${pathname === '/' ? '' : pathname}`;
       response = NextResponse.rewrite(url);
@@ -50,6 +57,7 @@ export function middleware(request: NextRequest) {
     response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
     return response;
   }
+
   
   // 2. 메인 루트('/') 경로 접속 시 언어별(en, ja) 자동 감지 리다이렉트
   if (pathname === '/') {
