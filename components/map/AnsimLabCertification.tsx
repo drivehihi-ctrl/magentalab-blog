@@ -47,8 +47,15 @@ export default function AnsimLabCertification({ placeName, category, placeId }: 
   const { data: session } = useSession();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [answers, setAnswers] = useState<Record<number, boolean | null>>({});
+
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [submittedScore, setSubmittedScore] = useState<number | null>(null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [userBadgeEarned, setUserBadgeEarned] = useState(false);
   const [cumulativeScore, setCumulativeScore] = useState<number | null>(null);
   const [totalEvaluationsCount, setTotalEvaluationsCount] = useState<number>(0);
+
+
 
   // Fetch cumulative evaluations for this place
   useEffect(() => {
