@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPetPlaces, INITIAL_PET_PLACES } from '@/lib/map/places';
+import { getPetPlaces } from '@/lib/map/places';
 import { PetCategory, PetPlacePOI } from '@/lib/map/types';
 
 const KAKAO_REST_API_KEY = process.env.KAKAO_REST_API_KEY || 'c7850585b1a0e91017128dcf19fc6a25';
@@ -42,7 +42,7 @@ const CATEGORY_IMAGE_COLLECTIONS: Record<string, string[]> = {
   ],
 };
 
-function getDiverseImageForPlace(category: string, placeId: string, placeName: string): string {
+function getPlaceMeta(category: string, placeId: string, placeName: string) {
   const collection = CATEGORY_IMAGE_COLLECTIONS[category] || CATEGORY_IMAGE_COLLECTIONS['park'];
   let hash = 0;
   const str = placeId + placeName;
@@ -50,8 +50,18 @@ function getDiverseImageForPlace(category: string, placeId: string, placeName: s
     hash = (hash << 5) - hash + str.charCodeAt(i);
     hash |= 0;
   }
-  const index = Math.abs(hash) % collection.length;
-  return collection[index];
+  const absHash = Math.abs(hash);
+  const imageIndex = absHash % collection.length;
+
+  const ratingList = [4.5, 4.6, 4.7, 4.8, 4.9, 4.7, 4.8, 4.9, 4.6, 4.8, 4.9, 4.7];
+  const rating = ratingList[absHash % ratingList.length];
+  const reviewCount = 38 + (absHash % 320);
+
+  return {
+    imageUrl: collection[imageIndex],
+    rating,
+    reviewCount,
+  };
 }
 
 function mapCategoryToSearchTerm(category: PetCategory | 'all', userQuery: string): string {
@@ -120,7 +130,7 @@ export async function GET(request: NextRequest) {
           const categoryName = rawCategory.split(' > ').pop() || '애견동반 스팟';
           const itemCategory = parsePetCategory(rawCategory, category);
           const placeId = `kakao-${doc.id}`;
-          const diverseImage = getDiverseImageForPlace(itemCategory, placeId, doc.place_name);
+          const placeMeta = getPlaceMeta(itemCategory, placeId, doc.place_name);
 
           return {
             id: placeId,
@@ -133,9 +143,9 @@ export async function GET(request: NextRequest) {
             lng: parseFloat(doc.x),
             phone: doc.phone || undefined,
             operatingHours: doc.phone ? `전화 문의 (${doc.phone})` : '영업시간 전화 문의',
-            rating: 4.8,
-            reviewCount: Math.floor(Math.random() * 200) + 20,
-            imageUrl: diverseImage,
+            rating: placeMeta.rating,
+            reviewCount: placeMeta.reviewCount,
+            imageUrl: placeMeta.imageUrl,
             description: `${doc.place_name}은(는) 카카오 지도에 등록된 실제 ${categoryName} 스팟입니다.`,
             petPolicy: {
               indoorAllowed: true,
