@@ -34,6 +34,12 @@ body {
   color: #1a1a1a;
 }
 
+/* Hide unstyled WordPress ez-toc plugin container from body content */
+#ez-toc-container, .ez-toc-v2_0_85, .ez-toc-container {
+  display: none !important;
+}
+
+
 .wp-content p {
   margin-bottom: 2rem;
 }
