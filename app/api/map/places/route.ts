@@ -4,6 +4,56 @@ import { PetCategory, PetPlacePOI } from '@/lib/map/types';
 
 const KAKAO_REST_API_KEY = process.env.KAKAO_REST_API_KEY || 'c7850585b1a0e91017128dcf19fc6a25';
 
+const CATEGORY_IMAGE_COLLECTIONS: Record<string, string[]> = {
+  cafe: [
+    'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=600&q=80',
+    'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=600&q=80',
+    'https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=600&q=80',
+    'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=600&q=80',
+    'https://images.unsplash.com/photo-1560807707-8cc77767d783?auto=format&fit=crop&w=600&q=80',
+    'https://images.unsplash.com/photo-1544568100-847a948585b9?auto=format&fit=crop&w=600&q=80',
+  ],
+  restaurant: [
+    'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=600&q=80',
+    'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80',
+    'https://images.unsplash.com/photo-1534361960057-19889db9621e?auto=format&fit=crop&w=600&q=80',
+    'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=600&q=80',
+    'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=600&q=80',
+  ],
+  park: [
+    'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&w=600&q=80',
+    'https://images.unsplash.com/photo-1530281700549-e82e7bf110d6?auto=format&fit=crop&w=600&q=80',
+    'https://images.unsplash.com/photo-1561037404-61cd46aa615b?auto=format&fit=crop&w=600&q=80',
+    'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=600&q=80',
+    'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=600&q=80',
+    'https://images.unsplash.com/photo-1518717758536-85ae29035b6d?auto=format&fit=crop&w=600&q=80',
+  ],
+  hospital: [
+    'https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?auto=format&fit=crop&w=600&q=80',
+    'https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&w=600&q=80',
+    'https://images.unsplash.com/photo-1532712938310-34cb3982ef74?auto=format&fit=crop&w=600&q=80',
+    'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=600&q=80',
+  ],
+  hotel: [
+    'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80',
+    'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=600&q=80',
+    'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?auto=format&fit=crop&w=600&q=80',
+    'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80',
+  ],
+};
+
+function getDiverseImageForPlace(category: string, placeId: string, placeName: string): string {
+  const collection = CATEGORY_IMAGE_COLLECTIONS[category] || CATEGORY_IMAGE_COLLECTIONS['park'];
+  let hash = 0;
+  const str = placeId + placeName;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  const index = Math.abs(hash) % collection.length;
+  return collection[index];
+}
+
 function mapCategoryToSearchTerm(category: PetCategory | 'all', userQuery: string): string {
   const cleanQuery = userQuery.trim();
 
@@ -22,7 +72,6 @@ function mapCategoryToSearchTerm(category: PetCategory | 'all', userQuery: strin
     return cleanQuery;
   }
 
-  // Default broad queries
   switch (category) {
     case 'cafe': return '애견카페';
     case 'restaurant': return '애견동반식당';
@@ -37,10 +86,10 @@ function parsePetCategory(categoryName: string, queryCategory: PetCategory | 'al
   if (queryCategory !== 'all') return queryCategory;
   
   if (categoryName.includes('카페')) return 'cafe';
-  if (categoryName.includes('음식점') || categoryName.includes('식당')) return 'restaurant';
-  if (categoryName.includes('공원') || categoryName.includes('놀이터')) return 'park';
+  if (categoryName.includes('음식점') || categoryName.includes('식당') || categoryName.includes('뷔페') || categoryName.includes('버거')) return 'restaurant';
+  if (categoryName.includes('공원') || categoryName.includes('놀이터') || categoryName.includes('쉼터') || categoryName.includes('운동장')) return 'park';
   if (categoryName.includes('병원') || categoryName.includes('수의')) return 'hospital';
-  if (categoryName.includes('펜션') || categoryName.includes('숙박') || categoryName.includes('호텔')) return 'hotel';
+  if (categoryName.includes('펜션') || categoryName.includes('숙박') || categoryName.includes('호텔') || categoryName.includes('리조트')) return 'hotel';
   return 'cafe';
 }
 
@@ -59,7 +108,7 @@ export async function GET(request: NextRequest) {
       headers: {
         Authorization: `KakaoAK ${KAKAO_REST_API_KEY}`,
       },
-      next: { revalidate: 3600 }, // cache for 1 hour
+      next: { revalidate: 3600 },
     });
 
     if (response.ok) {
@@ -70,9 +119,11 @@ export async function GET(request: NextRequest) {
           const rawCategory = doc.category_name || '';
           const categoryName = rawCategory.split(' > ').pop() || '애견동반 스팟';
           const itemCategory = parsePetCategory(rawCategory, category);
+          const placeId = `kakao-${doc.id}`;
+          const diverseImage = getDiverseImageForPlace(itemCategory, placeId, doc.place_name);
 
           return {
-            id: `kakao-${doc.id}`,
+            id: placeId,
             name: doc.place_name,
             category: itemCategory,
             categoryName: categoryName,
@@ -84,12 +135,12 @@ export async function GET(request: NextRequest) {
             operatingHours: doc.phone ? `전화 문의 (${doc.phone})` : '영업시간 전화 문의',
             rating: 4.8,
             reviewCount: Math.floor(Math.random() * 200) + 20,
-            imageUrl: `https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=600&q=80`,
+            imageUrl: diverseImage,
             description: `${doc.place_name}은(는) 카카오 지도에 등록된 실제 ${categoryName} 스팟입니다.`,
             petPolicy: {
               indoorAllowed: true,
               outdoorAllowed: true,
-              offLeashAllowed: false,
+              offLeashAllowed: itemCategory === 'park',
               parkingAvailable: true,
               notes: '실시간 동반 가능 여부 및 매너벨트 착용 수칙은 방문 전 전화로 확인해 주세요.',
             },
@@ -101,7 +152,6 @@ export async function GET(request: NextRequest) {
           };
         });
 
-
         return NextResponse.json({
           success: true,
           source: 'kakao_real_local_api',
@@ -111,12 +161,8 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Fallback to initial local sample dataset if API returns empty
-    const fallbackPlaces = getPetPlaces({
-      category,
-      searchQuery: query,
-    });
-
+    // Fallback
+    const fallbackPlaces = getPetPlaces({ category, searchQuery: query });
     return NextResponse.json({
       success: true,
       source: 'initial_dataset',
