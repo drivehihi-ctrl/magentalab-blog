@@ -95,11 +95,12 @@ export async function GET(request: NextRequest) {
             },
             tags: [categoryName, '실제매장', '카카오맵'],
             directionsUrls: {
-              kakao: doc.place_url || `https://map.kakao.com/link/map/${doc.id}`,
-              naver: `https://map.naver.com/v5/search/${encodeURIComponent(doc.place_name)}`,
+              kakao: `https://map.kakao.com/link/to/${encodeURIComponent(doc.place_name)},${doc.y},${doc.x}`,
+              naver: `https://map.naver.com/v5/search/${encodeURIComponent(doc.place_name + ' ' + (doc.road_address_name || doc.address_name))}`,
             },
           };
         });
+
 
         return NextResponse.json({
           success: true,

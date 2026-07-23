@@ -9,9 +9,20 @@ import LiveSearch from "./LiveSearch";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMapPage, setIsMapPage] = useState(false);
   const pathname = usePathname() || "/";
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const isMap = window.location.hostname.startsWith("map.") ||
+                    window.location.hostname.startsWith("map-") ||
+                    pathname.startsWith("/map");
+      setIsMapPage(isMap);
+    }
+  }, [pathname]);
+
   // Prevent scrolling when menu is open
+
   useEffect(() => {
     if (isMenuOpen) {
       document.body.style.overflow = "hidden";
@@ -146,7 +157,7 @@ export default function Header() {
             <LiveSearch />
           </div>
 
-          {!pathname.startsWith('/map') && (
+          {!isMapPage && (
             <div className="flex items-center gap-2 border border-gray-200 bg-gray-50/50 rounded-full px-3 py-1.5 text-xs font-semibold mr-1">
               <Link href={handleLanguageChange("ko")} className={`transition-colors hover:text-magenta ${!isEn && !isJa ? "text-magenta font-black" : "text-gray-400 font-medium"}`}>KO</Link>
               <span className="text-gray-250 select-none">|</span>
@@ -155,6 +166,7 @@ export default function Header() {
               <Link href={handleLanguageChange("ja")} className={`transition-colors hover:text-magenta ${isJa ? "text-magenta font-black" : "text-gray-400 font-medium"}`}>JA</Link>
             </div>
           )}
+
 
 
           <a 
@@ -279,7 +291,7 @@ export default function Header() {
             </Link>
           </nav>
 
-          {!pathname.startsWith('/map') && (
+          {!isMapPage && (
             <div className="px-4 py-3 mb-2 flex items-center justify-between bg-gray-50/50 rounded-2xl border border-gray-50 mx-1">
               <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Language</span>
               <div className="flex items-center gap-3 text-xs font-bold">
@@ -291,6 +303,7 @@ export default function Header() {
               </div>
             </div>
           )}
+
 
 
           <div className="mt-1.5 p-1.5 border-t border-gray-50">

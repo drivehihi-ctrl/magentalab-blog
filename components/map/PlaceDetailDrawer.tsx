@@ -4,7 +4,8 @@ import React from 'react';
 import { PetPlacePOI } from '@/lib/map/types';
 import { X, MapPin, Clock, Phone, Navigation, Star, ShieldAlert, CheckCircle2, Share2, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
-import NaverBlogReviews from '@/components/map/NaverBlogReviews';
+import AIBriefingReviews from '@/components/map/AIBriefingReviews';
+
 
 
 interface PlaceDetailDrawerProps {
@@ -150,8 +151,9 @@ export default function PlaceDetailDrawer({ place, onClose }: PlaceDetailDrawerP
           ))}
         </div>
 
-        {/* Naver Real Blog Reviews Section */}
-        <NaverBlogReviews placeName={place.name} address={place.address} />
+        {/* AI Briefing Review Section */}
+        <AIBriefingReviews placeName={place.name} address={place.address} />
+
 
         {/* Navigation Action Buttons */}
 
