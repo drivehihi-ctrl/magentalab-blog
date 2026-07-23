@@ -260,7 +260,8 @@ export default function PetMapViewer({
   };
 
   return (
-    <div className="relative w-full h-[calc(100vh-140px)] sm:h-[650px] bg-slate-100 rounded-3xl overflow-hidden shadow-inner border border-purple-100">
+    <div className="relative isolate z-0 w-full h-[calc(100vh-140px)] sm:h-[650px] bg-slate-100 rounded-3xl overflow-hidden shadow-inner border border-purple-100">
+
       {/* Floating Controls Bar */}
       <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
         <button

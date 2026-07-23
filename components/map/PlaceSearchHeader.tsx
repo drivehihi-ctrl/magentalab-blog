@@ -29,7 +29,8 @@ export default function PlaceSearchHeader({
   totalCount,
 }: PlaceSearchHeaderProps) {
   return (
-    <div className="bg-white/95 backdrop-blur-md border-b border-purple-100 p-4 shadow-sm sticky top-0 z-30">
+    <div className="bg-white/95 backdrop-blur-md border-b border-purple-100 p-4 shadow-sm sticky top-20 z-30">
+
       <div className="max-w-6xl mx-auto space-y-3">
         {/* Search Bar */}
         <div className="relative flex items-center">

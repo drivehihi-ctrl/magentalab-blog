@@ -183,3 +183,16 @@ body {
   }
 }
 
+/* Leaflet Scope & Stacking Context Fix */
+.leaflet-container {
+  isolation: isolate !important;
+  z-index: 1 !important;
+}
+.leaflet-pane, .leaflet-tile-container, .leaflet-marker-pane, .leaflet-overlay-pane {
+  z-index: 1 !important;
+}
+.leaflet-top, .leaflet-bottom {
+  z-index: 2 !important;
+}
+
+
