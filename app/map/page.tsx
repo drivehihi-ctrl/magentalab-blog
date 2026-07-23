@@ -110,13 +110,16 @@ export default function MapPage() {
             </div>
           </div>
 
-          <Link
-            href="/petcare-expenses-calculator"
+          <a
+            href="https://www.magentalabblog.com/petcare-expenses-calculator"
+            target="_blank"
+            rel="noopener noreferrer"
             className="shrink-0 flex items-center gap-1.5 px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-full shadow-md transition"
           >
             <span>안심이 펫 진단기 바로가기</span>
             <ArrowRight className="w-4 h-4" />
-          </Link>
+          </a>
+
         </div>
       </main>
 
