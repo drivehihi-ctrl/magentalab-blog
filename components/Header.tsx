@@ -146,13 +146,16 @@ export default function Header() {
             <LiveSearch />
           </div>
 
-          <div className="flex items-center gap-2 border border-gray-200 bg-gray-50/50 rounded-full px-3 py-1.5 text-xs font-semibold mr-1">
-            <Link href={handleLanguageChange("ko")} className={`transition-colors hover:text-magenta ${!isEn && !isJa ? "text-magenta font-black" : "text-gray-400 font-medium"}`}>KO</Link>
-            <span className="text-gray-250 select-none">|</span>
-            <Link href={handleLanguageChange("en")} className={`transition-colors hover:text-magenta ${isEn ? "text-magenta font-black" : "text-gray-400 font-medium"}`}>EN</Link>
-            <span className="text-gray-250 select-none">|</span>
-            <Link href={handleLanguageChange("ja")} className={`transition-colors hover:text-magenta ${isJa ? "text-magenta font-black" : "text-gray-400 font-medium"}`}>JA</Link>
-          </div>
+          {!pathname.startsWith('/map') && (
+            <div className="flex items-center gap-2 border border-gray-200 bg-gray-50/50 rounded-full px-3 py-1.5 text-xs font-semibold mr-1">
+              <Link href={handleLanguageChange("ko")} className={`transition-colors hover:text-magenta ${!isEn && !isJa ? "text-magenta font-black" : "text-gray-400 font-medium"}`}>KO</Link>
+              <span className="text-gray-250 select-none">|</span>
+              <Link href={handleLanguageChange("en")} className={`transition-colors hover:text-magenta ${isEn ? "text-magenta font-black" : "text-gray-400 font-medium"}`}>EN</Link>
+              <span className="text-gray-250 select-none">|</span>
+              <Link href={handleLanguageChange("ja")} className={`transition-colors hover:text-magenta ${isJa ? "text-magenta font-black" : "text-gray-400 font-medium"}`}>JA</Link>
+            </div>
+          )}
+
 
           <a 
             href="mailto:smagentalab@gmail.com"
@@ -276,16 +279,19 @@ export default function Header() {
             </Link>
           </nav>
 
-          <div className="px-4 py-3 mb-2 flex items-center justify-between bg-gray-50/50 rounded-2xl border border-gray-50 mx-1">
-            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Language</span>
-            <div className="flex items-center gap-3 text-xs font-bold">
-              <Link href={handleLanguageChange("ko")} className={`transition-colors hover:text-magenta ${!isEn && !isJa ? "text-magenta font-black" : "text-gray-400"}`} onClick={() => setIsMenuOpen(false)}>한국어</Link>
-              <span className="text-gray-200">|</span>
-              <Link href={handleLanguageChange("en")} className={`transition-colors hover:text-magenta ${isEn ? "text-magenta font-black" : "text-gray-400"}`} onClick={() => setIsMenuOpen(false)}>English</Link>
-              <span className="text-gray-200">|</span>
-              <Link href={handleLanguageChange("ja")} className={`transition-colors hover:text-magenta ${isJa ? "text-magenta font-black" : "text-gray-400"}`} onClick={() => setIsMenuOpen(false)}>日本語</Link>
+          {!pathname.startsWith('/map') && (
+            <div className="px-4 py-3 mb-2 flex items-center justify-between bg-gray-50/50 rounded-2xl border border-gray-50 mx-1">
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Language</span>
+              <div className="flex items-center gap-3 text-xs font-bold">
+                <Link href={handleLanguageChange("ko")} className={`transition-colors hover:text-magenta ${!isEn && !isJa ? "text-magenta font-black" : "text-gray-400"}`} onClick={() => setIsMenuOpen(false)}>한국어</Link>
+                <span className="text-gray-200">|</span>
+                <Link href={handleLanguageChange("en")} className={`transition-colors hover:text-magenta ${isEn ? "text-magenta font-black" : "text-gray-400"}`} onClick={() => setIsMenuOpen(false)}>English</Link>
+                <span className="text-gray-200">|</span>
+                <Link href={handleLanguageChange("ja")} className={`transition-colors hover:text-magenta ${isJa ? "text-magenta font-black" : "text-gray-400"}`} onClick={() => setIsMenuOpen(false)}>日本語</Link>
+              </div>
             </div>
-          </div>
+          )}
+
 
           <div className="mt-1.5 p-1.5 border-t border-gray-50">
             <a 
