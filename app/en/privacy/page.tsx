@@ -49,23 +49,33 @@ export default function PrivacyPage() {
               <br />- Automatically generated and collected items during internet service use: IP address, cookies, service usage logs, visit logs, etc.
             </p>
 
-            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">4. Destruction Procedure and Method of Personal Information</h2>
+            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">4. Google AdSense & Third-Party Cookie Policy</h2>
+            <p className="mb-6">
+              This website uses Google AdSense, a third-party advertising service provided by Google LLC.
+              <br />- Google and third-party vendors use cookies to serve ads based on a user's prior visits to this website or other websites on the Internet.
+              <br />- Users may opt out of personalized advertising by visiting Google Ads Settings (<a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-magenta underline">www.google.com/settings/ads</a>).
+              <br />- Alternatively, users can opt out of third-party vendor's use of cookies for personalized advertising by visiting <a href="https://www.aboutads.info" target="_blank" rel="noopener noreferrer" className="text-magenta underline">www.aboutads.info</a>.
+            </p>
+
+            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">5. Destruction Procedure and Method of Personal Information</h2>
+
             <p className="mb-6">
               The Center destroys the personal information without delay when the personal information becomes unnecessary, such as the expiration of the retention period or the achievement of the processing purpose.
               <br />- Destruction Method: Electronic files are destroyed using technical methods that cannot reproduce the records, and paper documents are shredded or incinerated.
             </p>
 
-            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">5. Rights of Users and Legal Representatives and How to Exercise Them</h2>
+            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">6. Rights of Users and Legal Representatives and How to Exercise Them</h2>
             <p className="mb-6">
               The data subject may exercise the right to request access to, correction of, deletion of, or suspension of processing of personal information at any time from the Center.
             </p>
 
-            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">6. Measures to Secure the Safety of Personal Information</h2>
+            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">7. Measures to Secure the Safety of Personal Information</h2>
             <p className="mb-6">
               The Center takes administrative measures (establishment of internal management plans), technical measures (access authority management, security program installation), and physical measures (access control) to ensure the safety of personal information.
             </p>
 
-            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">7. Privacy Officer</h2>
+            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">8. Privacy Officer</h2>
+
             <p className="mb-6">
               The Center designates a privacy officer to take overall responsibility for the processing of personal information, and to handle related complaints and remedy damages as follows.
               <br />- Email: smagentalab@gmail.com

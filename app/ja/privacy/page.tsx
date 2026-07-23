@@ -49,23 +49,33 @@ export default function PrivacyPage() {
               <br />- インターネットサービス利用の過程で自動的に生成され収集される項目：IPアドレス、クッキー、サービス利用記録、訪問記録など
             </p>
 
-            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">4. 個人情報の破棄手続きおよび方法</h2>
+            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">4. Google AdSenseおよびサードパーティクッキーポリシー</h2>
+            <p className="mb-6">
+              本ウェブサイトは、Google LLCが提供するオンライン広告サービスであるGoogle AdSenseを利用しています。
+              <br />- Googleおよびサードパーティ広告配信事業者は、ユーザーの過去のウェブサイト訪問記録に基づき、パーソナライズ広告を提供するためにクッキー（Cookie）を使用します。
+              <br />- ユーザーはGoogleの広告設定（<a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-magenta underline">www.google.com/settings/ads</a>）にアクセスし、パーソナライズ広告の受信を拒否（Opt-out）できます。
+              <br />- または <a href="https://www.aboutads.info" target="_blank" rel="noopener noreferrer" className="text-magenta underline">www.aboutads.info</a> にアクセスしてサードパーティ事業者のクッキー使用を無効にできます。
+            </p>
+
+            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">5. 個人情報の破棄手続きおよび方法</h2>
+
             <p className="mb-6">
               研究所は、個人情報の保有期間の経過、処理目的の達成など、個人情報が不要になったときは、遅滞なく当該個人情報を破棄します。
               <br />- 破棄方法：電子的なファイル形態は記録を再生できない技術的な方法を使用し、紙の文書は粉砕するか焼却します。
             </p>
 
-            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">5. 利用者および法定代理人の権利とその行使方法</h2>
+            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">6. 利用者および法定代理人の権利とその行使方法</h2>
             <p className="mb-6">
               情報主体は研究所に対し、いつでも個人情報の閲覧・訂正・削除・処理停止の要求などの権利を行使することができます。
             </p>
 
-            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">6. 個人情報の安全性確保措置</h2>
+            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">7. 個人情報の安全性確保措置</h2>
             <p className="mb-6">
               研究所は、個人情報の安全性確保のため、管理的な措置（内部管理計画の樹立）、技術的な措置（アクセス権限の管理、セキュリティプログラムの設置）、物理的な措置（アクセス統制）などを講じています。
             </p>
 
-            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">7. 個人情報保護責任者</h2>
+            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">8. 個人情報保護責任者</h2>
+
             <p className="mb-6">
               個人情報処理に関する業務を総括して責任を持ち、関連する苦情処理および被害救済などのため、以下のように個人情報保護責任者を指定しています。
               <br />- メール問い合わせ：smagentalab@gmail.com
