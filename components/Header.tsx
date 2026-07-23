@@ -3,15 +3,19 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Menu, X, ExternalLink } from "lucide-react";
+import { Menu, X, ExternalLink, LogOut, User } from "lucide-react";
 import { usePathname } from "next/navigation";
 import LiveSearch from "./LiveSearch";
+import { useSession, signOut, signIn } from "next-auth/react";
+
 
 
 export default function Header() {
+  const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMapPage, setIsMapPage] = useState(false);
   const pathname = usePathname() || "/";
+
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -182,12 +186,25 @@ export default function Header() {
             </div>
           )}
 
-          <a 
-            href="mailto:smagentalab@gmail.com"
-            className="px-5 py-2.5 bg-magenta text-white rounded-full hover:bg-magenta/90 transition-all shadow-md shadow-magenta/10 hover:shadow-lg"
-          >
-            {menu.contact}
-          </a>
+          {session?.user ? (
+            <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
+              <span className="text-xs font-bold text-gray-700 truncate max-w-[100px]">{session.user.name || '연구원'}님</span>
+              <button
+                onClick={() => signOut()}
+                className="text-xs font-bold text-gray-500 hover:text-rose-600 bg-gray-100 hover:bg-rose-50 px-2.5 py-1 rounded-full transition-all flex items-center gap-1"
+              >
+                <LogOut className="w-3 h-3" />
+                <span>로그아웃</span>
+              </button>
+            </div>
+          ) : (
+            <a 
+              href="mailto:smagentalab@gmail.com"
+              className="px-5 py-2.5 bg-magenta text-white rounded-full hover:bg-magenta/90 transition-all shadow-md shadow-magenta/10 hover:shadow-lg"
+            >
+              {menu.contact}
+            </a>
+          )}
         </nav>
 
         {/* Mobile Toggle Button */}
@@ -215,11 +232,31 @@ export default function Header() {
         }`}
       >
         <div className="flex flex-col p-2">
+          {session?.user && (
+            <div className="px-4 py-3 mb-2 flex items-center justify-between bg-purple-50 rounded-2xl border border-purple-100 mx-1">
+              <div className="flex items-center gap-2">
+                <User className="w-4 h-4 text-purple-600" />
+                <span className="text-xs font-bold text-purple-900">{session.user.name || '안심 연구원'}님</span>
+              </div>
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  signOut();
+                }}
+                className="text-xs font-bold text-rose-600 hover:text-rose-700 bg-rose-100/80 px-3 py-1.5 rounded-xl transition flex items-center gap-1"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>로그아웃</span>
+              </button>
+            </div>
+          )}
+
           {/* Mobile Search area */}
           <div className="px-4 py-3 mb-1 bg-gray-50/50 rounded-2xl border border-gray-50 flex items-center justify-between">
              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">{menu.searchLabel}</span>
              <LiveSearch />
           </div>
+
 
           <nav className="flex flex-col gap-0.5">
             {isMapPage && (
