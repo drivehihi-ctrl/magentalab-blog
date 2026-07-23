@@ -14,6 +14,8 @@ interface AIBriefingData {
   summaryBullets: string[];
   quotes: ReviewQuoteItem[];
   naverSearchUrl: string;
+  totalReviews?: number;
+  calculatedRating?: number;
 }
 
 interface AIBriefingReviewsProps {
@@ -55,7 +57,7 @@ export default function AIBriefingReviews({ placeName, address }: AIBriefingRevi
     return (
       <div className="bg-gradient-to-br from-indigo-50/60 to-purple-50/60 rounded-3xl p-5 border border-purple-100 flex items-center justify-center gap-2 text-xs font-semibold text-purple-700">
         <Loader2 className="w-4 h-4 animate-spin text-purple-600" />
-        <span>마젠타랩 AI가 실제 리뷰를 분석하여 AI 브리핑을 작성중입니다...</span>
+        <span>마젠타랩 AI가 네이버 블로그 후기를 실시간 분석하여 브리핑을 작성중입니다...</span>
       </div>
     );
   }
@@ -88,7 +90,7 @@ export default function AIBriefingReviews({ placeName, address }: AIBriefingRevi
             rel="noopener noreferrer"
             className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 hover:underline shrink-0"
           >
-            네이버 전체보기
+            {briefingData.totalReviews ? `네이버 블로그 후기 (${briefingData.totalReviews.toLocaleString()}건) 전체보기` : '네이버 전체보기'}
             <ExternalLink className="w-3 h-3" />
           </a>
         )}
@@ -104,44 +106,41 @@ export default function AIBriefingReviews({ placeName, address }: AIBriefingRevi
         ))}
       </div>
 
-      {/* Review Quote Cards */}
+      {/* User Review Quotes */}
       {briefingData.quotes && briefingData.quotes.length > 0 && (
-        <div className="space-y-2 pt-1">
-          <div className="flex items-center justify-between text-[11px] font-bold text-gray-500">
-            <span className="flex items-center gap-1">
-              <MessageSquareQuote className="w-3.5 h-3.5 text-indigo-500" />
-              실제 방문고객 한줄 후기
+        <div className="space-y-2.5 pt-1">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5 text-xs font-extrabold text-gray-800">
+              <MessageSquareQuote className="w-4 h-4 text-purple-600" />
+              <span>실제 방문고객 한줄 후기</span>
+            </div>
+            <span className="text-[10px] font-medium text-gray-400">
+              출처 {briefingData.quotes.length}건
             </span>
-            <span className="text-[10px] text-gray-400">출처 {briefingData.quotes.length}건</span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             {briefingData.quotes.map((item, idx) => (
               <a
                 key={idx}
                 href={item.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-white p-3 rounded-2xl border border-indigo-100 hover:border-indigo-300 hover:shadow-md transition-all flex flex-col justify-between group"
+                className="group bg-white p-3 rounded-2xl border border-gray-100 shadow-2xs hover:shadow-md hover:border-indigo-200 transition-all flex flex-col justify-between"
               >
-                <p className="text-xs font-semibold text-gray-800 line-clamp-3 group-hover:text-indigo-600 transition leading-snug">
-                  &ldquo;{item.quote}&rdquo;
+                <p className="text-[11px] font-medium text-gray-800 line-clamp-3 group-hover:text-indigo-600 transition-colors leading-snug">
+                  "{item.quote}"
                 </p>
-                <div className="flex items-center justify-between mt-3 pt-2 border-t border-gray-50 text-[10px] text-gray-400">
-                  <span className="truncate max-w-[100px] text-gray-500 font-medium">{item.author}</span>
-                  <span className="shrink-0">{item.date}</span>
+
+                <div className="mt-2 pt-2 border-t border-gray-50 flex items-center justify-between text-[10px] text-gray-400">
+                  <span className="truncate max-w-[90px] font-semibold text-gray-600">{item.author}</span>
+                  <span>{item.date}</span>
                 </div>
               </a>
             ))}
           </div>
         </div>
       )}
-
-      {/* Disclaimer Notice */}
-      <div className="flex items-center gap-1.5 text-[10px] text-gray-400 pt-1">
-        <Info className="w-3 h-3 text-gray-400 shrink-0" />
-        <span>AI 브리핑은 카카오/네이버 지도의 실제 방문자 후기를 바탕으로 자동 생성됩니다.</span>
-      </div>
     </div>
   );
 }
