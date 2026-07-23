@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ExternalLink } from "lucide-react";
 import { usePathname } from "next/navigation";
 import LiveSearch from "./LiveSearch";
+
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -148,7 +149,16 @@ export default function Header() {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-gray-600">
+        <nav className="hidden md:flex items-center gap-6 font-medium text-sm text-gray-600">
+          {isMapPage && (
+            <a 
+              href="https://www.magentalabblog.com"
+              className="font-extrabold text-magenta hover:text-magenta/80 transition-colors flex items-center gap-1.5 bg-magenta/10 hover:bg-magenta/20 px-3.5 py-1.5 rounded-full shadow-2xs"
+            >
+              <span>블로그 보러가기</span>
+              <ExternalLink className="w-3.5 h-3.5 text-magenta" />
+            </a>
+          )}
           <a href={getNavLink(menu.aboutLink)} className="hover:text-magenta transition-colors">{menu.about}</a>
           <a href={getNavLink(menu.aboutAnsimLink)} className="hover:text-magenta transition-colors">{menu.aboutAnsim}</a>
           <a href={getNavLink(menu.bcsLink)} className="hover:text-magenta transition-colors">{menu.bcs}</a>
@@ -212,11 +222,25 @@ export default function Header() {
           </div>
 
           <nav className="flex flex-col gap-0.5">
+            {isMapPage && (
+              <>
+                <a 
+                  href="https://www.magentalabblog.com" 
+                  className="px-5 py-3.5 rounded-2xl text-[15px] font-black text-white bg-magenta hover:bg-magenta/90 transition-all flex items-center justify-between shadow-md shadow-magenta/20 mb-1"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <span>블로그 보러가기 (메인)</span>
+                  <ExternalLink className="w-4 h-4 text-white" />
+                </a>
+                <div className="h-px bg-gray-100 mx-4 my-0.5" />
+              </>
+            )}
             <a 
               href={getNavLink(menu.aboutLink)} 
               className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
               onClick={() => setIsMenuOpen(false)}
             >
+
               {menu.about}
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
             </a>
