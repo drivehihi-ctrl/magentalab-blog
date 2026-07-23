@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Menu, X, ExternalLink, LogOut, User } from "lucide-react";
+import { Menu, X, ExternalLink, LogOut, User, Award } from "lucide-react";
 import { usePathname } from "next/navigation";
 import LiveSearch from "./LiveSearch";
 import { useSession, signOut, signIn } from "next-auth/react";
+
 
 
 
@@ -188,10 +189,16 @@ export default function Header() {
 
           {session?.user ? (
             <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
-              <span className="text-xs font-bold text-gray-700 truncate max-w-[100px]">{session.user.name || '연구원'}님</span>
+              <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 text-amber-900 px-3 py-1 rounded-full text-xs font-black shadow-2xs">
+                <Award className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                <span className="truncate max-w-[80px]">{session.user.name || '연구원'}님</span>
+                <span className="text-[10px] bg-gradient-to-r from-amber-400 to-yellow-400 text-purple-950 px-2 py-0.5 rounded-full font-black">
+                  수석 연구원 🏅
+                </span>
+              </div>
               <button
                 onClick={() => signOut()}
-                className="text-xs font-bold text-gray-500 hover:text-rose-600 bg-gray-100 hover:bg-rose-50 px-2.5 py-1 rounded-full transition-all flex items-center gap-1"
+                className="text-xs font-bold text-gray-500 hover:text-rose-600 bg-gray-100 hover:bg-rose-50 px-2.5 py-1.5 rounded-full transition-all flex items-center gap-1"
               >
                 <LogOut className="w-3 h-3" />
                 <span>로그아웃</span>
@@ -233,23 +240,33 @@ export default function Header() {
       >
         <div className="flex flex-col p-2">
           {session?.user && (
-            <div className="px-4 py-3 mb-2 flex items-center justify-between bg-purple-50 rounded-2xl border border-purple-100 mx-1">
+            <div className="px-4 py-3 mb-2 flex items-center justify-between bg-gradient-to-r from-amber-50 to-purple-50 rounded-2xl border border-amber-200/80 mx-1">
               <div className="flex items-center gap-2">
-                <User className="w-4 h-4 text-purple-600" />
-                <span className="text-xs font-bold text-purple-900">{session.user.name || '안심 연구원'}님</span>
+                <div className="w-7 h-7 rounded-xl bg-amber-400 text-purple-950 flex items-center justify-center font-black shrink-0">
+                  <Award className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-xs font-black text-purple-950 flex items-center gap-1">
+                    {session.user.name || '연구원'}님
+                  </p>
+                  <p className="text-[10px] font-extrabold text-amber-700">
+                    안심 수석 연구원 🏅 뱃지 보유
+                  </p>
+                </div>
               </div>
               <button
                 onClick={() => {
                   setIsMenuOpen(false);
                   signOut();
                 }}
-                className="text-xs font-bold text-rose-600 hover:text-rose-700 bg-rose-100/80 px-3 py-1.5 rounded-xl transition flex items-center gap-1"
+                className="text-xs font-bold text-rose-600 hover:text-rose-700 bg-rose-100/80 px-2.5 py-1.5 rounded-xl transition flex items-center gap-1 shrink-0"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>로그아웃</span>
               </button>
             </div>
           )}
+
 
           {/* Mobile Search area */}
           <div className="px-4 py-3 mb-1 bg-gray-50/50 rounded-2xl border border-gray-50 flex items-center justify-between">
