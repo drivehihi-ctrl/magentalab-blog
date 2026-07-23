@@ -48,9 +48,10 @@ export default function PlaceDetailDrawer({ place, onClose }: PlaceDetailDrawerP
                 <div className="flex items-center gap-1 text-amber-500 font-semibold text-xs">
                   <Star className="w-3.5 h-3.5 fill-amber-400" />
                   <span>{place.rating}</span>
-                  {place.reviewCount && <span className="text-gray-400 font-normal">({place.reviewCount})</span>}
+                  {place.reviewCount && <span className="text-gray-400 font-normal">(블로그 리뷰 {place.reviewCount.toLocaleString()}개)</span>}
                 </div>
               )}
+
             </div>
 
             <h2 className="text-xl font-bold text-gray-900">{place.name}</h2>
