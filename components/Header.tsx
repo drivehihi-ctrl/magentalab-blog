@@ -22,7 +22,6 @@ export default function Header() {
   }, [pathname]);
 
   // Prevent scrolling when menu is open
-
   useEffect(() => {
     if (isMenuOpen) {
       document.body.style.overflow = "hidden";
@@ -86,15 +85,20 @@ export default function Header() {
     blogDesc: isEn ? "Browse categories" : isJa ? "カテゴリで表示" : "카테고리별 모아보기"
   };
 
+  const getNavLink = (linkPath: string) => {
+    if (isMapPage && linkPath.startsWith("/")) {
+      return `https://www.magentalabblog.com${linkPath}`;
+    }
+    return linkPath;
+  };
+
   const handleLanguageChange = (lang: string) => {
     const pathSegments = pathname.split("/").filter(Boolean);
     
-    // 현재 언어 코드 세그먼트 제거 (en/ja)
     if (pathSegments[0] === "en" || pathSegments[0] === "ja") {
       pathSegments.shift();
     }
     
-    // 만약 포스트 상세 페이지(/posts/[slug])인 경우 슬러그 접미사(-en, -ja) 변환 처리
     if (pathSegments[0] === "posts" && pathSegments[1]) {
       const slug = pathSegments[1];
       const baseSlug = slug.replace(/-en$|-ja$/, "");
@@ -117,13 +121,14 @@ export default function Header() {
       targetPath = `/${pathSegments.join("/")}`;
     }
     
-    return targetPath.replace(/\/$/, "") || "/";
+    const finalPath = targetPath.replace(/\/$/, "") || "/";
+    return isMapPage ? `https://www.magentalabblog.com${finalPath}` : finalPath;
   };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-100 bg-white/80 backdrop-blur-md">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
-        <Link href={logoMainLink} className="flex items-center gap-2 group">
+        <Link href={isMapPage ? "/" : logoMainLink} className="flex items-center gap-2 group">
           <div className="w-12 h-12 flex items-center justify-center transition-transform group-hover:scale-110 relative">
             <Image 
               src={isMapPage ? "/images/map-logo.png" : "/images/favicon.png"} 
@@ -142,18 +147,17 @@ export default function Header() {
           </div>
         </Link>
 
-
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-gray-600">
-          <Link href={menu.aboutLink} className="hover:text-magenta transition-colors">{menu.about}</Link>
-          <Link href={menu.aboutAnsimLink} className="hover:text-magenta transition-colors">{menu.aboutAnsim}</Link>
-          <Link href={menu.bcsLink} className="hover:text-magenta transition-colors">{menu.bcs}</Link>
-          <Link href={menu.ageLink} className="hover:text-magenta transition-colors">{menu.age}</Link>
-          <Link href={menu.dmLink} className="hover:text-magenta transition-colors">{menu.dm}</Link>
-          <Link href={menu.emergencyLink} className="hover:text-magenta transition-colors">{menu.emergency}</Link>
-          <Link href={menu.patellaLink} className="hover:text-magenta transition-colors">{menu.patella}</Link>
-          <Link href={menu.petCareLink} className="hover:text-magenta transition-colors">{menu.petCare}</Link>
-          <Link href={menu.ficLink} className="hover:text-magenta transition-colors">{menu.fic}</Link>
+          <a href={getNavLink(menu.aboutLink)} className="hover:text-magenta transition-colors">{menu.about}</a>
+          <a href={getNavLink(menu.aboutAnsimLink)} className="hover:text-magenta transition-colors">{menu.aboutAnsim}</a>
+          <a href={getNavLink(menu.bcsLink)} className="hover:text-magenta transition-colors">{menu.bcs}</a>
+          <a href={getNavLink(menu.ageLink)} className="hover:text-magenta transition-colors">{menu.age}</a>
+          <a href={getNavLink(menu.dmLink)} className="hover:text-magenta transition-colors">{menu.dm}</a>
+          <a href={getNavLink(menu.emergencyLink)} className="hover:text-magenta transition-colors">{menu.emergency}</a>
+          <a href={getNavLink(menu.patellaLink)} className="hover:text-magenta transition-colors">{menu.patella}</a>
+          <a href={getNavLink(menu.petCareLink)} className="hover:text-magenta transition-colors">{menu.petCare}</a>
+          <a href={getNavLink(menu.ficLink)} className="hover:text-magenta transition-colors">{menu.fic}</a>
           <div className="ml-2 mr-2">
             <LiveSearch />
           </div>
@@ -167,8 +171,6 @@ export default function Header() {
               <Link href={handleLanguageChange("ja")} className={`transition-colors hover:text-magenta ${isJa ? "text-magenta font-black" : "text-gray-400 font-medium"}`}>JA</Link>
             </div>
           )}
-
-
 
           <a 
             href="mailto:smagentalab@gmail.com"
@@ -188,7 +190,7 @@ export default function Header() {
         </button>
       </div>
 
-      {/* Mobile Menu - Transparent Backdrop to catch click-outside */}
+      {/* Mobile Menu Backdrop */}
       {isMenuOpen && (
         <div 
           className="fixed inset-0 z-40 md:hidden bg-black/5 backdrop-blur-[2px]" 
@@ -196,7 +198,7 @@ export default function Header() {
         />
       )}
 
-      {/* Mobile Menu - Sleek Top-Right Dropdown */}
+      {/* Mobile Menu Dropdown */}
       <div 
         className={`fixed top-[75px] right-4 z-50 w-72 max-w-[calc(100vw-32px)] bg-white md:hidden transition-all duration-300 origin-top-right border border-gray-100 shadow-[0_20px_50px_rgba(0,0,0,0.15)] rounded-3xl max-h-[calc(100dvh-90px)] overflow-y-auto overscroll-contain ${
           isMenuOpen ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
@@ -210,86 +212,86 @@ export default function Header() {
           </div>
 
           <nav className="flex flex-col gap-0.5">
-            <Link 
-              href={menu.aboutLink} 
+            <a 
+              href={getNavLink(menu.aboutLink)} 
               className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
               onClick={() => setIsMenuOpen(false)}
             >
               {menu.about}
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
-            </Link>
+            </a>
             <div className="h-px bg-gray-50 mx-4" />
-            <Link 
-              href={menu.aboutAnsimLink} 
+            <a 
+              href={getNavLink(menu.aboutAnsimLink)} 
               className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
               onClick={() => setIsMenuOpen(false)}
             >
               {menu.aboutAnsim}
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
-            </Link>
+            </a>
             <div className="h-px bg-gray-50 mx-4" />
-            <Link 
-              href={menu.bcsLink} 
+            <a 
+              href={getNavLink(menu.bcsLink)} 
               className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
               onClick={() => setIsMenuOpen(false)}
             >
               {menu.bcs}
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
-            </Link>
+            </a>
             <div className="h-px bg-gray-50 mx-4" />
-            <Link 
-              href={menu.ageLink} 
+            <a 
+              href={getNavLink(menu.ageLink)} 
               className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
               onClick={() => setIsMenuOpen(false)}
             >
               {menu.age}
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
-            </Link>
+            </a>
             <div className="h-px bg-gray-50 mx-4" />
-            <Link 
-              href={menu.dmLink} 
+            <a 
+              href={getNavLink(menu.dmLink)} 
               className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
               onClick={() => setIsMenuOpen(false)}
             >
               {menu.dm}
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
-            </Link>
+            </a>
             <div className="h-px bg-gray-50 mx-4" />
-            <Link 
-              href={menu.emergencyLink} 
+            <a 
+              href={getNavLink(menu.emergencyLink)} 
               className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
               onClick={() => setIsMenuOpen(false)}
             >
               {menu.emergency}
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
-            </Link>
+            </a>
             <div className="h-px bg-gray-50 mx-4" />
-            <Link 
-              href={menu.patellaLink} 
+            <a 
+              href={getNavLink(menu.patellaLink)} 
               className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
               onClick={() => setIsMenuOpen(false)}
             >
               {menu.patella}
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
-            </Link>
+            </a>
             <div className="h-px bg-gray-50 mx-4" />
-            <Link 
-              href={menu.petCareLink} 
+            <a 
+              href={getNavLink(menu.petCareLink)} 
               className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
               onClick={() => setIsMenuOpen(false)}
             >
               {menu.petCare}
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
-            </Link>
+            </a>
             <div className="h-px bg-gray-50 mx-4" />
-            <Link 
-              href={menu.ficLink} 
+            <a 
+              href={getNavLink(menu.ficLink)} 
               className="px-5 py-3.5 rounded-2xl text-[15px] font-bold text-gray-700 hover:bg-magenta-light/30 hover:text-magenta transition-all flex items-center justify-between group"
               onClick={() => setIsMenuOpen(false)}
             >
               {menu.fic}
               <span className="text-gray-300 group-hover:text-magenta transition-colors opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all">→</span>
-            </Link>
+            </a>
           </nav>
 
           {!isMapPage && (
@@ -304,8 +306,6 @@ export default function Header() {
               </div>
             </div>
           )}
-
-
 
           <div className="mt-1.5 p-1.5 border-t border-gray-50">
             <a 
@@ -327,4 +327,3 @@ export default function Header() {
     </header>
   );
 }
-
