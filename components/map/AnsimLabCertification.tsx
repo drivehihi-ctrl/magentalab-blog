@@ -280,7 +280,7 @@ export default function AnsimLabCertification({ placeName, category, placeId }: 
 
             <div className="space-y-2 pt-2">
               <button
-                onClick={() => signIn('kakao')}
+                onClick={() => signIn('kakao', { callbackUrl: typeof window !== 'undefined' ? window.location.href : '/map' })}
                 className="w-full py-3 bg-[#FEE500] hover:bg-[#FDD800] text-[#3C1E1E] font-bold text-xs rounded-xl shadow-sm transition flex items-center justify-center gap-2"
               >
                 <LogIn className="w-4 h-4" />
@@ -288,12 +288,13 @@ export default function AnsimLabCertification({ placeName, category, placeId }: 
               </button>
 
               <button
-                onClick={() => signIn('google')}
+                onClick={() => signIn('google', { callbackUrl: typeof window !== 'undefined' ? window.location.href : '/map' })}
                 className="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xs rounded-xl transition flex items-center justify-center gap-2"
               >
                 <LogIn className="w-4 h-4 text-blue-600" />
                 <span>구글 계정으로 로그인</span>
               </button>
+
             </div>
 
             <button
