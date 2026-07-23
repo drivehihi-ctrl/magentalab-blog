@@ -126,7 +126,7 @@ export default function Header() {
         <Link href={logoMainLink} className="flex items-center gap-2 group">
           <div className="w-12 h-12 flex items-center justify-center transition-transform group-hover:scale-110 relative">
             <Image 
-              src="/images/favicon.png" 
+              src={isMapPage ? "/images/map-logo.png" : "/images/favicon.png"} 
               alt="Magentalab Logo" 
               fill
               className="object-contain"
@@ -134,13 +134,14 @@ export default function Header() {
           </div>
           <div>
             <div className="text-xl font-bold tracking-tight text-gray-900">
-              Magentalab
+              {isMapPage ? "마젠타랩 펫 맵" : "Magentalab"}
             </div>
             <p className="text-xs font-medium text-magenta tracking-widest uppercase">
-              {logoSubText}
+              {isMapPage ? "반려동물과 함께하기" : logoSubText}
             </p>
           </div>
         </Link>
+
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-gray-600">
