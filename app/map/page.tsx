@@ -98,29 +98,29 @@ export default function MapPage() {
           />
         </div>
 
-        {/* AI Character Ansim-i Banner & Link */}
+        {/* AI Character Ansim-i Banner & Link (Option 2: Recommended Exercise & BCS Calculator) */}
         <div className="bg-white rounded-3xl p-6 border border-purple-100 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-purple-100 flex items-center justify-center text-purple-700 shrink-0">
               <HeartHandshake className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-gray-900">외출 전 반려동물 건강 상태 점검하기</h3>
-              <p className="text-xs text-gray-500">AI 캐릭터 안심이의 펫 케어 계산기 & 슬개골/방광염 진단 도구 이용하기</p>
+              <h3 className="text-base font-bold text-gray-900">오늘 얼마나 뛰어놀아야 할까? 🏃‍♂️</h3>
+              <p className="text-xs text-gray-500">AI 캐릭터 안심이의 반려견 BCS 체형 & 권장 운동량 계산기</p>
             </div>
           </div>
 
           <a
-            href="https://www.magentalabblog.com/petcare-expenses-calculator"
+            href="https://www.magentalabblog.com/bcs-calculator"
             target="_blank"
             rel="noopener noreferrer"
             className="shrink-0 flex items-center gap-1.5 px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-full shadow-md transition"
           >
-            <span>안심이 펫 진단기 바로가기</span>
+            <span>안심이 운동량 계산기 바로가기</span>
             <ArrowRight className="w-4 h-4" />
           </a>
-
         </div>
+
       </main>
 
       {/* Selected POI Detail Drawer */}
