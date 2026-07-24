@@ -80,8 +80,18 @@ export default function AnsimLabCertification({ placeName, category, placeId }: 
           setUserBadgeEarned(true);
         } catch (e) {}
       }
+
+      // Auto open evaluation form if user just logged in to evaluate this place
+      if (session?.user) {
+        const pendingPlaceId = localStorage.getItem('ansim_pending_eval_place');
+        if (pendingPlaceId === placeId) {
+          setIsFormOpen(true);
+          localStorage.removeItem('ansim_pending_eval_place');
+        }
+      }
     }
-  }, [placeId]);
+  }, [placeId, session?.user]);
+
 
   const handleToggleAnswer = (questionId: number, val: boolean) => {
     setAnswers((prev) => ({
@@ -316,7 +326,11 @@ export default function AnsimLabCertification({ placeName, category, placeId }: 
 
             <div className="space-y-2 pt-2">
               <button
-                onClick={() => signIn('kakao', { callbackUrl: typeof window !== 'undefined' ? window.location.href : '/map' })}
+                onClick={() => {
+                  if (typeof window !== 'undefined') localStorage.setItem('ansim_pending_eval_place', placeId);
+                  const currentUrl = typeof window !== 'undefined' ? window.location.href : '/map';
+                  signIn('kakao', { callbackUrl: currentUrl });
+                }}
                 className="w-full py-3 bg-[#FEE500] hover:bg-[#FDD800] text-[#3C1E1E] font-bold text-xs rounded-xl shadow-sm transition flex items-center justify-center gap-2"
               >
                 <LogIn className="w-4 h-4" />
@@ -324,14 +338,18 @@ export default function AnsimLabCertification({ placeName, category, placeId }: 
               </button>
 
               <button
-                onClick={() => signIn('google', { callbackUrl: typeof window !== 'undefined' ? window.location.href : '/map' })}
+                onClick={() => {
+                  if (typeof window !== 'undefined') localStorage.setItem('ansim_pending_eval_place', placeId);
+                  const currentUrl = typeof window !== 'undefined' ? window.location.href : '/map';
+                  signIn('google', { callbackUrl: currentUrl });
+                }}
                 className="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xs rounded-xl transition flex items-center justify-center gap-2"
               >
                 <LogIn className="w-4 h-4 text-blue-600" />
                 <span>구글 계정으로 로그인</span>
               </button>
-
             </div>
+
 
             <button
               onClick={() => setShowLoginModal(false)}

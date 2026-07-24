@@ -28,6 +28,27 @@ const handler = NextAuth({
     schema: "public",
   } as any),
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      // Allow relative callback URLs
+      if (url.startsWith('/')) {
+        return `${baseUrl}${url}`;
+      }
+
+      // Allow callback URLs on magentalabblog.com subdomains, vercel.app, and localhost
+      try {
+        const parsedUrl = new URL(url);
+        if (
+          parsedUrl.hostname.endsWith('magentalabblog.com') ||
+          parsedUrl.hostname.endsWith('vercel.app') ||
+          parsedUrl.hostname === 'localhost' ||
+          parsedUrl.hostname === '127.0.0.1'
+        ) {
+          return url;
+        }
+      } catch (e) {}
+
+      return baseUrl;
+    },
     async session({ session, user }) {
       if (session.user) {
         (session.user as any).id = user.id;
@@ -35,6 +56,7 @@ const handler = NextAuth({
       return session;
     },
   },
+
   pages: {
     signIn: '/shop', // Redirect to shop for sign in modal
   },
