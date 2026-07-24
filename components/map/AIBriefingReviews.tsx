@@ -1,33 +1,26 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Sparkles, ExternalLink, MessageSquareQuote, CheckCircle, Info, Loader2 } from 'lucide-react';
-
-interface ReviewQuoteItem {
-  quote: string;
-  author: string;
-  date: string;
-  link: string;
-}
-
-interface AIBriefingData {
-  summaryBullets: string[];
-  quotes: ReviewQuoteItem[];
-  naverSearchUrl: string;
-  totalReviews?: number;
-  calculatedRating?: number;
-}
+import { Sparkles, ExternalLink, MessageSquareQuote, CheckCircle, Loader2 } from 'lucide-react';
+import type { AIBriefingData } from '@/lib/map/aiBriefing';
 
 interface AIBriefingReviewsProps {
   placeName: string;
   address?: string;
+  initialData?: AIBriefingData | null;
 }
 
-export default function AIBriefingReviews({ placeName, address }: AIBriefingReviewsProps) {
-  const [briefingData, setBriefingData] = useState<AIBriefingData | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+export default function AIBriefingReviews({ placeName, address, initialData }: AIBriefingReviewsProps) {
+  const [briefingData, setBriefingData] = useState<AIBriefingData | null>(initialData || null);
+  const [isLoading, setIsLoading] = useState<boolean>(!initialData);
 
   useEffect(() => {
+    if (initialData) {
+      setBriefingData(initialData);
+      setIsLoading(false);
+      return;
+    }
+
     if (!placeName) return;
 
     setIsLoading(true);
@@ -51,7 +44,7 @@ export default function AIBriefingReviews({ placeName, address }: AIBriefingRevi
       })
       .catch((err) => console.error('Failed to fetch AI briefing:', err))
       .finally(() => setIsLoading(false));
-  }, [placeName, address]);
+  }, [placeName, address, initialData]);
 
   if (isLoading) {
     return (

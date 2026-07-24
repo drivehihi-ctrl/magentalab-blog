@@ -125,7 +125,24 @@ export async function GET(request: NextRequest) {
       const data = await response.json();
       
       if (data.documents && data.documents.length > 0) {
-        const realPlaces: PetPlacePOI[] = data.documents.map((doc: any) => {
+        const petKeywords = ['애견', '반려', '펫', '동물', '강아지', '고양이', '멍', '냥', '동반', '입장', '놀이터', '운동장', '병원', '펜션', '카페'];
+
+        const realPlaces: PetPlacePOI[] = data.documents
+          .filter((doc: any) => {
+            const rawCategory = doc.category_name || '';
+            const name = doc.place_name || '';
+            
+            // 온천, 섬, 산 등 반려동물과 전혀 무관한 카테고리는 이름에 펫 관련 키워드가 없으면 제외
+            const excludedCategories = ['온천', '섬', '산', '계곡', '성곽', '유적지', '관공서'];
+            const isExcludedCategory = excludedCategories.some(cat => rawCategory.includes(cat));
+            const hasPetKeyword = petKeywords.some(kw => name.includes(kw) || rawCategory.includes(kw));
+
+            if (isExcludedCategory && !hasPetKeyword) {
+              return false;
+            }
+            return true;
+          })
+          .map((doc: any) => {
           const rawCategory = doc.category_name || '';
           const categoryName = rawCategory.split(' > ').pop() || '애견동반 스팟';
           const itemCategory = parsePetCategory(rawCategory, category);

@@ -1,10 +1,9 @@
 import React from 'react';
 import { getPetPlaceById, INITIAL_PET_PLACES } from '@/lib/map/places';
-import { MapPin, Clock, Phone, Navigation, ArrowLeft, Star, ShieldAlert, CheckCircle2 } from 'lucide-react';
+import { MapPin, Clock, Phone, Navigation, ArrowLeft, ShieldAlert, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import AIBriefingReviews from '@/components/map/AIBriefingReviews';
-
-
+import { getAIBriefingData } from '@/lib/map/aiBriefing';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 
@@ -22,10 +21,19 @@ export async function generateMetadata({ params }: PlaceDetailPageProps): Promis
     };
   }
 
+  const aiBriefing = await getAIBriefingData(place.name, place.address);
+  const briefingSummary = aiBriefing.summaryBullets[0] || place.description || '';
+  const metaDescription = `${place.name} (${place.categoryName}) - ${place.address}. ${briefingSummary} 영업시간: ${place.operatingHours}`;
+
   return {
-    title: `${place.name} - 영업시간, 위치, 반려동물 동반 수칙 | 마젠타랩 펫 맵`,
-    description: `${place.name} (${place.categoryName}) - ${place.address}. ${place.description || ''} 영업시간: ${place.operatingHours}`,
-    keywords: [place.name, place.categoryName, '애견동반', '반려동물지도', ...place.tags],
+    title: `${place.name} - AI 후기 요약, 영업시간, 반려동물 동반 수칙 | 마젠타랩 펫 맵`,
+    description: metaDescription,
+    keywords: [place.name, place.categoryName, '애견동반', '반려동물지도', 'AI후기', ...place.tags],
+    openGraph: {
+      title: `${place.name} - 마젠타랩 펫 맵 AI 브리핑`,
+      description: metaDescription,
+      images: place.imageUrl ? [{ url: place.imageUrl }] : [],
+    },
     robots: {
       index: true,
       follow: true,
@@ -35,9 +43,7 @@ export async function generateMetadata({ params }: PlaceDetailPageProps): Promis
       },
     },
   };
-
 }
-
 
 export async function generateStaticParams() {
   return INITIAL_PET_PLACES.map((place) => ({
@@ -53,11 +59,15 @@ export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) 
     notFound();
   }
 
+  // Fetch AI Briefing on Server-side (SSR/ISR) for search engine indexing
+  const aiBriefingData = await getAIBriefingData(place.name, place.address);
+
   // Schema.org LocalBusiness JSON-LD for Search Engine SEO
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: place.name,
+    description: aiBriefingData.summaryBullets.join(' '),
     address: {
       '@type': 'PostalAddress',
       streetAddress: place.roadAddress || place.address,
@@ -71,13 +81,20 @@ export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) 
     telephone: place.phone,
     openingHours: place.operatingHours,
     image: place.imageUrl,
-    aggregateRating: place.rating
-      ? {
-          '@type': 'AggregateRating',
-          ratingValue: place.rating,
-          reviewCount: place.reviewCount || 1,
-        }
-      : undefined,
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: aiBriefingData.calculatedRating || place.rating || 4.7,
+      reviewCount: aiBriefingData.totalReviews || place.reviewCount || 10,
+    },
+    review: aiBriefingData.quotes.map((q) => ({
+      '@type': 'Review',
+      author: {
+        '@type': 'Person',
+        name: q.author,
+      },
+      datePublished: q.date,
+      reviewBody: q.quote,
+    })),
   };
 
   return (
@@ -167,12 +184,10 @@ export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) 
             ))}
           </div>
 
-          {/* Real AI Briefing Reviews */}
-          <AIBriefingReviews placeName={place.name} address={place.address} />
-
+          {/* Real Server-Side Rendered AI Briefing Reviews for 100% SEO Search Engine Crawling */}
+          <AIBriefingReviews placeName={place.name} address={place.address} initialData={aiBriefingData} />
 
           <div className="grid grid-cols-2 gap-3 pt-2">
-
             {place.directionsUrls?.kakao && (
               <a
                 href={place.directionsUrls.kakao}

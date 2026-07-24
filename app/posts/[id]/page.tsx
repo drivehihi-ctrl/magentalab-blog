@@ -146,6 +146,7 @@ export default async function PostDetailPage({ params }: PageProps) {
     "@context": "https://schema.org",
     "@type": "Article",
     "headline": sanitizeForSeo(post.title.rendered),
+    "description": sanitizeForSeo(post.excerpt.rendered, 200),
     "image": [imageUrl],
     "datePublished": post.date,
     "dateModified": post.modified || post.date,
