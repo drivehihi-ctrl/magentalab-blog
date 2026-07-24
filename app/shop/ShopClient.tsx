@@ -2234,14 +2234,6 @@ function LoyaltySubPage() {
 function ConsultationSubPage() {
   const [tickets, setTickets] = useState<any[]>([]);
 
-  useEffect(() => {
-    // await supabase.from('support_tickets').select('*')...
-    setTickets([
-      { id: 1, subject: "아이 눈물 자국 제품 추천 문의", status: "completed", created_at: "2026.04.18" },
-      { id: 2, subject: "결제 오류 확인 부탁드립니다", status: "pending", created_at: "2026.04.21" },
-    ]);
-  }, []);
-
   return (
     <div style={{ padding: "0 4px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
@@ -2250,11 +2242,12 @@ function ConsultationSubPage() {
       </div>
 
       {tickets.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "60px 20px" }}>
+        <div style={{ textAlign: "center", padding: "60px 20px", background: "#fff", borderRadius: "20px", border: "1px border #F3F4F6" }}>
           <div style={{ fontSize: "40px", marginBottom: "12px" }}>💬</div>
-          <p style={{ color: "#9CA3AF", fontSize: "14px" }}>아직 상담 기록이 없습니다.</p>
+          <p style={{ color: "#9CA3AF", fontSize: "14px", fontWeight: 600 }}>상담 내역이 없습니다.</p>
         </div>
       ) : (
+
         tickets.map(t => (
           <div key={t.id} style={{ background: "#fff", padding: "20px", borderRadius: "18px", marginBottom: "12px", border: "1px solid #F3F4F6", cursor: "pointer" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
