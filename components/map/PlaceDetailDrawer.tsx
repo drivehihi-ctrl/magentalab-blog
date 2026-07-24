@@ -19,7 +19,7 @@ interface PlaceDetailDrawerProps {
   onClose: () => void;
 }
 
-const KAKAO_JS_KEY = process.env.NEXT_PUBLIC_KAKAO_JS_KEY || 'a1fac81ff513c131e308c17f7b442343';
+const KAKAO_JS_KEY = process.env.NEXT_PUBLIC_KAKAO_JS_KEY || '186380c4d2f6974b4c29d1be55963a4a';
 
 export default function PlaceDetailDrawer({ place, onClose }: PlaceDetailDrawerProps) {
   if (!place) return null;
