@@ -2596,7 +2596,8 @@ export default function ShopClient({ initialProducts = [], initialBanners = [], 
   }, []);
 
   const [activeSubPage, setActiveSubPage] = useState<string | null>(null);
-  const [products, setProducts] = useState<any[]>(initialProducts.length > 0 ? initialProducts : MOCK_PRODUCTS);
+  const [products, setProducts] = useState<any[]>(initialProducts);
+
   const [banners, setBanners] = useState<any[]>(initialBanners.length > 0 ? initialBanners : DEFAULT_BANNERS);
   const [careGuides, setCareGuides] = useState<any[]>(initialCareGuides.length > 0 ? initialCareGuides : DEFAULT_CARE_GUIDES);
   const [cartItems, setCartItems] = useState<any[]>([]);
