@@ -8,6 +8,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { GoogleTagManager } from "@next/third-parties/google";
 
 import SessionProvider from "@/components/providers/SessionProvider";
+import KakaoScript from "@/components/KakaoScript";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.magentalabblog.com"),
@@ -100,6 +101,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <SessionProvider>
+          <KakaoScript />
           <Header />
           <main>{children}</main>
           <Analytics />

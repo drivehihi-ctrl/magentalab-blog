@@ -3,6 +3,7 @@ import { getPetPlaceById, INITIAL_PET_PLACES } from '@/lib/map/places';
 import { MapPin, Clock, Phone, Navigation, ArrowLeft, ShieldAlert, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import AIBriefingReviews from '@/components/map/AIBriefingReviews';
+import KakaoShareButton from '@/components/map/KakaoShareButton';
 import { getAIBriefingData } from '@/lib/map/aiBriefing';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
@@ -186,6 +187,18 @@ export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) 
 
           {/* Real Server-Side Rendered AI Briefing Reviews for 100% SEO Search Engine Crawling */}
           <AIBriefingReviews placeName={place.name} address={place.address} initialData={aiBriefingData} />
+
+          {/* KakaoTalk Viral Share Button */}
+          <div className="pt-2">
+            <KakaoShareButton
+              placeId={place.id}
+              placeName={place.name}
+              categoryName={place.categoryName}
+              address={place.roadAddress || place.address}
+              imageUrl={place.imageUrl}
+              description={place.description || aiBriefingData.summaryBullets[0]}
+            />
+          </div>
 
           <div className="grid grid-cols-2 gap-3 pt-2">
             {place.directionsUrls?.kakao && (
