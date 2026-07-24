@@ -27,15 +27,15 @@ export async function generateMetadata({ params }: PlaceDetailPageProps): Promis
     description: `${place.name} (${place.categoryName}) - ${place.address}. ${place.description || ''} 영업시간: ${place.operatingHours}`,
     keywords: [place.name, place.categoryName, '애견동반', '반려동물지도', ...place.tags],
     robots: {
-      index: false,
-      follow: false,
-      nocache: true,
+      index: true,
+      follow: true,
       googleBot: {
-        index: false,
-        follow: false,
+        index: true,
+        follow: true,
       },
     },
   };
+
 }
 
 

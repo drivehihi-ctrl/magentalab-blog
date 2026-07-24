@@ -1,23 +1,27 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: '마젠타랩 펫 맵 (개발중)',
-  description: '우리 아이와 함께하는 전속 애견동반 지도 서비스',
-  icons: {
-    icon: '/map-icon.png',
-    shortcut: '/map-icon.png',
-    apple: '/map-icon.png',
+  title: '마젠타랩 펫 맵 | 동반 장소 & 안심 지수 현장 제보',
+  description: '반려동물과 함께 갈 수 있는 병원, 카페, 펜션 지도 및 안심 지수 정보 서비스입니다.',
+  alternates: {
+    canonical: 'https://map.magentalabblog.com',
+  },
+  openGraph: {
+    title: '마젠타랩 펫 맵 | 동반 장소 & 안심 지수 현장 제보',
+    description: '반려동물과 함께 갈 수 있는 병원, 카페, 펜션 지도 및 안심 지수 정보 서비스입니다.',
+    url: 'https://map.magentalabblog.com',
+    type: 'website',
   },
   robots: {
-    index: false,
-    follow: false,
-    nocache: true,
+    index: true,
+    follow: true,
     googleBot: {
-      index: false,
-      follow: false,
+      index: true,
+      follow: true,
     },
   },
 };
+
 
 
 export default function MapLayout({

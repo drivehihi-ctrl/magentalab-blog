@@ -68,10 +68,11 @@ export async function generateMetadata({
       images: [product.image_url || "/images/favicon.png"],
     },
     robots: {
-      index: false,
-      follow: false,
+      index: true,
+      follow: true,
     },
   };
+
 }
 
 export default async function ProductDetailPage({ 
