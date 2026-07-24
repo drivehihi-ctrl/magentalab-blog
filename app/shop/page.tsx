@@ -18,10 +18,11 @@ export const metadata: Metadata = {
     type: "website",
   },
   robots: {
-    index: false,
-    follow: false,
+    index: true,
+    follow: true,
   },
 };
+
 
 export default async function ShopPage() {
   // 서버 사이드에서 데이터를 미리 가져옵니다 (0.1% 정밀 프리페칭)
