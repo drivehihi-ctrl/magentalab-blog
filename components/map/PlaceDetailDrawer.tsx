@@ -6,6 +6,7 @@ import { X, MapPin, Clock, Phone, Navigation, ShieldAlert, CheckCircle2, Share2,
 import Link from 'next/link';
 import AIBriefingReviews from '@/components/map/AIBriefingReviews';
 import AnsimLabCertification from '@/components/map/AnsimLabCertification';
+import KakaoShareButton from '@/components/map/KakaoShareButton';
 
 
 
@@ -18,19 +19,52 @@ interface PlaceDetailDrawerProps {
   onClose: () => void;
 }
 
+const KAKAO_JS_KEY = process.env.NEXT_PUBLIC_KAKAO_JS_KEY || 'c7850585b1a0e91017128dcf19fc6a25';
+
 export default function PlaceDetailDrawer({ place, onClose }: PlaceDetailDrawerProps) {
   if (!place) return null;
 
   const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: `${place.name} | 마젠타랩 애견동반 지도`,
-        text: `${place.name} - ${place.address}`,
-        url: window.location.href,
-      }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-      alert('링크가 복사되었습니다!');
+    const shareUrl = `https://www.magentalabblog.com/map/place/${place.id}`;
+    const defaultImage = place.imageUrl || 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=600&q=80';
+    const descText = place.description ? place.description.substring(0, 80) : `${place.address} 에 위치한 대표 ${place.categoryName} 스팟입니다.`;
+
+    if (typeof window !== 'undefined' && window.Kakao) {
+      if (!window.Kakao.isInitialized()) {
+        window.Kakao.init(KAKAO_JS_KEY);
+      }
+
+      try {
+        window.Kakao.Share.sendDefault({
+          objectType: 'feed',
+          content: {
+            title: `[마젠타랩 펫 맵] 🐶 이번 주말 여기 어때? ${place.name}`,
+            description: `📍 ${place.roadAddress || place.address} (${place.categoryName})\n"${descText}"`,
+            imageUrl: defaultImage,
+            link: {
+              mobileWebUrl: shareUrl,
+              webUrl: shareUrl,
+            },
+          },
+          buttons: [
+            {
+              title: '펫 맵에서 상세보기',
+              link: {
+                mobileWebUrl: shareUrl,
+                webUrl: shareUrl,
+              },
+            },
+          ],
+        });
+        return;
+      } catch (err) {
+        console.warn('Kakao Share failed, fallback to Clipboard:', err);
+      }
+    }
+
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(shareUrl);
+      alert('카카오톡 공유 링크가 복사되었습니다!');
     }
   };
 
@@ -174,7 +208,17 @@ export default function PlaceDetailDrawer({ place, onClose }: PlaceDetailDrawerP
         {/* AI Briefing Review Section */}
         <AIBriefingReviews placeName={place.name} address={place.address} />
 
-
+        {/* KakaoTalk 1-Second Share Button */}
+        <div className="pt-2">
+          <KakaoShareButton
+            placeId={place.id}
+            placeName={place.name}
+            categoryName={place.categoryName}
+            address={place.roadAddress || place.address}
+            imageUrl={place.imageUrl}
+            description={place.description}
+          />
+        </div>
 
         {/* Navigation Action Buttons */}
 
