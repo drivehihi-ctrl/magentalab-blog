@@ -203,16 +203,7 @@ export default function PlaceDetailDrawer({ place, onClose }: PlaceDetailDrawerP
           )}
         </div>
 
-        {/* Detailed SEO Link */}
-        <div className="text-center pt-2">
-          <Link
-            href={`/map/place/${place.id}`}
-            className="inline-flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 font-semibold underline"
-          >
-            상세 정보 및 블로그 후기 페이지 보기
-            <ExternalLink className="w-3 h-3" />
-          </Link>
-        </div>
+
       </div>
     </div>
   );
