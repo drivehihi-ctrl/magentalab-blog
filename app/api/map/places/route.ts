@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getPetPlaces } from '@/lib/map/places';
 import { PetCategory, PetPlacePOI } from '@/lib/map/types';
 
-const KAKAO_REST_API_KEY = process.env.KAKAO_REST_API_KEY || 'c7850585b1a0e91017128dcf19fc6a25';
+const KAKAO_REST_API_KEY = process.env.KAKAO_REST_API_KEY || '1e731faf63d8c8f7d05e9bfd410fa9d3';
 
 const CATEGORY_IMAGE_COLLECTIONS: Record<string, string[]> = {
   cafe: [

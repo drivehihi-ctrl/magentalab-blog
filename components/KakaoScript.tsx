@@ -2,7 +2,7 @@
 
 import Script from 'next/script';
 
-const KAKAO_JS_KEY = process.env.NEXT_PUBLIC_KAKAO_JS_KEY || 'c7850585b1a0e91017128dcf19fc6a25';
+const KAKAO_JS_KEY = process.env.NEXT_PUBLIC_KAKAO_JS_KEY || 'a1fac81ff513c131e308c17f7b442343';
 
 export default function KakaoScript() {
   const handleKakaoInit = () => {
