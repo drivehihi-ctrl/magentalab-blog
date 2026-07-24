@@ -19,30 +19,8 @@ export function middleware(request: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
-  // 2. 메인 루트('/') 경로 접속 시 언어별(en, ja) 자동 감지 리다이렉트
-  if (pathname === '/') {
-    const hasRedirected = request.cookies.get('lang_redirected');
-    if (hasRedirected) {
-      return NextResponse.next();
-    }
-
-    const acceptLanguage = request.headers.get('accept-language') || '';
-    let targetUrl = null;
-
-    if (acceptLanguage.startsWith('en') || acceptLanguage.includes(',en')) {
-      targetUrl = new URL('/en', request.url);
-    } else if (acceptLanguage.startsWith('ja') || acceptLanguage.includes(',ja')) {
-      targetUrl = new URL('/ja', request.url);
-    }
-
-    if (targetUrl) {
-      const res = NextResponse.redirect(targetUrl);
-      res.cookies.set('lang_redirected', 'true', { maxAge: 60 * 60 * 24 });
-      return res;
-    }
-  }
-
   return NextResponse.next();
+
 }
 
 export const config = {
