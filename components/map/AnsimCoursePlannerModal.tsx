@@ -44,8 +44,6 @@ export default function AnsimCoursePlannerModal({
     targetRegionLabel: string;
   } | null>(null);
 
-  if (!isOpen) return null;
-
   // Helper: fetch best place from API for a specific category + region keyword
   const fetchBestPlaceForCategory = useCallback(async (
     category: 'restaurant' | 'park' | 'cafe' | 'hospital',
@@ -71,6 +69,8 @@ export default function AnsimCoursePlannerModal({
     }
     return null;
   }, []);
+
+  if (!isOpen) return null;
 
   // Generate 1-Second AI 3-Step Outing Course — each category fetched independently
   const handleGenerateCourse = async () => {
