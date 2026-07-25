@@ -30,21 +30,20 @@ export default function KakaoShareButton({
 }: KakaoShareButtonProps) {
   const [copied, setCopied] = useState(false);
 
-  const handleKakaoShare = async () => {
+  const handleKakaoShare = () => {
     if (typeof window === 'undefined') return;
 
-    const shareUrl = `https://map.magentalabblog.com/map?placeId=${placeId}`;
+    const shareUrl = `https://map.magentalabblog.com/place/${placeId}`;
     const defaultImage = imageUrl || 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=600&q=80';
     const descText = description ? description.substring(0, 80) : `${address} 에 위치한 대표 ${categoryName} 스팟입니다.`;
 
-    // 1. Try Kakao SDK V2 & V1 Share/Link API
     if (window.Kakao) {
-      try {
-        if (!window.Kakao.isInitialized()) {
-          window.Kakao.init(KAKAO_JS_KEY);
-        }
+      if (!window.Kakao.isInitialized()) {
+        window.Kakao.init(KAKAO_JS_KEY);
+      }
 
-        const shareParams = {
+      try {
+        window.Kakao.Share.sendDefault({
           objectType: 'feed',
           content: {
             title: `[마젠타랩 펫 맵] 🐶 우리 아이와 함께 가볼까? ${placeName}`,
@@ -64,42 +63,32 @@ export default function KakaoShareButton({
               },
             },
           ],
-        };
-
-        if (window.Kakao.Share && typeof window.Kakao.Share.sendDefault === 'function') {
-          window.Kakao.Share.sendDefault(shareParams);
-          return;
-        } else if (window.Kakao.Link && typeof window.Kakao.Link.sendDefault === 'function') {
-          window.Kakao.Link.sendDefault(shareParams);
-          return;
-        }
+        });
+        return;
       } catch (err) {
         console.warn('Kakao Share API failed:', err);
       }
     }
 
     // 2. Web Share API Fallback
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `[마젠타랩 펫 맵] ${placeName}`,
-          text: `📍 ${address} (${categoryName})`,
-          url: shareUrl,
-        });
-        return;
-      } catch (err) {
-        console.log('Web Share cancelled or failed:', err);
-      }
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      navigator.share({
+        title: `[마젠타랩 펫 맵] ${placeName}`,
+        text: `📍 ${address} (${categoryName})`,
+        url: shareUrl,
+      }).catch((err) => console.log('Web Share cancelled or failed:', err));
+      return;
     }
 
     // 3. Clipboard Fallback
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
-      alert('공유 링크가 복사되었습니다! 카카오톡 대화방에 붙여넣어 공유하세요.');
-    } catch (err) {
-      alert(`링크 주소: ${shareUrl}`);
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2500);
+        alert('공유 링크가 복사되었습니다! 카카오톡 대화방에 붙여넣어 공유하세요.');
+      }).catch(() => {
+        alert(`링크 주소: ${shareUrl}`);
+      });
     }
   };
 

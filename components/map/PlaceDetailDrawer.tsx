@@ -25,18 +25,18 @@ const KAKAO_JS_KEY = process.env.NEXT_PUBLIC_KAKAO_JS_KEY || '186380c4d2f6974b4c
 export default function PlaceDetailDrawer({ place, onClose }: PlaceDetailDrawerProps) {
   if (!place) return null;
 
-  const handleShare = async () => {
-    const shareUrl = `https://map.magentalabblog.com/map?placeId=${place.id}`;
+  const handleShare = () => {
+    const shareUrl = `https://map.magentalabblog.com/place/${place.id}`;
     const defaultImage = place.imageUrl || 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=600&q=80';
     const descText = place.description ? place.description.substring(0, 80) : `${place.address} 에 위치한 대표 ${place.categoryName} 스팟입니다.`;
 
     if (typeof window !== 'undefined' && window.Kakao) {
-      try {
-        if (!window.Kakao.isInitialized()) {
-          window.Kakao.init(KAKAO_JS_KEY);
-        }
+      if (!window.Kakao.isInitialized()) {
+        window.Kakao.init(KAKAO_JS_KEY);
+      }
 
-        const shareParams = {
+      try {
+        window.Kakao.Share.sendDefault({
           objectType: 'feed',
           content: {
             title: `[마젠타랩 펫 맵] 🐶 우리 아이와 함께 가볼까? ${place.name}`,
@@ -56,40 +56,28 @@ export default function PlaceDetailDrawer({ place, onClose }: PlaceDetailDrawerP
               },
             },
           ],
-        };
-
-        if (window.Kakao.Share && typeof window.Kakao.Share.sendDefault === 'function') {
-          window.Kakao.Share.sendDefault(shareParams);
-          return;
-        } else if (window.Kakao.Link && typeof window.Kakao.Link.sendDefault === 'function') {
-          window.Kakao.Link.sendDefault(shareParams);
-          return;
-        }
+        });
+        return;
       } catch (err) {
         console.warn('Kakao Share failed:', err);
       }
     }
 
     if (typeof navigator !== 'undefined' && navigator.share) {
-      try {
-        await navigator.share({
-          title: `[마젠타랩 펫 맵] ${place.name}`,
-          text: `📍 ${place.address} (${place.categoryName})`,
-          url: shareUrl,
-        });
-        return;
-      } catch (err) {
-        console.log('Web Share cancelled:', err);
-      }
+      navigator.share({
+        title: `[마젠타랩 펫 맵] ${place.name}`,
+        text: `📍 ${place.address} (${place.categoryName})`,
+        url: shareUrl,
+      }).catch((err) => console.log('Web Share cancelled:', err));
+      return;
     }
 
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
-      try {
-        await navigator.clipboard.writeText(shareUrl);
+      navigator.clipboard.writeText(shareUrl).then(() => {
         alert('공유 링크가 복사되었습니다!');
-      } catch (err) {
+      }).catch(() => {
         alert(`링크 주소: ${shareUrl}`);
-      }
+      });
     }
   };
 
