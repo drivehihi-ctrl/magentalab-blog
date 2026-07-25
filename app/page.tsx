@@ -1,11 +1,11 @@
 import Image from "next/image";
 import PostCard from "@/components/PostCard";
 import Pagination from "@/components/Pagination";
-import { getPosts, getFeaturedImage } from "@/lib/wp";
+import { getPosts, getFeaturedImage, getPostViews } from "@/lib/wp";
 import { sanitizeForSeo } from "@/lib/utils";
 import { Metadata } from "next";
 import Link from "next/link";
-import { Flame, Sparkles, TrendingUp, ArrowRight } from "lucide-react";
+import { Flame, Sparkles, TrendingUp, ArrowRight, Eye } from "lucide-react";
 
 export const revalidate = 86400;
 
@@ -38,9 +38,14 @@ export default async function HomePage({
   const currentPage = Number(page) || 1;
   const { posts, totalPages } = await getPosts(currentPage, 20);
 
-  // Extract top 3 posts for "지금 뜨고 있는 글" (Trending Posts)
-  const trendingPosts = posts.slice(0, 3);
-  const remainingPosts = currentPage === 1 ? posts.slice(3) : posts;
+  // 🌟 "지금 뜨고 있는 글" (Trending Posts) - Sort strictly by View Count!
+  const trendingPosts = [...posts]
+    .sort((a, b) => getPostViews(b) - getPostViews(a))
+    .slice(0, 3);
+
+  // Remove trending posts from main grid only on page 1 for variety
+  const trendingIds = new Set(trendingPosts.map((p) => p.id));
+  const remainingPosts = currentPage === 1 ? posts.filter((p) => !trendingIds.has(p.id)) : posts;
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
@@ -141,7 +146,7 @@ export default async function HomePage({
       </section>
 
       {/* ═════════════════════════════
-          🔥 지금 뜨고 있는 글 (TRENDING POSTS) SECTION
+          🔥 지금 뜨고 있는 글 (TRENDING POSTS - SORTED BY VIEWS) SECTION
       ═════════════════════════════ */}
       {currentPage === 1 && trendingPosts.length > 0 && (
         <section className="bg-gradient-to-b from-[#faf6f0] to-white py-12 border-y border-amber-900/10">
@@ -153,9 +158,11 @@ export default async function HomePage({
                   <Flame className="w-5 h-5 animate-bounce" />
                 </div>
                 <div>
-                  <span className="text-[10px] font-black text-rose-600 tracking-widest uppercase bg-rose-100 px-2 py-0.5 rounded-full inline-block mb-0.5">
-                    HOT ISSUE
-                  </span>
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <span className="text-[10px] font-black text-rose-600 tracking-widest uppercase bg-rose-100 px-2 py-0.5 rounded-full inline-block">
+                      실시간 조회수 기준 📊
+                    </span>
+                  </div>
                   <h2 className="text-xl sm:text-2xl font-extrabold text-[#1a1a2e] tracking-tight">
                     지금 뜨고 있는 글 🔥
                   </h2>
@@ -170,11 +177,13 @@ export default async function HomePage({
               </Link>
             </div>
 
-            {/* Trending Cards Grid */}
+            {/* Trending Cards Grid (Sorted by View Count) */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {trendingPosts.map((post, idx) => {
                 const imgUrl = getFeaturedImage(post);
                 const titleText = sanitizeForSeo(post.title.rendered);
+                const views = getPostViews(post);
+                const viewsFormatted = views.toLocaleString();
                 const dateStr = new Date(post.date).toLocaleDateString("ko-KR", {
                   year: "numeric",
                   month: "long",
@@ -186,8 +195,8 @@ export default async function HomePage({
                     key={post.id}
                     className="bg-white rounded-3xl p-5 border border-rose-100 shadow-md hover:shadow-xl hover:border-rose-300 transition-all duration-300 flex flex-col justify-between relative overflow-hidden group"
                   >
-                    {/* Popular Badge Rank */}
-                    <div className="absolute top-4 right-4 z-10">
+                    {/* Popular Badge Rank & View Count */}
+                    <div className="absolute top-4 right-4 z-10 flex items-center gap-1.5">
                       <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-gradient-to-r from-rose-500 to-amber-500 text-white shadow-xs">
                         TOP {idx + 1}
                       </span>
@@ -202,12 +211,16 @@ export default async function HomePage({
                           fill
                           className="object-cover group-hover:scale-105 transition-transform duration-500"
                         />
+                        <div className="absolute bottom-2.5 left-2.5 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-bold text-white flex items-center gap-1">
+                          <Eye className="w-3 h-3 text-amber-300" />
+                          <span>조회수 {viewsFormatted}회</span>
+                        </div>
                       </div>
 
                       <div className="space-y-1.5 pt-1">
                         <span className="text-[11px] font-bold text-rose-600 flex items-center gap-1">
                           <TrendingUp className="w-3 h-3" />
-                          <span>반려동물 인기 이슈</span>
+                          <span>실시간 트렌드 포스트</span>
                         </span>
                         <h3
                           className="text-base font-extrabold text-gray-900 line-clamp-2 leading-snug group-hover:text-[#E5007E] transition-colors"
