@@ -56,7 +56,7 @@ export default function PlaceSearchHeader({
         </div>
 
         {/* Category Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none touch-pan-x">
           {CATEGORIES.map((cat) => {
             const active = selectedCategory === cat.id;
             const isFavoriteTab = cat.id === 'favorite';
@@ -64,7 +64,7 @@ export default function PlaceSearchHeader({
               <button
                 key={cat.id}
                 onClick={() => onCategoryChange(cat.id)}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all shrink-0 ${
                   active
                     ? 'bg-purple-600 text-white shadow-md shadow-purple-200 scale-105'
                     : 'bg-gray-100 text-gray-700 hover:bg-purple-50 hover:text-purple-700'

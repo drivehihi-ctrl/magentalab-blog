@@ -159,12 +159,12 @@ export default function AnsimCoursePlannerModal({
               <MapPin className="w-4 h-4 text-purple-600" />
               <span>1. 어디로 떠나시나요? (지역 선택)</span>
             </label>
-            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none touch-pan-x">
               {(['김포', '서울', '경기', '인천', '부산'] as RegionChoice[]).map((region) => (
                 <button
                   key={region}
                   onClick={() => setSelectedRegion(region)}
-                  className={`px-4 py-2 rounded-2xl text-xs font-bold transition whitespace-nowrap ${
+                  className={`px-4 py-2 rounded-2xl text-xs font-bold transition whitespace-nowrap shrink-0 ${
                     selectedRegion === region
                       ? 'bg-purple-600 text-white shadow-md shadow-purple-300 scale-105'
                       : 'bg-gray-100 text-gray-700 hover:bg-purple-50'

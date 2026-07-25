@@ -148,7 +148,7 @@ export default async function JapaneseHomePage({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex overflow-x-auto snap-x snap-mandatory pb-6 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-3 gap-4 sm:gap-6 scrollbar-none touch-pan-x">
               {trendingPosts.map((post, idx) => {
                 const imgUrl = getFeaturedImage(post);
                 const titleText = sanitizeForSeo(post.title.rendered);
@@ -161,7 +161,7 @@ export default async function JapaneseHomePage({
                 return (
                   <div
                     key={post.id}
-                    className="bg-white rounded-3xl p-5 border border-rose-100 shadow-md hover:shadow-xl hover:border-rose-300 transition-all duration-300 flex flex-col justify-between relative overflow-hidden group"
+                    className="shrink-0 min-w-[280px] w-[82vw] max-w-[340px] sm:w-auto snap-center bg-white rounded-3xl p-5 border border-rose-100 shadow-md hover:shadow-xl hover:border-rose-300 transition-all duration-300 flex flex-col justify-between relative overflow-hidden group"
                   >
                     <div className="absolute top-4 right-4 z-10">
                       <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-gradient-to-r from-rose-500 to-amber-500 text-white shadow-xs">
