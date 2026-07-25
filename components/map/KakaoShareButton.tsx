@@ -34,6 +34,7 @@ export default function KakaoShareButton({
     if (typeof window === 'undefined') return;
 
     const shareUrl = `https://map.magentalabblog.com/place/${placeId}`;
+    const externalUrl = `kakaotalk://web/openExternal?url=${encodeURIComponent(shareUrl)}`;
     const defaultImage = imageUrl || 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=600&q=80';
     const descText = description ? description.substring(0, 80) : `${address} 에 위치한 대표 ${categoryName} 스팟입니다.`;
 
@@ -52,6 +53,8 @@ export default function KakaoShareButton({
             link: {
               mobileWebUrl: shareUrl,
               webUrl: shareUrl,
+              androidExecutionParams: `placeId=${placeId}`,
+              iosExecutionParams: `placeId=${placeId}`,
             },
           },
           buttons: [
@@ -60,6 +63,8 @@ export default function KakaoShareButton({
               link: {
                 mobileWebUrl: shareUrl,
                 webUrl: shareUrl,
+                androidExecutionParams: `placeId=${placeId}`,
+                iosExecutionParams: `placeId=${placeId}`,
               },
             },
           ],

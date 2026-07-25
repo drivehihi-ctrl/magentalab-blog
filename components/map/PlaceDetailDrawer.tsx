@@ -45,6 +45,8 @@ export default function PlaceDetailDrawer({ place, onClose }: PlaceDetailDrawerP
             link: {
               mobileWebUrl: shareUrl,
               webUrl: shareUrl,
+              androidExecutionParams: `placeId=${place.id}`,
+              iosExecutionParams: `placeId=${place.id}`,
             },
           },
           buttons: [
@@ -53,6 +55,8 @@ export default function PlaceDetailDrawer({ place, onClose }: PlaceDetailDrawerP
               link: {
                 mobileWebUrl: shareUrl,
                 webUrl: shareUrl,
+                androidExecutionParams: `placeId=${place.id}`,
+                iosExecutionParams: `placeId=${place.id}`,
               },
             },
           ],
