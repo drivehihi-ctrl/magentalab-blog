@@ -87,6 +87,51 @@ export default function PlaceDetailDrawer({ place, onClose, isFavorite, onToggle
     }
   };
 
+  const getDynamicPhotoSpot = (place: PetPlacePOI) => {
+    if (place.photoSpot) return place.photoSpot;
+    
+    const nameStr = place.name.toLowerCase();
+    const isOcean = nameStr.includes('바다') || nameStr.includes('해변') || nameStr.includes('비치');
+    const isRanch = nameStr.includes('목장') || nameStr.includes('농장') || nameStr.includes('가든') || nameStr.includes('팜');
+    
+    if (isOcean) {
+      return {
+        location: '탁 트인 오션뷰 테라스 & 시그니처 무지개 의자',
+        bestTime: '파란 하늘이 쨍한 낮 1시 ~ 3시 또는 일몰 시간대',
+        shootingTip: '바다 배경과 무지개 의자가 다 나오도록 광각으로 시원하게 찍어주세요!'
+      };
+    }
+    if (isRanch) {
+      return {
+        location: '초록빛 넓은 목초지 & 목장 오두막 포토존',
+        bestTime: '햇살이 부드러운 오전 10시 ~ 11시',
+        shootingTip: '푸른 잔디밭에서 댕댕이가 뛰노는 자연스러운 순간을 연속 촬영으로 담아보세요.'
+      };
+    }
+    if (place.category === 'cafe') {
+      return {
+        location: `${place.name} 시그니처 메인 포토존 & 채광 좋은 창가`,
+        bestTime: '실내 채광이 가장 좋은 낮 시간대 (오후 1시~3시)',
+        shootingTip: '예쁜 소품을 활용하거나 댕댕이 간식을 카메라 렌즈 가까이 두고 시선을 끌어 찍어보세요!'
+      };
+    }
+    if (place.category === 'park') {
+      return {
+        location: '넓은 잔디 광장 중심부 & 산책로 나무 데크',
+        bestTime: '산책하기 좋은 선선한 늦은 오후 (오후 4시~6시)',
+        shootingTip: '신나게 뛰노는 모습을 로우 앵글(아래에서 위로)로 찍으면 롱다리처럼 예쁘게 나와요!'
+      };
+    }
+    
+    return {
+      location: `${place.categoryName} 특유의 감성이 묻어나는 입구 또는 메인 홀`,
+      bestTime: '방문객이 적은 평일 한가한 시간대',
+      shootingTip: '우리 아이가 가장 편안한 표정을 지을 때 다가가서 수평 구도로 찍어주세요!'
+    };
+  };
+
+  const photoInfo = getDynamicPhotoSpot(place);
+
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 bg-white rounded-t-3xl shadow-2xl border-t border-purple-100 max-w-2xl mx-auto overflow-hidden animate-in slide-in-from-bottom duration-300">
       {/* Drawer Handle */}
@@ -216,13 +261,13 @@ export default function PlaceDetailDrawer({ place, onClose, isFavorite, onToggle
 
           <div className="space-y-1.5 text-xs">
             <p className="text-purple-100">
-              📍 <strong className="text-amber-200">Best 포토존 위치:</strong> {place.photoSpot?.location || '2층 야외 테라스 노란 의자 & 루프탑 잔디'}
+              📍 <strong className="text-amber-200">Best 포토존 위치:</strong> {photoInfo.location}
             </p>
             <p className="text-purple-100">
-              ⏰ <strong className="text-amber-200">추천 촬영 시각:</strong> {place.photoSpot?.bestTime || '오후 4시 ~ 5시 (노을빛 쏟아지는 골든아워)'}
+              ⏰ <strong className="text-amber-200">추천 촬영 시각:</strong> {photoInfo.bestTime}
             </p>
             <div className="bg-white/10 backdrop-blur p-2.5 rounded-xl border border-white/10 text-[11px] text-purple-100 font-medium leading-relaxed mt-1">
-              💡 <strong className="text-amber-300">촬영 팁:</strong> {place.photoSpot?.shootingTip || '댕댕이를 의자 중앙에 앉히고 보호자님이 눈높이 수평 구도로 찍으시면 무조건 인스타 대박 인생샷 완성!'}
+              💡 <strong className="text-amber-300">촬영 팁:</strong> {photoInfo.shootingTip}
             </div>
           </div>
         </div>

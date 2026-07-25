@@ -178,7 +178,7 @@ export default async function HomePage({
             </div>
 
             {/* Trending Cards Grid (Sorted by View Count) */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex overflow-x-auto snap-x snap-mandatory pb-6 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-3 gap-4 sm:gap-6 scrollbar-hide">
               {trendingPosts.map((post, idx) => {
                 const imgUrl = getFeaturedImage(post);
                 const titleText = sanitizeForSeo(post.title.rendered);
@@ -193,7 +193,7 @@ export default async function HomePage({
                 return (
                   <div
                     key={post.id}
-                    className="bg-white rounded-3xl p-5 border border-rose-100 shadow-md hover:shadow-xl hover:border-rose-300 transition-all duration-300 flex flex-col justify-between relative overflow-hidden group"
+                    className="shrink-0 w-[85%] sm:w-auto snap-center sm:snap-align-none bg-white rounded-3xl p-5 border border-rose-100 shadow-md hover:shadow-xl hover:border-rose-300 transition-all duration-300 flex flex-col justify-between relative overflow-hidden group"
                   >
                     {/* Popular Badge Rank & View Count */}
                     <div className="absolute top-4 right-4 z-10 flex items-center gap-1.5">
