@@ -94,10 +94,10 @@ export default async function EnglishHomePage({
       >
         <div className="h-[3px] w-full bg-gradient-to-r from-[#E5007E] via-amber-400 to-[#E5007E]" />
         
-        <div className="container relative mx-auto px-4 sm:px-6 py-14 lg:py-24">
-          <div className="flex flex-col-reverse lg:flex-row items-center gap-10 lg:gap-16">
+        <div className="container relative mx-auto px-4 sm:px-6 py-14 lg:py-24 max-w-6xl">
+          <div className="flex flex-col-reverse lg:flex-row items-center justify-between gap-10 lg:gap-12">
             {/* Character */}
-            <div className="w-full lg:w-1/2 flex justify-center lg:justify-end order-first lg:order-last">
+            <div className="w-full lg:w-1/2 flex justify-center lg:justify-center order-first lg:order-last">
               <div className="relative w-56 h-56 sm:w-72 sm:h-72 lg:w-[420px] lg:h-[420px]" style={{ animation: "float 6s ease-in-out infinite" }}>
                 <div className="absolute inset-0 bg-[#E5007E]/10 rounded-full blur-3xl transform scale-90" />
                 <Image
