@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPetPlaces } from '@/lib/map/places';
 import { PetCategory, PetPlacePOI } from '@/lib/map/types';
+import { getRealPlaceImageUrl } from '@/lib/map/aiBriefing';
 
 const KAKAO_REST_API_KEY = process.env.KAKAO_REST_API_KEY || 'c7850585b1a0e91017128dcf19fc6a25';
 
@@ -127,57 +128,62 @@ export async function GET(request: NextRequest) {
       if (data.documents && data.documents.length > 0) {
         const petKeywords = ['애견', '반려', '펫', '동물', '강아지', '고양이', '멍', '냥', '동반', '입장', '놀이터', '운동장', '병원', '펜션', '카페'];
 
-        const realPlaces: PetPlacePOI[] = data.documents
-          .filter((doc: any) => {
-            const rawCategory = doc.category_name || '';
-            const name = doc.place_name || '';
-            
-            // 온천, 섬, 산 등 반려동물과 전혀 무관한 카테고리는 이름에 펫 관련 키워드가 없으면 제외
-            const excludedCategories = ['온천', '섬', '산', '계곡', '성곽', '유적지', '관공서'];
-            const isExcludedCategory = excludedCategories.some(cat => rawCategory.includes(cat));
-            const hasPetKeyword = petKeywords.some(kw => name.includes(kw) || rawCategory.includes(kw));
+        const realPlaces: PetPlacePOI[] = await Promise.all(
+          data.documents
+            .filter((doc: any) => {
+              const rawCategory = doc.category_name || '';
+              const name = doc.place_name || '';
+              
+              // 온천, 섬, 산 등 반려동물과 전혀 무관한 카테고리는 이름에 펫 관련 키워드가 없으면 제외
+              const excludedCategories = ['온천', '섬', '산', '계곡', '성곽', '유적지', '관공서'];
+              const isExcludedCategory = excludedCategories.some(cat => rawCategory.includes(cat));
+              const hasPetKeyword = petKeywords.some(kw => name.includes(kw) || rawCategory.includes(kw));
 
-            if (isExcludedCategory && !hasPetKeyword) {
-              return false;
-            }
-            return true;
-          })
-          .map((doc: any) => {
-          const rawCategory = doc.category_name || '';
-          const categoryName = rawCategory.split(' > ').pop() || '애견동반 스팟';
-          const itemCategory = parsePetCategory(rawCategory, category);
-          const placeId = `kakao-${doc.id}`;
-          const placeMeta = getPlaceMeta(itemCategory, placeId, doc.place_name);
+              if (isExcludedCategory && !hasPetKeyword) {
+                return false;
+              }
+              return true;
+            })
+            .map(async (doc: any) => {
+              const rawCategory = doc.category_name || '';
+              const categoryName = rawCategory.split(' > ').pop() || '애견동반 스팟';
+              const itemCategory = parsePetCategory(rawCategory, category);
+              const placeId = `kakao-${doc.id}`;
+              const placeMeta = getPlaceMeta(itemCategory, placeId, doc.place_name);
 
-          return {
-            id: placeId,
-            name: doc.place_name,
-            category: itemCategory,
-            categoryName: categoryName,
-            address: doc.address_name || '주소 정보 없음',
-            roadAddress: doc.road_address_name || doc.address_name,
-            lat: parseFloat(doc.y),
-            lng: parseFloat(doc.x),
-            phone: doc.phone || undefined,
-            operatingHours: doc.phone ? `전화 문의 (${doc.phone})` : '영업시간 전화 문의',
-            rating: placeMeta.rating,
-            reviewCount: placeMeta.reviewCount,
-            imageUrl: placeMeta.imageUrl,
-            description: `${doc.place_name}은(는) 카카오 지도에 등록된 실제 ${categoryName} 스팟입니다.`,
-            petPolicy: {
-              indoorAllowed: true,
-              outdoorAllowed: true,
-              offLeashAllowed: itemCategory === 'park',
-              parkingAvailable: true,
-              notes: '실시간 동반 가능 여부 및 매너벨트 착용 수칙은 방문 전 전화로 확인해 주세요.',
-            },
-            tags: [categoryName, '실제매장', '카카오맵'],
-            directionsUrls: {
-              kakao: `https://map.kakao.com/link/to/${encodeURIComponent(doc.place_name)},${doc.y},${doc.x}`,
-              naver: `https://map.naver.com/v5/search/${encodeURIComponent(doc.place_name + ' ' + (doc.road_address_name || doc.address_name))}`,
-            },
-          };
-        });
+              // 🌟 네이버 이미지 검색 API로 매장의 '진짜 대표 실사 사진' 실시간 가져오기!
+              const realImg = await getRealPlaceImageUrl(doc.place_name, doc.road_address_name || doc.address_name);
+
+              return {
+                id: placeId,
+                name: doc.place_name,
+                category: itemCategory,
+                categoryName: categoryName,
+                address: doc.address_name || '주소 정보 없음',
+                roadAddress: doc.road_address_name || doc.address_name,
+                lat: parseFloat(doc.y),
+                lng: parseFloat(doc.x),
+                phone: doc.phone || undefined,
+                operatingHours: doc.phone ? `전화 문의 (${doc.phone})` : '영업시간 전화 문의',
+                rating: placeMeta.rating,
+                reviewCount: placeMeta.reviewCount,
+                imageUrl: realImg || placeMeta.imageUrl,
+                description: `${doc.place_name}은(는) 카카오 지도에 등록된 실제 ${categoryName} 스팟입니다.`,
+                petPolicy: {
+                  indoorAllowed: true,
+                  outdoorAllowed: true,
+                  offLeashAllowed: itemCategory === 'park',
+                  parkingAvailable: true,
+                  notes: '실시간 동반 가능 여부 및 매너벨트 착용 수칙은 방문 전 전화로 확인해 주세요.',
+                },
+                tags: [categoryName, '실제매장', '카카오맵'],
+                directionsUrls: {
+                  kakao: `https://map.kakao.com/link/to/${encodeURIComponent(doc.place_name)},${doc.y},${doc.x}`,
+                  naver: `https://map.naver.com/v5/search/${encodeURIComponent(doc.place_name + ' ' + (doc.road_address_name || doc.address_name))}`,
+                },
+              };
+            })
+        );
 
         return NextResponse.json({
           success: true,
