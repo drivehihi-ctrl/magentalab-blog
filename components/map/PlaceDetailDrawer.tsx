@@ -7,6 +7,7 @@ import Link from 'next/link';
 import AIBriefingReviews from '@/components/map/AIBriefingReviews';
 import AnsimLabCertification from '@/components/map/AnsimLabCertification';
 import KakaoShareButton from '@/components/map/KakaoShareButton';
+import SafePlaceImage from '@/components/map/SafePlaceImage';
 
 
 
@@ -123,16 +124,7 @@ export default function PlaceDetailDrawer({ place, onClose }: PlaceDetailDrawerP
         {place.imageUrl && (
           <div className="space-y-1.5">
             <div className="relative h-44 w-full rounded-2xl overflow-hidden shadow-inner bg-gray-100">
-              {/* eslint-disable-next-html-element-suppression */}
-              <img
-                src={place.imageUrl}
-                alt={place.name}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  // 네이버 핫링크 차단되거나 이미지 404 발생 시 예시 사진으로 자동 교체 (엑박 방지)
-                  (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=600&q=80';
-                }}
-              />
+              <SafePlaceImage src={place.imageUrl} alt={place.name} />
             </div>
             <p className="text-[11px] text-gray-400 text-right pr-1 flex items-center justify-end gap-1 font-medium">
               <Info className="w-3.5 h-3.5 text-gray-400 shrink-0" />
@@ -141,44 +133,12 @@ export default function PlaceDetailDrawer({ place, onClose }: PlaceDetailDrawerP
           </div>
         )}
 
-
         {/* Description */}
         {place.description && (
           <p className="text-xs sm:text-sm text-gray-600 bg-purple-50/50 p-3 rounded-xl border border-purple-100">
             {place.description}
           </p>
         )}
-
-        {/* Pet Policy Checklist */}
-        <div className="bg-gray-50 p-3.5 rounded-2xl border border-gray-100 space-y-2">
-          <h3 className="text-xs font-bold text-gray-800 flex items-center gap-1.5">
-            <ShieldAlert className="w-4 h-4 text-purple-600" />
-            반려동물 동반 수칙 & 시설
-          </h3>
-          <div className="grid grid-cols-2 gap-2 text-xs text-gray-700">
-            <div className="flex items-center gap-1.5">
-              <CheckCircle2 className={`w-3.5 h-3.5 ${place.petPolicy.indoorAllowed ? 'text-green-500' : 'text-gray-300'}`} />
-              <span>실내 동반 {place.petPolicy.indoorAllowed ? '가능' : '불가'}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <CheckCircle2 className={`w-3.5 h-3.5 ${place.petPolicy.outdoorAllowed ? 'text-green-500' : 'text-gray-300'}`} />
-              <span>야외/테라스 {place.petPolicy.outdoorAllowed ? '가능' : '불가'}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <CheckCircle2 className={`w-3.5 h-3.5 ${place.petPolicy.offLeashAllowed ? 'text-green-500' : 'text-gray-300'}`} />
-              <span>오프리쉬(노리드줄) {place.petPolicy.offLeashAllowed ? '가능' : '불가'}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <CheckCircle2 className={`w-3.5 h-3.5 ${place.petPolicy.parkingAvailable ? 'text-green-500' : 'text-gray-300'}`} />
-              <span>주차 공간 {place.petPolicy.parkingAvailable ? '가능' : '불가'}</span>
-            </div>
-          </div>
-          {place.petPolicy.notes && (
-            <p className="text-[11px] text-amber-700 bg-amber-50 p-2 rounded-lg mt-2">
-              💡 {place.petPolicy.notes}
-            </p>
-          )}
-        </div>
 
         {/* Operating Hours & Contact */}
         <div className="space-y-1.5 text-xs text-gray-600">

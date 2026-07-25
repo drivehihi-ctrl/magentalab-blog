@@ -4,6 +4,7 @@ import { MapPin, Clock, Phone, Navigation, ArrowLeft, ShieldAlert, CheckCircle2 
 import Link from 'next/link';
 import AIBriefingReviews from '@/components/map/AIBriefingReviews';
 import KakaoShareButton from '@/components/map/KakaoShareButton';
+import SafePlaceImage from '@/components/map/SafePlaceImage';
 import { getAIBriefingData } from '@/lib/map/aiBriefing';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
@@ -128,15 +129,7 @@ export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) 
 
           {place.imageUrl && (
             <div className="h-64 sm:h-80 w-full rounded-2xl overflow-hidden bg-gray-100">
-              {/* eslint-disable-next-html-element-suppression */}
-              <img
-                src={place.imageUrl}
-                alt={place.name}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=600&q=80';
-                }}
-              />
+              <SafePlaceImage src={place.imageUrl} alt={place.name} />
             </div>
           )}
 
@@ -145,31 +138,6 @@ export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) 
               {place.description}
             </div>
           )}
-
-          <div className="bg-gray-50 p-5 rounded-2xl space-y-3">
-            <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-              <ShieldAlert className="w-4 h-4 text-purple-600" />
-              반려동물 동반 수칙 & 상세 시설
-            </h3>
-            <div className="grid grid-cols-2 gap-3 text-xs sm:text-sm text-gray-700">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className={`w-4 h-4 ${place.petPolicy.indoorAllowed ? 'text-green-500' : 'text-gray-300'}`} />
-                <span>실내 동반 {place.petPolicy.indoorAllowed ? '가능' : '불가'}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className={`w-4 h-4 ${place.petPolicy.outdoorAllowed ? 'text-green-500' : 'text-gray-300'}`} />
-                <span>야외/테라스 {place.petPolicy.outdoorAllowed ? '가능' : '불가'}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className={`w-4 h-4 ${place.petPolicy.offLeashAllowed ? 'text-green-500' : 'text-gray-300'}`} />
-                <span>오프리쉬(노리드줄) {place.petPolicy.offLeashAllowed ? '가능' : '불가'}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className={`w-4 h-4 ${place.petPolicy.parkingAvailable ? 'text-green-500' : 'text-gray-300'}`} />
-                <span>주차 {place.petPolicy.parkingAvailable ? '가능' : '불가'}</span>
-              </div>
-            </div>
-          </div>
 
           <div className="space-y-2 text-sm text-gray-700 border-t border-b border-gray-100 py-4">
             <div className="flex items-center gap-2">
