@@ -9,6 +9,12 @@ export interface PetPolicy {
   notes?: string;                                  // 기타 주의사항 (예: 기저귀 착용 필수 등)
 }
 
+export interface PhotoSpotInfo {
+  location: string;
+  bestTime: string;
+  shootingTip: string;
+}
+
 export interface PetPlacePOI {
   id: string;
   name: string;
@@ -27,6 +33,7 @@ export interface PetPlacePOI {
   imageUrl?: string;
   description?: string;
   petPolicy: PetPolicy;
+  photoSpot?: PhotoSpotInfo;
   tags: string[];
   directionsUrls?: {
     kakao?: string;

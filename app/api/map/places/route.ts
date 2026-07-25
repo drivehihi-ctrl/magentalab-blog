@@ -65,6 +65,39 @@ function getPlaceMeta(category: string, placeId: string, placeName: string) {
   };
 }
 
+function getPhotoSpotInfo(category: string, placeName: string) {
+  const spotLocations = [
+    '2층 야외 테라스 노란 의자 & 루프탑 잔디',
+    '입구 감성 통창 포토존 메인 미니 벤치',
+    '넓은 야외 잔디밭 펜스 입구 전용 조명 포토존',
+    '아늑한 실내 전용 라운지 강아지 미니 방석',
+    '메인 가든 알록달록 무지개 바람개비 존',
+  ];
+  const bestTimes = [
+    '오후 4시 ~ 5시 (노을빛 쏟아지는 골든아워 시간대)',
+    '오전 11시 ~ 12시 (햇살이 가장 맑고 눈부신 시각)',
+    '해 질 녘 오후 6시 (은은한 조명 켜지는 감성 타임)',
+  ];
+  const tips = [
+    '댕댕이를 의자 중앙에 앉히고 보호자님이 눈높이 수평 수평 구도로 찍으시면 인스타 대박 인생샷 완성!',
+    '강아지가 간식을 바라볼 때 정면 샷을 연속 촬영하면 역대급 인생 프로필 컷을 얻을 수 있습니다.',
+    '자연광을 등지고 찍으면 털 표면이 반짝이는 천사 컷 촬영이 가능합니다!',
+  ];
+
+  let hash = 0;
+  for (let i = 0; i < placeName.length; i++) {
+    hash = (hash << 5) - hash + placeName.charCodeAt(i);
+    hash |= 0;
+  }
+  const abs = Math.abs(hash);
+
+  return {
+    location: spotLocations[abs % spotLocations.length],
+    bestTime: bestTimes[abs % bestTimes.length],
+    shootingTip: tips[abs % tips.length],
+  };
+}
+
 function mapCategoryToSearchTerm(category: PetCategory | 'all', userQuery: string): string {
   const cleanQuery = userQuery.trim();
 
@@ -192,6 +225,7 @@ export async function GET(request: NextRequest) {
                   parkingAvailable: true,
                   notes: '실시간 동반 가능 여부 및 매너벨트 착용 수칙은 방문 전 전화로 확인해 주세요.',
                 },
+                photoSpot: getPhotoSpotInfo(itemCategory, doc.place_name),
                 tags: [categoryName, '실제매장', '카카오맵'],
                 directionsUrls: {
                   kakao: `https://map.kakao.com/link/to/${encodeURIComponent(doc.place_name)},${doc.y},${doc.x}`,

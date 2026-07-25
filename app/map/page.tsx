@@ -6,8 +6,9 @@ import PetMapViewer from '@/components/map/PetMapViewer';
 import PlaceDetailDrawer from '@/components/map/PlaceDetailDrawer';
 import PetWeatherWidget from '@/components/map/PetWeatherWidget';
 import AnsimPetCuratorModal from '@/components/map/AnsimPetCuratorModal';
+import AnsimCoursePlannerModal from '@/components/map/AnsimCoursePlannerModal';
 import { PetCategory, PetPlacePOI } from '@/lib/map/types';
-import { Sparkles, HeartHandshake, ArrowRight, Loader2, Heart, Wand2 } from 'lucide-react';
+import { Sparkles, HeartHandshake, ArrowRight, Loader2, Heart, Wand2, Compass, Navigation } from 'lucide-react';
 import Link from 'next/link';
 
 export default function MapPage() {
@@ -18,6 +19,7 @@ export default function MapPage() {
   const [allFetchedPlaces, setAllFetchedPlaces] = useState<PetPlacePOI[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isCuratorOpen, setIsCuratorOpen] = useState<boolean>(false);
+  const [isCoursePlannerOpen, setIsCoursePlannerOpen] = useState<boolean>(false);
   const [favoritePlaces, setFavoritePlaces] = useState<PetPlacePOI[]>([]);
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
 
@@ -148,14 +150,24 @@ export default function MapPage() {
             </p>
           </div>
 
-          {/* Ansim AI Curator Trigger Button */}
-          <button
-            onClick={() => setIsCuratorOpen(true)}
-            className="relative z-10 shrink-0 flex items-center gap-2 px-5 py-3.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-purple-950 font-black text-xs sm:text-sm rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95 border border-amber-300 animate-pulse"
-          >
-            <Wand2 className="w-4 h-4 text-purple-950 shrink-0" />
-            <span>1초 댕댕이 성격 맞춤 큐레이션 🐶</span>
-          </button>
+          {/* Action Trigger Buttons (Curator & Course Planner) */}
+          <div className="relative z-10 shrink-0 flex flex-wrap gap-2.5">
+            <button
+              onClick={() => setIsCoursePlannerOpen(true)}
+              className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-extrabold text-xs sm:text-sm rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95 border border-purple-300"
+            >
+              <Navigation className="w-4 h-4 text-amber-300 shrink-0" />
+              <span>주말 1초 AI 코스 플래너 🚗</span>
+            </button>
+
+            <button
+              onClick={() => setIsCuratorOpen(true)}
+              className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-purple-950 font-extrabold text-xs sm:text-sm rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95 border border-amber-300"
+            >
+              <Wand2 className="w-4 h-4 text-purple-950 shrink-0" />
+              <span>1초 댕댕이 성격 맞춤 큐레이션 🐶</span>
+            </button>
+          </div>
         </div>
 
         {/* Map Loading Indicator Overlay */}
@@ -175,7 +187,7 @@ export default function MapPage() {
           />
         </div>
 
-        {/* AI Character Ansim-i Banner & Link (Option 2: Recommended Exercise & BCS Calculator) */}
+        {/* AI Character Ansim-i Banner & Link */}
         <div className="bg-white rounded-3xl p-6 border border-purple-100 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-purple-100 flex items-center justify-center text-purple-700 shrink-0">
@@ -212,6 +224,14 @@ export default function MapPage() {
       <AnsimPetCuratorModal
         isOpen={isCuratorOpen}
         onClose={() => setIsCuratorOpen(false)}
+        places={allFetchedPlaces.length > 0 ? allFetchedPlaces : places}
+        onSelectPlace={(place) => setSelectedPlace(place)}
+      />
+
+      {/* 1-Second AI Course Planner Modal */}
+      <AnsimCoursePlannerModal
+        isOpen={isCoursePlannerOpen}
+        onClose={() => setIsCoursePlannerOpen(false)}
         places={allFetchedPlaces.length > 0 ? allFetchedPlaces : places}
         onSelectPlace={(place) => setSelectedPlace(place)}
       />

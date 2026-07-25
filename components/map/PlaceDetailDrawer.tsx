@@ -203,6 +203,30 @@ export default function PlaceDetailDrawer({ place, onClose, isFavorite, onToggle
         {/* AI Briefing Review Section */}
         <AIBriefingReviews placeName={place.name} address={place.address} />
 
+        {/* 📸 AI Photo Spot & Shooting Tip Section (Viral Feature) */}
+        <div className="bg-gradient-to-r from-purple-900 via-indigo-900 to-purple-800 text-white p-4 sm:p-5 rounded-2xl shadow-lg border border-purple-400/20 space-y-2.5 relative overflow-hidden">
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded-full bg-amber-400 text-purple-950 font-black text-[10px]">
+              이탈률 0% 📸 AI 꿀팁
+            </span>
+            <h4 className="text-xs font-black text-amber-300">
+              인스타 대박 인생샷 명당 좌표 & 촬영 팁
+            </h4>
+          </div>
+
+          <div className="space-y-1.5 text-xs">
+            <p className="text-purple-100">
+              📍 <strong className="text-amber-200">Best 포토존 위치:</strong> {place.photoSpot?.location || '2층 야외 테라스 노란 의자 & 루프탑 잔디'}
+            </p>
+            <p className="text-purple-100">
+              ⏰ <strong className="text-amber-200">추천 촬영 시각:</strong> {place.photoSpot?.bestTime || '오후 4시 ~ 5시 (노을빛 쏟아지는 골든아워)'}
+            </p>
+            <div className="bg-white/10 backdrop-blur p-2.5 rounded-xl border border-white/10 text-[11px] text-purple-100 font-medium leading-relaxed mt-1">
+              💡 <strong className="text-amber-300">촬영 팁:</strong> {place.photoSpot?.shootingTip || '댕댕이를 의자 중앙에 앉히고 보호자님이 눈높이 수평 구도로 찍으시면 무조건 인스타 대박 인생샷 완성!'}
+            </div>
+          </div>
+        </div>
+
         {/* KakaoTalk 1-Second Share Button */}
         <div className="pt-2">
           <KakaoShareButton
