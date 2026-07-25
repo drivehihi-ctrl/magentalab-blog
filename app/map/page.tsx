@@ -190,15 +190,15 @@ export default function MapPage() {
           />
         </div>
 
-        {/* AI Character Ansim-i Banner & Link */}
-        <div className="bg-white rounded-3xl p-6 border border-purple-100 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+        {/* AI Character Ansim-i Banner & Link (Hani-inspired design) */}
+        <div className="bg-[#faf6f0] rounded-3xl p-6 border border-[#e8e4df] shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-purple-100 flex items-center justify-center text-purple-700 shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-[#1a1a2e] text-[#c9a64c] flex items-center justify-center border border-[#c9a64c]/30 shrink-0 shadow-xs">
               <HeartHandshake className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-gray-900">오늘 얼마나 뛰어놀아야 할까? 🏃‍♂️</h3>
-              <p className="text-xs text-gray-500">AI 캐릭터 안심이의 반려견 BCS 체형 & 권장 운동량 계산기</p>
+              <h3 className="text-base font-extrabold text-[#1a1a2e]">오늘 얼마나 뛰어놀아야 할까? 🏃‍♂️</h3>
+              <p className="text-xs text-gray-600 font-medium">AI 캐릭터 안심이의 반려견 BCS 체형 & 권장 운동량 계산기</p>
             </div>
           </div>
 
@@ -206,10 +206,10 @@ export default function MapPage() {
             href="https://www.magentalabblog.com/bcs-calculator"
             target="_blank"
             rel="noopener noreferrer"
-            className="shrink-0 flex items-center gap-1.5 px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-full shadow-md transition"
+            className="shrink-0 flex items-center gap-1.5 px-6 py-3 bg-[#1a1a2e] hover:bg-[#252542] text-[#c9a64c] font-extrabold text-xs rounded-full shadow-md border border-[#c9a64c]/30 transition transform hover:scale-[1.02] active:scale-95"
           >
             <span>안심이 운동량 계산기 바로가기</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 text-[#E5007E]" />
           </a>
         </div>
 

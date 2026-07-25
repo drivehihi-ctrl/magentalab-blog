@@ -287,7 +287,7 @@ export default function PetMapViewer({
               }, 100);
             }
           }}
-          className="flex items-center gap-1.5 px-3.5 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-full shadow-lg transition active:scale-95"
+          className="flex items-center gap-1.5 px-3.5 py-2 bg-[#1a1a2e] hover:bg-[#252542] text-[#c9a64c] text-xs font-extrabold rounded-full shadow-lg border border-[#c9a64c]/30 transition active:scale-95 cursor-pointer"
         >
           {viewMode === 'map' ? (
             <>
@@ -309,17 +309,17 @@ export default function PetMapViewer({
           {/* Map Container */}
           <div ref={mapContainerRef} className="w-full h-full min-h-[500px]" />
 
-          {/* Touch Lock Protection Overlay for Smooth Mobile Page Scroll (Excludes bottom carousel) */}
+          {/* Touch Lock Protection Overlay for Smooth Mobile Page Scroll */}
           {isTouchLocked && (
             <div 
               onClick={() => setIsTouchLocked(false)}
-              className="absolute top-0 left-0 right-0 bottom-[140px] z-20 bg-purple-950/15 backdrop-blur-[0.5px] flex items-center justify-center cursor-pointer transition-all hover:bg-purple-950/25"
+              className="absolute top-0 left-0 right-0 bottom-[140px] z-20 bg-[#1a1a2e]/20 backdrop-blur-[0.5px] flex items-center justify-center cursor-pointer transition-all hover:bg-[#1a1a2e]/30"
             >
-              <div className="bg-purple-950/90 text-white px-5 py-3 rounded-2xl shadow-2xl border border-purple-400/50 flex items-center gap-2.5 text-xs font-black animate-bounce text-center mx-4 pointer-events-auto">
-                <Hand className="w-5 h-5 text-amber-300 shrink-0" />
+              <div className="bg-[#1a1a2e]/95 text-white px-5 py-3 rounded-2xl shadow-2xl border border-[#c9a64c]/40 flex items-center gap-2.5 text-xs font-extrabold animate-bounce text-center mx-4 pointer-events-auto">
+                <Hand className="w-5 h-5 text-[#c9a64c] shrink-0" />
                 <div>
-                  <p className="text-amber-300 font-bold">터치 시 지도 자유 이동 🔓</p>
-                  <p className="text-[10px] text-purple-200/90 font-normal">현재 페이지 스크롤 보호 모드 (클릭하여 지도 이동 활성화)</p>
+                  <p className="text-[#c9a64c] font-black">터치 시 지도 자유 이동 🔓</p>
+                  <p className="text-[10px] text-gray-300 font-normal">현재 페이지 스크롤 보호 모드 (클릭하여 지도 이동 활성화)</p>
                 </div>
               </div>
             </div>
@@ -329,15 +329,15 @@ export default function PetMapViewer({
           <div className="absolute top-4 right-4 z-30">
             <button
               onClick={() => setIsTouchLocked(!isTouchLocked)}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold shadow-lg border backdrop-blur transition flex items-center gap-1.5 ${
+              className={`px-3.5 py-2 rounded-xl text-xs font-extrabold shadow-lg border backdrop-blur transition flex items-center gap-1.5 cursor-pointer ${
                 isTouchLocked
-                  ? 'bg-purple-900/90 text-white border-purple-400/40 hover:bg-purple-950'
-                  : 'bg-emerald-600/90 text-white border-emerald-400/40 hover:bg-emerald-700'
+                  ? 'bg-[#1a1a2e]/95 text-[#c9a64c] border-[#c9a64c]/40 hover:bg-[#252542]'
+                  : 'bg-emerald-700/95 text-white border-emerald-400/40 hover:bg-emerald-800'
               }`}
             >
               {isTouchLocked ? (
                 <>
-                  <Lock className="w-3.5 h-3.5 text-amber-300" />
+                  <Lock className="w-3.5 h-3.5 text-[#c9a64c]" />
                   <span>지도 이동 켜기 🔓</span>
                 </>
               ) : (
@@ -383,8 +383,8 @@ export default function PetMapViewer({
                       onClick={() => onSelectPlace(place)}
                       className={`snap-start shrink-0 w-[82%] sm:w-72 bg-white/95 backdrop-blur p-3 rounded-2xl shadow-xl border cursor-pointer transition-all transform active:scale-98 ${
                         isSelected
-                          ? 'border-purple-600 ring-2 ring-purple-500/30 bg-purple-50/70'
-                          : 'border-purple-100 hover:border-purple-300'
+                          ? 'border-[#1a1a2e] ring-2 ring-[#c9a64c]/40 bg-[#faf6f0]'
+                          : 'border-gray-200 hover:border-[#1a1a2e]/30'
                       }`}
                     >
                       <div className="flex gap-3 items-center">
@@ -392,7 +392,7 @@ export default function PetMapViewer({
                           {place.imageUrl ? (
                             <SafePlaceImage src={place.imageUrl} alt={place.name} />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-purple-50">
+                            <div className="w-full h-full flex items-center justify-center bg-[#faf6f0]">
                               {getCategoryIcon(place.category)}
                             </div>
                           )}
@@ -400,7 +400,7 @@ export default function PetMapViewer({
 
                         <div className="space-y-0.5 overflow-hidden flex-1">
                           <div className="flex items-center gap-1">
-                            <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">
+                            <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#1a1a2e] text-[#c9a64c]">
                               {place.categoryName}
                             </span>
                             {place.rating && (

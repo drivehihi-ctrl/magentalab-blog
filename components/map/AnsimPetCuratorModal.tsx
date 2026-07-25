@@ -101,44 +101,46 @@ export default function AnsimPetCuratorModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-purple-950/70 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-purple-100 overflow-hidden relative max-h-[90vh] flex flex-col">
-        {/* Modal Header */}
-        <div className="bg-gradient-to-r from-purple-900 via-indigo-900 to-purple-800 text-white p-5 sm:p-6 relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1a1a2e]/80 backdrop-blur-sm animate-fadeIn font-sans">
+      <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-gray-200 overflow-hidden relative max-h-[90vh] flex flex-col">
+        {/* Hani-inspired Deep Navy Header */}
+        <div className="bg-[#1a1a2e] text-white p-5 sm:p-6 relative border-b border-[#c9a64c]/30">
+          <div className="h-[3px] w-full bg-gradient-to-r from-[#E5007E] via-[#c9a64c] to-[#E5007E] absolute top-0 left-0 right-0" />
+
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-purple-200 hover:text-white bg-white/10 p-2 rounded-full backdrop-blur transition"
+            className="absolute top-4 right-4 text-gray-300 hover:text-white bg-white/10 p-2 rounded-full backdrop-blur transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
 
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-amber-400/20 border border-amber-300/40 flex items-center justify-center text-amber-300 shrink-0">
+            <div className="w-11 h-11 rounded-2xl bg-white/10 border border-[#c9a64c]/40 flex items-center justify-center text-[#c9a64c] shrink-0 shadow-xs">
               <Sparkles className="w-6 h-6 animate-pulse" />
             </div>
             <div>
-              <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-purple-500/30 text-purple-200 border border-purple-400/30">
-                마젠타랩 AI 큐레이터
+              <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#c9a64c]/20 text-[#c9a64c] border border-[#c9a64c]/30 inline-block">
+                마젠타랩 AI 큐레이터 🐶
               </span>
-              <h3 className="text-xl font-extrabold tracking-tight mt-0.5">
-                1초 댕댕이 성격 맞춤 추천 🐶
+              <h3 className="text-xl font-extrabold tracking-tight text-white mt-1">
+                1초 댕댕이 성격 맞춤 추천
               </h3>
             </div>
           </div>
-          <p className="text-xs text-purple-200 mt-2 leading-relaxed">
+          <p className="text-xs text-gray-300 mt-2.5 leading-relaxed font-normal">
             우리 아이 체형과 필요한 조건을 선택해 주시면 (중복 선택 가능!), AI 안심이가 딱 맞는 스팟을 큐레이션해 드립니다!
           </p>
         </div>
 
         {/* Modal Body */}
-        <div className="p-5 sm:p-6 overflow-y-auto space-y-6 flex-1">
+        <div className="p-5 sm:p-6 overflow-y-auto space-y-6 flex-1 bg-white">
           {/* STEP 1: Pet Size Selection */}
           <div className="space-y-2.5">
-            <label className="text-xs font-black text-gray-900 flex items-center gap-1.5">
-              <Dog className="w-4 h-4 text-purple-600" />
+            <label className="text-xs font-extrabold text-[#1a1a2e] flex items-center gap-1.5">
+              <Dog className="w-4 h-4 text-[#E5007E]" />
               <span>1. 아이 크기(체형)를 선택해 주세요</span>
             </label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-2.5">
               {[
                 { id: 'small', label: '소형견', sub: '10kg 미만' },
                 { id: 'medium', label: '중형견', sub: '10~25kg' },
@@ -147,14 +149,14 @@ export default function AnsimPetCuratorModal({
                 <button
                   key={item.id}
                   onClick={() => setPetSize(item.id as PetSize)}
-                  className={`p-3 rounded-2xl border text-center transition flex flex-col items-center ${
+                  className={`p-3.5 rounded-2xl border text-center transition flex flex-col items-center cursor-pointer ${
                     petSize === item.id
-                      ? 'border-purple-600 bg-purple-50 text-purple-900 ring-2 ring-purple-500/20 font-bold'
-                      : 'border-gray-200 hover:border-purple-200 text-gray-700'
+                      ? 'border-[#1a1a2e] bg-[#faf6f0] text-[#1a1a2e] ring-2 ring-[#c9a64c]/40 font-extrabold shadow-2xs'
+                      : 'border-gray-200 hover:border-[#1a1a2e]/30 text-gray-700'
                   }`}
                 >
                   <span className="text-xs font-bold">{item.label}</span>
-                  <span className="text-[10px] text-gray-400 mt-0.5">{item.sub}</span>
+                  <span className="text-[10px] text-gray-500 mt-1 font-medium">{item.sub}</span>
                 </button>
               ))}
             </div>
@@ -163,11 +165,11 @@ export default function AnsimPetCuratorModal({
           {/* STEP 2: Pet Trait / Style Selection (Multiple Support!) */}
           <div className="space-y-2.5">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-black text-gray-900 flex items-center gap-1.5">
-                <Zap className="w-4 h-4 text-amber-500" />
+              <label className="text-xs font-extrabold text-[#1a1a2e] flex items-center gap-1.5">
+                <Zap className="w-4 h-4 text-[#c9a64c]" />
                 <span>2. 아이 성격 & 원하는 조건 선택 (중복 선택 가능!)</span>
               </label>
-              <span className="text-[10px] text-purple-600 font-bold">다중 선택 가능 </span>
+              <span className="text-[10px] text-[#E5007E] font-extrabold">다중 선택 가능 </span>
             </div>
             <div className="grid grid-cols-2 gap-2.5">
               {[
@@ -201,10 +203,10 @@ export default function AnsimPetCuratorModal({
                   <button
                     key={item.id}
                     onClick={() => toggleTrait(item.id as PetTrait)}
-                    className={`p-3 rounded-2xl border text-left transition flex flex-col gap-1 relative ${
+                    className={`p-3.5 rounded-2xl border text-left transition flex flex-col gap-1 relative cursor-pointer ${
                       isSelected
-                        ? 'border-purple-600 bg-purple-50 text-purple-900 ring-2 ring-purple-500/20 font-bold'
-                        : 'border-gray-200 hover:border-purple-200 text-gray-700'
+                        ? 'border-[#1a1a2e] bg-[#faf6f0] text-[#1a1a2e] ring-2 ring-[#c9a64c]/40 font-extrabold shadow-2xs'
+                        : 'border-gray-200 hover:border-[#1a1a2e]/30 text-gray-700'
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -213,10 +215,10 @@ export default function AnsimPetCuratorModal({
                         <span>{item.title}</span>
                       </div>
                       {isSelected && (
-                        <CheckCircle2 className="w-4 h-4 text-purple-600 shrink-0" />
+                        <CheckCircle2 className="w-4 h-4 text-[#1a1a2e] shrink-0" />
                       )}
                     </div>
-                    <span className="text-[10px] text-gray-500 pl-5">{item.desc}</span>
+                    <span className="text-[10px] text-gray-500 pl-5 font-medium">{item.desc}</span>
                   </button>
                 );
               })}
@@ -227,16 +229,16 @@ export default function AnsimPetCuratorModal({
           <button
             onClick={handleCurate}
             disabled={isCurating}
-            className="w-full py-3.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-extrabold text-sm rounded-2xl shadow-lg transition active:scale-98 flex items-center justify-center gap-2"
+            className="w-full py-4 bg-[#1a1a2e] hover:bg-[#252542] text-[#c9a64c] font-black text-sm rounded-2xl shadow-lg border border-[#c9a64c]/30 transition transform hover:scale-[1.01] active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
           >
             {isCurating ? (
               <>
-                <RefreshCw className="w-4 h-4 animate-spin text-purple-200" />
+                <RefreshCw className="w-4 h-4 animate-spin text-[#c9a64c]" />
                 <span>안심이 AI가 펫 맵 DB를 분석하는 중...</span>
               </>
             ) : (
               <>
-                <Sparkles className="w-4 h-4 text-amber-300" />
+                <Sparkles className="w-4 h-4 text-[#E5007E]" />
                 <span>선택된 조건으로 맞춤 큐레이션 실행</span>
               </>
             )}
@@ -244,13 +246,13 @@ export default function AnsimPetCuratorModal({
 
           {/* RESULTS AREA */}
           {curatedResults && (
-            <div className="pt-4 border-t border-purple-100 space-y-3.5 animate-fadeIn">
+            <div className="pt-4 border-t border-gray-100 space-y-3.5 animate-fadeIn">
               <div className="flex items-center justify-between">
-                <h4 className="text-xs font-black text-purple-900 flex items-center gap-1.5">
+                <h4 className="text-xs font-extrabold text-[#1a1a2e] flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                   <span>안심이가 추천하는 맞춤 3곳</span>
                 </h4>
-                <span className="text-[10px] text-purple-600 font-bold">터치 시 지도 이동</span>
+                <span className="text-[10px] text-gray-500 font-bold">터치 시 지도 이동</span>
               </div>
 
               <div className="space-y-3">
@@ -261,31 +263,31 @@ export default function AnsimPetCuratorModal({
                       onSelectPlace(place);
                       onClose();
                     }}
-                    className="bg-purple-50/60 hover:bg-purple-100/60 p-3.5 rounded-2xl border border-purple-100 shadow-sm transition cursor-pointer flex flex-col gap-2 group"
+                    className="bg-[#faf6f0] hover:bg-gray-100 p-3.5 rounded-2xl border border-gray-200/80 shadow-2xs transition cursor-pointer flex flex-col gap-2 group"
                   >
                     <div className="flex gap-3 items-center">
-                      <div className="w-14 h-14 rounded-xl overflow-hidden bg-gray-100 shrink-0 relative">
+                      <div className="w-14 h-14 rounded-xl overflow-hidden bg-gray-100 shrink-0 relative border border-gray-100">
                         {place.imageUrl ? (
                           <SafePlaceImage src={place.imageUrl} alt={place.name} />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-purple-100 text-purple-700 font-bold text-xs">
+                          <div className="w-full h-full flex items-center justify-center bg-[#faf6f0] text-[#1a1a2e] font-extrabold text-xs">
                             {place.categoryName}
                           </div>
                         )}
                       </div>
                       <div className="space-y-0.5 overflow-hidden flex-1">
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-200 text-purple-800 inline-block">
+                        <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#1a1a2e] text-[#c9a64c] inline-block">
                           {place.categoryName}
                         </span>
-                        <h5 className="text-xs font-bold text-gray-900 group-hover:text-purple-700 transition truncate">
+                        <h5 className="text-xs font-extrabold text-[#1a1a2e] group-hover:text-[#E5007E] transition truncate">
                           {place.name}
                         </h5>
                         <p className="text-[11px] text-gray-500 truncate">{place.roadAddress || place.address}</p>
                       </div>
-                      <ArrowRight className="w-4 h-4 text-purple-400 group-hover:translate-x-1 transition shrink-0" />
+                      <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-[#E5007E] group-hover:translate-x-1 transition shrink-0" />
                     </div>
 
-                    <div className="bg-white p-2.5 rounded-xl border border-purple-100/80 text-[11px] text-purple-950 font-medium leading-relaxed">
+                    <div className="bg-white p-2.5 rounded-xl border border-gray-200/60 text-[11px] text-[#1a1a2e] font-medium leading-relaxed">
                       {ansimComment}
                     </div>
                   </div>

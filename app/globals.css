@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;900&display=swap');
 
 :root {
   /* Magentalab Brand Core */
@@ -37,6 +38,11 @@
   --color-gold: var(--gold);
   --color-gold-light: var(--gold-light);
   --font-sans: "Pretendard", "Inter", system-ui, -apple-system, sans-serif;
+  --font-serif: "Noto Serif KR", Georgia, serif;
+}
+
+.font-serif-hani {
+  font-family: "Noto Serif KR", Georgia, serif;
 }
 
 html {
