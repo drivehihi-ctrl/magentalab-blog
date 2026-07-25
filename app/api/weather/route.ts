@@ -6,6 +6,9 @@ const REGION_COORDS: Record<string, { name: string; lat: number; lon: number; nx
   '경기': { name: '경기 김포/남양주', lat: 37.6000, lon: 127.1500, nx: 64, ny: 128 },
   '인천': { name: '인천 송도/영종', lat: 37.4563, lon: 126.7052, nx: 55, ny: 124 },
   '부산': { name: '부산 해운대/수영', lat: 35.1796, lon: 129.0756, nx: 98, ny: 76 },
+  '대구': { name: '대구 수성/동성로', lat: 35.8714, lon: 128.6014, nx: 89, ny: 90 },
+  '광주': { name: '광주 상무/첨단', lat: 35.1595, lon: 126.8526, nx: 58, ny: 74 },
+  '대전': { name: '대전 둔산/유성', lat: 36.3504, lon: 127.3845, nx: 67, ny: 100 },
 };
 
 export async function GET(request: Request) {
@@ -14,7 +17,7 @@ export async function GET(request: Request) {
   const target = REGION_COORDS[region] || REGION_COORDS['서울'];
 
   try {
-    // 1. Fetch real-time weather from Open-Meteo with Korea KMA high-resolution model (best_match/kma)
+    // 1. Fetch real-time weather from Open-Meteo with Korea KMA high-resolution model
     const weatherRes = await fetch(
       `https://api.open-meteo.com/v1/forecast?latitude=${target.lat}&longitude=${target.lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m&timezone=Asia%2FTokyo`,
       { next: { revalidate: 300 } }

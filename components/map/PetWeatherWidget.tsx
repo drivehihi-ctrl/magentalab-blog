@@ -71,12 +71,12 @@ export default function PetWeatherWidget() {
             </span>
 
             {/* Region Selector Pills */}
-            <div className="flex gap-1 bg-white/10 p-1 rounded-full backdrop-blur border border-white/10">
-              {['서울', '경기', '인천', '부산'].map((region) => (
+            <div className="flex gap-1 bg-white/10 p-1 rounded-full backdrop-blur border border-white/10 overflow-x-auto max-w-full scrollbar-none">
+              {['서울', '경기', '인천', '부산', '대구', '광주', '대전'].map((region) => (
                 <button
                   key={region}
                   onClick={() => setSelectedRegion(region)}
-                  className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold transition ${
+                  className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold transition whitespace-nowrap ${
                     selectedRegion === region
                       ? 'bg-amber-400 text-purple-950 shadow-sm'
                       : 'text-purple-200 hover:text-white'
