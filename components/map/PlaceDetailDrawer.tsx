@@ -38,7 +38,7 @@ export default function PlaceDetailDrawer({ place, onClose }: PlaceDetailDrawerP
         window.Kakao.Share.sendDefault({
           objectType: 'feed',
           content: {
-            title: `[마젠타랩 펫 맵] 🐶 이번 주말 여기 어때? ${place.name}`,
+            title: `[마젠타랩 펫 맵] 🐶 우리 아이와 함께 가볼까? ${place.name}`,
             description: `📍 ${place.roadAddress || place.address} (${place.categoryName})\n"${descText}"`,
             imageUrl: defaultImage,
             link: {

@@ -46,7 +46,7 @@ export default function KakaoShareButton({
         window.Kakao.Share.sendDefault({
           objectType: 'feed',
           content: {
-            title: `[마젠타랩 펫 맵] 🐶 이번 주말 여기 어때? ${placeName}`,
+            title: `[마젠타랩 펫 맵] 🐶 우리 아이와 함께 가볼까? ${placeName}`,
             description: `📍 ${address} (${categoryName})\n"${descText}"`,
             imageUrl: defaultImage,
             link: {
