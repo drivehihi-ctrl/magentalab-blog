@@ -207,7 +207,7 @@ export default function PlaceDetailDrawer({ place, onClose, isFavorite, onToggle
         <div className="bg-gradient-to-r from-purple-900 via-indigo-900 to-purple-800 text-white p-4 sm:p-5 rounded-2xl shadow-lg border border-purple-400/20 space-y-2.5 relative overflow-hidden">
           <div className="flex items-center gap-2">
             <span className="px-2.5 py-0.5 rounded-full bg-amber-400 text-purple-950 font-black text-[10px]">
-              이탈률 0% 📸 AI 꿀팁
+              📸 AI 꿀팁
             </span>
             <h4 className="text-xs font-black text-amber-300">
               인스타 대박 인생샷 명당 좌표 & 촬영 팁

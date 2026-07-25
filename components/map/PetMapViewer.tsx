@@ -309,13 +309,13 @@ export default function PetMapViewer({
           {/* Map Container */}
           <div ref={mapContainerRef} className="w-full h-full min-h-[500px]" />
 
-          {/* Touch Lock Protection Overlay for Smooth Mobile Page Scroll */}
+          {/* Touch Lock Protection Overlay for Smooth Mobile Page Scroll (Excludes bottom carousel) */}
           {isTouchLocked && (
             <div 
               onClick={() => setIsTouchLocked(false)}
-              className="absolute inset-0 z-20 bg-purple-950/15 backdrop-blur-[0.5px] flex items-center justify-center cursor-pointer transition-all hover:bg-purple-950/25"
+              className="absolute top-0 left-0 right-0 bottom-[140px] z-20 bg-purple-950/15 backdrop-blur-[0.5px] flex items-center justify-center cursor-pointer transition-all hover:bg-purple-950/25"
             >
-              <div className="bg-purple-950/90 text-white px-5 py-3 rounded-2xl shadow-2xl border border-purple-400/50 flex items-center gap-2.5 text-xs font-black animate-bounce text-center mx-4">
+              <div className="bg-purple-950/90 text-white px-5 py-3 rounded-2xl shadow-2xl border border-purple-400/50 flex items-center gap-2.5 text-xs font-black animate-bounce text-center mx-4 pointer-events-auto">
                 <Hand className="w-5 h-5 text-amber-300 shrink-0" />
                 <div>
                   <p className="text-amber-300 font-bold">터치 시 지도 자유 이동 🔓</p>
@@ -356,19 +356,19 @@ export default function PetMapViewer({
             </div>
           </div>
 
-          {/* Interactive Bottom Carousel Bar with Mobile Peek View (w-[82%]) & Scroll Indicator */}
-          <div className="absolute bottom-3 left-3 right-3 z-10 space-y-1.5">
+          {/* Interactive Bottom Carousel Bar with High Z-Index (z-30) & Touch-Pan-X Support */}
+          <div className="absolute bottom-3 left-3 right-3 z-30 space-y-1.5 pointer-events-auto">
             {places.length > 1 && (
-              <div className="flex items-center justify-between px-2 text-[11px] font-bold text-purple-900 bg-white/80 backdrop-blur-md py-1 rounded-xl shadow-xs border border-purple-100/60">
+              <div className="flex items-center justify-between px-3 text-[11px] font-bold text-purple-900 bg-white/90 backdrop-blur-md py-1.5 rounded-xl shadow-sm border border-purple-100/80">
                 <span className="flex items-center gap-1">
                   <span>총 {places.length}곳 탐색됨</span>
-                  <span className="text-[10px] font-normal text-purple-600">(옆으로 슥슥 넘겨보세요)</span>
+                  <span className="text-[10px] font-normal text-purple-600">(옆으로 슥슥 스와이프해보세요)</span>
                 </span>
-                <span className="text-purple-600 animate-pulse font-extrabold">옆으로 스와이프 ↔️</span>
+                <span className="text-purple-600 font-extrabold animate-pulse">좌우 스와이프 ↔️</span>
               </div>
             )}
 
-            <div className="overflow-x-auto pb-1 flex gap-2.5 snap-x snap-mandatory scrollbar-none">
+            <div className="overflow-x-scroll touch-pan-x flex gap-2.5 snap-x snap-mandatory scrollbar-none py-1">
               {places.length === 0 ? (
                 <div className="bg-white p-5 rounded-2xl shadow-lg border border-purple-100 text-center w-full max-w-md mx-auto">
                   <p className="text-sm font-semibold text-gray-700">검색 조건에 일치하는 애견 스팟이 없습니다.</p>
