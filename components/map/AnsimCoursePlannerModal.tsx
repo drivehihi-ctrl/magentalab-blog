@@ -101,6 +101,7 @@ export default function AnsimCoursePlannerModal({
       roadAddress: displayRegion,
       lat: 37.5665,
       lng: 126.978,
+      operatingHours: '영업시간 방문 전 문의',
       rating: 4.5,
       reviewCount: 0,
       tags: [],
