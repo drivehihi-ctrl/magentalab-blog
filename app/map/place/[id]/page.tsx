@@ -1,12 +1,12 @@
 import React from 'react';
-import { getPetPlaceById, INITIAL_PET_PLACES } from '@/lib/map/places';
-import { MapPin, Clock, Phone, Navigation, ArrowLeft, ShieldAlert, CheckCircle2 } from 'lucide-react';
+import { getPetPlaceById, getPetPlaceByIdAsync, INITIAL_PET_PLACES } from '@/lib/map/places';
+import { MapPin, Clock, Phone, Navigation, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import AIBriefingReviews from '@/components/map/AIBriefingReviews';
 import KakaoShareButton from '@/components/map/KakaoShareButton';
 import SafePlaceImage from '@/components/map/SafePlaceImage';
 import { getAIBriefingData } from '@/lib/map/aiBriefing';
-import { notFound } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 
 interface PlaceDetailPageProps {
@@ -15,34 +15,26 @@ interface PlaceDetailPageProps {
 
 export async function generateMetadata({ params }: PlaceDetailPageProps): Promise<Metadata> {
   const { id } = await params;
-  const place = getPetPlaceById(id);
+  const place = (await getPetPlaceByIdAsync(id)) || getPetPlaceById(id);
 
   if (!place) {
     return {
-      title: '장소를 찾을 수 없습니다 | 마젠타랩 펫 맵',
+      title: '마젠타랩 펫 맵 | 반려견 동반 지도',
     };
   }
 
   const aiBriefing = await getAIBriefingData(place.name, place.address);
   const briefingSummary = aiBriefing.summaryBullets[0] || place.description || '';
-  const metaDescription = `${place.name} (${place.categoryName}) - ${place.address}. ${briefingSummary} 영업시간: ${place.operatingHours}`;
+  const metaDescription = `${place.name} (${place.categoryName}) - ${place.address}. ${briefingSummary}`;
 
   return {
-    title: `${place.name} - AI 후기 요약, 영업시간, 반려동물 동반 수칙 | 마젠타랩 펫 맵`,
+    title: `${place.name} - AI 후기 요약, 영업시간 | 마젠타랩 펫 맵`,
     description: metaDescription,
     keywords: [place.name, place.categoryName, '애견동반', '반려동물지도', 'AI후기', ...place.tags],
     openGraph: {
       title: `${place.name} - 마젠타랩 펫 맵 AI 브리핑`,
       description: metaDescription,
       images: place.imageUrl ? [{ url: place.imageUrl }] : [],
-    },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-      },
     },
   };
 }
@@ -55,10 +47,10 @@ export async function generateStaticParams() {
 
 export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) {
   const { id } = await params;
-  const place = getPetPlaceById(id);
+  const place = (await getPetPlaceByIdAsync(id)) || getPetPlaceById(id);
 
   if (!place) {
-    notFound();
+    redirect('/map');
   }
 
   // Fetch AI Briefing on Server-side (SSR/ISR) for search engine indexing
