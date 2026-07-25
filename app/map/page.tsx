@@ -64,10 +64,12 @@ export default function MapPage() {
 
     const timer = setTimeout(() => {
       const params = new URLSearchParams();
+      // If favorite tab is active, do not restrict category so we get all potential places
       if (selectedCategory && selectedCategory !== 'all' && selectedCategory !== 'favorite') {
         params.set('category', selectedCategory);
       }
-      if (searchQuery && searchQuery.trim() !== '') {
+      // If NOT favorite tab, send search query. If favorite tab, fetch broad dataset and filter locally by favoriteIds
+      if (selectedCategory !== 'favorite' && searchQuery && searchQuery.trim() !== '') {
         params.set('q', searchQuery.trim());
       }
 
@@ -77,7 +79,16 @@ export default function MapPage() {
           if (!isCancelled && data.success && Array.isArray(data.data)) {
             setAllFetchedPlaces(data.data);
             if (selectedCategory === 'favorite') {
-              setPlaces(data.data.filter((p: PetPlacePOI) => favoriteIds.includes(p.id)));
+              let favs = data.data.filter((p: PetPlacePOI) => favoriteIds.includes(p.id));
+              if (searchQuery && searchQuery.trim() !== '') {
+                const qLower = searchQuery.trim().toLowerCase();
+                favs = favs.filter((p: PetPlacePOI) =>
+                  p.name.toLowerCase().includes(qLower) ||
+                  p.address.toLowerCase().includes(qLower) ||
+                  p.categoryName.toLowerCase().includes(qLower)
+                );
+              }
+              setPlaces(favs);
             } else {
               setPlaces(data.data);
             }

@@ -29,6 +29,7 @@ export default function PlaceSearchHeader({
   searchQuery,
   onSearchChange,
   totalCount,
+  favoriteCount,
 }: PlaceSearchHeaderProps) {
   return (
     <div className="bg-white/95 backdrop-blur-md border-b border-purple-100 p-4 shadow-sm sticky top-20 z-30">
@@ -58,6 +59,7 @@ export default function PlaceSearchHeader({
         <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
           {CATEGORIES.map((cat) => {
             const active = selectedCategory === cat.id;
+            const isFavoriteTab = cat.id === 'favorite';
             return (
               <button
                 key={cat.id}
@@ -70,6 +72,13 @@ export default function PlaceSearchHeader({
               >
                 {cat.icon}
                 <span>{cat.label}</span>
+                {isFavoriteTab && favoriteCount !== undefined && favoriteCount > 0 && (
+                  <span className={`text-[10px] font-extrabold px-1.5 py-0.2 rounded-full ${
+                    active ? 'bg-white text-purple-900' : 'bg-rose-500 text-white'
+                  }`}>
+                    {favoriteCount}
+                  </span>
+                )}
               </button>
             );
           })}
