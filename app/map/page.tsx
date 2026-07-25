@@ -133,28 +133,31 @@ export default function MapPage() {
         {/* Real-time Pet Weather Widget */}
         <PetWeatherWidget />
 
-        {/* Hero Title Banner & Ansim AI Curator Trigger */}
-        <div className="bg-gradient-to-r from-purple-900 via-indigo-900 to-purple-800 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div className="absolute right-0 top-0 translate-x-8 -translate-y-8 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
+        {/* Hani-inspired Deep Navy Hero Title Banner & Ansim AI Curator Trigger */}
+        <div className="bg-[#1a1a2e] text-white rounded-3xl p-6 sm:p-8 shadow-md border border-[#c9a64c]/30 relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-5">
+          {/* Top Hani Accent Stripe */}
+          <div className="h-[3px] w-full bg-gradient-to-r from-[#E5007E] via-[#c9a64c] to-[#E5007E] absolute top-0 left-0 right-0" />
+          
+          <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-64 h-64 bg-[#c9a64c]/10 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="relative z-10 space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/30 text-purple-200 text-xs font-semibold backdrop-blur-sm border border-purple-400/20">
-              <Sparkles className="w-3.5 h-3.5" />
+          <div className="relative z-10 space-y-2.5 max-w-2xl">
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/10 text-[#c9a64c] text-xs font-extrabold border border-[#c9a64c]/30 backdrop-blur-sm">
+              <Sparkles className="w-3.5 h-3.5 text-[#c9a64c] animate-pulse" />
               <span>마젠타랩 펫 맵 (map.magentalabblog.com)</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-              우리 아이와 함께가는 <span className="text-purple-300">실시간 애견동반 지도</span>
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
+              우리 아이와 함께가는 <span className="text-[#c9a64c]">실시간 애견동반 지도</span>
             </h1>
-            <p className="text-xs sm:text-sm text-purple-100/90 leading-relaxed">
+            <p className="text-xs sm:text-sm text-gray-300 leading-relaxed font-normal">
               카카오 지도 기반 전국 실제 애견 카페, 동반 식당, 24시 동물병원, 반려동물 공원, 애견 숙소 실시간 탐색!
             </p>
           </div>
 
           {/* Action Trigger Buttons (Curator & Course Planner) */}
-          <div className="relative z-10 shrink-0 flex flex-wrap gap-2.5">
+          <div className="relative z-10 shrink-0 flex flex-wrap gap-3">
             <button
               onClick={() => setIsCoursePlannerOpen(true)}
-              className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-extrabold text-xs sm:text-sm rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95 border border-purple-300"
+              className="flex items-center gap-2 px-5 py-3.5 bg-gradient-to-r from-[#E5007E] to-[#c0006a] hover:from-[#c0006a] hover:to-[#E5007E] text-white font-extrabold text-xs sm:text-sm rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] active:scale-95 border border-pink-400/30 cursor-pointer"
             >
               <Navigation className="w-4 h-4 text-amber-300 shrink-0" />
               <span>주말 1초 AI 코스 플래너 🚗</span>
@@ -162,9 +165,9 @@ export default function MapPage() {
 
             <button
               onClick={() => setIsCuratorOpen(true)}
-              className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-purple-950 font-extrabold text-xs sm:text-sm rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95 border border-amber-300"
+              className="flex items-center gap-2 px-5 py-3.5 bg-gradient-to-r from-[#c9a64c] to-[#a38230] hover:from-[#a38230] hover:to-[#c9a64c] text-[#1a1a2e] font-extrabold text-xs sm:text-sm rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] active:scale-95 border border-amber-300/40 cursor-pointer"
             >
-              <Wand2 className="w-4 h-4 text-purple-950 shrink-0" />
+              <Wand2 className="w-4 h-4 text-[#1a1a2e] shrink-0" />
               <span>1초 댕댕이 성격 맞춤 큐레이션 🐶</span>
             </button>
           </div>
