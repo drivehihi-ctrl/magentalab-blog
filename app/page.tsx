@@ -5,7 +5,7 @@ import { getPosts, getFeaturedImage, getPostViews } from "@/lib/wp";
 import { sanitizeForSeo } from "@/lib/utils";
 import { Metadata } from "next";
 import Link from "next/link";
-import { Flame, Sparkles, TrendingUp, ArrowRight, Eye } from "lucide-react";
+import { Flame, Sparkles, TrendingUp, ArrowRight } from "lucide-react";
 
 export const revalidate = 86400;
 
@@ -211,10 +211,6 @@ export default async function HomePage({
                           fill
                           className="object-cover group-hover:scale-105 transition-transform duration-500"
                         />
-                        <div className="absolute bottom-2.5 left-2.5 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-bold text-white flex items-center gap-1">
-                          <Eye className="w-3 h-3 text-amber-300" />
-                          <span>조회수 {viewsFormatted}회</span>
-                        </div>
                       </div>
 
                       <div className="space-y-1.5 pt-1">

@@ -181,28 +181,30 @@ export default function Header() {
             </div>
           )}
 
-          {session?.user ? (
-            <div className="flex items-center gap-2 pl-3 border-l border-gray-200">
-              <div className="flex items-center gap-1.5 bg-amber-100/70 border border-amber-300/60 text-amber-900 px-3 py-1 rounded-full text-xs font-black">
-                <Award className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                <span className="truncate max-w-[80px]">{session.user.name || "연구원"}님</span>
-                <span className="text-[10px] bg-[#E5007E] text-white px-2 py-0.5 rounded-full font-black">수석 🏅</span>
+          {!isEn && !isJa && (
+            session?.user ? (
+              <div className="flex items-center gap-2 pl-3 border-l border-gray-200">
+                <div className="flex items-center gap-1.5 bg-amber-100/70 border border-amber-300/60 text-amber-900 px-3 py-1 rounded-full text-xs font-black">
+                  <Award className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                  <span className="truncate max-w-[80px]">{session.user.name || "연구원"}님</span>
+                  <span className="text-[10px] bg-[#E5007E] text-white px-2 py-0.5 rounded-full font-black">수석 🏅</span>
+                </div>
+                <button
+                  onClick={() => signOut()}
+                  className="text-xs font-bold text-gray-500 hover:text-rose-600 hover:bg-rose-50 px-2.5 py-1.5 rounded-full transition-all flex items-center gap-1"
+                >
+                  <LogOut className="w-3 h-3" />
+                  <span>로그아웃</span>
+                </button>
               </div>
-              <button
-                onClick={() => signOut()}
-                className="text-xs font-bold text-gray-500 hover:text-rose-600 hover:bg-rose-50 px-2.5 py-1.5 rounded-full transition-all flex items-center gap-1"
+            ) : (
+              <a
+                href="mailto:smagentalab@gmail.com"
+                className="ml-1 px-4 py-2 bg-[#E5007E] hover:bg-[#c0006a] text-white text-xs font-extrabold rounded-full transition-all shadow-md shadow-[#E5007E]/20 whitespace-nowrap"
               >
-                <LogOut className="w-3 h-3" />
-                <span>로그아웃</span>
-              </button>
-            </div>
-          ) : (
-            <a
-              href="mailto:smagentalab@gmail.com"
-              className="ml-1 px-4 py-2 bg-[#E5007E] hover:bg-[#c0006a] text-white text-xs font-extrabold rounded-full transition-all shadow-md shadow-[#E5007E]/20 whitespace-nowrap"
-            >
-              {menu.contact}
-            </a>
+                {menu.contact}
+              </a>
+            )
           )}
         </nav>
 
@@ -239,7 +241,7 @@ export default function Header() {
           <div className="px-4 py-3 flex flex-col gap-0">
 
             {/* User badge (mobile) */}
-            {session?.user && (
+            {!isEn && !isJa && session?.user && (
               <div className="flex items-center justify-between bg-amber-50 border border-amber-200/80 rounded-2xl px-4 py-3 mb-3">
                 <div className="flex items-center gap-2">
                   <div className="w-7 h-7 rounded-xl bg-amber-400 text-purple-950 flex items-center justify-center font-black shrink-0">
