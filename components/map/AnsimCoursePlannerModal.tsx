@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { PetPlacePOI } from '@/lib/map/types';
 import { Sparkles, X, MapPin, Share2, Compass, Utensils, Trees, Coffee, Hospital, ArrowRight, Navigation, Search } from 'lucide-react';
 
@@ -46,58 +46,93 @@ export default function AnsimCoursePlannerModal({
 
   if (!isOpen) return null;
 
-  // Generate 1-Second AI 3-Step Outing Course strictly matching searchRegion
-  const handleGenerateCourse = () => {
+  // Helper: fetch best place from API for a specific category + region keyword
+  const fetchBestPlaceForCategory = useCallback(async (
+    category: 'restaurant' | 'park' | 'cafe' | 'hospital',
+    regionQuery: string
+  ): Promise<PetPlacePOI | null> => {
+    try {
+      const params = new URLSearchParams();
+      params.set('category', category);
+      if (regionQuery.trim()) params.set('q', regionQuery.trim());
+      const res = await fetch(`/api/map/places?${params.toString()}`);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+        // Pick first result that matches the region keyword in address/name
+        const trimmedKw = regionQuery.trim().toLowerCase();
+        const regionMatch = data.data.find((p: PetPlacePOI) => {
+          const text = (p.address + ' ' + (p.roadAddress || '') + ' ' + p.name).toLowerCase();
+          return text.includes(trimmedKw);
+        });
+        return regionMatch || data.data[0];
+      }
+    } catch (err) {
+      console.warn(`Failed to fetch ${category} for region "${regionQuery}":`, err);
+    }
+    return null;
+  }, []);
+
+  // Generate 1-Second AI 3-Step Outing Course — each category fetched independently
+  const handleGenerateCourse = async () => {
+    if (!searchRegion.trim()) {
+      alert('떠날 지역을 먼저 입력하거나 선택해주세요! 📍');
+      return;
+    }
     setIsGenerating(true);
     setGeneratedCourse(null);
 
-    setTimeout(() => {
-      const trimmed = searchRegion.trim().toLowerCase();
-      const keywords = trimmed.split(/[\s\/,]+/).filter(Boolean);
+    const displayRegion = searchRegion.trim();
 
-      // Filter places strictly within the same searched region
-      const matchedPlaces = keywords.length === 0
-        ? places
-        : places.filter((p) => {
-            const fullText = (p.address + ' ' + (p.roadAddress || '') + ' ' + p.name + ' ' + p.tags.join(' ')).toLowerCase();
-            return keywords.some((kw) => fullText.includes(kw));
-          });
+    // ✅ Parallel fetch for each category independently — NOT from parent filtered places
+    const [dining, park, cafe, hospital] = await Promise.all([
+      fetchBestPlaceForCategory('restaurant', displayRegion),
+      fetchBestPlaceForCategory('park', displayRegion),
+      fetchBestPlaceForCategory('cafe', displayRegion),
+      fetchBestPlaceForCategory('hospital', displayRegion),
+    ]);
 
-      // If matched pool has enough places, use matched pool; otherwise fallback to full places
-      const pool = matchedPlaces.length > 0 ? matchedPlaces : places;
+    // Fallback: if any category returned null, use the others or a placeholder
+    const fallbackPlace: PetPlacePOI = {
+      id: 'fallback',
+      name: `${displayRegion} 주변 스팟 (검색 중)`,
+      category: 'cafe',
+      categoryName: '애견동반 스팟',
+      address: displayRegion,
+      roadAddress: displayRegion,
+      lat: 37.5665,
+      lng: 126.978,
+      rating: 4.5,
+      reviewCount: 0,
+      tags: [],
+      petPolicy: { indoorAllowed: true, outdoorAllowed: true, offLeashAllowed: false, parkingAvailable: true },
+      directionsUrls: {},
+    };
 
-      const dining = pool.find((p) => p.category === 'restaurant') || pool[0] || places[0];
-      const park = pool.find((p) => p.category === 'park') || pool[1] || places[1] || pool[0];
-      const cafe = pool.find((p) => p.category === 'cafe') || pool[2] || places[2] || pool[0];
-      const hospital = pool.find((p) => p.category === 'hospital') || pool[3] || places[3] || pool[0];
+    const themeTitles: Record<ThemeChoice, string> = {
+      healing: `🌸 [${displayRegion}] 댕댕이와 함께하는 감성 힐링 1일 데이트 코스`,
+      energy: `⚡ [${displayRegion}] 체력 소진! 넓은 잔디 운동장 폭풍 뜀박질 코스`,
+      brunch: `☕ [${displayRegion}] 인스타 핫플 브런치 & 여유로운 오후 산책 코스`,
+    };
 
-      const displayRegion = searchRegion.trim() || '목적지';
+    const themeDescs: Record<ThemeChoice, string> = {
+      healing: `${displayRegion} 근처 맛있는 애견동반 식사부터 탁 트인 산책 공원, 감성 카페까지 안심이 AI가 엄선한 실패 없는 3단계 데이트 동선입니다.`,
+      energy: `${displayRegion} 근처 에너지 넘치는 아이를 위한 넓은 잔디 공원과 신나게 뛴 후 아늑하게 쉴 수 있는 애견동반 스팟 모음!`,
+      brunch: `${displayRegion} 근처 사진 잘 나오는 포토존 브런치 카페와 그늘진 산책길로 구성된 완벽한 데이트 코스입니다.`,
+    };
 
-      const themeTitles: Record<ThemeChoice, string> = {
-        healing: `🌸 [${displayRegion}] 댕댕이와 함께하는 감성 힐링 1일 데이트 코스`,
-        energy: `⚡ [${displayRegion}] 체력 소진! 넓은 잔디 운동장 폭풍 뜀박질 코스`,
-        brunch: `☕ [${displayRegion}] 인스타 핫플 브런치 & 여유로운 오후 산책 코스`,
-      };
+    setGeneratedCourse({
+      dining: dining || fallbackPlace,
+      park: park || fallbackPlace,
+      cafe: cafe || fallbackPlace,
+      hospital: hospital || fallbackPlace,
+      title: themeTitles[selectedTheme],
+      description: themeDescs[selectedTheme],
+      targetRegionLabel: displayRegion,
+    });
 
-      const themeDescs: Record<ThemeChoice, string> = {
-        healing: `${displayRegion} 근처 맛있는 애견동반 식사부터 탁 트인 산책 공원, 감성 카페까지 안심이 AI가 엄선한 실패 없는 3단계 데이트 동선입니다.`,
-        energy: `${displayRegion} 근처 에너지 넘치는 아이를 위한 넓은 잔디 공원과 신나게 뛴 후 아늑하게 쉴 수 있는 애견동반 스팟 모음!`,
-        brunch: `${displayRegion} 근처 사진 잘 나오는 포토존 브런치 카페와 그늘진 산책길로 구성된 완벽한 데이트 코스입니다.`,
-      };
-
-      setGeneratedCourse({
-        dining,
-        park,
-        cafe,
-        hospital,
-        title: themeTitles[selectedTheme],
-        description: themeDescs[selectedTheme],
-        targetRegionLabel: displayRegion,
-      });
-
-      setIsGenerating(false);
-    }, 600);
+    setIsGenerating(false);
   };
+
 
   // KakaoTalk 1-Click Course Share Handler
   const handleShareKakao = () => {
