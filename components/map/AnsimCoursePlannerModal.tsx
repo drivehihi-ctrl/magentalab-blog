@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { PetPlacePOI } from '@/lib/map/types';
-import { Sparkles, X, MapPin, Share2, Compass, Utensils, Trees, Coffee, Hospital, ArrowRight, Navigation, ShieldAlert } from 'lucide-react';
+import { Sparkles, X, MapPin, Share2, Compass, Utensils, Trees, Coffee, Hospital, ArrowRight, Navigation, Search } from 'lucide-react';
 
 interface AnsimCoursePlannerModalProps {
   isOpen: boolean;
@@ -11,8 +11,19 @@ interface AnsimCoursePlannerModalProps {
   onSelectPlace: (place: PetPlacePOI) => void;
 }
 
-type RegionChoice = '전국' | '서울' | '경기' | '인천' | '강원' | '충청' | '전라' | '경상' | '제주';
 type ThemeChoice = 'healing' | 'energy' | 'brunch';
+
+const POPULAR_PRESETS = [
+  '가평',
+  '양평',
+  '강남',
+  '연남동',
+  '부천',
+  '김포',
+  '속초',
+  '해운대',
+  '제주',
+];
 
 export default function AnsimCoursePlannerModal({
   isOpen,
@@ -20,7 +31,7 @@ export default function AnsimCoursePlannerModal({
   places,
   onSelectPlace,
 }: AnsimCoursePlannerModalProps) {
-  const [selectedRegion, setSelectedRegion] = useState<RegionChoice>('전국');
+  const [searchRegion, setSearchRegion] = useState<string>('가평');
   const [selectedTheme, setSelectedTheme] = useState<ThemeChoice>('healing');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedCourse, setGeneratedCourse] = useState<{
@@ -30,46 +41,48 @@ export default function AnsimCoursePlannerModal({
     hospital: PetPlacePOI;
     title: string;
     description: string;
+    targetRegionLabel: string;
   } | null>(null);
 
   if (!isOpen) return null;
 
-  // Generate 1-Second AI 3-Step Outing Course + Emergency Hospital Info
+  // Generate 1-Second AI 3-Step Outing Course strictly matching searchRegion
   const handleGenerateCourse = () => {
     setIsGenerating(true);
     setGeneratedCourse(null);
 
     setTimeout(() => {
-      // Pick matching places across nationwide regions
-      const regionFiltered = selectedRegion === '전국'
-        ? places
-        : places.filter((p) =>
-            p.address.includes(selectedRegion) ||
-            p.name.includes(selectedRegion) ||
-            (selectedRegion === '충청' && (p.address.includes('대전') || p.address.includes('충남') || p.address.includes('충북') || p.address.includes('세종'))) ||
-            (selectedRegion === '경상' && (p.address.includes('부산') || p.address.includes('대구') || p.address.includes('경남') || p.address.includes('경북') || p.address.includes('울산'))) ||
-            (selectedRegion === '전라' && (p.address.includes('광주') || p.address.includes('전남') || p.address.includes('전북')))
-          );
+      const trimmed = searchRegion.trim().toLowerCase();
+      const keywords = trimmed.split(/[\s\/,]+/).filter(Boolean);
 
-      const pool = regionFiltered.length >= 3 ? regionFiltered : places;
+      // Filter places strictly within the same searched region
+      const matchedPlaces = keywords.length === 0
+        ? places
+        : places.filter((p) => {
+            const fullText = (p.address + ' ' + (p.roadAddress || '') + ' ' + p.name + ' ' + p.tags.join(' ')).toLowerCase();
+            return keywords.some((kw) => fullText.includes(kw));
+          });
+
+      // If matched pool has enough places, use matched pool; otherwise fallback to full places
+      const pool = matchedPlaces.length > 0 ? matchedPlaces : places;
 
       const dining = pool.find((p) => p.category === 'restaurant') || pool[0] || places[0];
       const park = pool.find((p) => p.category === 'park') || pool[1] || places[1] || pool[0];
       const cafe = pool.find((p) => p.category === 'cafe') || pool[2] || places[2] || pool[0];
       const hospital = pool.find((p) => p.category === 'hospital') || pool[3] || places[3] || pool[0];
 
-      const regionLabel = selectedRegion === '전국' ? '전국 추천' : selectedRegion;
+      const displayRegion = searchRegion.trim() || '목적지';
 
       const themeTitles: Record<ThemeChoice, string> = {
-        healing: `🌸 [${regionLabel}] 댕댕이와 함께하는 감성 힐링 1일 데이트 코스`,
-        energy: `⚡ [${regionLabel}] 체력 소진! 넓은 잔디 운동장 폭풍 뜀박질 코스`,
-        brunch: `☕ [${regionLabel}] 인스타 핫플 브런치 & 여유로운 오후 산책 코스`,
+        healing: `🌸 [${displayRegion}] 댕댕이와 함께하는 감성 힐링 1일 데이트 코스`,
+        energy: `⚡ [${displayRegion}] 체력 소진! 넓은 잔디 운동장 폭풍 뜀박질 코스`,
+        brunch: `☕ [${displayRegion}] 인스타 핫플 브런치 & 여유로운 오후 산책 코스`,
       };
 
       const themeDescs: Record<ThemeChoice, string> = {
-        healing: `맛있는 애견동반 식사부터 탁 트인 산책 공원, 감성 카페까지 안심이 AI가 엄선한 실패 없는 3단계 데이트 동선입니다.`,
-        energy: `에너지 넘치는 아이를 위한 넓은 잔디 공원과 신나게 뛴 후 아늑하게 쉴 수 있는 애견동반 스팟 모음!`,
-        brunch: `사진 잘 나오는 포토존 브런치 카페와 그늘진 산책길로 구성된 완벽한 데이트 코스입니다.`,
+        healing: `${displayRegion} 근처 맛있는 애견동반 식사부터 탁 트인 산책 공원, 감성 카페까지 안심이 AI가 엄선한 실패 없는 3단계 데이트 동선입니다.`,
+        energy: `${displayRegion} 근처 에너지 넘치는 아이를 위한 넓은 잔디 공원과 신나게 뛴 후 아늑하게 쉴 수 있는 애견동반 스팟 모음!`,
+        brunch: `${displayRegion} 근처 사진 잘 나오는 포토존 브런치 카페와 그늘진 산책길로 구성된 완벽한 데이트 코스입니다.`,
       };
 
       setGeneratedCourse({
@@ -79,6 +92,7 @@ export default function AnsimCoursePlannerModal({
         hospital,
         title: themeTitles[selectedTheme],
         description: themeDescs[selectedTheme],
+        targetRegionLabel: displayRegion,
       });
 
       setIsGenerating(false);
@@ -125,7 +139,7 @@ export default function AnsimCoursePlannerModal({
     if (!generatedCourse) return;
     const text = `🚗 ${generatedCourse.title}\n\n1코스(식사): ${generatedCourse.dining.name}\n2코스(산책): ${generatedCourse.park.name}\n3코스(카페): ${generatedCourse.cafe.name}\n\n🏥 비상시 응급병원: ${generatedCourse.hospital.name}\n👉 펫 맵에서 코스 확인: ${window.location.href}`;
     navigator.clipboard.writeText(text);
-    alert('📋 [댕댕이 1일 데이트 코스] 공유 텍스트가 복사되었습니다! 카톡 대화방에 붙여넣어 공유하세요!');
+    alert(`📋 [${generatedCourse.targetRegionLabel} 댕댕이 1일 데이트 코스] 공유 텍스트가 복사되었습니다! 카톡 대화방에 붙여넣어 공유하세요!`);
   };
 
   return (
@@ -148,7 +162,7 @@ export default function AnsimCoursePlannerModal({
             </div>
             <div>
               <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#c9a64c]/20 text-[#c9a64c] border border-[#c9a64c]/30 inline-block">
-                전국 단위 AI 플래너 🚗
+                지역 맞춤 AI 코스 플래너 🚗
               </span>
               <h3 className="text-xl font-extrabold tracking-tight text-white mt-1">
                 주말 1초 꿀조합 AI 코스 플래너
@@ -156,32 +170,64 @@ export default function AnsimCoursePlannerModal({
             </div>
           </div>
           <p className="text-xs text-gray-300 mt-2.5 leading-relaxed font-normal">
-            [지역]과 [테마]만 선택하면 <strong className="text-[#c9a64c]">식당 ➔ 산책 공원 ➔ 카페</strong> 1일 데이트 동선을 1초 만에 추천해 드립니다!
+            원하시는 [지역]을 직접 검색하고 [테마]를 선택하면 <strong className="text-[#c9a64c]">식당 ➔ 산책 공원 ➔ 카페</strong> 1일 동선을 해당 지역 근처로 1초 만에 추천해 드립니다!
           </p>
         </div>
 
         {/* Modal Content */}
         <div className="p-5 sm:p-6 overflow-y-auto space-y-6 flex-1 bg-white">
-          {/* STEP 1: Region Selection (Expanded to Nationwide!) */}
+          {/* STEP 1: Region Direct Input Search + Popular Presets */}
           <div className="space-y-2.5">
-            <label className="text-xs font-extrabold text-[#1a1a2e] flex items-center gap-1.5">
-              <MapPin className="w-4 h-4 text-[#E5007E]" />
-              <span>1. 어디로 떠나시나요? (전국 지역 선택)</span>
+            <label className="text-xs font-extrabold text-[#1a1a2e] flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <MapPin className="w-4 h-4 text-[#E5007E]" />
+                <span>1. 어디로 떠나시나요? (떠날 지역 입력/검색)</span>
+              </span>
+              <span className="text-[10px] text-[#E5007E] font-extrabold">직접 입력 가능 ✍️</span>
             </label>
-            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none touch-pan-x">
-              {(['전국', '서울', '경기', '인천', '강원', '충청', '전라', '경상', '제주'] as RegionChoice[]).map((region) => (
+
+            {/* Region Search Input Field */}
+            <div className="relative flex items-center">
+              <Search className="absolute left-3.5 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                value={searchRegion}
+                onChange={(e) => setSearchRegion(e.target.value)}
+                placeholder="목적지 입력 (예: 가평, 양평, 연남동, 속초, 해운대, 서초...)"
+                className="w-full pl-10 pr-9 py-3 bg-[#faf6f0] border border-gray-200 rounded-2xl text-xs font-bold text-[#1a1a2e] focus:outline-none focus:ring-2 focus:ring-[#1a1a2e] focus:bg-white transition"
+              />
+              {searchRegion && (
                 <button
-                  key={region}
-                  onClick={() => setSelectedRegion(region)}
-                  className={`px-3.5 py-1.5 rounded-2xl text-xs font-bold transition whitespace-nowrap shrink-0 cursor-pointer ${
-                    selectedRegion === region
-                      ? 'bg-[#1a1a2e] text-[#c9a64c] shadow-md border border-[#c9a64c]/30'
-                      : 'bg-[#faf6f0] text-gray-700 hover:bg-gray-200 border border-gray-200/60'
-                  }`}
+                  onClick={() => setSearchRegion('')}
+                  className="absolute right-3 text-[10px] bg-gray-200 hover:bg-gray-300 text-gray-700 px-2 py-0.5 rounded-full font-bold"
                 >
-                  📍 {region}
+                  지우기
                 </button>
-              ))}
+              )}
+            </div>
+
+            {/* Popular Region Quick Preset Buttons */}
+            <div className="space-y-1">
+              <p className="text-[10px] text-gray-400 font-semibold">🔥 인기 대표 지역 빠르게 선택하기:</p>
+              <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none touch-pan-x">
+                {POPULAR_PRESETS.map((preset) => {
+                  const isSelected = searchRegion.trim().toLowerCase() === preset.toLowerCase();
+                  return (
+                    <button
+                      key={preset}
+                      type="button"
+                      onClick={() => setSearchRegion(preset)}
+                      className={`px-3 py-1 rounded-full text-[11px] font-bold transition whitespace-nowrap shrink-0 cursor-pointer ${
+                        isSelected
+                          ? 'bg-[#1a1a2e] text-[#c9a64c] shadow-xs border border-[#c9a64c]/30'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200/50'
+                      }`}
+                    >
+                      📍 {preset}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
@@ -220,11 +266,11 @@ export default function AnsimCoursePlannerModal({
             className="w-full py-4 bg-[#1a1a2e] hover:bg-[#252542] text-[#c9a64c] font-black text-sm rounded-2xl shadow-lg border border-[#c9a64c]/30 transition transform hover:scale-[1.01] active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
           >
             {isGenerating ? (
-              <span>안심이 AI가 1초 최적 동선 조합하는 중... ⏱️</span>
+              <span>안심이 AI가 [{searchRegion || '목적지'}] 근처 1초 최적 동선 조합하는 중... ⏱️</span>
             ) : (
               <>
                 <Navigation className="w-4 h-4 text-[#E5007E]" />
-                <span>1초 풀코스 AI 꿀조합 생성하기</span>
+                <span>[{searchRegion || '목적지'}] 근처 1초 풀코스 생성하기</span>
               </>
             )}
           </button>
@@ -235,7 +281,7 @@ export default function AnsimCoursePlannerModal({
               <div className="bg-[#1a1a2e] text-white p-4 sm:p-5 rounded-2xl shadow-md space-y-1.5 border border-[#c9a64c]/30 relative overflow-hidden">
                 <div className="h-[2px] w-full bg-gradient-to-r from-[#E5007E] via-[#c9a64c] to-[#E5007E] absolute top-0 left-0 right-0" />
                 <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#c9a64c] text-[#1a1a2e] inline-block">
-                  AI 추천 데이트 코스 완성! 🎉
+                  [{generatedCourse.targetRegionLabel}] 맞춤 추천 코스 완성! 🎉
                 </span>
                 <h4 className="text-sm font-black text-white">{generatedCourse.title}</h4>
                 <p className="text-[11px] text-gray-300 font-medium">{generatedCourse.description}</p>
@@ -244,9 +290,9 @@ export default function AnsimCoursePlannerModal({
               {/* 3-Step Outing Timeline Flow */}
               <div className="space-y-2.5">
                 {[
-                  { step: '1단계', icon: <Utensils className="w-4 h-4 text-amber-600" />, label: '애견동반 식사', place: generatedCourse.dining },
-                  { step: '2단계', icon: <Trees className="w-4 h-4 text-emerald-600" />, label: '야외 잔디 산책', place: generatedCourse.park },
-                  { step: '3단계', icon: <Coffee className="w-4 h-4 text-purple-600" />, label: '감성 애견카페', place: generatedCourse.cafe },
+                  { step: '1단계', icon: <Utensils className="w-4 h-4 text-amber-600" />, label: `${generatedCourse.targetRegionLabel} 애견동반 식사`, place: generatedCourse.dining },
+                  { step: '2단계', icon: <Trees className="w-4 h-4 text-emerald-600" />, label: `${generatedCourse.targetRegionLabel} 야외 잔디 산책`, place: generatedCourse.park },
+                  { step: '3단계', icon: <Coffee className="w-4 h-4 text-purple-600" />, label: `${generatedCourse.targetRegionLabel} 감성 애견카페`, place: generatedCourse.cafe },
                 ].map((item, idx) => (
                   <div
                     key={idx}
@@ -282,7 +328,7 @@ export default function AnsimCoursePlannerModal({
                   <span>🏥 혹시나 우리 아이가 아프다면 가까운 병원은?</span>
                 </div>
                 <p className="text-[11px] text-gray-600 font-medium leading-relaxed">
-                  즐거운 나들이 길, 만약의 비상 상황에 대비해 동선 근처 24시 응급 동물의료센터 좌표도 준비해 두었습니다.
+                  즐거운 나들이 길, 만약의 비상 상황에 대비해 [{generatedCourse.targetRegionLabel}] 동선 근처 24시 응급 동물의료센터 좌표도 준비해 두었습니다.
                 </p>
                 <div
                   onClick={() => {
@@ -311,7 +357,7 @@ export default function AnsimCoursePlannerModal({
                 className="w-full py-3.5 bg-[#FEE500] hover:bg-[#fdd800] text-[#191919] font-black text-sm rounded-2xl shadow-md transition active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Share2 className="w-4 h-4 text-[#191919]" />
-                <span>💬 이 3단계 코스 카카오톡으로 친구에게 전송하기</span>
+                <span>💬 이 [{generatedCourse.targetRegionLabel}] 3단계 코스 카카오톡으로 친구에게 전송하기</span>
               </button>
             </div>
           )}
