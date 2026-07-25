@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Menu, X, ExternalLink, LogOut, Award, ChevronRight } from "lucide-react";
+import { Menu, X, ExternalLink, LogOut, Award, ChevronRight, TrendingUp } from "lucide-react";
 import { usePathname } from "next/navigation";
 import LiveSearch from "./LiveSearch";
 import { useSession, signOut } from "next-auth/react";
@@ -113,22 +113,22 @@ export default function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+      className={`sticky top-0 z-50 w-full transition-all duration-300 border-b ${
         isScrolled
-          ? "bg-[#1a1a2e]/95 backdrop-blur-md shadow-lg shadow-[#1a1a2e]/20"
-          : "bg-[#1a1a2e]"
+          ? "bg-white/95 backdrop-blur-md border-amber-900/10 shadow-sm"
+          : "bg-[#fdfcfa]/90 backdrop-blur-sm border-amber-900/5"
       }`}
     >
-      {/* ─── Top accent bar (Hani-inspired gradient stripe) ─── */}
-      <div className="h-[3px] w-full bg-gradient-to-r from-[#E5007E] via-[#c9a64c] to-[#E5007E]" />
+      {/* ─── Top subtle accent stripe (Soft Gold & Magenta) ─── */}
+      <div className="h-[2.5px] w-full bg-gradient-to-r from-amber-400 via-[#E5007E] to-amber-400" />
 
-      <div className="container mx-auto px-4 sm:px-6 h-[68px] flex items-center justify-between gap-4">
+      <div className="container mx-auto px-4 sm:px-6 h-[66px] flex items-center justify-between gap-4">
         {/* ─── Logo ─── */}
         <Link
           href={isMapPage ? "/" : logoMainLink}
           className="flex items-center gap-2.5 group shrink-0"
         >
-          <div className="w-10 h-10 flex items-center justify-center relative transition-transform group-hover:scale-105">
+          <div className="w-9 h-9 flex items-center justify-center relative transition-transform group-hover:scale-105">
             <Image
               src={isMapPage ? "/images/map-logo.png" : "/images/favicon.png"}
               alt="Magentalab Logo"
@@ -137,21 +137,21 @@ export default function Header() {
             />
           </div>
           <div>
-            <div className="text-[17px] font-extrabold tracking-tight text-white leading-tight">
+            <div className="text-[17px] font-extrabold tracking-tight text-[#1a1a2e] leading-tight">
               {isMapPage ? "마젠타랩 펫 맵" : "Magentalab"}
             </div>
-            <p className="text-[10px] font-bold text-[#c9a64c] tracking-widest uppercase leading-none mt-0.5">
+            <p className="text-[10px] font-bold text-[#E5007E] tracking-widest uppercase leading-none mt-0.5">
               {isMapPage ? "반려동물과 함께하기" : logoSubText}
             </p>
           </div>
         </Link>
 
         {/* ─── Desktop Navigation ─── */}
-        <nav className="hidden lg:flex items-center gap-1 font-medium text-sm text-[#c8c8e0]">
+        <nav className="hidden lg:flex items-center gap-1 font-medium text-sm text-gray-700">
           {isMapPage && (
             <a
               href="https://www.magentalabblog.com"
-              className="font-extrabold text-[#E5007E] hover:text-white px-3.5 py-1.5 rounded-full bg-[#E5007E]/10 hover:bg-[#E5007E]/20 transition-all flex items-center gap-1.5 mr-1"
+              className="font-extrabold text-[#E5007E] hover:text-[#c0006a] px-3 py-1.5 rounded-full bg-[#E5007E]/10 hover:bg-[#E5007E]/20 transition-all flex items-center gap-1.5 mr-1 text-xs"
             >
               <span>블로그 보러가기</span>
               <ExternalLink className="w-3.5 h-3.5" />
@@ -161,7 +161,7 @@ export default function Header() {
             <a
               key={nav.href}
               href={nav.href}
-              className="px-2.5 py-1.5 rounded-lg text-[#c8c8e0] hover:text-white hover:bg-white/10 transition-all text-[13px] whitespace-nowrap"
+              className="px-2.5 py-1.5 rounded-lg text-gray-700 hover:text-[#E5007E] hover:bg-amber-500/10 transition-all text-[13px] font-bold whitespace-nowrap"
             >
               {nav.label}
             </a>
@@ -172,25 +172,25 @@ export default function Header() {
           </div>
 
           {!isMapPage && (
-            <div className="flex items-center gap-1.5 border border-white/10 bg-white/5 rounded-full px-3 py-1 text-xs font-semibold">
-              <Link href={handleLanguageChange("ko")} className={`transition-colors hover:text-white ${!isEn && !isJa ? "text-[#c9a64c] font-black" : "text-[#8888aa]"}`}>KO</Link>
-              <span className="text-white/20 select-none">|</span>
-              <Link href={handleLanguageChange("en")} className={`transition-colors hover:text-white ${isEn ? "text-[#c9a64c] font-black" : "text-[#8888aa]"}`}>EN</Link>
-              <span className="text-white/20 select-none">|</span>
-              <Link href={handleLanguageChange("ja")} className={`transition-colors hover:text-white ${isJa ? "text-[#c9a64c] font-black" : "text-[#8888aa]"}`}>JA</Link>
+            <div className="flex items-center gap-1.5 border border-amber-900/10 bg-amber-50/50 rounded-full px-3 py-1 text-xs font-semibold">
+              <Link href={handleLanguageChange("ko")} className={`transition-colors hover:text-[#E5007E] ${!isEn && !isJa ? "text-[#E5007E] font-black" : "text-gray-400 font-medium"}`}>KO</Link>
+              <span className="text-gray-300 select-none">|</span>
+              <Link href={handleLanguageChange("en")} className={`transition-colors hover:text-[#E5007E] ${isEn ? "text-[#E5007E] font-black" : "text-gray-400 font-medium"}`}>EN</Link>
+              <span className="text-gray-300 select-none">|</span>
+              <Link href={handleLanguageChange("ja")} className={`transition-colors hover:text-[#E5007E] ${isJa ? "text-[#E5007E] font-black" : "text-gray-400 font-medium"}`}>JA</Link>
             </div>
           )}
 
           {session?.user ? (
-            <div className="flex items-center gap-2 pl-3 border-l border-white/10">
-              <div className="flex items-center gap-1.5 bg-[#c9a64c]/15 border border-[#c9a64c]/30 text-[#c9a64c] px-3 py-1 rounded-full text-xs font-black">
-                <Award className="w-3.5 h-3.5 shrink-0" />
+            <div className="flex items-center gap-2 pl-3 border-l border-gray-200">
+              <div className="flex items-center gap-1.5 bg-amber-100/70 border border-amber-300/60 text-amber-900 px-3 py-1 rounded-full text-xs font-black">
+                <Award className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                 <span className="truncate max-w-[80px]">{session.user.name || "연구원"}님</span>
-                <span className="text-[10px] bg-[#c9a64c] text-[#1a1a2e] px-2 py-0.5 rounded-full font-black">수석 🏅</span>
+                <span className="text-[10px] bg-[#E5007E] text-white px-2 py-0.5 rounded-full font-black">수석 🏅</span>
               </div>
               <button
                 onClick={() => signOut()}
-                className="text-xs font-bold text-[#8888aa] hover:text-rose-400 hover:bg-rose-900/20 px-2.5 py-1.5 rounded-full transition-all flex items-center gap-1"
+                className="text-xs font-bold text-gray-500 hover:text-rose-600 hover:bg-rose-50 px-2.5 py-1.5 rounded-full transition-all flex items-center gap-1"
               >
                 <LogOut className="w-3 h-3" />
                 <span>로그아웃</span>
@@ -199,7 +199,7 @@ export default function Header() {
           ) : (
             <a
               href="mailto:smagentalab@gmail.com"
-              className="ml-1 px-4 py-2 bg-[#E5007E] hover:bg-[#c0006a] text-white text-sm font-bold rounded-full transition-all shadow-md shadow-[#E5007E]/20 whitespace-nowrap"
+              className="ml-1 px-4 py-2 bg-[#E5007E] hover:bg-[#c0006a] text-white text-xs font-extrabold rounded-full transition-all shadow-md shadow-[#E5007E]/20 whitespace-nowrap"
             >
               {menu.contact}
             </a>
@@ -208,7 +208,7 @@ export default function Header() {
 
         {/* ─── Mobile Toggle ─── */}
         <button
-          className="lg:hidden p-2 text-white hover:text-[#c9a64c] transition-colors z-[60] relative"
+          className="lg:hidden p-2 text-gray-800 hover:text-[#E5007E] transition-colors z-[60] relative"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           aria-label="Toggle Menu"
         >
@@ -219,40 +219,40 @@ export default function Header() {
       {/* ─── Mobile Menu Backdrop ─── */}
       {isMenuOpen && (
         <div
-          className="fixed inset-0 z-40 lg:hidden bg-black/60 backdrop-blur-[3px]"
+          className="fixed inset-0 z-40 lg:hidden bg-black/40 backdrop-blur-[2px]"
           onClick={() => setIsMenuOpen(false)}
         />
       )}
 
       {/* ─── Mobile Menu Dropdown ─── */}
       <div
-        className={`fixed top-[71px] left-0 right-0 z-50 lg:hidden transition-all duration-300 origin-top max-h-[calc(100dvh-80px)] overflow-y-auto overscroll-contain ${
+        className={`fixed top-[69px] left-0 right-0 z-50 lg:hidden transition-all duration-300 origin-top max-h-[calc(100dvh-75px)] overflow-y-auto overscroll-contain ${
           isMenuOpen ? "opacity-100 scale-y-100" : "opacity-0 scale-y-95 pointer-events-none"
         }`}
         style={{ transformOrigin: "top" }}
       >
-        <div className="bg-[#1a1a2e] border-t border-[#c9a64c]/20 shadow-2xl">
+        <div className="bg-[#fdfcfa] border-b border-amber-900/10 shadow-xl">
 
           {/* Accent top stripe inside menu */}
-          <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-[#c9a64c]/40 to-transparent" />
+          <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-[#E5007E]/40 to-transparent" />
 
           <div className="px-4 py-3 flex flex-col gap-0">
 
             {/* User badge (mobile) */}
             {session?.user && (
-              <div className="flex items-center justify-between bg-[#c9a64c]/10 border border-[#c9a64c]/20 rounded-2xl px-4 py-3 mb-3">
+              <div className="flex items-center justify-between bg-amber-50 border border-amber-200/80 rounded-2xl px-4 py-3 mb-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-xl bg-[#c9a64c] text-[#1a1a2e] flex items-center justify-center font-black shrink-0">
+                  <div className="w-7 h-7 rounded-xl bg-amber-400 text-purple-950 flex items-center justify-center font-black shrink-0">
                     <Award className="w-4 h-4" />
                   </div>
                   <div>
-                    <p className="text-xs font-black text-white">{session.user.name || "연구원"}님</p>
-                    <p className="text-[10px] font-bold text-[#c9a64c]">안심 수석 연구원 🏅</p>
+                    <p className="text-xs font-black text-gray-900">{session.user.name || "연구원"}님</p>
+                    <p className="text-[10px] font-bold text-[#E5007E]">안심 수석 연구원 🏅</p>
                   </div>
                 </div>
                 <button
                   onClick={() => { setIsMenuOpen(false); signOut(); }}
-                  className="text-xs font-bold text-rose-400 hover:text-rose-300 bg-rose-900/20 px-2.5 py-1.5 rounded-xl transition flex items-center gap-1"
+                  className="text-xs font-bold text-rose-600 hover:text-rose-700 bg-rose-50 px-2.5 py-1.5 rounded-xl transition flex items-center gap-1"
                 >
                   <LogOut className="w-3.5 h-3.5" />
                   <span>로그아웃</span>
@@ -273,8 +273,8 @@ export default function Header() {
             )}
 
             {/* Search */}
-            <div className="flex items-center justify-between px-4 py-2.5 mb-2 bg-white/5 rounded-xl border border-white/10">
-              <span className="text-[10px] font-black text-[#8888aa] uppercase tracking-widest">{menu.searchLabel}</span>
+            <div className="flex items-center justify-between px-4 py-2.5 mb-2 bg-gray-100/70 rounded-xl border border-gray-200/50">
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{menu.searchLabel}</span>
               <LiveSearch />
             </div>
 
@@ -285,30 +285,30 @@ export default function Header() {
                   key={nav.href}
                   href={nav.href}
                   onClick={() => setIsMenuOpen(false)}
-                  className="flex items-center justify-between px-4 py-3.5 rounded-xl text-[14px] font-semibold text-[#c8c8e0] hover:bg-white/10 hover:text-white transition-all group"
+                  className="flex items-center justify-between px-4 py-3 rounded-xl text-[14px] font-bold text-gray-800 hover:bg-amber-100/50 hover:text-[#E5007E] transition-all group"
                 >
                   <span>{nav.label}</span>
-                  <ChevronRight className="w-4 h-4 text-[#8888aa] group-hover:text-[#c9a64c] transition-colors" />
+                  <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-[#E5007E] transition-colors" />
                 </a>
               ))}
             </nav>
 
             {/* Language selector */}
             {!isMapPage && (
-              <div className="flex items-center justify-between px-4 py-3 mt-2 bg-white/5 rounded-xl border border-white/10">
-                <span className="text-[10px] font-black text-[#8888aa] uppercase tracking-widest">Language</span>
+              <div className="flex items-center justify-between px-4 py-3 mt-2 bg-gray-100/70 rounded-xl border border-gray-200/50">
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Language</span>
                 <div className="flex items-center gap-3 text-xs font-bold">
-                  <Link href={handleLanguageChange("ko")} className={`transition-colors hover:text-white ${!isEn && !isJa ? "text-[#c9a64c] font-black" : "text-[#8888aa]"}`} onClick={() => setIsMenuOpen(false)}>한국어</Link>
-                  <span className="text-white/20">|</span>
-                  <Link href={handleLanguageChange("en")} className={`transition-colors hover:text-white ${isEn ? "text-[#c9a64c] font-black" : "text-[#8888aa]"}`} onClick={() => setIsMenuOpen(false)}>English</Link>
-                  <span className="text-white/20">|</span>
-                  <Link href={handleLanguageChange("ja")} className={`transition-colors hover:text-white ${isJa ? "text-[#c9a64c] font-black" : "text-[#8888aa]"}`} onClick={() => setIsMenuOpen(false)}>日本語</Link>
+                  <Link href={handleLanguageChange("ko")} className={`transition-colors hover:text-[#E5007E] ${!isEn && !isJa ? "text-[#E5007E] font-black" : "text-gray-400"}`} onClick={() => setIsMenuOpen(false)}>한국어</Link>
+                  <span className="text-gray-300">|</span>
+                  <Link href={handleLanguageChange("en")} className={`transition-colors hover:text-[#E5007E] ${isEn ? "text-[#E5007E] font-black" : "text-gray-400"}`} onClick={() => setIsMenuOpen(false)}>English</Link>
+                  <span className="text-gray-300">|</span>
+                  <Link href={handleLanguageChange("ja")} className={`transition-colors hover:text-[#E5007E] ${isJa ? "text-[#E5007E] font-black" : "text-gray-400"}`} onClick={() => setIsMenuOpen(false)}>日本語</Link>
                 </div>
               </div>
             )}
 
             {/* CTA button */}
-            <div className="mt-3 pb-4">
+            <div className="mt-3 pb-3">
               <a
                 href="mailto:smagentalab@gmail.com"
                 className="flex items-center justify-center w-full py-3.5 bg-gradient-to-r from-[#E5007E] to-[#c0006a] text-white text-[15px] font-bold rounded-2xl shadow-lg shadow-[#E5007E]/20 hover:opacity-90 transition-all active:scale-[0.98]"
@@ -319,8 +319,8 @@ export default function Header() {
             </div>
 
             {/* Footer mini */}
-            <div className="py-3 text-center border-t border-white/10">
-              <p className="text-[9px] text-[#8888aa] font-bold uppercase tracking-widest">© Magentalab Research</p>
+            <div className="py-2.5 text-center border-t border-gray-200/60">
+              <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">© Magentalab Research</p>
             </div>
           </div>
         </div>
