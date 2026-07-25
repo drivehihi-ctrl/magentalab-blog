@@ -25,7 +25,8 @@ export default function PlaceDetailDrawer({ place, onClose }: PlaceDetailDrawerP
   if (!place) return null;
 
   const handleShare = () => {
-    const shareUrl = `https://www.magentalabblog.com/map/place/${place.id}`;
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://www.magentalabblog.com';
+    const shareUrl = `${baseUrl}/map/place/${place.id}`;
     const defaultImage = place.imageUrl || 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=600&q=80';
     const descText = place.description ? place.description.substring(0, 80) : `${place.address} 에 위치한 대표 ${place.categoryName} 스팟입니다.`;
 
@@ -127,6 +128,10 @@ export default function PlaceDetailDrawer({ place, onClose }: PlaceDetailDrawerP
                 src={place.imageUrl}
                 alt={place.name}
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  // 네이버 핫링크 차단되거나 이미지 404 발생 시 예시 사진으로 자동 교체 (엑박 방지)
+                  (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=600&q=80';
+                }}
               />
             </div>
             <p className="text-[11px] text-gray-400 text-right pr-1 flex items-center justify-end gap-1 font-medium">

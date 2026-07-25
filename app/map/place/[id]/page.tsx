@@ -129,7 +129,14 @@ export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) 
           {place.imageUrl && (
             <div className="h-64 sm:h-80 w-full rounded-2xl overflow-hidden bg-gray-100">
               {/* eslint-disable-next-html-element-suppression */}
-              <img src={place.imageUrl} alt={place.name} className="w-full h-full object-cover" />
+              <img
+                src={place.imageUrl}
+                alt={place.name}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=600&q=80';
+                }}
+              />
             </div>
           )}
 
