@@ -19,7 +19,7 @@ interface PlaceDetailDrawerProps {
   place: PetPlacePOI | null;
   onClose: () => void;
   isFavorite?: boolean;
-  onToggleFavorite?: (id: string) => void;
+  onToggleFavorite?: (place: PetPlacePOI) => void;
 }
 
 const KAKAO_JS_KEY = process.env.NEXT_PUBLIC_KAKAO_JS_KEY || '186380c4d2f6974b4c29d1be55963a4a';
@@ -122,7 +122,7 @@ export default function PlaceDetailDrawer({ place, onClose, isFavorite, onToggle
           <div className="flex items-center gap-1.5">
             {onToggleFavorite && (
               <button
-                onClick={() => onToggleFavorite(place.id)}
+                onClick={() => onToggleFavorite(place)}
                 className={`p-2 rounded-full transition ${
                   isFavorite
                     ? 'bg-rose-100 text-rose-600 font-bold'

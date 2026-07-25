@@ -18,28 +18,33 @@ export default function MapPage() {
   const [allFetchedPlaces, setAllFetchedPlaces] = useState<PetPlacePOI[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isCuratorOpen, setIsCuratorOpen] = useState<boolean>(false);
+  const [favoritePlaces, setFavoritePlaces] = useState<PetPlacePOI[]>([]);
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
 
-  // Load favorites from localStorage
+  // Load favorite full place objects from localStorage
   useEffect(() => {
     if (typeof window === 'undefined') return;
     try {
-      const saved = localStorage.getItem('magentalab_pet_favorites');
-      if (saved) {
-        setFavoriteIds(JSON.parse(saved));
+      const savedObjects = localStorage.getItem('magentalab_pet_favorites_full_objects');
+      if (savedObjects) {
+        const parsed: PetPlacePOI[] = JSON.parse(savedObjects);
+        setFavoritePlaces(parsed);
+        setFavoriteIds(parsed.map((p) => p.id));
       }
     } catch (err) {
-      console.warn('Failed to load favorites:', err);
+      console.warn('Failed to load favorite place objects:', err);
     }
   }, []);
 
-  // Toggle Favorite handler
-  const handleToggleFavorite = (placeId: string) => {
-    setFavoriteIds((prev) => {
-      const next = prev.includes(placeId) ? prev.filter((id) => id !== placeId) : [...prev, placeId];
+  // Toggle Favorite handler with full object persistence
+  const handleToggleFavoritePlace = (place: PetPlacePOI) => {
+    setFavoritePlaces((prev) => {
+      const exists = prev.some((p) => p.id === place.id);
+      const next = exists ? prev.filter((p) => p.id !== place.id) : [place, ...prev];
       if (typeof window !== 'undefined') {
-        localStorage.setItem('magentalab_pet_favorites', JSON.stringify(next));
+        localStorage.setItem('magentalab_pet_favorites_full_objects', JSON.stringify(next));
       }
+      setFavoriteIds(next.map((p) => p.id));
       return next;
     });
   };
@@ -57,29 +62,34 @@ export default function MapPage() {
     }
   }, [places]);
 
-  // Fetch real Kakao POI places from API route
+  // Fetch real Kakao POI places from API route or display local favorite objects
   useEffect(() => {
     let isCancelled = false;
     setIsLoading(true);
 
+    if (selectedCategory === 'favorite') {
+      let favs = [...favoritePlaces];
+      if (searchQuery && searchQuery.trim() !== '') {
+        const qLower = searchQuery.trim().toLowerCase();
+        favs = favs.filter(
+          (p) =>
+            p.name.toLowerCase().includes(qLower) ||
+            p.address.toLowerCase().includes(qLower) ||
+            p.categoryName.toLowerCase().includes(qLower)
+        );
+      }
+      setPlaces(favs);
+      setIsLoading(false);
+      return;
+    }
+
     const timer = setTimeout(() => {
       const params = new URLSearchParams();
-
-      if (selectedCategory === 'favorite') {
-        if (favoriteIds.length > 0) {
-          params.set('ids', favoriteIds.join(','));
-        } else {
-          setPlaces([]);
-          setIsLoading(false);
-          return;
-        }
-      } else {
-        if (selectedCategory && selectedCategory !== 'all') {
-          params.set('category', selectedCategory);
-        }
-        if (searchQuery && searchQuery.trim() !== '') {
-          params.set('q', searchQuery.trim());
-        }
+      if (selectedCategory && selectedCategory !== 'all') {
+        params.set('category', selectedCategory);
+      }
+      if (searchQuery && searchQuery.trim() !== '') {
+        params.set('q', searchQuery.trim());
       }
 
       fetch(`/api/map/places?${params.toString()}`)
@@ -87,20 +97,7 @@ export default function MapPage() {
         .then((data) => {
           if (!isCancelled && data.success && Array.isArray(data.data)) {
             setAllFetchedPlaces(data.data);
-            if (selectedCategory === 'favorite') {
-              let favs = data.data;
-              if (searchQuery && searchQuery.trim() !== '') {
-                const qLower = searchQuery.trim().toLowerCase();
-                favs = favs.filter((p: PetPlacePOI) =>
-                  p.name.toLowerCase().includes(qLower) ||
-                  p.address.toLowerCase().includes(qLower) ||
-                  p.categoryName.toLowerCase().includes(qLower)
-                );
-              }
-              setPlaces(favs);
-            } else {
-              setPlaces(data.data);
-            }
+            setPlaces(data.data);
           }
         })
         .catch((err) => {
@@ -115,7 +112,7 @@ export default function MapPage() {
       isCancelled = true;
       clearTimeout(timer);
     };
-  }, [selectedCategory, searchQuery, favoriteIds]);
+  }, [selectedCategory, searchQuery, favoritePlaces]);
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
@@ -208,7 +205,7 @@ export default function MapPage() {
         place={selectedPlace}
         onClose={() => setSelectedPlace(null)}
         isFavorite={selectedPlace ? favoriteIds.includes(selectedPlace.id) : false}
-        onToggleFavorite={handleToggleFavorite}
+        onToggleFavorite={handleToggleFavoritePlace}
       />
 
       {/* Ansim Pet Curator AI Modal */}

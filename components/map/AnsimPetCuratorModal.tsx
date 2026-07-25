@@ -22,7 +22,8 @@ export default function AnsimPetCuratorModal({
   onSelectPlace,
 }: AnsimPetCuratorModalProps) {
   const [petSize, setPetSize] = useState<PetSize>('small');
-  const [selectedTrait, setSelectedTrait] = useState<PetTrait>('timid');
+  // Allow multiple selected traits
+  const [selectedTraits, setSelectedTraits] = useState<PetTrait[]>(['energetic', 'parking']);
   const [isCurating, setIsCurating] = useState(false);
   const [curatedResults, setCuratedResults] = useState<{
     place: PetPlacePOI;
@@ -31,7 +32,18 @@ export default function AnsimPetCuratorModal({
 
   if (!isOpen) return null;
 
-  // Run AI Curation logic matching pet traits
+  const toggleTrait = (trait: PetTrait) => {
+    setSelectedTraits((prev) => {
+      if (prev.includes(trait)) {
+        if (prev.length === 1) return prev; // Keep at least one trait selected
+        return prev.filter((t) => t !== trait);
+      } else {
+        return [...prev, trait];
+      }
+    });
+  };
+
+  // Run AI Curation logic matching multiple pet traits
   const handleCurate = () => {
     setIsCurating(true);
     setCuratedResults(null);
@@ -39,59 +51,47 @@ export default function AnsimPetCuratorModal({
     setTimeout(() => {
       let filtered = [...places];
 
-      if (selectedTrait === 'timid') {
-        filtered = filtered.filter(
-          (p) =>
-            p.category === 'cafe' ||
-            p.category === 'hotel' ||
-            p.description?.includes('울타리') ||
-            p.description?.includes('소형견') ||
-            p.name.includes('다시사랑') ||
-            p.name.includes('파트너')
-        );
-      } else if (selectedTrait === 'energetic') {
-        filtered = filtered.filter(
-          (p) =>
-            p.category === 'park' ||
-            p.category === 'cafe' ||
-            p.description?.includes('운동장') ||
-            p.description?.includes('야외') ||
-            p.description?.includes('잔디')
-        );
-      } else if (selectedTrait === 'fence') {
-        filtered = filtered.filter(
-          (p) =>
-            p.description?.includes('울타리') ||
-            p.description?.includes('펜스') ||
-            p.description?.includes('독립') ||
-            p.category === 'cafe'
-        );
-      } else if (selectedTrait === 'parking') {
-        filtered = filtered.filter(
-          (p) =>
-            p.description?.includes('주차') ||
-            p.address.includes('경기') ||
-            p.address.includes('남양주') ||
-            p.address.includes('김포')
-        );
-      }
+      // Score each place based on how many selected traits it satisfies
+      const scored = filtered.map((place) => {
+        let score = 0;
+        const text = (place.name + ' ' + place.description + ' ' + place.categoryName + ' ' + place.tags.join(' ')).toLowerCase();
 
-      if (filtered.length < 3) {
-        filtered = places;
-      }
-
-      // Pick top 3 matching places with custom Ansim-i Comments
-      const top3 = filtered.slice(0, 3).map((place) => {
-        let comment = '';
-        if (selectedTrait === 'timid') {
-          comment = `🐶 "다른 강아지 무서워하는 아이 맞죠? ${place.name}은(는) 붐비지 않고 독립 공간이 잘 확보되어 소심이도 평화롭게 쉴 수 있어요!"`;
-        } else if (selectedTrait === 'energetic') {
-          comment = `⚡ "체력 폭발 댕댕이 찰떡! ${place.name}은(는) 마음껏 뛰놀 수 있는 넓은 스팟이라 오늘 떡실신 보장합니다!"`;
-        } else if (selectedTrait === 'fence') {
-          comment = `🛡️ "안전 울타리 필수 보호자님 주목! ${place.name}은(는) 펜스 시설이 확실해서 마음 편히 여유를 즐기실 수 있어요."`;
-        } else {
-          comment = `🚗 "초보 운전자도 안심! ${place.name}은(는) 주차 여유가 넉넉해 자차로 아이 데리고 편하게 방문 가능해요."`;
+        if (selectedTraits.includes('timid')) {
+          if (place.category === 'cafe' || place.category === 'hotel' || text.includes('울타리') || text.includes('소형견') || text.includes('독립')) {
+            score += 2;
+          }
         }
+        if (selectedTraits.includes('energetic')) {
+          if (place.category === 'park' || text.includes('운동장') || text.includes('야외') || text.includes('잔디') || text.includes('뛰')) {
+            score += 2;
+          }
+        }
+        if (selectedTraits.includes('fence')) {
+          if (text.includes('울타리') || text.includes('펜스') || text.includes('안전')) {
+            score += 3;
+          }
+        }
+        if (selectedTraits.includes('parking')) {
+          if (text.includes('주차') || place.address.includes('경기') || place.address.includes('남양주') || place.address.includes('김포')) {
+            score += 2;
+          }
+        }
+        return { place, score };
+      });
+
+      // Sort by score descending
+      scored.sort((a, b) => b.score - a.score);
+
+      const top3 = scored.slice(0, 3).map(({ place }) => {
+        const comments: string[] = [];
+        if (selectedTraits.includes('energetic')) comments.push('넓은 운동장/잔디');
+        if (selectedTraits.includes('parking')) comments.push('편한 주차 공간');
+        if (selectedTraits.includes('fence')) comments.push('안전 울타리');
+        if (selectedTraits.includes('timid')) comments.push('독립 공간');
+
+        const traitSummary = comments.join(', ');
+        const comment = `🐶 "${traitSummary} 조건 완벽 만족! ${place.name}은(는) 보호자님이 원하시는 맞춤 스팟입니다."`;
+
         return { place, ansimComment: comment };
       });
 
@@ -126,7 +126,7 @@ export default function AnsimPetCuratorModal({
             </div>
           </div>
           <p className="text-xs text-purple-200 mt-2 leading-relaxed">
-            우리 아이 체형과 성격을 선택해 주시면, AI 안심이가 팩트 리뷰를 분석해 딱 맞는 스팟을 큐레이션해 드립니다!
+            우리 아이 체형과 필요한 조건을 선택해 주시면 (중복 선택 가능!), AI 안심이가 딱 맞는 스팟을 큐레이션해 드립니다!
           </p>
         </div>
 
@@ -160,12 +160,15 @@ export default function AnsimPetCuratorModal({
             </div>
           </div>
 
-          {/* STEP 2: Pet Trait / Style Selection */}
+          {/* STEP 2: Pet Trait / Style Selection (Multiple Support!) */}
           <div className="space-y-2.5">
-            <label className="text-xs font-black text-gray-900 flex items-center gap-1.5">
-              <Zap className="w-4 h-4 text-amber-500" />
-              <span>2. 아이 성격 & 이번 방문 목적을 선택해 주세요</span>
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-black text-gray-900 flex items-center gap-1.5">
+                <Zap className="w-4 h-4 text-amber-500" />
+                <span>2. 아이 성격 & 원하는 조건 선택 (중복 선택 가능!)</span>
+              </label>
+              <span className="text-[10px] text-purple-600 font-bold">다중 선택 가능 </span>
+            </div>
             <div className="grid grid-cols-2 gap-2.5">
               {[
                 {
@@ -192,23 +195,31 @@ export default function AnsimPetCuratorModal({
                   title: '주차하기 쉬운 곳 🚗',
                   desc: '자차 방문 넉넉한 주차장',
                 },
-              ].map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => setSelectedTrait(item.id as PetTrait)}
-                  className={`p-3 rounded-2xl border text-left transition flex flex-col gap-1 ${
-                    selectedTrait === item.id
-                      ? 'border-purple-600 bg-purple-50 text-purple-900 ring-2 ring-purple-500/20'
-                      : 'border-gray-200 hover:border-purple-200 text-gray-700'
-                  }`}
-                >
-                  <div className="flex items-center gap-1.5 font-bold text-xs">
-                    {item.icon}
-                    <span>{item.title}</span>
-                  </div>
-                  <span className="text-[10px] text-gray-500 pl-5">{item.desc}</span>
-                </button>
-              ))}
+              ].map((item) => {
+                const isSelected = selectedTraits.includes(item.id as PetTrait);
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => toggleTrait(item.id as PetTrait)}
+                    className={`p-3 rounded-2xl border text-left transition flex flex-col gap-1 relative ${
+                      isSelected
+                        ? 'border-purple-600 bg-purple-50 text-purple-900 ring-2 ring-purple-500/20 font-bold'
+                        : 'border-gray-200 hover:border-purple-200 text-gray-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 text-xs font-bold">
+                        {item.icon}
+                        <span>{item.title}</span>
+                      </div>
+                      {isSelected && (
+                        <CheckCircle2 className="w-4 h-4 text-purple-600 shrink-0" />
+                      )}
+                    </div>
+                    <span className="text-[10px] text-gray-500 pl-5">{item.desc}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -226,7 +237,7 @@ export default function AnsimPetCuratorModal({
             ) : (
               <>
                 <Sparkles className="w-4 h-4 text-amber-300" />
-                <span>안심이 AI 맞춤 큐레이션 실행하기</span>
+                <span>선택된 조건으로 맞춤 큐레이션 실행</span>
               </>
             )}
           </button>
