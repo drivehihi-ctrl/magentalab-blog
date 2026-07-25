@@ -118,7 +118,7 @@ export default async function JapaneseHomePage({
                   <span>Magentalab ペット研究所</span>
                 </div>
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1a1a2e] tracking-tight mb-5 leading-[1.14]">
-                  科学的エビデンスで築く <br /> 
+                  科学的エビデンスで<span className="whitespace-nowrap">築く</span> <br /> 
                   ペットの<span className="text-[#E5007E]">健康な未来</span>。
                 </h1>
                 <p className="max-w-xl mx-auto lg:mx-0 text-base sm:text-lg text-gray-600 leading-relaxed font-normal mb-7">
