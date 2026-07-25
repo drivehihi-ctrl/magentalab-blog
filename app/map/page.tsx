@@ -64,13 +64,22 @@ export default function MapPage() {
 
     const timer = setTimeout(() => {
       const params = new URLSearchParams();
-      // If favorite tab is active, do not restrict category so we get all potential places
-      if (selectedCategory && selectedCategory !== 'all' && selectedCategory !== 'favorite') {
-        params.set('category', selectedCategory);
-      }
-      // If NOT favorite tab, send search query. If favorite tab, fetch broad dataset and filter locally by favoriteIds
-      if (selectedCategory !== 'favorite' && searchQuery && searchQuery.trim() !== '') {
-        params.set('q', searchQuery.trim());
+
+      if (selectedCategory === 'favorite') {
+        if (favoriteIds.length > 0) {
+          params.set('ids', favoriteIds.join(','));
+        } else {
+          setPlaces([]);
+          setIsLoading(false);
+          return;
+        }
+      } else {
+        if (selectedCategory && selectedCategory !== 'all') {
+          params.set('category', selectedCategory);
+        }
+        if (searchQuery && searchQuery.trim() !== '') {
+          params.set('q', searchQuery.trim());
+        }
       }
 
       fetch(`/api/map/places?${params.toString()}`)
@@ -79,7 +88,7 @@ export default function MapPage() {
           if (!isCancelled && data.success && Array.isArray(data.data)) {
             setAllFetchedPlaces(data.data);
             if (selectedCategory === 'favorite') {
-              let favs = data.data.filter((p: PetPlacePOI) => favoriteIds.includes(p.id));
+              let favs = data.data;
               if (searchQuery && searchQuery.trim() !== '') {
                 const qLower = searchQuery.trim().toLowerCase();
                 favs = favs.filter((p: PetPlacePOI) =>

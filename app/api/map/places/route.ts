@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPetPlaces } from '@/lib/map/places';
+import { getPetPlaces, getPetPlaceByIdAsync } from '@/lib/map/places';
 import { PetCategory, PetPlacePOI } from '@/lib/map/types';
 import { getRealPlaceImageUrl } from '@/lib/map/aiBriefing';
 
@@ -108,8 +108,24 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const category = (searchParams.get('category') || 'all') as PetCategory | 'all';
   const query = searchParams.get('q') || '';
+  const idsParam = searchParams.get('ids') || '';
 
   try {
+    // 🌟 If specific POI IDs are requested (e.g. Favorite Places tab: ids=poi-1,kakao-1234)
+    if (idsParam.trim()) {
+      const requestedIds = idsParam.split(',').map(id => id.trim()).filter(Boolean);
+      const favoritePlaces = (
+        await Promise.all(requestedIds.map(id => getPetPlaceByIdAsync(id)))
+      ).filter((p): p is PetPlacePOI => p !== null);
+
+      return NextResponse.json({
+        success: true,
+        source: 'favorites_by_ids',
+        count: favoritePlaces.length,
+        data: favoritePlaces,
+      });
+    }
+
     const searchTerm = mapCategoryToSearchTerm(category, query);
     
     // Request Kakao Local REST API
