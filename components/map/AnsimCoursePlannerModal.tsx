@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { PetPlacePOI } from '@/lib/map/types';
-import { Sparkles, X, MapPin, Share2, Compass, Utensils, Trees, Coffee, Hospital, ArrowRight, Navigation } from 'lucide-react';
+import { Sparkles, X, MapPin, Share2, Compass, Utensils, Trees, Coffee, Hospital, ArrowRight, Navigation, ShieldAlert } from 'lucide-react';
 
 interface AnsimCoursePlannerModalProps {
   isOpen: boolean;
@@ -11,7 +11,7 @@ interface AnsimCoursePlannerModalProps {
   onSelectPlace: (place: PetPlacePOI) => void;
 }
 
-type RegionChoice = '김포' | '서울' | '경기' | '인천' | '부산';
+type RegionChoice = '전국' | '서울' | '경기' | '인천' | '강원' | '충청' | '전라' | '경상' | '제주';
 type ThemeChoice = 'healing' | 'energy' | 'brunch';
 
 export default function AnsimCoursePlannerModal({
@@ -20,7 +20,7 @@ export default function AnsimCoursePlannerModal({
   places,
   onSelectPlace,
 }: AnsimCoursePlannerModalProps) {
-  const [selectedRegion, setSelectedRegion] = useState<RegionChoice>('김포');
+  const [selectedRegion, setSelectedRegion] = useState<RegionChoice>('전국');
   const [selectedTheme, setSelectedTheme] = useState<ThemeChoice>('healing');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedCourse, setGeneratedCourse] = useState<{
@@ -34,16 +34,22 @@ export default function AnsimCoursePlannerModal({
 
   if (!isOpen) return null;
 
-  // Generate 1-Second AI 4-Step Course
+  // Generate 1-Second AI 3-Step Outing Course + Emergency Hospital Info
   const handleGenerateCourse = () => {
     setIsGenerating(true);
     setGeneratedCourse(null);
 
     setTimeout(() => {
-      // Pick matching places or fallbacks
-      const regionFiltered = places.filter((p) =>
-        p.address.includes(selectedRegion) || p.name.includes(selectedRegion) || selectedRegion === '김포'
-      );
+      // Pick matching places across nationwide regions
+      const regionFiltered = selectedRegion === '전국'
+        ? places
+        : places.filter((p) =>
+            p.address.includes(selectedRegion) ||
+            p.name.includes(selectedRegion) ||
+            (selectedRegion === '충청' && (p.address.includes('대전') || p.address.includes('충남') || p.address.includes('충북') || p.address.includes('세종'))) ||
+            (selectedRegion === '경상' && (p.address.includes('부산') || p.address.includes('대구') || p.address.includes('경남') || p.address.includes('경북') || p.address.includes('울산'))) ||
+            (selectedRegion === '전라' && (p.address.includes('광주') || p.address.includes('전남') || p.address.includes('전북')))
+          );
 
       const pool = regionFiltered.length >= 3 ? regionFiltered : places;
 
@@ -52,16 +58,18 @@ export default function AnsimCoursePlannerModal({
       const cafe = pool.find((p) => p.category === 'cafe') || pool[2] || places[2] || pool[0];
       const hospital = pool.find((p) => p.category === 'hospital') || pool[3] || places[3] || pool[0];
 
+      const regionLabel = selectedRegion === '전국' ? '전국 추천' : selectedRegion;
+
       const themeTitles: Record<ThemeChoice, string> = {
-        healing: `🌸 [${selectedRegion}] 댕댕이와 함께하는 감성 힐링 1일 데이트 코스`,
-        energy: `⚡ [${selectedRegion}] 체력 소진! 넓은 잔디 운동장 폭풍 뜀박질 코스`,
-        brunch: `☕ [${selectedRegion}] 인스타 핫플 브런치 & 여유로운 오후 산책 코스`,
+        healing: `🌸 [${regionLabel}] 댕댕이와 함께하는 감성 힐링 1일 데이트 코스`,
+        energy: `⚡ [${regionLabel}] 체력 소진! 넓은 잔디 운동장 폭풍 뜀박질 코스`,
+        brunch: `☕ [${regionLabel}] 인스타 핫플 브런치 & 여유로운 오후 산책 코스`,
       };
 
       const themeDescs: Record<ThemeChoice, string> = {
-        healing: `맛있는 애견동반 식사부터 탁 트인 산책 공원, 감성 카페까지 안심이 AI가 엄선한 실패 없는 동선입니다.`,
+        healing: `맛있는 애견동반 식사부터 탁 트인 산책 공원, 감성 카페까지 안심이 AI가 엄선한 실패 없는 3단계 데이트 동선입니다.`,
         energy: `에너지 넘치는 아이를 위한 넓은 잔디 공원과 신나게 뛴 후 아늑하게 쉴 수 있는 애견동반 스팟 모음!`,
-        brunch: `사진 잘 나오는 포토존 브런치 카페와 그늘진 산책길로 구성된 완벽한 데이트 풀코스입니다.`,
+        brunch: `사진 잘 나오는 포토존 브런치 카페와 그늘진 산책길로 구성된 완벽한 데이트 코스입니다.`,
       };
 
       setGeneratedCourse({
@@ -87,7 +95,7 @@ export default function AnsimCoursePlannerModal({
           objectType: 'feed',
           content: {
             title: generatedCourse.title,
-            description: `1단계: ${generatedCourse.dining.name}\n2단계: ${generatedCourse.park.name}\n3단계: ${generatedCourse.cafe.name}\n4단계: ${generatedCourse.hospital.name} (24시 응급)`,
+            description: `1단계: ${generatedCourse.dining.name}\n2단계: ${generatedCourse.park.name}\n3단계: ${generatedCourse.cafe.name}`,
             imageUrl: generatedCourse.cafe.imageUrl || 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=600&q=80',
             link: {
               mobileWebUrl: window.location.href,
@@ -115,9 +123,9 @@ export default function AnsimCoursePlannerModal({
 
   const copyToClipboard = () => {
     if (!generatedCourse) return;
-    const text = `🚗 ${generatedCourse.title}\n\n1코스(식사): ${generatedCourse.dining.name}\n2코스(산책): ${generatedCourse.park.name}\n3코스(카페): ${generatedCourse.cafe.name}\n4코스(응급): ${generatedCourse.hospital.name}\n\n👉 펫 맵에서 코스 확인: ${window.location.href}`;
+    const text = `🚗 ${generatedCourse.title}\n\n1코스(식사): ${generatedCourse.dining.name}\n2코스(산책): ${generatedCourse.park.name}\n3코스(카페): ${generatedCourse.cafe.name}\n\n🏥 비상시 응급병원: ${generatedCourse.hospital.name}\n👉 펫 맵에서 코스 확인: ${window.location.href}`;
     navigator.clipboard.writeText(text);
-    alert('📋 [가평/김포 댕댕이 1일 데이트 코스] 공유 텍스트가 복사되었습니다! 카톡 대화방에 붙여넣어 공유하세요!');
+    alert('📋 [댕댕이 1일 데이트 코스] 공유 텍스트가 복사되었습니다! 카톡 대화방에 붙여넣어 공유하세요!');
   };
 
   return (
@@ -140,7 +148,7 @@ export default function AnsimCoursePlannerModal({
             </div>
             <div>
               <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#c9a64c]/20 text-[#c9a64c] border border-[#c9a64c]/30 inline-block">
-                AI 추천 플래너 🚗
+                전국 단위 AI 플래너 🚗
               </span>
               <h3 className="text-xl font-extrabold tracking-tight text-white mt-1">
                 주말 1초 꿀조합 AI 코스 플래너
@@ -148,24 +156,24 @@ export default function AnsimCoursePlannerModal({
             </div>
           </div>
           <p className="text-xs text-gray-300 mt-2.5 leading-relaxed font-normal">
-            [지역]과 [테마]만 선택하면 <strong className="text-[#c9a64c]">식당 ➔ 산책 공원 ➔ 카페 ➔ 24시 병원</strong> 1일 풀코스 동선을 1초 만에 카드로 추천해 드립니다!
+            [지역]과 [테마]만 선택하면 <strong className="text-[#c9a64c]">식당 ➔ 산책 공원 ➔ 카페</strong> 1일 데이트 동선을 1초 만에 추천해 드립니다!
           </p>
         </div>
 
         {/* Modal Content */}
         <div className="p-5 sm:p-6 overflow-y-auto space-y-6 flex-1 bg-white">
-          {/* STEP 1: Region Selection */}
+          {/* STEP 1: Region Selection (Expanded to Nationwide!) */}
           <div className="space-y-2.5">
             <label className="text-xs font-extrabold text-[#1a1a2e] flex items-center gap-1.5">
               <MapPin className="w-4 h-4 text-[#E5007E]" />
-              <span>1. 어디로 떠나시나요? (지역 선택)</span>
+              <span>1. 어디로 떠나시나요? (전국 지역 선택)</span>
             </label>
             <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none touch-pan-x">
-              {(['김포', '서울', '경기', '인천', '부산'] as RegionChoice[]).map((region) => (
+              {(['전국', '서울', '경기', '인천', '강원', '충청', '전라', '경상', '제주'] as RegionChoice[]).map((region) => (
                 <button
                   key={region}
                   onClick={() => setSelectedRegion(region)}
-                  className={`px-4 py-2 rounded-2xl text-xs font-bold transition whitespace-nowrap shrink-0 cursor-pointer ${
+                  className={`px-3.5 py-1.5 rounded-2xl text-xs font-bold transition whitespace-nowrap shrink-0 cursor-pointer ${
                     selectedRegion === region
                       ? 'bg-[#1a1a2e] text-[#c9a64c] shadow-md border border-[#c9a64c]/30'
                       : 'bg-[#faf6f0] text-gray-700 hover:bg-gray-200 border border-gray-200/60'
@@ -227,19 +235,18 @@ export default function AnsimCoursePlannerModal({
               <div className="bg-[#1a1a2e] text-white p-4 sm:p-5 rounded-2xl shadow-md space-y-1.5 border border-[#c9a64c]/30 relative overflow-hidden">
                 <div className="h-[2px] w-full bg-gradient-to-r from-[#E5007E] via-[#c9a64c] to-[#E5007E] absolute top-0 left-0 right-0" />
                 <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#c9a64c] text-[#1a1a2e] inline-block">
-                  AI 추천 코스 완성! 🎉
+                  AI 추천 데이트 코스 완성! 🎉
                 </span>
                 <h4 className="text-sm font-black text-white">{generatedCourse.title}</h4>
                 <p className="text-[11px] text-gray-300 font-medium">{generatedCourse.description}</p>
               </div>
 
-              {/* 4-Step Timeline Flow */}
+              {/* 3-Step Outing Timeline Flow */}
               <div className="space-y-2.5">
                 {[
                   { step: '1단계', icon: <Utensils className="w-4 h-4 text-amber-600" />, label: '애견동반 식사', place: generatedCourse.dining },
                   { step: '2단계', icon: <Trees className="w-4 h-4 text-emerald-600" />, label: '야외 잔디 산책', place: generatedCourse.park },
                   { step: '3단계', icon: <Coffee className="w-4 h-4 text-purple-600" />, label: '감성 애견카페', place: generatedCourse.cafe },
-                  { step: '4단계', icon: <Hospital className="w-4 h-4 text-rose-600" />, label: '24시 응급 병원', place: generatedCourse.hospital },
                 ].map((item, idx) => (
                   <div
                     key={idx}
@@ -268,13 +275,43 @@ export default function AnsimCoursePlannerModal({
                 ))}
               </div>
 
+              {/* Emergency Hospital Section (Separate Reassuring Care Recommendation) */}
+              <div className="bg-[#faf6f0] p-4 rounded-2xl border border-rose-200/60 space-y-2">
+                <div className="flex items-center gap-1.5 text-xs font-extrabold text-[#1a1a2e]">
+                  <Hospital className="w-4 h-4 text-rose-600 shrink-0" />
+                  <span>🏥 혹시나 우리 아이가 아프다면 가까운 병원은?</span>
+                </div>
+                <p className="text-[11px] text-gray-600 font-medium leading-relaxed">
+                  즐거운 나들이 길, 만약의 비상 상황에 대비해 동선 근처 24시 응급 동물의료센터 좌표도 준비해 두었습니다.
+                </p>
+                <div
+                  onClick={() => {
+                    onSelectPlace(generatedCourse.hospital);
+                    onClose();
+                  }}
+                  className="bg-white p-3 rounded-xl border border-gray-200 hover:border-rose-300 transition cursor-pointer flex items-center justify-between gap-3 shadow-2xs group"
+                >
+                  <div className="flex items-center gap-2.5 overflow-hidden">
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 shrink-0">
+                      24시 응급
+                    </span>
+                    <h5 className="text-xs font-extrabold text-[#1a1a2e] group-hover:text-rose-600 transition truncate">
+                      {generatedCourse.hospital.name}
+                    </h5>
+                  </div>
+                  <span className="text-[10px] font-bold text-rose-600 group-hover:underline shrink-0 flex items-center gap-0.5">
+                    병원 위치 보기 →
+                  </span>
+                </div>
+              </div>
+
               {/* KakaoTalk Share Button */}
               <button
                 onClick={handleShareKakao}
                 className="w-full py-3.5 bg-[#FEE500] hover:bg-[#fdd800] text-[#191919] font-black text-sm rounded-2xl shadow-md transition active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Share2 className="w-4 h-4 text-[#191919]" />
-                <span>💬 이 풀코스 카카오톡으로 친구에게 전송하기</span>
+                <span>💬 이 3단계 코스 카카오톡으로 친구에게 전송하기</span>
               </button>
             </div>
           )}
