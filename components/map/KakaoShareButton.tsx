@@ -33,8 +33,7 @@ export default function KakaoShareButton({
   const handleKakaoShare = () => {
     if (typeof window === 'undefined') return;
 
-    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://www.magentalabblog.com';
-    const shareUrl = `${baseUrl}/map/place/${placeId}`;
+    const shareUrl = `https://www.magentalabblog.com/map/place/${placeId}`;
     const defaultImage = imageUrl || 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=600&q=80';
     const descText = description ? description.substring(0, 80) : `${address} 에 위치한 대표 ${categoryName} 스팟입니다.`;
 
