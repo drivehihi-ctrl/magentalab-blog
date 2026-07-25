@@ -11,11 +11,24 @@ import type { Metadata } from 'next';
 
 interface PlaceDetailPageProps {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 }
 
-export async function generateMetadata({ params }: PlaceDetailPageProps): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: PlaceDetailPageProps): Promise<Metadata> {
   const { id } = await params;
-  const place = (await getPetPlaceByIdAsync(id)) || getPetPlaceById(id);
+  const sp = await searchParams;
+  let place = (await getPetPlaceByIdAsync(id)) || getPetPlaceById(id);
+
+  if (place && id.startsWith('kakao-') && sp?.name) {
+    place = {
+      ...place,
+      name: sp.name,
+      address: sp.address || place.address,
+      roadAddress: sp.address || place.roadAddress,
+      categoryName: sp.categoryName || place.categoryName,
+      imageUrl: sp.imageUrl || place.imageUrl,
+    };
+  }
 
   if (!place) {
     return {
@@ -45,9 +58,21 @@ export async function generateStaticParams() {
   }));
 }
 
-export default async function PlaceDetailPage({ params }: PlaceDetailPageProps) {
+export default async function PlaceDetailPage({ params, searchParams }: PlaceDetailPageProps) {
   const { id } = await params;
-  const place = (await getPetPlaceByIdAsync(id)) || getPetPlaceById(id);
+  const sp = await searchParams;
+  let place = (await getPetPlaceByIdAsync(id)) || getPetPlaceById(id);
+
+  if (place && id.startsWith('kakao-') && sp?.name) {
+    place = {
+      ...place,
+      name: sp.name,
+      address: sp.address || place.address,
+      roadAddress: sp.address || place.roadAddress,
+      categoryName: sp.categoryName || place.categoryName,
+      imageUrl: sp.imageUrl || place.imageUrl,
+    };
+  }
 
   if (!place) {
     redirect('/map');
