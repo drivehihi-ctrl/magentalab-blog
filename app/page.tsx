@@ -6,6 +6,7 @@ import { sanitizeForSeo } from "@/lib/utils";
 import { Metadata } from "next";
 import Link from "next/link";
 import { Flame, Sparkles, TrendingUp, ArrowRight } from "lucide-react";
+import DraggableScrollContainer from "@/components/DraggableScrollContainer";
 
 export const revalidate = 86400;
 
@@ -177,8 +178,8 @@ export default async function HomePage({
               </Link>
             </div>
 
-            {/* Trending Cards Grid (Sorted by View Count - Peek-ahead Carousel on Mobile) */}
-            <div className="flex overflow-x-auto snap-x snap-mandatory pb-6 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-3 gap-4 sm:gap-6 scrollbar-none touch-pan-x">
+            {/* Trending Cards Grid (PC Mouse Drag & Left/Right Arrows + Mobile Touch Carousel) */}
+            <DraggableScrollContainer className="-mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-3">
               {trendingPosts.map((post, idx) => {
                 const imgUrl = getFeaturedImage(post);
                 const titleText = sanitizeForSeo(post.title.rendered);
@@ -243,7 +244,7 @@ export default async function HomePage({
                   </div>
                 );
               })}
-            </div>
+            </DraggableScrollContainer>
           </div>
         </section>
       )}
