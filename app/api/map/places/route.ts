@@ -183,8 +183,18 @@ export async function GET(request: NextRequest) {
               const rawCategory = doc.category_name || '';
               const name = doc.place_name || '';
               
+              // ✅ 마트/쇼핑/편의점 등 나들이와 전혀 무관한 상업시설 카테고리는 이름에 펫 키워드 있어도 무조건 차단
+              const ALWAYS_EXCLUDE_CATEGORIES = [
+                '대형마트', '마트', '쇼핑몰', '백화점', '편의점', '할인점', '슈퍼마켓',
+                '아울렛', '면세점', '홈플러스', '이마트', '롯데마트', '코스트코', '하나로마트',
+                '기업', '관공서', '주민센터', '구청', '시청', '경찰서', '소방서',
+                '은행', '증권', '보험', '주유소', '세차장',
+              ];
+              const isAlwaysExcluded = ALWAYS_EXCLUDE_CATEGORIES.some(cat => rawCategory.includes(cat) || name.includes(cat));
+              if (isAlwaysExcluded) return false;
+
               // 온천, 섬, 산 등 반려동물과 전혀 무관한 카테고리는 이름에 펫 관련 키워드가 없으면 제외
-              const excludedCategories = ['온천', '섬', '산', '계곡', '성곽', '유적지', '관공서'];
+              const excludedCategories = ['온천', '섬', '산', '계곡', '성곽', '유적지'];
               const isExcludedCategory = excludedCategories.some(cat => rawCategory.includes(cat));
               const hasPetKeyword = petKeywords.some(kw => name.includes(kw) || rawCategory.includes(kw));
 
