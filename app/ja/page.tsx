@@ -111,19 +111,21 @@ export default async function JapaneseHomePage({
             </div>
 
             {/* Text */}
-            <div className="w-full lg:w-1/2 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-5 rounded-full bg-amber-100/80 border border-amber-300/60 text-[#88004e] text-[11px] font-extrabold tracking-wide">
-                <Sparkles className="w-3.5 h-3.5 text-[#E5007E] animate-pulse" />
-                <span>Magentalab ペット研究所</span>
+            <div className="w-full lg:w-1/2 flex flex-col items-center lg:items-end text-center lg:text-left">
+              <div className="w-full lg:max-w-[480px]">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-5 rounded-full bg-amber-100/80 border border-amber-300/60 text-[#88004e] text-[11px] font-extrabold tracking-wide">
+                  <Sparkles className="w-3.5 h-3.5 text-[#E5007E] animate-pulse" />
+                  <span>Magentalab ペット研究所</span>
+                </div>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1a1a2e] tracking-tight mb-5 leading-[1.14]">
+                  科学的エビデンスで築く <br /> 
+                  ペットの<span className="text-[#E5007E]">健康な未来</span>。
+                </h1>
+                <p className="max-w-xl mx-auto lg:mx-0 text-base sm:text-lg text-gray-600 leading-relaxed font-normal mb-7">
+                  Magentalabペット研究所がお届けする、 <br className="hidden md:block" />
+                  科学的根拠に基づいた獣医医学研究と日々のケアガイド。
+                </p>
               </div>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1a1a2e] tracking-tight mb-5 leading-[1.14]">
-                科学的エビデンスで築く <br /> 
-                ペットの<span className="text-[#E5007E]">健康な未来</span>。
-              </h1>
-              <p className="max-w-xl mx-auto lg:mx-0 text-base sm:text-lg text-gray-600 leading-relaxed font-normal mb-7">
-                Magentalabペット研究所がお届けする、 <br className="hidden md:block" />
-                科学的根拠に基づいた獣医医学研究と日々のケアガイド。
-              </p>
             </div>
           </div>
         </div>

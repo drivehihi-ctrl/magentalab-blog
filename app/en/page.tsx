@@ -111,20 +111,22 @@ export default async function EnglishHomePage({
             </div>
 
             {/* Text */}
-            <div className="w-full lg:w-1/2 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-5 rounded-full bg-amber-100/80 border border-amber-300/60 text-[#88004e] text-[11px] font-extrabold tracking-wide">
-                <Sparkles className="w-3.5 h-3.5 text-[#E5007E] animate-pulse" />
-                <span>Magentalab Pet Research Institute</span>
+            <div className="w-full lg:w-1/2 flex flex-col items-center lg:items-end text-center lg:text-left">
+              <div className="w-full lg:max-w-[480px]">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-5 rounded-full bg-amber-100/80 border border-amber-300/60 text-[#88004e] text-[11px] font-extrabold tracking-wide">
+                  <Sparkles className="w-3.5 h-3.5 text-[#E5007E] animate-pulse" />
+                  <span>Magentalab Pet Research Institute</span>
+                </div>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1a1a2e] tracking-tight mb-5 leading-[1.14]">
+                  Science-Backed <br /> 
+                  <span className="text-[#E5007E]">Insights</span> for a <br className="hidden lg:block" />
+                  Healthier Pet Future.
+                </h1>
+                <p className="max-w-xl mx-auto lg:mx-0 text-base sm:text-lg text-gray-600 leading-relaxed font-normal mb-7">
+                  Discover evidence-based veterinary research <br className="hidden md:block" />
+                  and daily care guides from Magentalab Pet Research Institute.
+                </p>
               </div>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1a1a2e] tracking-tight mb-5 leading-[1.14]">
-                Science-Backed <br /> 
-                <span className="text-[#E5007E]">Insights</span> for a <br className="hidden lg:block" />
-                Healthier Pet Future.
-              </h1>
-              <p className="max-w-xl mx-auto lg:mx-0 text-base sm:text-lg text-gray-600 leading-relaxed font-normal mb-7">
-                Discover evidence-based veterinary research <br className="hidden md:block" />
-                and daily care guides from Magentalab Pet Research Institute.
-              </p>
             </div>
           </div>
         </div>

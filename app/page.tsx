@@ -109,37 +109,39 @@ export default async function HomePage({
             </div>
 
             {/* Hero Text */}
-            <div className="w-full lg:w-1/2 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-5 rounded-full bg-amber-100/80 border border-amber-300/60 text-[#88004e] text-[11px] font-extrabold tracking-wide">
-                <Sparkles className="w-3.5 h-3.5 text-[#E5007E] animate-pulse" />
-                <span>Magentalab Pet Health Lab</span>
-              </div>
+            <div className="w-full lg:w-1/2 flex flex-col items-center lg:items-end text-center lg:text-left">
+              <div className="w-full lg:max-w-[480px]">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-5 rounded-full bg-amber-100/80 border border-amber-300/60 text-[#88004e] text-[11px] font-extrabold tracking-wide">
+                  <Sparkles className="w-3.5 h-3.5 text-[#E5007E] animate-pulse" />
+                  <span>Magentalab Pet Health Lab</span>
+                </div>
 
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1a1a2e] tracking-tight mb-5 leading-[1.14]">
-                반려동물을 위한 <br />
-                <span className="text-[#E5007E]">더 나은 미래</span>를 <br className="hidden lg:block" />
-                연구합니다.
-              </h1>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1a1a2e] tracking-tight mb-5 leading-[1.14]">
+                  반려동물을 위한 <br />
+                  <span className="text-[#E5007E]">더 나은 미래</span>를 <br className="hidden lg:block" />
+                  연구합니다.
+                </h1>
 
-              <p className="max-w-xl mx-auto lg:mx-0 text-base sm:text-lg text-gray-600 leading-relaxed font-normal mb-7">
-                Magentalab 반려동물 연구소의 최신 연구 결과와 <br className="hidden md:block" />
-                생활 속 건강 팁을 블로그에서 만나보세요.
-              </p>
+                <p className="max-w-xl mx-auto lg:mx-0 text-base sm:text-lg text-gray-600 leading-relaxed font-normal mb-7">
+                  Magentalab 반려동물 연구소의 최신 연구 결과와 <br className="hidden md:block" />
+                  생활 속 건강 팁을 블로그에서 만나보세요.
+                </p>
 
-              {/* CTA Buttons */}
-              <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
-                <a
-                  href="/blog"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#E5007E] to-[#c0006a] text-white font-bold text-sm rounded-full shadow-lg shadow-[#E5007E]/25 hover:shadow-xl hover:opacity-95 transition-all"
-                >
-                  블로그 글 보러가기 →
-                </a>
-                <a
-                  href="/map"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-amber-100/90 text-amber-950 font-bold text-sm rounded-full hover:bg-amber-200 border border-amber-300/50 transition-all shadow-xs"
-                >
-                  🐾 펫 맵 탐색하기
-                </a>
+                {/* CTA Buttons */}
+                <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
+                  <a
+                    href="/blog"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#E5007E] to-[#c0006a] text-white font-bold text-sm rounded-full shadow-lg shadow-[#E5007E]/25 hover:shadow-xl hover:opacity-95 transition-all"
+                  >
+                    블로그 글 보러가기 →
+                  </a>
+                  <a
+                    href="/map"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-amber-100/90 text-amber-950 font-bold text-sm rounded-full hover:bg-amber-200 border border-amber-300/50 transition-all shadow-xs"
+                  >
+                    🐾 펫 맵 탐색하기
+                  </a>
+                </div>
               </div>
             </div>
           </div>
