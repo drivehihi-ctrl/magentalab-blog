@@ -4,16 +4,45 @@ import React, { useState, useEffect } from 'react';
 import PlaceSearchHeader from '@/components/map/PlaceSearchHeader';
 import PetMapViewer from '@/components/map/PetMapViewer';
 import PlaceDetailDrawer from '@/components/map/PlaceDetailDrawer';
+import PetWeatherWidget from '@/components/map/PetWeatherWidget';
+import AnsimPetCuratorModal from '@/components/map/AnsimPetCuratorModal';
 import { PetCategory, PetPlacePOI } from '@/lib/map/types';
-import { Sparkles, HeartHandshake, ArrowRight, Loader2 } from 'lucide-react';
+import { Sparkles, HeartHandshake, ArrowRight, Loader2, Heart, Wand2 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function MapPage() {
-  const [selectedCategory, setSelectedCategory] = useState<PetCategory | 'all'>('all');
+  const [selectedCategory, setSelectedCategory] = useState<PetCategory | 'all' | 'favorite'>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedPlace, setSelectedPlace] = useState<PetPlacePOI | null>(null);
   const [places, setPlaces] = useState<PetPlacePOI[]>([]);
+  const [allFetchedPlaces, setAllFetchedPlaces] = useState<PetPlacePOI[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isCuratorOpen, setIsCuratorOpen] = useState<boolean>(false);
+  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
+
+  // Load favorites from localStorage
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const saved = localStorage.getItem('magentalab_pet_favorites');
+      if (saved) {
+        setFavoriteIds(JSON.parse(saved));
+      }
+    } catch (err) {
+      console.warn('Failed to load favorites:', err);
+    }
+  }, []);
+
+  // Toggle Favorite handler
+  const handleToggleFavorite = (placeId: string) => {
+    setFavoriteIds((prev) => {
+      const next = prev.includes(placeId) ? prev.filter((id) => id !== placeId) : [...prev, placeId];
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('magentalab_pet_favorites', JSON.stringify(next));
+      }
+      return next;
+    });
+  };
 
   // Auto-open detail drawer if ?placeId= or ?place= exists in URL (from Kakao Share link)
   useEffect(() => {
@@ -35,7 +64,7 @@ export default function MapPage() {
 
     const timer = setTimeout(() => {
       const params = new URLSearchParams();
-      if (selectedCategory && selectedCategory !== 'all') {
+      if (selectedCategory && selectedCategory !== 'all' && selectedCategory !== 'favorite') {
         params.set('category', selectedCategory);
       }
       if (searchQuery && searchQuery.trim() !== '') {
@@ -46,7 +75,12 @@ export default function MapPage() {
         .then((res) => res.json())
         .then((data) => {
           if (!isCancelled && data.success && Array.isArray(data.data)) {
-            setPlaces(data.data);
+            setAllFetchedPlaces(data.data);
+            if (selectedCategory === 'favorite') {
+              setPlaces(data.data.filter((p: PetPlacePOI) => favoriteIds.includes(p.id)));
+            } else {
+              setPlaces(data.data);
+            }
           }
         })
         .catch((err) => {
@@ -61,7 +95,7 @@ export default function MapPage() {
       isCancelled = true;
       clearTimeout(timer);
     };
-  }, [selectedCategory, searchQuery]);
+  }, [selectedCategory, searchQuery, favoriteIds]);
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
@@ -72,12 +106,16 @@ export default function MapPage() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         totalCount={places.length}
+        favoriteCount={favoriteIds.length}
       />
 
       {/* Main Map Content Area */}
       <main className="flex-1 max-w-6xl w-full mx-auto p-4 space-y-4">
-        {/* Hero Title Banner */}
-        <div className="bg-gradient-to-r from-purple-900 via-indigo-900 to-purple-800 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+        {/* Real-time Pet Weather Widget */}
+        <PetWeatherWidget />
+
+        {/* Hero Title Banner & Ansim AI Curator Trigger */}
+        <div className="bg-gradient-to-r from-purple-900 via-indigo-900 to-purple-800 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="absolute right-0 top-0 translate-x-8 -translate-y-8 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 space-y-2 max-w-2xl">
@@ -92,6 +130,15 @@ export default function MapPage() {
               카카오 지도 기반 전국 실제 애견 카페, 동반 식당, 24시 동물병원, 반려동물 공원, 애견 숙소 실시간 탐색!
             </p>
           </div>
+
+          {/* Ansim AI Curator Trigger Button */}
+          <button
+            onClick={() => setIsCuratorOpen(true)}
+            className="relative z-10 shrink-0 flex items-center gap-2 px-5 py-3.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-purple-950 font-black text-xs sm:text-sm rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95 border border-amber-300 animate-pulse"
+          >
+            <Wand2 className="w-4 h-4 text-purple-950 shrink-0" />
+            <span>1초 댕댕이 성격 맞춤 큐레이션 🐶</span>
+          </button>
         </div>
 
         {/* Map Loading Indicator Overlay */}
@@ -140,6 +187,16 @@ export default function MapPage() {
       <PlaceDetailDrawer
         place={selectedPlace}
         onClose={() => setSelectedPlace(null)}
+        isFavorite={selectedPlace ? favoriteIds.includes(selectedPlace.id) : false}
+        onToggleFavorite={handleToggleFavorite}
+      />
+
+      {/* Ansim Pet Curator AI Modal */}
+      <AnsimPetCuratorModal
+        isOpen={isCuratorOpen}
+        onClose={() => setIsCuratorOpen(false)}
+        places={allFetchedPlaces.length > 0 ? allFetchedPlaces : places}
+        onSelectPlace={(place) => setSelectedPlace(place)}
       />
     </div>
   );

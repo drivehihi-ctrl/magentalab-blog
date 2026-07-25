@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { PetPlacePOI } from '@/lib/map/types';
-import { X, MapPin, Clock, Phone, Navigation, ShieldAlert, CheckCircle2, Share2, ExternalLink, MessageSquareQuote, Info } from 'lucide-react';
+import { X, MapPin, Clock, Phone, Navigation, ShieldAlert, CheckCircle2, Share2, ExternalLink, MessageSquareQuote, Info, Heart } from 'lucide-react';
 import Link from 'next/link';
 import AIBriefingReviews from '@/components/map/AIBriefingReviews';
 import AnsimLabCertification from '@/components/map/AnsimLabCertification';
@@ -18,11 +18,13 @@ import SafePlaceImage from '@/components/map/SafePlaceImage';
 interface PlaceDetailDrawerProps {
   place: PetPlacePOI | null;
   onClose: () => void;
+  isFavorite?: boolean;
+  onToggleFavorite?: (id: string) => void;
 }
 
 const KAKAO_JS_KEY = process.env.NEXT_PUBLIC_KAKAO_JS_KEY || '186380c4d2f6974b4c29d1be55963a4a';
 
-export default function PlaceDetailDrawer({ place, onClose }: PlaceDetailDrawerProps) {
+export default function PlaceDetailDrawer({ place, onClose, isFavorite, onToggleFavorite }: PlaceDetailDrawerProps) {
   if (!place) return null;
 
   const handleShare = () => {
@@ -117,7 +119,20 @@ export default function PlaceDetailDrawer({ place, onClose }: PlaceDetailDrawerP
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            {onToggleFavorite && (
+              <button
+                onClick={() => onToggleFavorite(place.id)}
+                className={`p-2 rounded-full transition ${
+                  isFavorite
+                    ? 'bg-rose-100 text-rose-600 font-bold'
+                    : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
+                }`}
+                title={isFavorite ? '찜 해제' : '찜하기'}
+              >
+                <Heart className={`w-4 h-4 ${isFavorite ? 'fill-rose-500 text-rose-500' : ''}`} />
+              </button>
+            )}
             <button
               onClick={handleShare}
               className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition"

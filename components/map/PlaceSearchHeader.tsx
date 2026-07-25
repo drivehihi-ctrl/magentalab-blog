@@ -2,18 +2,20 @@
 
 import React from 'react';
 import { PetCategory } from '@/lib/map/types';
-import { Search, Coffee, Utensils, Trees, Hospital, Hotel, MapPin } from 'lucide-react';
+import { Search, Coffee, Utensils, Trees, Hospital, Hotel, MapPin, Heart } from 'lucide-react';
 
 interface PlaceSearchHeaderProps {
-  selectedCategory: PetCategory | 'all';
-  onCategoryChange: (cat: PetCategory | 'all') => void;
+  selectedCategory: PetCategory | 'all' | 'favorite';
+  onCategoryChange: (cat: PetCategory | 'all' | 'favorite') => void;
   searchQuery: string;
   onSearchChange: (q: string) => void;
   totalCount: number;
+  favoriteCount?: number;
 }
 
-const CATEGORIES: { id: PetCategory | 'all'; label: string; icon: React.ReactNode }[] = [
+const CATEGORIES: { id: PetCategory | 'all' | 'favorite'; label: string; icon: React.ReactNode }[] = [
   { id: 'all', label: '전체', icon: <MapPin className="w-4 h-4" /> },
+  { id: 'favorite', label: '내 찜한 장소', icon: <Heart className="w-4 h-4 text-rose-500 fill-rose-500" /> },
   { id: 'cafe', label: '애견카페', icon: <Coffee className="w-4 h-4" /> },
   { id: 'restaurant', label: '애견동반식당', icon: <Utensils className="w-4 h-4" /> },
   { id: 'park', label: '반려동물공원', icon: <Trees className="w-4 h-4" /> },
