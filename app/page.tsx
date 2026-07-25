@@ -90,11 +90,11 @@ export default async function HomePage({
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#E5007E]/5 rounded-full blur-3xl opacity-60 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[340px] h-[340px] bg-amber-400/10 rounded-full blur-3xl opacity-40 pointer-events-none" />
 
-        <div className="container relative mx-auto px-4 sm:px-6 py-14 lg:py-24">
-          <div className="flex flex-col-reverse lg:flex-row items-center gap-10 lg:gap-16">
+        <div className="container relative mx-auto px-4 sm:px-6 py-14 lg:py-24 max-w-6xl">
+          <div className="flex flex-col-reverse lg:flex-row items-center justify-between gap-10 lg:gap-12">
 
             {/* Character Image */}
-            <div className="w-full lg:w-1/2 flex justify-center lg:justify-end order-first lg:order-last">
+            <div className="w-full lg:w-1/2 flex justify-center lg:justify-center order-first lg:order-last">
               <div className="relative w-56 h-56 sm:w-72 sm:h-72 lg:w-[420px] lg:h-[420px]"
                 style={{ animation: "float 6s ease-in-out infinite" }}>
                 <div className="absolute inset-0 bg-[#E5007E]/10 rounded-full blur-3xl transform scale-90" />
