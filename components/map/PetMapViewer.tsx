@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { PetPlacePOI } from '@/lib/map/types';
 import { MapPin, Navigation, List, Map as MapIcon, Coffee, Utensils, Trees, Hospital, Hotel, ExternalLink, Lock, Unlock, Hand } from 'lucide-react';
+import SafePlaceImage from './SafePlaceImage';
 
 
 interface PetMapViewerProps {
@@ -348,60 +349,73 @@ export default function PetMapViewer({
             </button>
           </div>
 
-          {/* Floating POI Summary Count Badge */}
-          <div className="absolute top-4 left-4 z-10 pointer-events-none">
-            <div className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl shadow-md border border-purple-100 inline-block text-xs font-medium text-purple-900 pointer-events-auto">
-              📍 지도에 <strong>{places.length}개</strong>의 애견동반 스팟이 표시중입니다.
+          {/* Floating POI Summary Count Badge & Swipe Hint */}
+          <div className="absolute top-4 left-4 z-10 pointer-events-none flex flex-col gap-1">
+            <div className="bg-white/90 backdrop-blur-md px-3.5 py-1.5 rounded-2xl shadow-md border border-purple-100 inline-block text-xs font-medium text-purple-900 pointer-events-auto">
+              📍 주변 <strong>{places.length}개</strong> 애견동반 스팟
             </div>
           </div>
 
-
-          {/* Interactive Bottom Carousel Bar */}
-          <div className="absolute bottom-4 left-4 right-4 z-10 overflow-x-auto pb-2 flex gap-3 snap-x scrollbar-none">
-            {places.length === 0 ? (
-              <div className="bg-white p-6 rounded-2xl shadow-lg border border-purple-100 text-center w-full max-w-md mx-auto">
-                <p className="text-sm font-semibold text-gray-700">검색 조건에 일치하는 애견 스팟이 없습니다.</p>
-                <p className="text-xs text-gray-500 mt-1">다른 카테고리나 검색어로 다시 시도해 보세요.</p>
+          {/* Interactive Bottom Carousel Bar with Mobile Peek View (w-[82%]) & Scroll Indicator */}
+          <div className="absolute bottom-3 left-3 right-3 z-10 space-y-1.5">
+            {places.length > 1 && (
+              <div className="flex items-center justify-between px-2 text-[11px] font-bold text-purple-900 bg-white/80 backdrop-blur-md py-1 rounded-xl shadow-xs border border-purple-100/60">
+                <span className="flex items-center gap-1">
+                  <span>총 {places.length}곳 탐색됨</span>
+                  <span className="text-[10px] font-normal text-purple-600">(옆으로 슥슥 넘겨보세요)</span>
+                </span>
+                <span className="text-purple-600 animate-pulse font-extrabold">옆으로 스와이프 ↔️</span>
               </div>
-            ) : (
-              places.map((place) => {
-                const isSelected = selectedPlace?.id === place.id;
-                return (
-                  <div
-                    key={place.id}
-                    onClick={() => onSelectPlace(place)}
-                    className={`snap-center shrink-0 w-72 bg-white/95 backdrop-blur p-3.5 rounded-2xl shadow-lg border cursor-pointer transition-all transform hover:-translate-y-1 ${
-                      isSelected
-                        ? 'border-purple-600 ring-2 ring-purple-500/20 bg-purple-50/50'
-                        : 'border-purple-100 hover:border-purple-300'
-                    }`}
-                  >
-                    <div className="flex gap-3 items-center">
-                      <div className="w-14 h-14 rounded-xl overflow-hidden bg-gray-100 shrink-0 border border-gray-100">
-                        {place.imageUrl ? (
-                          /* eslint-disable-next-html-element-suppression */
-                          <img src={place.imageUrl} alt={place.name} className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-purple-50">
-                            {getCategoryIcon(place.category)}
-                          </div>
-                        )}
-                      </div>
+            )}
 
-                      <div className="space-y-1 overflow-hidden">
-                        <div className="flex items-center gap-1">
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">
-                            {place.categoryName}
-                          </span>
+            <div className="overflow-x-auto pb-1 flex gap-2.5 snap-x snap-mandatory scrollbar-none">
+              {places.length === 0 ? (
+                <div className="bg-white p-5 rounded-2xl shadow-lg border border-purple-100 text-center w-full max-w-md mx-auto">
+                  <p className="text-sm font-semibold text-gray-700">검색 조건에 일치하는 애견 스팟이 없습니다.</p>
+                  <p className="text-xs text-gray-500 mt-1">다른 카테고리나 검색어로 다시 시도해 보세요.</p>
+                </div>
+              ) : (
+                places.map((place) => {
+                  const isSelected = selectedPlace?.id === place.id;
+                  return (
+                    <div
+                      key={place.id}
+                      onClick={() => onSelectPlace(place)}
+                      className={`snap-start shrink-0 w-[82%] sm:w-72 bg-white/95 backdrop-blur p-3 rounded-2xl shadow-xl border cursor-pointer transition-all transform active:scale-98 ${
+                        isSelected
+                          ? 'border-purple-600 ring-2 ring-purple-500/30 bg-purple-50/70'
+                          : 'border-purple-100 hover:border-purple-300'
+                      }`}
+                    >
+                      <div className="flex gap-3 items-center">
+                        <div className="w-14 h-14 rounded-xl overflow-hidden bg-gray-100 shrink-0 border border-gray-100 relative">
+                          {place.imageUrl ? (
+                            <SafePlaceImage src={place.imageUrl} alt={place.name} />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-purple-50">
+                              {getCategoryIcon(place.category)}
+                            </div>
+                          )}
                         </div>
-                        <h4 className="text-xs font-bold text-gray-900 truncate">{place.name}</h4>
-                        <p className="text-[11px] text-gray-500 truncate">{place.roadAddress || place.address}</p>
+
+                        <div className="space-y-0.5 overflow-hidden flex-1">
+                          <div className="flex items-center gap-1">
+                            <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">
+                              {place.categoryName}
+                            </span>
+                            {place.rating && (
+                              <span className="text-[10px] font-bold text-amber-500">★ {place.rating}</span>
+                            )}
+                          </div>
+                          <h4 className="text-xs font-bold text-gray-900 truncate">{place.name}</h4>
+                          <p className="text-[11px] text-gray-500 truncate">{place.roadAddress || place.address}</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })
-            )}
+                  );
+                })
+              )}
+            </div>
           </div>
         </div>
       ) : (
