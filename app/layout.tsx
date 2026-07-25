@@ -99,13 +99,15 @@ export default function RootLayout({
         />
         <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js" async></script>
       </head>
-      <body className="antialiased">
+      <body className="antialiased overflow-x-hidden">
         <SessionProvider>
-          <KakaoScript />
-          <Header />
-          <main>{children}</main>
-          <Analytics />
-          <Footer />
+          <div className="overflow-x-hidden w-full flex flex-col min-h-screen">
+            <KakaoScript />
+            <Header />
+            <main className="flex-grow">{children}</main>
+            <Analytics />
+            <Footer />
+          </div>
         </SessionProvider>
       </body>
     </html>
