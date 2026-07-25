@@ -1,10 +1,29 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Magentalab Brand Core */
   --magenta: #E5007E;
   --magenta-light: #FFEBFA;
+  --magenta-dark: #a8005a;
+
+  /* Hani-inspired Deep Dark Palette (헤더·풋터) */
+  --deep-navy: #1a1a2e;
+  --deep-navy-light: #252542;
+  --charcoal: #2d2d44;
+
+  /* Hani-inspired Warm Cream Section Backgrounds */
+  --cream: #f9f5f0;
+  --cream-dark: #f0ebe4;
+  --warm-white: #fdfcfa;
+
+  /* Hani-inspired Gold Accent */
+  --gold: #c9a64c;
+  --gold-light: #f5e9c8;
+
+  /* Text */
+  --foreground: #1a1a2e;
+  --foreground-muted: #4a4a6a;
+  --background: #ffffff;
 }
 
 @theme {
@@ -12,6 +31,11 @@
   --color-foreground: var(--foreground);
   --color-magenta: var(--magenta);
   --color-magenta-light: var(--magenta-light);
+  --color-magenta-dark: var(--magenta-dark);
+  --color-deep-navy: var(--deep-navy);
+  --color-cream: var(--cream);
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
   --font-sans: "Pretendard", "Inter", system-ui, -apple-system, sans-serif;
 }
 
@@ -27,78 +51,190 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Base typography for WordPress content */
-.wp-content {
-  line-height: 1.625;
-  font-size: 1.125rem; /* 18px */
-  color: #1a1a1a;
+/* ─── SITE HERO (Hani-inspired warm gradient) ─── */
+.site-hero-section {
+  background: linear-gradient(135deg, var(--cream) 0%, #fff 60%, var(--magenta-light) 100%);
+  position: relative;
+  overflow: hidden;
 }
 
+.site-hero-section::before {
+  content: '';
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 340px;
+  height: 340px;
+  background: radial-gradient(circle, rgba(229,0,126,0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
 
+/* ─── POST CARD GRID (Hani-inspired card hover) ─── */
+.post-card-hani {
+  background: var(--warm-white);
+  border: 1px solid #e8e4df;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease, transform 0.25s ease, border-color 0.25s;
+  box-shadow: 0 2px 8px rgba(26,26,46,0.05);
+}
+
+.post-card-hani:hover {
+  box-shadow: 0 12px 40px rgba(26,26,46,0.13), 0 2px 8px rgba(229,0,126,0.07);
+  transform: translateY(-3px);
+  border-color: rgba(229,0,126,0.2);
+}
+
+/* ─── SECTION LABEL (Hani-inspired badge) ─── */
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 1rem;
+  background: linear-gradient(90deg, var(--deep-navy) 0%, var(--charcoal) 100%);
+  color: var(--gold);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  margin-bottom: 1rem;
+}
+
+/* ─── CTA BUTTON (Hani-inspired strong button) ─── */
+.btn-hani-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 2rem;
+  background: linear-gradient(135deg, var(--magenta) 0%, #c0006a 100%);
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.95rem;
+  border-radius: 999px;
+  box-shadow: 0 4px 16px rgba(229,0,126,0.3), 0 1px 3px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+  letter-spacing: -0.01em;
+}
+
+.btn-hani-primary:hover {
+  background: linear-gradient(135deg, #c0006a 0%, var(--magenta) 100%);
+  box-shadow: 0 8px 24px rgba(229,0,126,0.4);
+  transform: translateY(-1px);
+}
+
+.btn-hani-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 2rem;
+  background: transparent;
+  color: var(--deep-navy);
+  font-weight: 700;
+  border: 2px solid var(--deep-navy);
+  border-radius: 999px;
+  transition: all 0.2s ease;
+}
+
+.btn-hani-secondary:hover {
+  background: var(--deep-navy);
+  color: #fff;
+}
+
+/* ─── BASE TYPOGRAPHY ─── */
+.wp-content {
+  line-height: 1.75;
+  font-size: 1.1rem;
+  color: var(--foreground);
+}
 
 .wp-content p {
-  margin-bottom: 2rem;
+  margin-bottom: 1.75rem;
 }
 
 .wp-content h1, .wp-content h2, .wp-content h3, .wp-content h4, .wp-content h5 {
   font-weight: 800;
-  letter-spacing: -0.05em;
-  margin-top: 3.5rem;
-  margin-bottom: 1.5rem;
-  scroll-margin-top: 100px; /* Header offset */
+  letter-spacing: -0.04em;
+  margin-top: 3rem;
+  margin-bottom: 1.25rem;
+  scroll-margin-top: 100px;
   line-height: 1.2;
-  color: #000;
+  color: var(--deep-navy);
 }
+
 .wp-content a {
-  color: #2563eb;
+  color: var(--magenta);
   text-decoration: underline;
-  text-decoration-color: rgba(37, 99, 235, 0.3);
+  text-decoration-color: rgba(229,0,126,0.25);
   text-underline-offset: 4px;
   transition: all 0.2s ease;
 }
+
 .wp-content a:hover {
-  color: #1d4ed8;
-  text-decoration-color: #1d4ed8;
+  color: var(--magenta-dark);
+  text-decoration-color: var(--magenta);
 }
 
+/* ─── ANIMATIONS ─── */
 @keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
 }
 
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
 
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeSlideUp {
+  animation: fadeSlideUp 0.55s ease both;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ─── DIVIDER ─── */
+.divider-hani {
+  height: 4px;
+  background: linear-gradient(90deg, var(--magenta) 0%, var(--gold) 50%, var(--deep-navy) 100%);
+  border-radius: 999px;
+  margin: 0;
+}
+
+/* ─── IMAGES ─── */
 .wp-content img {
   max-width: 100%;
   height: auto;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   margin: 2rem 0;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
 
-/* WordPress Table Styles */
+/* ─── TABLE ─── */
 .wp-table-wrapper {
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  margin: 2.5rem 0 0.5rem 0; /* 하단 안내문구와의 간격을 좁히기 위해 조정 */
+  margin: 2.5rem 0 0.5rem 0;
   border: 1px solid #e5e7eb;
   border-radius: 1rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
 }
 
 .wp-content table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  margin: 0; /* wrapper가 스타일을 담당하므로 0 */
+  margin: 0;
   font-size: 0.95rem;
-  color: #374151;
+  color: var(--foreground-muted);
 }
 
 .wp-content th,
@@ -109,16 +245,15 @@ body {
 }
 
 .wp-content thead {
-  background-color: var(--magenta-light);
-  color: var(--magenta);
+  background: linear-gradient(90deg, var(--deep-navy) 0%, var(--charcoal) 100%);
+  color: var(--gold);
 }
 
 .wp-content th {
   font-weight: 800;
-  border-bottom: 2px solid rgba(229, 0, 126, 0.1);
-  font-size: 0.95rem;
-  letter-spacing: -0.02em;
-  color: #88004e; /* Darker magenta for header text readability */
+  border-bottom: 2px solid rgba(201,166,76,0.2);
+  font-size: 0.92rem;
+  letter-spacing: -0.01em;
 }
 
 .wp-content td {
@@ -131,15 +266,14 @@ body {
 }
 
 .wp-content tbody tr:nth-child(even) {
-  background-color: rgba(229, 0, 126, 0.015); /* Very soft magenta tint */
+  background-color: var(--cream);
 }
 
 .wp-content tbody tr:hover {
-  background-color: rgba(229, 0, 126, 0.04); /* Highlight on hover */
+  background-color: rgba(229,0,126,0.03);
   transition: background-color 0.2s ease;
 }
 
-/* figure.wp-block-table 스타일 리셋 */
 .wp-content figure.wp-block-table,
 .wp-content figure {
   margin: 0;
@@ -147,9 +281,9 @@ body {
   width: 100%;
 }
 
-/* 모바일 전용 드래그 안내 문구 스타일 */
+/* ─── MOBILE DRAG NOTICE ─── */
 .wp-table-notice {
-  display: none; /* 데스크톱에서는 노출 안 함 */
+  display: none;
 }
 
 @media (max-width: 768px) {
@@ -159,9 +293,9 @@ body {
     gap: 0.5rem;
     font-size: 0.8rem;
     color: #6b7280;
-    margin-bottom: 2.5rem; /* 아래에 있는 본문 글과의 간격 확보 */
+    margin-bottom: 2.5rem;
     padding: 0.6rem 0.8rem;
-    background-color: var(--magenta-light);
+    background-color: var(--cream);
     border-radius: 0.5rem;
     border-left: 3.5px solid var(--magenta);
     font-weight: 600;
@@ -177,7 +311,6 @@ body {
     flex-shrink: 0;
   }
 
-  /* 모바일에서 테이블 찌그러짐 방지 */
   .wp-content th,
   .wp-content td {
     min-width: 140px;
@@ -185,16 +318,20 @@ body {
   }
 }
 
-/* Leaflet Scope & Stacking Context Fix */
+/* ─── MAP WIDGET ─── */
 .leaflet-container {
   isolation: isolate !important;
   z-index: 1 !important;
 }
+
 .leaflet-pane, .leaflet-tile-container, .leaflet-marker-pane, .leaflet-overlay-pane {
   z-index: 1 !important;
 }
+
 .leaflet-top, .leaflet-bottom {
   z-index: 2 !important;
 }
 
-
+/* ─── SCROLLBAR HIDE UTILITY ─── */
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
