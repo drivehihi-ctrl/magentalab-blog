@@ -132,6 +132,15 @@ export default function PlaceDetailDrawer({ place, onClose, isFavorite, onToggle
 
   const photoInfo = getDynamicPhotoSpot(place);
 
+  const isHospital = 
+    place.category === 'hospital' ||
+    place.name.includes('병원') ||
+    place.name.includes('의료') ||
+    place.name.includes('메디컬') ||
+    place.categoryName.includes('병원') ||
+    place.categoryName.includes('의료') ||
+    place.categoryName.includes('메디컬');
+
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 bg-white rounded-t-3xl shadow-2xl border-t border-purple-100 max-w-2xl mx-auto overflow-hidden animate-in slide-in-from-bottom duration-300">
       {/* Drawer Handle */}
@@ -249,29 +258,31 @@ export default function PlaceDetailDrawer({ place, onClose, isFavorite, onToggle
         <AIBriefingReviews placeName={place.name} address={place.address} />
 
         {/* 📸 AI Photo Spot & Shooting Tip Section (Hani-inspired design) */}
-        <div className="bg-[#1a1a2e] text-white p-4 sm:p-5 rounded-2xl shadow-md border border-[#c9a64c]/30 space-y-2.5 relative overflow-hidden">
-          <div className="h-[2px] w-full bg-gradient-to-r from-[#E5007E] via-[#c9a64c] to-[#E5007E] absolute top-0 left-0 right-0" />
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full bg-[#c9a64c] text-[#1a1a2e] font-extrabold text-[10px]">
-              📸 AI 꿀팁
-            </span>
-            <h4 className="text-xs font-extrabold text-[#c9a64c]">
-              인스타 대박 인생샷 명당 좌표 & 촬영 팁
-            </h4>
-          </div>
+        {!isHospital && (
+          <div className="bg-[#1a1a2e] text-white p-4 sm:p-5 rounded-2xl shadow-md border border-[#c9a64c]/30 space-y-2.5 relative overflow-hidden">
+            <div className="h-[2px] w-full bg-gradient-to-r from-[#E5007E] via-[#c9a64c] to-[#E5007E] absolute top-0 left-0 right-0" />
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#c9a64c] text-[#1a1a2e] font-extrabold text-[10px]">
+                📸 AI 꿀팁
+              </span>
+              <h4 className="text-xs font-extrabold text-[#c9a64c]">
+                인스타 대박 인생샷 명당 좌표 & 촬영 팁
+              </h4>
+            </div>
 
-          <div className="space-y-1.5 text-xs">
-            <p className="text-gray-200">
-              📍 <strong className="text-[#c9a64c]">Best 포토존 위치:</strong> {photoInfo.location}
-            </p>
-            <p className="text-gray-200">
-              ⏰ <strong className="text-[#c9a64c]">추천 촬영 시각:</strong> {photoInfo.bestTime}
-            </p>
-            <div className="bg-white/10 backdrop-blur p-2.5 rounded-xl border border-white/10 text-[11px] text-gray-200 font-medium leading-relaxed mt-1">
-              💡 <strong className="text-[#c9a64c]">촬영 팁:</strong> {photoInfo.shootingTip}
+            <div className="space-y-1.5 text-xs">
+              <p className="text-gray-200">
+                📍 <strong className="text-[#c9a64c]">Best 포토존 위치:</strong> {photoInfo.location}
+              </p>
+              <p className="text-gray-200">
+                ⏰ <strong className="text-[#c9a64c]">추천 촬영 시각:</strong> {photoInfo.bestTime}
+              </p>
+              <div className="bg-white/10 backdrop-blur p-2.5 rounded-xl border border-white/10 text-[11px] text-gray-200 font-medium leading-relaxed mt-1">
+                💡 <strong className="text-[#c9a64c]">촬영 팁:</strong> {photoInfo.shootingTip}
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* KakaoTalk 1-Second Share Button */}
         <div className="pt-2">
