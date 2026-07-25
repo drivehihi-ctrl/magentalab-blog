@@ -15,6 +15,19 @@ export default function MapPage() {
   const [places, setPlaces] = useState<PetPlacePOI[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  // Auto-open detail drawer if ?placeId= or ?place= exists in URL (from Kakao Share link)
+  useEffect(() => {
+    if (typeof window === 'undefined' || places.length === 0) return;
+    const params = new URLSearchParams(window.location.search);
+    const placeParam = params.get('placeId') || params.get('place');
+    if (placeParam) {
+      const found = places.find((p) => p.id === placeParam);
+      if (found) {
+        setSelectedPlace(found);
+      }
+    }
+  }, [places]);
+
   // Fetch real Kakao POI places from API route
   useEffect(() => {
     let isCancelled = false;

@@ -26,7 +26,7 @@ export default function PlaceDetailDrawer({ place, onClose }: PlaceDetailDrawerP
   if (!place) return null;
 
   const handleShare = async () => {
-    const shareUrl = `https://map.magentalabblog.com/place/${place.id}`;
+    const shareUrl = `https://map.magentalabblog.com/map?placeId=${place.id}`;
     const defaultImage = place.imageUrl || 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=600&q=80';
     const descText = place.description ? place.description.substring(0, 80) : `${place.address} 에 위치한 대표 ${place.categoryName} 스팟입니다.`;
 
