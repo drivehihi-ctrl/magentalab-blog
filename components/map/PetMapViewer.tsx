@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { PetPlacePOI } from '@/lib/map/types';
 import { MapPin, Navigation, List, Map as MapIcon, Coffee, Utensils, Trees, Hospital, Hotel, ExternalLink, Lock, Unlock, Hand } from 'lucide-react';
 import SafePlaceImage from './SafePlaceImage';
+import DraggableScrollContainer from '@/components/DraggableScrollContainer';
 
 
 interface PetMapViewerProps {
@@ -356,26 +357,26 @@ export default function PetMapViewer({
             </div>
           </div>
 
-          {/* Interactive Bottom Carousel Bar with High Z-Index (z-30) & Touch-Pan-X Support */}
+          {/* Interactive Bottom Carousel Bar with High Z-Index (z-30) & PC Mouse Drag + Left/Right Arrow Support */}
           <div className="absolute bottom-3 left-3 right-3 z-30 space-y-1.5 pointer-events-auto">
             {places.length > 1 && (
-              <div className="flex items-center justify-between px-3 text-[11px] font-bold text-purple-900 bg-white/90 backdrop-blur-md py-1.5 rounded-xl shadow-sm border border-purple-100/80">
-                <span className="flex items-center gap-1">
-                  <span>총 {places.length}곳 탐색됨</span>
-                  <span className="text-[10px] font-normal text-purple-600">(옆으로 슥슥 스와이프해보세요)</span>
+              <div className="flex items-center justify-between px-3.5 text-[11px] font-bold text-[#1a1a2e] bg-white/95 backdrop-blur-md py-1.5 rounded-xl shadow-sm border border-gray-200">
+                <span className="flex items-center gap-1.5">
+                  <span className="font-extrabold">총 {places.length}곳 탐색됨</span>
+                  <span className="text-[10px] font-medium text-gray-500">(PC: 화살표 버튼 또는 마우스 드래그 ↔️)</span>
                 </span>
-                <span className="text-purple-600 font-extrabold animate-pulse">좌우 스와이프 ↔️</span>
+                <span className="text-[#E5007E] font-extrabold animate-pulse hidden sm:inline-block">좌우 이동 ↔️</span>
               </div>
             )}
 
-            <div className="overflow-x-scroll touch-pan-x flex gap-2.5 snap-x snap-mandatory scrollbar-none py-1">
-              {places.length === 0 ? (
-                <div className="bg-white p-5 rounded-2xl shadow-lg border border-purple-100 text-center w-full max-w-md mx-auto">
-                  <p className="text-sm font-semibold text-gray-700">검색 조건에 일치하는 애견 스팟이 없습니다.</p>
-                  <p className="text-xs text-gray-500 mt-1">다른 카테고리나 검색어로 다시 시도해 보세요.</p>
-                </div>
-              ) : (
-                places.map((place) => {
+            {places.length === 0 ? (
+              <div className="bg-white p-5 rounded-2xl shadow-lg border border-gray-200 text-center w-full max-w-md mx-auto">
+                <p className="text-sm font-semibold text-gray-700">검색 조건에 일치하는 애견 스팟이 없습니다.</p>
+                <p className="text-xs text-gray-500 mt-1">다른 카테고리나 검색어로 다시 시도해 보세요.</p>
+              </div>
+            ) : (
+              <DraggableScrollContainer arrowPosition="inside" className="py-1 gap-2.5">
+                {places.map((place) => {
                   const isSelected = selectedPlace?.id === place.id;
                   return (
                     <div
@@ -413,9 +414,9 @@ export default function PetMapViewer({
                       </div>
                     </div>
                   );
-                })
-              )}
-            </div>
+                })}
+              </DraggableScrollContainer>
+            )}
           </div>
         </div>
       ) : (
