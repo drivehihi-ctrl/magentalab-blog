@@ -32,7 +32,7 @@ export default function PlaceSearchHeader({
   favoriteCount,
 }: PlaceSearchHeaderProps) {
   return (
-    <div className="bg-white/95 backdrop-blur-md border-b border-purple-100 p-4 shadow-sm sticky top-20 z-30">
+    <div className="bg-white/95 backdrop-blur-md border border-purple-100 sm:rounded-2xl p-4 shadow-sm">
 
       <div className="max-w-6xl mx-auto space-y-3">
         {/* Search Bar */}

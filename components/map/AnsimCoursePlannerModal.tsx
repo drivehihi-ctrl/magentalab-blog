@@ -242,29 +242,6 @@ export default function AnsimCoursePlannerModal({
               )}
             </div>
 
-            {/* Popular Region Quick Preset Buttons */}
-            <div className="space-y-1">
-              <p className="text-[10px] text-gray-400 font-semibold">🔥 인기 대표 지역 빠르게 선택하기:</p>
-              <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none touch-pan-x">
-                {POPULAR_PRESETS.map((preset) => {
-                  const isSelected = searchRegion.trim().toLowerCase() === preset.toLowerCase();
-                  return (
-                    <button
-                      key={preset}
-                      type="button"
-                      onClick={() => setSearchRegion(preset)}
-                      className={`px-3 py-1 rounded-full text-[11px] font-bold transition whitespace-nowrap shrink-0 cursor-pointer ${
-                        isSelected
-                          ? 'bg-[#1a1a2e] text-[#c9a64c] shadow-xs border border-[#c9a64c]/30'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200/50'
-                      }`}
-                    >
-                      📍 {preset}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
           </div>
 
           {/* STEP 2: Theme Selection */}

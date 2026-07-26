@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { PetPlacePOI } from '@/lib/map/types';
-import { Sparkles, X, Heart, Shield, Car, Zap, CheckCircle2, ArrowRight, RefreshCw, Dog } from 'lucide-react';
+import { Sparkles, X, Heart, Shield, Car, Zap, CheckCircle2, ArrowRight, RefreshCw, Dog, MapPin, Search } from 'lucide-react';
 import SafePlaceImage from './SafePlaceImage';
 
 interface AnsimPetCuratorModalProps {
@@ -24,6 +24,7 @@ export default function AnsimPetCuratorModal({
   const [petSize, setPetSize] = useState<PetSize>('small');
   // Allow multiple selected traits
   const [selectedTraits, setSelectedTraits] = useState<PetTrait[]>(['energetic', 'parking']);
+  const [searchRegion, setSearchRegion] = useState<string>('');
   const [isCurating, setIsCurating] = useState(false);
   const [curatedResults, setCuratedResults] = useState<{
     place: PetPlacePOI;
@@ -45,11 +46,26 @@ export default function AnsimPetCuratorModal({
 
   // Run AI Curation logic matching multiple pet traits
   const handleCurate = () => {
+    if (searchRegion.trim() === '') {
+      alert('어디로 떠나실지 지역을 먼저 입력해 주세요! 🐶');
+      return;
+    }
+
     setIsCurating(true);
     setCuratedResults(null);
 
     setTimeout(() => {
       let filtered = [...places];
+      
+      if (searchRegion.trim() !== '') {
+        const query = searchRegion.trim().toLowerCase();
+        filtered = filtered.filter(
+          (p) =>
+            p.address.toLowerCase().includes(query) ||
+            p.name.toLowerCase().includes(query) ||
+            (p.tags && p.tags.some((tag: string) => tag.toLowerCase().includes(query)))
+        );
+      }
 
       // Score each place based on how many selected traits it satisfies
       const scored = filtered.map((place) => {
@@ -222,6 +238,35 @@ export default function AnsimPetCuratorModal({
                   </button>
                 );
               })}
+            </div>
+          </div>
+
+          {/* STEP 3: Region Direct Input Search */}
+          <div className="space-y-2.5">
+            <label className="text-xs font-extrabold text-[#1a1a2e] flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <MapPin className="w-4 h-4 text-[#E5007E]" />
+                <span>3. 어디로 가고 싶으신가요? <span className="text-[#E5007E]">(필수)</span></span>
+              </span>
+            </label>
+
+            <div className="relative flex items-center">
+              <Search className="absolute left-3.5 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                value={searchRegion}
+                onChange={(e) => setSearchRegion(e.target.value)}
+                placeholder="목적지 입력 (예: 가평, 양평, 연남동, 속초, 해운대...)"
+                className="w-full pl-10 pr-9 py-3 bg-[#faf6f0] border border-gray-200 rounded-2xl text-xs font-bold text-[#1a1a2e] focus:outline-none focus:ring-2 focus:ring-[#1a1a2e] focus:bg-white transition"
+              />
+              {searchRegion && (
+                <button
+                  onClick={() => setSearchRegion('')}
+                  className="absolute right-3 text-[10px] bg-gray-200 hover:bg-gray-300 text-gray-700 px-2 py-0.5 rounded-full font-bold"
+                >
+                  지우기
+                </button>
+              )}
             </div>
           </div>
 

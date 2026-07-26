@@ -118,16 +118,6 @@ export default function MapPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
-      {/* Search Header */}
-      <PlaceSearchHeader
-        selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        totalCount={places.length}
-        favoriteCount={favoriteIds.length}
-      />
-
       {/* Main Map Content Area */}
       <main className="flex-1 max-w-6xl w-full mx-auto p-4 space-y-4">
         {/* Real-time Pet Weather Widget */}
@@ -173,8 +163,20 @@ export default function MapPage() {
           </div>
         </div>
 
+        {/* Search Header (Moved above map) */}
+        <div className="-mx-4 sm:mx-0 sticky top-16 z-30">
+          <PlaceSearchHeader
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            totalCount={places.length}
+            favoriteCount={favoriteIds.length}
+          />
+        </div>
+
         {/* Map Loading Indicator Overlay */}
-        <div className="relative">
+        <div className="relative z-20">
           {isLoading && (
             <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 bg-purple-900/90 text-white px-4 py-2 rounded-full text-xs font-bold shadow-xl flex items-center gap-2 backdrop-blur animate-pulse">
               <Loader2 className="w-4 h-4 animate-spin text-purple-300" />
