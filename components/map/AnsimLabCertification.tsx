@@ -241,7 +241,7 @@ export default function AnsimLabCertification({ placeName, category, placeId }: 
             className="w-full py-3 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-500 hover:to-yellow-500 text-purple-950 font-black text-xs rounded-xl shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2 active:scale-98"
           >
             <Award className="w-4 h-4" />
-            <span>{hasSubmitted ? '내 안심 지수 평가 수정하기 ✍️' : '안심 5대 체크리스트 평가 참여하기 ✍️'}</span>
+            <span>{hasSubmitted ? '내 안심 지수 평가 수정하기 ✍️' : '안심 8대 체크리스트 평가 참여하기 ✍️'}</span>
             <ChevronDown className="w-4 h-4" />
           </button>
         </div>
@@ -253,7 +253,7 @@ export default function AnsimLabCertification({ placeName, category, placeId }: 
           <div className="flex items-center justify-between border-b border-white/10 pb-2">
             <h4 className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4" />
-              현장 안심 5대 체크리스트 작성
+              현장 안심 8대 체크리스트 작성
             </h4>
             <button
               onClick={() => setIsFormOpen(false)}

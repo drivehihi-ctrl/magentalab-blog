@@ -47,7 +47,8 @@ export default function AnsimCoursePlannerModal({
   // Helper: fetch best place from API for a specific category + region keyword
   const fetchBestPlaceForCategory = useCallback(async (
     category: 'restaurant' | 'park' | 'cafe' | 'hospital',
-    regionQuery: string
+    regionQuery: string,
+    theme?: ThemeChoice
   ): Promise<PetPlacePOI | null> => {
     try {
       const params = new URLSearchParams();
@@ -56,13 +57,39 @@ export default function AnsimCoursePlannerModal({
       const res = await fetch(`/api/map/places?${params.toString()}`);
       const data = await res.json();
       if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-        // Pick first result that matches the region keyword in address/name
         const trimmedKw = regionQuery.trim().toLowerCase();
-        const regionMatch = data.data.find((p: PetPlacePOI) => {
+        let regionMatches = data.data.filter((p: PetPlacePOI) => {
           const text = (p.address + ' ' + (p.roadAddress || '') + ' ' + p.name).toLowerCase();
           return text.includes(trimmedKw);
         });
-        return regionMatch || data.data[0];
+
+        if (regionMatches.length === 0) {
+          regionMatches = data.data; // fallback to any in category if exact region match fails
+        }
+
+        // Ansim Index 현장 제보 데이터 연동 및 테마별 우선순위 정렬
+        regionMatches.sort((a: PetPlacePOI, b: PetPlacePOI) => {
+          const getAnsimScore = (place: PetPlacePOI) => {
+            let score = 0;
+            try {
+              const saved = localStorage.getItem(`ansim_eval_${place.id}`);
+              if (saved) {
+                const answers = JSON.parse(saved).answers;
+                score += 10; // 제보 데이터가 존재하기만 해도 우선순위 부여
+                
+                // '폭풍 뜀박질(energy)' 테마이고 공원(park)인 경우, '넓은 야외 잔디(ID: 7)' 항목 강력 반영
+                if (theme === 'energy' && category === 'park') {
+                  if (answers[7] === true) score += 100;
+                  else if (answers[7] === false) score -= 100;
+                }
+              }
+            } catch (e) {}
+            return score;
+          };
+          return getAnsimScore(b) - getAnsimScore(a);
+        });
+
+        return regionMatches[0];
       }
     } catch (err) {
       console.warn(`Failed to fetch ${category} for region "${regionQuery}":`, err);
@@ -85,10 +112,10 @@ export default function AnsimCoursePlannerModal({
 
     // ✅ Parallel fetch for each category independently
     const [dining, park, cafe, hospital] = await Promise.all([
-      fetchBestPlaceForCategory('restaurant', displayRegion),
-      fetchBestPlaceForCategory('park', displayRegion),
-      fetchBestPlaceForCategory('cafe', displayRegion),
-      fetchBestPlaceForCategory('hospital', displayRegion),
+      fetchBestPlaceForCategory('restaurant', displayRegion, selectedTheme),
+      fetchBestPlaceForCategory('park', displayRegion, selectedTheme),
+      fetchBestPlaceForCategory('cafe', displayRegion, selectedTheme),
+      fetchBestPlaceForCategory('hospital', displayRegion, selectedTheme),
     ]);
 
     const themeTitles: Record<ThemeChoice, string> = {
