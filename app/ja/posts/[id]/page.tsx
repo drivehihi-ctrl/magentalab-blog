@@ -88,7 +88,7 @@ export default async function JapanesePostDetailPage({ params }: PageProps) {
   const isNumeric = /^\d+$/.test(id);
   
   let post;
-  let allPosts;
+  let allPosts: any[] = [];
   let shouldRedirect = false;
   let targetSlug = "";
 
