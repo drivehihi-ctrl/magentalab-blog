@@ -45,7 +45,7 @@ export default function AnsimPetCuratorModal({
   };
 
   // Run AI Curation logic matching multiple pet traits
-  const handleCurate = () => {
+  const handleCurate = async () => {
     if (searchRegion.trim() === '') {
       alert('어디로 떠나실지 지역을 먼저 입력해 주세요! 🐶');
       return;
@@ -54,21 +54,31 @@ export default function AnsimPetCuratorModal({
     setIsCurating(true);
     setCuratedResults(null);
 
-    setTimeout(() => {
-      let filtered = [...places];
-      
-      if (searchRegion.trim() !== '') {
-        const query = searchRegion.trim().toLowerCase();
-        filtered = filtered.filter(
-          (p) =>
-            (p.address || '').toLowerCase().includes(query) ||
-            (p.name || '').toLowerCase().includes(query) ||
-            (p.tags && p.tags.some((tag: string) => tag.toLowerCase().includes(query)))
-        );
+    try {
+      let candidatePlaces = [...places];
+      const query = searchRegion.trim();
+
+      // 전체 DB에서 지역 키워드로 스팟 검색 (현재 맵 뷰에 없는 데이터까지 포함)
+      if (query !== '') {
+        const res = await fetch(`/api/map/places?q=${encodeURIComponent(query)}`);
+        const data = await res.json();
+        
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+          candidatePlaces = data.data;
+        } else {
+          // API 결과가 없으면 로컬 데이터에서 폴백 필터링
+          const lowerQ = query.toLowerCase();
+          candidatePlaces = candidatePlaces.filter(
+            (p) =>
+              (p.address || '').toLowerCase().includes(lowerQ) ||
+              (p.name || '').toLowerCase().includes(lowerQ) ||
+              (p.tags && p.tags.some((tag: string) => tag.toLowerCase().includes(lowerQ)))
+          );
+        }
       }
 
       // Score each place based on how many selected traits it satisfies
-      const scored = filtered.map((place) => {
+      const scored = candidatePlaces.map((place) => {
         let score = 0;
         const text = (place.name + ' ' + place.description + ' ' + place.categoryName + ' ' + (place.tags || []).join(' ')).toLowerCase();
 
@@ -139,8 +149,13 @@ export default function AnsimPetCuratorModal({
       });
 
       setCuratedResults(top3);
+    } catch (err) {
+      console.error('Curation failed:', err);
+      // 에러 발생 시 빈 결과로 처리하여 UI에 Empty State 노출
+      setCuratedResults([]);
+    } finally {
       setIsCurating(false);
-    }, 600);
+    }
   };
 
   return (
