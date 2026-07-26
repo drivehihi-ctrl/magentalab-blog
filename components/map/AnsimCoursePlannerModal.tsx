@@ -364,7 +364,7 @@ export default function AnsimCoursePlannerModal({
                             <span>{item.label}</span>
                           </div>
                           <h5 className="text-xs font-bold text-gray-400 truncate">
-                            현재 {generatedCourse.targetRegionLabel} 스팟 꼼꼼히 찾는 중 🐶
+                            현재 {item.label}에 맞는 곳이 등록되어 있지 않아요.
                           </h5>
                         </div>
                       </div>
@@ -415,7 +415,7 @@ export default function AnsimCoursePlannerModal({
                         24시 응급
                       </span>
                       <h5 className="text-xs font-bold text-gray-400 truncate">
-                        현재 {generatedCourse.targetRegionLabel} 동물병원 찾는 중 🐶
+                        현재 {generatedCourse.targetRegionLabel} 동물병원에 맞는 곳이 등록되어 있지 않아요.
                       </h5>
                     </div>
                     <button 

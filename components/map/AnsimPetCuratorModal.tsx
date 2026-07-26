@@ -135,7 +135,7 @@ export default function AnsimPetCuratorModal({
       // Sort by score descending
       validScored.sort((a, b) => b.score - a.score);
 
-      const top3 = validScored.slice(0, 3).map(({ place }) => {
+      const top3 = validScored.slice(0, 2).map(({ place }) => {
         const comments: string[] = [];
         if (selectedTraits.includes('energetic')) comments.push('넓은 운동장/잔디');
         if (selectedTraits.includes('parking')) comments.push('편한 주차 공간');
@@ -337,7 +337,7 @@ export default function AnsimPetCuratorModal({
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-extrabold text-[#1a1a2e] flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>안심이가 추천하는 맞춤 3곳</span>
+                  <span>안심이가 추천하는 맞춤 2곳</span>
                 </h4>
                 <span className="text-[10px] text-gray-500 font-bold">터치 시 지도 이동</span>
               </div>
