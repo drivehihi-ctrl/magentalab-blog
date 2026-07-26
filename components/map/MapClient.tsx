@@ -7,6 +7,7 @@ import AnsimPetCuratorModal from '@/components/map/AnsimPetCuratorModal';
 import AnsimCoursePlannerModal from '@/components/map/AnsimCoursePlannerModal';
 import FeaturedPlacesSection from '@/components/map/FeaturedPlacesSection';
 import WeatherChip from '@/components/map/WeatherChip';
+import MapBlogSection from '@/components/map/MapBlogSection';
 import { PetCategory, PetPlacePOI } from '@/lib/map/types';
 import { Search, Coffee, Utensils, Trees, Hospital, Hotel, MapPin, Heart, Navigation, Wand2, X } from 'lucide-react';
 
@@ -186,6 +187,7 @@ export default function MapClient({ initialRegion = '', initialCategory = 'all' 
           places={allFetchedPlaces.length > 0 ? allFetchedPlaces : places}
           onSelectPlace={setSelectedPlace}
         />
+        <MapBlogSection />
       </div>
 
       {/* FAB BUTTONS */}
