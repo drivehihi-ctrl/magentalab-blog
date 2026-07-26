@@ -61,8 +61,8 @@ export default function AnsimPetCuratorModal({
         const query = searchRegion.trim().toLowerCase();
         filtered = filtered.filter(
           (p) =>
-            p.address.toLowerCase().includes(query) ||
-            p.name.toLowerCase().includes(query) ||
+            (p.address || '').toLowerCase().includes(query) ||
+            (p.name || '').toLowerCase().includes(query) ||
             (p.tags && p.tags.some((tag: string) => tag.toLowerCase().includes(query)))
         );
       }
@@ -70,35 +70,62 @@ export default function AnsimPetCuratorModal({
       // Score each place based on how many selected traits it satisfies
       const scored = filtered.map((place) => {
         let score = 0;
-        const text = (place.name + ' ' + place.description + ' ' + place.categoryName + ' ' + place.tags.join(' ')).toLowerCase();
+        const text = (place.name + ' ' + place.description + ' ' + place.categoryName + ' ' + (place.tags || []).join(' ')).toLowerCase();
+
+        // 안심 지수 현장 제보 데이터 불러오기
+        let ansimAnswers: Record<number, boolean | null> | null = null;
+        try {
+          const saved = localStorage.getItem(`ansim_eval_${place.id}`);
+          if (saved) {
+            ansimAnswers = JSON.parse(saved).answers;
+          }
+        } catch (e) {}
 
         if (selectedTraits.includes('timid')) {
-          if (place.category === 'cafe' || place.category === 'hotel' || text.includes('울타리') || text.includes('소형견') || text.includes('독립')) {
+          if (ansimAnswers && ansimAnswers[6] !== undefined && ansimAnswers[6] !== null) {
+            if (ansimAnswers[6] === true) score += 20; // 현장 제보 '독립공간 O'
+            else score -= 100; // 현장 제보 '독립공간 X' -> 추천 제외 수준
+          } else if (place.category === 'cafe' || place.category === 'hotel' || text.includes('울타리') || text.includes('소형견') || text.includes('독립')) {
             score += 2;
           }
         }
+        
         if (selectedTraits.includes('energetic')) {
-          if (place.category === 'park' || text.includes('운동장') || text.includes('야외') || text.includes('잔디') || text.includes('뛰')) {
+          if (ansimAnswers && ansimAnswers[7] !== undefined && ansimAnswers[7] !== null) {
+            if (ansimAnswers[7] === true) score += 20; // 현장 제보 '잔디 O'
+            else score -= 100;
+          } else if (place.category === 'park' || text.includes('운동장') || text.includes('야외') || text.includes('잔디') || text.includes('뛰')) {
             score += 2;
           }
         }
+        
         if (selectedTraits.includes('fence')) {
-          if (text.includes('울타리') || text.includes('펜스') || text.includes('안전')) {
+          if (ansimAnswers && ansimAnswers[4] !== undefined && ansimAnswers[4] !== null) {
+            if (ansimAnswers[4] === true) score += 20; // 현장 제보 '펜스 O'
+            else score -= 100;
+          } else if (text.includes('울타리') || text.includes('펜스') || text.includes('안전')) {
             score += 3;
           }
         }
+        
         if (selectedTraits.includes('parking')) {
-          if (text.includes('주차') || place.address.includes('경기') || place.address.includes('남양주') || place.address.includes('김포')) {
+          if (ansimAnswers && ansimAnswers[8] !== undefined && ansimAnswers[8] !== null) {
+            if (ansimAnswers[8] === true) score += 20; // 현장 제보 '주차 O'
+            else score -= 100;
+          } else if (text.includes('주차') || place.address.includes('경기') || place.address.includes('남양주') || place.address.includes('김포')) {
             score += 2;
           }
         }
         return { place, score };
       });
 
-      // Sort by score descending
-      scored.sort((a, b) => b.score - a.score);
+      // Filter out heavily penalized places (score < 0 means it failed a hard requirement from Ansim Index)
+      const validScored = scored.filter(s => s.score >= 0);
 
-      const top3 = scored.slice(0, 3).map(({ place }) => {
+      // Sort by score descending
+      validScored.sort((a, b) => b.score - a.score);
+
+      const top3 = validScored.slice(0, 3).map(({ place }) => {
         const comments: string[] = [];
         if (selectedTraits.includes('energetic')) comments.push('넓은 운동장/잔디');
         if (selectedTraits.includes('parking')) comments.push('편한 주차 공간');
@@ -301,42 +328,49 @@ export default function AnsimPetCuratorModal({
               </div>
 
               <div className="space-y-3">
-                {curatedResults.map(({ place, ansimComment }) => (
-                  <div
-                    key={place.id}
-                    onClick={() => {
-                      onSelectPlace(place);
-                      onClose();
-                    }}
-                    className="bg-[#faf6f0] hover:bg-gray-100 p-3.5 rounded-2xl border border-gray-200/80 shadow-2xs transition cursor-pointer flex flex-col gap-2 group"
-                  >
-                    <div className="flex gap-3 items-center">
-                      <div className="w-14 h-14 rounded-xl overflow-hidden bg-gray-100 shrink-0 relative border border-gray-100">
-                        {place.imageUrl ? (
-                          <SafePlaceImage src={place.imageUrl} alt={place.name} />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-[#faf6f0] text-[#1a1a2e] font-extrabold text-xs">
+                {curatedResults.length > 0 ? (
+                  curatedResults.map(({ place, ansimComment }) => (
+                    <div
+                      key={place.id}
+                      onClick={() => {
+                        onSelectPlace(place);
+                        onClose();
+                      }}
+                      className="bg-[#faf6f0] hover:bg-gray-100 p-3.5 rounded-2xl border border-gray-200/80 shadow-2xs transition cursor-pointer flex flex-col gap-2 group"
+                    >
+                      <div className="flex gap-3 items-center">
+                        <div className="w-14 h-14 rounded-xl overflow-hidden bg-gray-100 shrink-0 relative border border-gray-100">
+                          {place.imageUrl ? (
+                            <SafePlaceImage src={place.imageUrl} alt={place.name} />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-[#faf6f0] text-[#1a1a2e] font-extrabold text-xs">
+                              {place.categoryName}
+                            </div>
+                          )}
+                        </div>
+                        <div className="space-y-0.5 overflow-hidden flex-1">
+                          <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#1a1a2e] text-[#c9a64c] inline-block">
                             {place.categoryName}
-                          </div>
-                        )}
+                          </span>
+                          <h5 className="text-xs font-extrabold text-[#1a1a2e] group-hover:text-[#E5007E] transition truncate">
+                            {place.name}
+                          </h5>
+                          <p className="text-[11px] text-gray-500 truncate">{place.roadAddress || place.address}</p>
+                        </div>
+                        <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-[#E5007E] group-hover:translate-x-1 transition shrink-0" />
                       </div>
-                      <div className="space-y-0.5 overflow-hidden flex-1">
-                        <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#1a1a2e] text-[#c9a64c] inline-block">
-                          {place.categoryName}
-                        </span>
-                        <h5 className="text-xs font-extrabold text-[#1a1a2e] group-hover:text-[#E5007E] transition truncate">
-                          {place.name}
-                        </h5>
-                        <p className="text-[11px] text-gray-500 truncate">{place.roadAddress || place.address}</p>
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-[#E5007E] group-hover:translate-x-1 transition shrink-0" />
-                    </div>
 
-                    <div className="bg-white p-2.5 rounded-xl border border-gray-200/60 text-[11px] text-[#1a1a2e] font-medium leading-relaxed">
-                      {ansimComment}
+                      <div className="bg-white p-2.5 rounded-xl border border-gray-200/60 text-[11px] text-[#1a1a2e] font-medium leading-relaxed">
+                        {ansimComment}
+                      </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="py-8 text-center bg-gray-50 rounded-2xl border border-gray-100">
+                    <p className="text-xs text-gray-500 font-bold mb-1">앗, 조건에 딱 맞는 스팟을 찾지 못했어요 🥲</p>
+                    <p className="text-[10px] text-gray-400">다른 지역을 검색하거나 조건을 살짝 변경해 보세요!</p>
                   </div>
-                ))}
+                )}
               </div>
             </div>
           )}

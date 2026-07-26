@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Award, ShieldCheck, CheckCircle2, XCircle, Sparkles, LogIn, ChevronDown, ChevronUp, Lock, Layers, Coffee, Bone, Check, UserCheck } from 'lucide-react';
+import { Award, ShieldCheck, CheckCircle2, XCircle, Sparkles, LogIn, ChevronDown, ChevronUp, Lock, Layers, Coffee, Bone, Check, UserCheck, Heart, Zap, Car } from 'lucide-react';
 import { useSession, signIn } from 'next-auth/react';
 
 interface AnsimLabCertificationProps {
@@ -40,6 +40,24 @@ const QUESTIONS = [
     title: '매너벨트/배변봉투가 비치되어 있나요?',
     desc: '매장 내에 매너벨트나 배변 봉투 등 비상 위생 용품이 구비되어 있는지 확인해 주세요.',
     icon: Bone,
+  },
+  {
+    id: 6,
+    title: '독립공간이 있는가?',
+    desc: '소심한 아이도 편하게 쉴 수 있는 분리된 개별 룸이나 독립공간이 있는지 확인해 주세요.',
+    icon: Heart,
+  },
+  {
+    id: 7,
+    title: '넓은 야외 잔디가 있는가?',
+    desc: '에너지 넘치는 아이가 마음껏 뛰어놀 수 있는 야외 잔디나 운동장이 있는지 확인해 주세요.',
+    icon: Zap,
+  },
+  {
+    id: 8,
+    title: '주차하기 쉬운가?',
+    desc: '자차 방문 시 편하게 주차할 수 있는 넉넉한 전용 주차장이 있는지 확인해 주세요.',
+    icon: Car,
   },
 ];
 
@@ -110,13 +128,13 @@ export default function AnsimLabCertification({ placeName, category, placeId }: 
 
   const handleSubmitEvaluation = async () => {
     const answeredKeys = Object.keys(answers).filter((k) => answers[Number(k)] !== null);
-    if (answeredKeys.length < 5) {
-      alert('5가지 질문에 모두 답해주시면 감사하겠습니다! 😊');
+    if (answeredKeys.length < 8) {
+      alert('8가지 질문에 모두 답해주시면 감사하겠습니다! 😊');
       return;
     }
 
     const yesCount = Object.values(answers).filter((v) => v === true).length;
-    const calculatedScore = 60 + yesCount * 8; // 60 ~ 100 score range
+    const calculatedScore = 60 + yesCount * 5; // 60 ~ 100 score range
 
     setSubmittedScore(calculatedScore);
     setHasSubmitted(true);
