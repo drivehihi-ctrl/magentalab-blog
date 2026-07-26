@@ -123,12 +123,17 @@ export default function AnsimCoursePlannerModal({
 
     if (typeof window !== 'undefined' && window.kakao && window.kakao.Link) {
       try {
+        const diningName = generatedCourse.dining ? generatedCourse.dining.name : '스팟 탐색 중';
+        const parkName = generatedCourse.park ? generatedCourse.park.name : '스팟 탐색 중';
+        const cafeName = generatedCourse.cafe ? generatedCourse.cafe.name : '스팟 탐색 중';
+        const imageUrl = generatedCourse.cafe?.imageUrl || generatedCourse.park?.imageUrl || generatedCourse.dining?.imageUrl || 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=600&q=80';
+
         window.kakao.Link.sendDefault({
           objectType: 'feed',
           content: {
             title: generatedCourse.title,
-            description: `1단계: ${generatedCourse.dining.name}\n2단계: ${generatedCourse.park.name}\n3단계: ${generatedCourse.cafe.name}`,
-            imageUrl: generatedCourse.cafe.imageUrl || 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=600&q=80',
+            description: `1단계: ${diningName}\n2단계: ${parkName}\n3단계: ${cafeName}`,
+            imageUrl: imageUrl,
             link: {
               mobileWebUrl: window.location.href,
               webUrl: window.location.href,
@@ -155,7 +160,13 @@ export default function AnsimCoursePlannerModal({
 
   const copyToClipboard = () => {
     if (!generatedCourse) return;
-    const text = `🚗 ${generatedCourse.title}\n\n1코스(식사): ${generatedCourse.dining.name}\n2코스(산책): ${generatedCourse.park.name}\n3코스(카페): ${generatedCourse.cafe.name}\n\n🏥 비상시 응급병원: ${generatedCourse.hospital.name}\n👉 펫 맵에서 코스 확인: ${window.location.href}`;
+    
+    const diningName = generatedCourse.dining ? generatedCourse.dining.name : '스팟 탐색 중';
+    const parkName = generatedCourse.park ? generatedCourse.park.name : '스팟 탐색 중';
+    const cafeName = generatedCourse.cafe ? generatedCourse.cafe.name : '스팟 탐색 중';
+    const hospitalName = generatedCourse.hospital ? generatedCourse.hospital.name : '스팟 탐색 중';
+
+    const text = `🚗 ${generatedCourse.title}\n\n1코스(식사): ${diningName}\n2코스(산책): ${parkName}\n3코스(카페): ${cafeName}\n\n🏥 비상시 응급병원: ${hospitalName}\n👉 펫 맵에서 코스 확인: ${window.location.href}`;
     navigator.clipboard.writeText(text);
     alert(`📋 [${generatedCourse.targetRegionLabel} 댕댕이 1일 데이트 코스] 공유 텍스트가 복사되었습니다! 카톡 대화방에 붙여넣어 공유하세요!`);
   };
