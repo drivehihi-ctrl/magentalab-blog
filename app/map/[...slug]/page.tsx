@@ -33,8 +33,9 @@ function parseSlug(slug: string[]) {
   return { regionName, categoryInfo };
 }
 
-export async function generateMetadata({ params }: { params: { slug: string[] } }): Promise<Metadata> {
-  const { regionName, categoryInfo } = parseSlug(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string[] }> }): Promise<Metadata> {
+  const resolvedParams = await params;
+  const { regionName, categoryInfo } = parseSlug(resolvedParams.slug);
   
   const title = categoryInfo 
     ? `${regionName} ${categoryInfo.label} 추천 TOP 리스트 - 마젠타랩 펫 맵`
@@ -54,8 +55,9 @@ export async function generateMetadata({ params }: { params: { slug: string[] } 
   };
 }
 
-export default function SeoMapPage({ params }: { params: { slug: string[] } }) {
-  const { regionName, categoryInfo } = parseSlug(params.slug);
+export default async function SeoMapPage({ params }: { params: Promise<{ slug: string[] }> }) {
+  const resolvedParams = await params;
+  const { regionName, categoryInfo } = parseSlug(resolvedParams.slug);
   const categoryId = categoryInfo ? categoryInfo.id : 'all';
 
   // Schema.org JSON-LD 구조화 데이터 (검색 봇 제공용)
