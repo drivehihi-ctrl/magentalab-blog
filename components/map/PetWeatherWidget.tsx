@@ -63,15 +63,15 @@ export default function PetWeatherWidget() {
 
       <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5 pt-1">
         {/* Left Info Column */}
-        <div className="space-y-2.5 flex-1 min-w-0 w-full">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1a1a2e] text-[#c9a64c] text-[11px] font-extrabold border border-[#c9a64c]/30 shadow-xs">
+        <div className="space-y-2.5 flex-1 min-w-0 w-full overflow-hidden">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1a1a2e] text-[#c9a64c] text-[11px] font-extrabold border border-[#c9a64c]/30 shadow-xs shrink-0">
               <Sparkles className="w-3.5 h-3.5 text-[#c9a64c]" />
               <span>실시간 KMA 기상청 펫 산책지수</span>
             </span>
 
             {/* Region Selector Pills */}
-            <div className="flex gap-1 bg-white/90 p-1 rounded-full border border-gray-200/80 overflow-x-auto w-full md:w-auto scrollbar-none shadow-2xs">
+            <div className="flex gap-1 bg-white/90 p-1 rounded-full border border-gray-200/80 overflow-x-auto overflow-y-hidden w-full max-w-full scrollbar-hide touch-pan-x shadow-2xs">
               {['서울', '경기', '인천', '부산', '대구', '광주', '대전'].map((region) => (
                 <button
                   key={region}
