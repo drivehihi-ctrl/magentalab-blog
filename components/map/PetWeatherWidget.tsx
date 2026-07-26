@@ -71,20 +71,22 @@ export default function PetWeatherWidget() {
             </span>
 
             {/* Region Selector Pills */}
-            <div className="flex gap-1 bg-white/90 p-1 rounded-full border border-gray-200/80 overflow-x-auto overflow-y-hidden w-full max-w-full scrollbar-hide touch-pan-x shadow-2xs">
-              {['서울', '경기', '인천', '부산', '대구', '광주', '대전'].map((region) => (
-                <button
-                  key={region}
-                  onClick={() => setSelectedRegion(region)}
-                  className={`px-3 py-0.5 rounded-full text-[11px] font-bold transition whitespace-nowrap shrink-0 ${
-                    selectedRegion === region
-                      ? 'bg-[#1a1a2e] text-[#c9a64c] shadow-xs'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100/60'
-                  }`}
-                >
-                  {region}
-                </button>
-              ))}
+            <div className="w-full overflow-x-auto scrollbar-hide pb-1 -mb-1 relative z-20">
+              <div className="flex gap-1 bg-white/90 p-1 rounded-full border border-gray-200/80 shadow-2xs min-w-max">
+                {['서울', '경기', '인천', '부산', '대구', '광주', '대전', '울산', '강원'].map((region) => (
+                  <button
+                    key={region}
+                    onClick={() => setSelectedRegion(region)}
+                    className={`px-3 py-0.5 rounded-full text-[11px] font-bold transition shrink-0 ${
+                      selectedRegion === region
+                        ? 'bg-[#1a1a2e] text-[#c9a64c] shadow-xs'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100/60'
+                    }`}
+                  >
+                    {region}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
