@@ -133,32 +133,26 @@ export default function MapClient({ initialRegion = '', initialCategory = 'all' 
             )}
           </div>
 
-          <div className="flex items-center gap-1.5">
-            <div className="flex gap-1.5 overflow-x-auto scrollbar-hide flex-1" style={{ WebkitOverflowScrolling: 'touch' }}>
-              {CATEGORIES.map((cat) => {
-                const active = selectedCategory === cat.id;
-                return (
-                  <button
-                    key={cat.id}
-                    onClick={() => setSelectedCategory(cat.id)}
-                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold shrink-0 whitespace-nowrap transition-all ${
-                      active ? 'bg-[#E5007E] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
-                  >
-                    {cat.label}
-                    {cat.id === 'favorite' && favoriteIds.length > 0 && (
-                      <span className={`ml-1 text-[10px] font-bold ${active ? 'text-white/80' : 'text-rose-500'}`}>
-                        {favoriteIds.length}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-            {/* Weather Chip - right side of category row */}
-            <div className="shrink-0">
-              <WeatherChip />
-            </div>
+          <div className="flex gap-1.5 overflow-x-auto scrollbar-hide" style={{ WebkitOverflowScrolling: 'touch' }}>
+            {CATEGORIES.map((cat) => {
+              const active = selectedCategory === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold shrink-0 whitespace-nowrap transition-all ${
+                    active ? 'bg-[#E5007E] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {cat.label}
+                  {cat.id === 'favorite' && favoriteIds.length > 0 && (
+                    <span className={`ml-1 text-[10px] font-bold ${active ? 'text-white/80' : 'text-rose-500'}`}>
+                      {favoriteIds.length}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -226,6 +220,9 @@ export default function MapClient({ initialRegion = '', initialCategory = 'all' 
         places={allFetchedPlaces.length > 0 ? allFetchedPlaces : places}
         onSelectPlace={(place) => setSelectedPlace(place)}
       />
+
+      {/* Draggable Weather Chip — fixed overlay, renders on top of everything */}
+      <WeatherChip />
     </div>
   );
 }

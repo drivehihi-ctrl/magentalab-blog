@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Thermometer, X, ChevronDown } from 'lucide-react';
 
 interface WeatherData {
@@ -9,37 +9,140 @@ interface WeatherData {
   apparentTemp: number;
   humidity: number;
   score: number;
-  statusText: string;
   isHotAlert: boolean;
 }
+
+const REGIONS = ['서울', '경기', '인천', '부산', '대구', '광주', '대전', '울산', '강원', '제주'];
+const DEFAULT_POS = { x: 16, y: 80 }; // default: top-left below header
 
 export default function WeatherChip() {
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [expanded, setExpanded] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState('서울');
 
-  const REGIONS = ['서울', '경기', '인천', '부산', '대구', '광주', '대전', '울산', '강원', '제주'];
+  // Drag state
+  const [pos, setPos] = useState(DEFAULT_POS);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStart = useRef({ mx: 0, my: 0, px: 0, py: 0 });
+  const hasDragged = useRef(false);
+  const chipRef = useRef<HTMLDivElement>(null);
 
+  // Restore saved position from localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('weatherChipPos');
+      if (saved) {
+        const p = JSON.parse(saved);
+        // Clamp to viewport
+        const maxX = window.innerWidth - 160;
+        const maxY = window.innerHeight - 56;
+        setPos({
+          x: Math.max(0, Math.min(p.x, maxX)),
+          y: Math.max(0, Math.min(p.y, maxY)),
+        });
+      }
+    } catch {}
+  }, []);
+
+  // Fetch weather
   useEffect(() => {
     fetch(`/api/weather?region=${encodeURIComponent(selectedRegion)}`)
-      .then((res) => res.json())
-      .then((data) => { if (data.success && data.data) setWeather(data.data); })
+      .then((r) => r.json())
+      .then((d) => { if (d.success && d.data) setWeather(d.data); })
       .catch(() => {});
   }, [selectedRegion]);
+
+  // ─── Mouse drag ───
+  const onMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    hasDragged.current = false;
+    dragStart.current = { mx: e.clientX, my: e.clientY, px: pos.x, py: pos.y };
+    setIsDragging(true);
+
+    const onMove = (me: MouseEvent) => {
+      const dx = me.clientX - dragStart.current.mx;
+      const dy = me.clientY - dragStart.current.my;
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) hasDragged.current = true;
+      const nx = Math.max(0, Math.min(dragStart.current.px + dx, window.innerWidth - 160));
+      const ny = Math.max(0, Math.min(dragStart.current.py + dy, window.innerHeight - 56));
+      setPos({ x: nx, y: ny });
+    };
+
+    const onUp = () => {
+      setIsDragging(false);
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+      // Save position
+      setPos((p) => {
+        localStorage.setItem('weatherChipPos', JSON.stringify(p));
+        return p;
+      });
+    };
+
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  }, [pos]);
+
+  // ─── Touch drag ───
+  const onTouchStart = useCallback((e: React.TouchEvent) => {
+    const t = e.touches[0];
+    hasDragged.current = false;
+    dragStart.current = { mx: t.clientX, my: t.clientY, px: pos.x, py: pos.y };
+
+    const onMove = (te: TouchEvent) => {
+      const tt = te.touches[0];
+      const dx = tt.clientX - dragStart.current.mx;
+      const dy = tt.clientY - dragStart.current.my;
+      if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
+        hasDragged.current = true;
+        te.preventDefault();
+      }
+      const nx = Math.max(0, Math.min(dragStart.current.px + dx, window.innerWidth - 160));
+      const ny = Math.max(0, Math.min(dragStart.current.py + dy, window.innerHeight - 56));
+      setPos({ x: nx, y: ny });
+    };
+
+    const onEnd = () => {
+      document.removeEventListener('touchmove', onMove);
+      document.removeEventListener('touchend', onEnd);
+      setPos((p) => {
+        localStorage.setItem('weatherChipPos', JSON.stringify(p));
+        return p;
+      });
+    };
+
+    document.addEventListener('touchmove', onMove, { passive: false });
+    document.addEventListener('touchend', onEnd);
+  }, [pos]);
+
+  const handleClick = () => {
+    // Only toggle expand if it wasn't a drag
+    if (!hasDragged.current) {
+      setExpanded((prev) => !prev);
+    }
+  };
 
   const score = weather?.score ?? '–';
   const isHot = weather?.isHotAlert ?? false;
 
   return (
-    <div className="relative">
-      {/* Chip button */}
+    <div
+      ref={chipRef}
+      style={{ position: 'fixed', left: pos.x, top: pos.y, zIndex: 9999, userSelect: 'none', touchAction: 'none' }}
+    >
+      {/* Chip */}
       <button
-        onClick={() => setExpanded(!expanded)}
-        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold shadow-md backdrop-blur-sm border transition-all ${
+        onMouseDown={onMouseDown}
+        onTouchStart={onTouchStart}
+        onClick={handleClick}
+        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold shadow-lg backdrop-blur-sm border transition-all cursor-grab active:cursor-grabbing ${
+          isDragging ? 'opacity-80 scale-105' : ''
+        } ${
           isHot
             ? 'bg-rose-500/90 text-white border-rose-400/50'
             : 'bg-emerald-500/90 text-white border-emerald-400/50'
         }`}
+        title="드래그해서 이동 가능"
       >
         <Thermometer className="w-3.5 h-3.5" />
         <span>산책지수 {score}점</span>
@@ -48,8 +151,8 @@ export default function WeatherChip() {
       </button>
 
       {/* Expanded panel */}
-      {expanded && (
-        <div className="absolute top-10 right-0 w-64 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-gray-200 p-4 space-y-3 z-50">
+      {expanded && !isDragging && (
+        <div className="absolute top-10 left-0 w-64 bg-white/97 backdrop-blur-md rounded-2xl shadow-xl border border-gray-200 p-4 space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-gray-800">🌡️ 기상청 펫 산책지수</span>
             <button onClick={() => setExpanded(false)} className="text-gray-400 hover:text-gray-600">
