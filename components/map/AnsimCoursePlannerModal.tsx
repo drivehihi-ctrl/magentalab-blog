@@ -35,10 +35,10 @@ export default function AnsimCoursePlannerModal({
   const [selectedTheme, setSelectedTheme] = useState<ThemeChoice>('healing');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedCourse, setGeneratedCourse] = useState<{
-    dining: PetPlacePOI;
-    park: PetPlacePOI;
-    cafe: PetPlacePOI;
-    hospital: PetPlacePOI;
+    dining: PetPlacePOI | null;
+    park: PetPlacePOI | null;
+    cafe: PetPlacePOI | null;
+    hospital: PetPlacePOI | null;
     title: string;
     description: string;
     targetRegionLabel: string;
@@ -83,31 +83,13 @@ export default function AnsimCoursePlannerModal({
 
     const displayRegion = searchRegion.trim();
 
-    // ✅ Parallel fetch for each category independently — NOT from parent filtered places
+    // ✅ Parallel fetch for each category independently
     const [dining, park, cafe, hospital] = await Promise.all([
       fetchBestPlaceForCategory('restaurant', displayRegion),
       fetchBestPlaceForCategory('park', displayRegion),
       fetchBestPlaceForCategory('cafe', displayRegion),
       fetchBestPlaceForCategory('hospital', displayRegion),
     ]);
-
-    // Fallback: if any category returned null, use the others or a placeholder
-    const fallbackPlace: PetPlacePOI = {
-      id: 'fallback',
-      name: `${displayRegion} 주변 스팟 (검색 중)`,
-      category: 'cafe',
-      categoryName: '애견동반 스팟',
-      address: displayRegion,
-      roadAddress: displayRegion,
-      lat: 37.5665,
-      lng: 126.978,
-      operatingHours: '영업시간 방문 전 문의',
-      rating: 4.5,
-      reviewCount: 0,
-      tags: [],
-      petPolicy: { indoorAllowed: true, outdoorAllowed: true, offLeashAllowed: false, parkingAvailable: true },
-      directionsUrls: {},
-    };
 
     const themeTitles: Record<ThemeChoice, string> = {
       healing: `🌸 [${displayRegion}] 댕댕이와 함께하는 감성 힐링 1일 데이트 코스`,
@@ -122,10 +104,10 @@ export default function AnsimCoursePlannerModal({
     };
 
     setGeneratedCourse({
-      dining: dining || fallbackPlace,
-      park: park || fallbackPlace,
-      cafe: cafe || fallbackPlace,
-      hospital: hospital || fallbackPlace,
+      dining,
+      park,
+      cafe,
+      hospital,
       title: themeTitles[selectedTheme],
       description: themeDescs[selectedTheme],
       targetRegionLabel: displayRegion,
@@ -307,30 +289,55 @@ export default function AnsimCoursePlannerModal({
                   { step: '2단계', icon: <Trees className="w-4 h-4 text-emerald-600" />, label: `${generatedCourse.targetRegionLabel} 야외 잔디 산책`, place: generatedCourse.park },
                   { step: '3단계', icon: <Coffee className="w-4 h-4 text-purple-600" />, label: `${generatedCourse.targetRegionLabel} 감성 애견카페`, place: generatedCourse.cafe },
                 ].map((item, idx) => (
-                  <div
-                    key={idx}
-                    onClick={() => {
-                      onSelectPlace(item.place);
-                      onClose();
-                    }}
-                    className="bg-[#faf6f0] hover:bg-gray-100 p-3.5 rounded-2xl border border-gray-200/80 flex items-center justify-between gap-3 cursor-pointer transition group shadow-2xs"
-                  >
-                    <div className="flex items-center gap-3 overflow-hidden">
-                      <div className="w-9 h-9 rounded-xl bg-[#1a1a2e] text-[#c9a64c] flex items-center justify-center font-black text-xs border border-[#c9a64c]/30 shrink-0">
-                        {item.step}
-                      </div>
-                      <div className="overflow-hidden space-y-0.5">
-                        <div className="flex items-center gap-1.5 text-[11px] font-bold text-gray-600">
-                          {item.icon}
-                          <span>{item.label}</span>
+                  item.place ? (
+                    <div
+                      key={idx}
+                      onClick={() => {
+                        onSelectPlace(item.place as PetPlacePOI);
+                        onClose();
+                      }}
+                      className="bg-[#faf6f0] hover:bg-gray-100 p-3.5 rounded-2xl border border-gray-200/80 flex items-center justify-between gap-3 cursor-pointer transition group shadow-2xs"
+                    >
+                      <div className="flex items-center gap-3 overflow-hidden">
+                        <div className="w-9 h-9 rounded-xl bg-[#1a1a2e] text-[#c9a64c] flex items-center justify-center font-black text-xs border border-[#c9a64c]/30 shrink-0">
+                          {item.step}
                         </div>
-                        <h5 className="text-xs font-extrabold text-[#1a1a2e] truncate group-hover:text-[#E5007E] transition">
-                          {item.place.name}
-                        </h5>
+                        <div className="overflow-hidden space-y-0.5">
+                          <div className="flex items-center gap-1.5 text-[11px] font-bold text-gray-600">
+                            {item.icon}
+                            <span>{item.label}</span>
+                          </div>
+                          <h5 className="text-xs font-extrabold text-[#1a1a2e] truncate group-hover:text-[#E5007E] transition">
+                            {item.place.name}
+                          </h5>
+                        </div>
                       </div>
+                      <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-[#E5007E] group-hover:translate-x-1 transition shrink-0" />
                     </div>
-                    <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-[#E5007E] group-hover:translate-x-1 transition shrink-0" />
-                  </div>
+                  ) : (
+                    <div key={idx} className="bg-gray-50 p-3.5 rounded-2xl border border-dashed border-gray-300 flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3 overflow-hidden">
+                        <div className="w-9 h-9 rounded-xl bg-gray-200 text-gray-400 flex items-center justify-center font-black text-xs shrink-0">
+                          {item.step}
+                        </div>
+                        <div className="overflow-hidden space-y-0.5">
+                          <div className="flex items-center gap-1.5 text-[11px] font-bold text-gray-500">
+                            {item.icon}
+                            <span>{item.label}</span>
+                          </div>
+                          <h5 className="text-xs font-bold text-gray-400 truncate">
+                            현재 {generatedCourse.targetRegionLabel} 스팟 꼼꼼히 찾는 중 🐶
+                          </h5>
+                        </div>
+                      </div>
+                      <button 
+                        onClick={() => alert('제보해 주셔서 감사합니다! 마젠타랩 안심 연구소에서 곧 추가할게요. 🐶')}
+                        className="text-[10px] font-bold text-[#E5007E] hover:underline whitespace-nowrap shrink-0"
+                      >
+                        내가 아는 곳 제보하기 →
+                      </button>
+                    </div>
+                  )
                 ))}
               </div>
 
@@ -343,25 +350,44 @@ export default function AnsimCoursePlannerModal({
                 <p className="text-[11px] text-gray-600 font-medium leading-relaxed">
                   즐거운 나들이 길, 만약의 비상 상황에 대비해 [{generatedCourse.targetRegionLabel}] 동선 근처 24시 응급 동물의료센터 좌표도 준비해 두었습니다.
                 </p>
-                <div
-                  onClick={() => {
-                    onSelectPlace(generatedCourse.hospital);
-                    onClose();
-                  }}
-                  className="bg-white p-3 rounded-xl border border-gray-200 hover:border-rose-300 transition cursor-pointer flex items-center justify-between gap-3 shadow-2xs group"
-                >
-                  <div className="flex items-center gap-2.5 overflow-hidden">
-                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 shrink-0">
-                      24시 응급
+                {generatedCourse.hospital ? (
+                  <div
+                    onClick={() => {
+                      onSelectPlace(generatedCourse.hospital as PetPlacePOI);
+                      onClose();
+                    }}
+                    className="bg-white p-3 rounded-xl border border-gray-200 hover:border-rose-300 transition cursor-pointer flex items-center justify-between gap-3 shadow-2xs group"
+                  >
+                    <div className="flex items-center gap-2.5 overflow-hidden">
+                      <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 shrink-0">
+                        24시 응급
+                      </span>
+                      <h5 className="text-xs font-extrabold text-[#1a1a2e] group-hover:text-rose-600 transition truncate">
+                        {generatedCourse.hospital.name}
+                      </h5>
+                    </div>
+                    <span className="text-[10px] font-bold text-rose-600 group-hover:underline shrink-0 flex items-center gap-0.5">
+                      병원 위치 보기 →
                     </span>
-                    <h5 className="text-xs font-extrabold text-[#1a1a2e] group-hover:text-rose-600 transition truncate">
-                      {generatedCourse.hospital.name}
-                    </h5>
                   </div>
-                  <span className="text-[10px] font-bold text-rose-600 group-hover:underline shrink-0 flex items-center gap-0.5">
-                    병원 위치 보기 →
-                  </span>
-                </div>
+                ) : (
+                  <div className="bg-white p-3 rounded-xl border border-dashed border-rose-200 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5 overflow-hidden">
+                      <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 shrink-0">
+                        24시 응급
+                      </span>
+                      <h5 className="text-xs font-bold text-gray-400 truncate">
+                        현재 {generatedCourse.targetRegionLabel} 동물병원 찾는 중 🐶
+                      </h5>
+                    </div>
+                    <button 
+                      onClick={() => alert('제보해 주셔서 감사합니다! 마젠타랩 안심 연구소에서 곧 추가할게요. 🐶')}
+                      className="text-[10px] font-bold text-rose-600 hover:underline whitespace-nowrap shrink-0"
+                    >
+                      내가 아는 병원 제보하기 →
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* KakaoTalk Share Button */}
