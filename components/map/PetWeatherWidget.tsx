@@ -118,44 +118,46 @@ export default function PetWeatherWidget() {
         </div>
 
         {/* Right Metric Stat Cards */}
-        <div className="flex items-center gap-2.5 shrink-0 w-full lg:w-auto justify-between lg:justify-start bg-white/90 p-3.5 rounded-2xl border border-gray-200/80 shadow-2xs">
-          <div className="flex items-center gap-2.5 px-2 shrink-0">
-            <div className="w-8 h-8 rounded-xl bg-rose-50 flex items-center justify-center border border-rose-100 text-[#E5007E] shrink-0">
-              <Thermometer className="w-4 h-4" />
+        <div className="w-full lg:w-auto overflow-x-auto scrollbar-hide">
+          <div className="inline-flex items-center gap-3 lg:gap-2.5 min-w-max bg-white/90 p-3.5 rounded-2xl border border-gray-200/80 shadow-sm" style={{ WebkitOverflowScrolling: 'touch' }}>
+            <div className="flex items-center gap-2.5 px-2 shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-rose-50 flex items-center justify-center border border-rose-100 text-[#E5007E] shrink-0">
+                <Thermometer className="w-4 h-4" />
+              </div>
+              <div className="whitespace-nowrap">
+                <p className="text-[10px] text-gray-400 font-semibold">기온 (체감)</p>
+                <p className="text-xs font-black text-[#1a1a2e]">
+                  {displayData.temp}°C <span className="text-rose-600">({displayData.apparentTemp}°C)</span>
+                </p>
+              </div>
             </div>
-            <div className="whitespace-nowrap">
-              <p className="text-[10px] text-gray-400 font-semibold">기온 (체감)</p>
-              <p className="text-xs font-black text-[#1a1a2e]">
-                {displayData.temp}°C <span className="text-rose-600">({displayData.apparentTemp}°C)</span>
-              </p>
-            </div>
-          </div>
 
-          <div className="h-7 w-[1px] bg-gray-200 shrink-0" />
+            <div className="h-7 w-[1px] bg-gray-200 shrink-0" />
 
-          <div className="flex items-center gap-2.5 px-2 shrink-0">
-            <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center border border-blue-100 text-blue-600 shrink-0">
-              <Droplets className="w-4 h-4" />
+            <div className="flex items-center gap-2.5 px-2 shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center border border-blue-100 text-blue-600 shrink-0">
+                <Droplets className="w-4 h-4" />
+              </div>
+              <div className="whitespace-nowrap">
+                <p className="text-[10px] text-gray-400 font-semibold">습도</p>
+                <p className="text-xs font-black text-blue-900">{displayData.humidity}%</p>
+              </div>
             </div>
-            <div className="whitespace-nowrap">
-              <p className="text-[10px] text-gray-400 font-semibold">습도</p>
-              <p className="text-xs font-black text-blue-900">{displayData.humidity}%</p>
-            </div>
-          </div>
 
-          <div className="h-7 w-[1px] bg-gray-200 shrink-0" />
+            <div className="h-7 w-[1px] bg-gray-200 shrink-0" />
 
-          <div className="flex items-center gap-2.5 px-2 shrink-0">
-            <div className={`w-8 h-8 rounded-xl flex items-center justify-center border shrink-0 ${
-              displayData.isHotAlert ? 'bg-amber-50 text-amber-600 border-amber-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200'
-            }`}>
-              {displayData.isHotAlert ? <AlertTriangle className="w-4 h-4" /> : <ShieldCheck className="w-4 h-4" />}
-            </div>
-            <div className="whitespace-nowrap">
-              <p className="text-[10px] text-gray-400 font-semibold">추천 장소</p>
-              <p className={`text-xs font-black ${displayData.isHotAlert ? 'text-[#c0006a]' : 'text-emerald-700'}`}>
-                {displayData.isHotAlert ? '실내 에어컨 ❄️' : '야외 공원 🌳'}
-              </p>
+            <div className="flex items-center gap-2.5 px-2 shrink-0">
+              <div className={`w-8 h-8 rounded-xl flex items-center justify-center border shrink-0 ${
+                displayData.isHotAlert ? 'bg-amber-50 text-amber-600 border-amber-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200'
+              }`}>
+                {displayData.isHotAlert ? <AlertTriangle className="w-4 h-4" /> : <ShieldCheck className="w-4 h-4" />}
+              </div>
+              <div className="whitespace-nowrap">
+                <p className="text-[10px] text-gray-400 font-semibold">추천 장소</p>
+                <p className={`text-xs font-black ${displayData.isHotAlert ? 'text-[#c0006a]' : 'text-emerald-700'}`}>
+                  {displayData.isHotAlert ? '실내 에어컨 ❄️' : '야외 공원 🌳'}
+                </p>
+              </div>
             </div>
           </div>
         </div>
