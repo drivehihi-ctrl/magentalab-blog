@@ -130,10 +130,21 @@ export default async function EnglishPostDetailPage({ params }: PageProps) {
     permanentRedirect(`/en/posts/${targetSlug}`);
   }
 
-  if (!post) notFound();
+  // If post wasn't found but the URL had an -en suffix, check if the Korean original exists
+  let fallbackPost = post;
+  if (!post && id.endsWith("-en")) {
+    const krSlug = id.replace(/-en$/, "");
+    try {
+      fallbackPost = await getPostBySlug(krSlug);
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  if (!fallbackPost) notFound();
 
   // If the post is not an English post (meaning the translation doesn't exist yet)
-  if (post.slug && !post.slug.endsWith("-en")) {
+  if (fallbackPost.slug && !fallbackPost.slug.endsWith("-en")) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center px-4 text-center">
         <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
@@ -146,7 +157,7 @@ export default async function EnglishPostDetailPage({ params }: PageProps) {
           This article is currently being translated into English by our research team. Please check back later!
         </p>
         <Link 
-          href={`/posts/${post.slug}`}
+          href={`/posts/${fallbackPost.slug}`}
           className="px-6 py-3 bg-[#E5007E] text-white font-bold rounded-full hover:bg-[#c0006a] transition-colors"
         >
           View Original Article (Korean)
@@ -154,6 +165,9 @@ export default async function EnglishPostDetailPage({ params }: PageProps) {
       </div>
     );
   }
+
+  // From here on we know post exists and is an English post
+  post = fallbackPost;
 
   const relatedPosts = getRelatedPosts(post, allPosts, 3);
   

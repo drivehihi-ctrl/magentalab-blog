@@ -130,10 +130,21 @@ export default async function JapanesePostDetailPage({ params }: PageProps) {
     permanentRedirect(`/ja/posts/${targetSlug}`);
   }
 
-  if (!post) notFound();
+  // If post wasn't found but the URL had a -ja suffix, check if the Korean original exists
+  let fallbackPost = post;
+  if (!post && id.endsWith("-ja")) {
+    const krSlug = id.replace(/-ja$/, "");
+    try {
+      fallbackPost = await getPostBySlug(krSlug);
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  if (!fallbackPost) notFound();
 
   // If the post is not a Japanese post (meaning the translation doesn't exist yet)
-  if (post.slug && !post.slug.endsWith("-ja")) {
+  if (fallbackPost.slug && !fallbackPost.slug.endsWith("-ja")) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center px-4 text-center">
         <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
@@ -146,7 +157,7 @@ export default async function JapanesePostDetailPage({ params }: PageProps) {
           この記事は現在、当研究所のチームによって日本語に翻訳されています。もうしばらくお待ちください！
         </p>
         <Link 
-          href={`/posts/${post.slug}`}
+          href={`/posts/${fallbackPost.slug}`}
           className="px-6 py-3 bg-[#E5007E] text-white font-bold rounded-full hover:bg-[#c0006a] transition-colors"
         >
           韓国語の原文を見る
@@ -154,6 +165,9 @@ export default async function JapanesePostDetailPage({ params }: PageProps) {
       </div>
     );
   }
+
+  // From here on we know post exists and is a Japanese post
+  post = fallbackPost;
   const relatedPosts = getRelatedPosts(post, allPosts, 3);
   
   const imageUrl = getFeaturedImage(post);
