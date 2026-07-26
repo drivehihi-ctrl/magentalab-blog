@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
@@ -15,6 +15,16 @@ interface BlogPost {
 
 // 나중에 관련 글이 더 생기면 여기 키워드만 바꾸면 됩니다
 const KEYWORDS = ['여행', '애견카페', '초콜릿'];
+
+// 항상 첫 번째로 고정할 글
+const PINNED_POST: BlogPost = {
+  id: 56,
+  slug: 'pet-etiquette-cafe',
+  title: '펫티켓의 정석: 강아지 동반 카페 매너 &amp; 규칙 연구 보고서',
+  excerpt: '애견카페에서 꼭 지켜야 할 에티켓과 매너를 총정리했습니다. 우리 아이와 함께 더 즐거운 카페 문화를 만들어요.',
+  imageUrl: 'https://magentalab.mycafe24.com/wp-content/uploads/2026/04/6-2.jpeg',
+  date: '4월',
+};
 
 export default function MapBlogSection() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -34,7 +44,7 @@ export default function MapBlogSection() {
           )
         );
 
-        const seen = new Set<number>();
+        const seen = new Set<number>([PINNED_POST.id]); // pinned post ID는 미리 seen에 추가
         const merged: BlogPost[] = [];
 
         results.flat().forEach((p: any) => {
@@ -56,7 +66,8 @@ export default function MapBlogSection() {
           }
         });
 
-        setPosts(merged.slice(0, 6));
+        // 핀 글을 항상 첫 번째에 배치
+        setPosts([PINNED_POST, ...merged].slice(0, 6));
       } finally {
         setIsLoading(false);
       }
