@@ -36,6 +36,13 @@ export interface WPCategory {
   count: number;
 }
 
+export interface WPTag {
+  id: number;
+  name: string;
+  slug: string;
+  count: number;
+}
+
 // 안전하게 JSON을 파싱하는 헬퍼 함수 (비JSON 응답으로 인한 크래시 방지)
 async function safeJson(res: Response): Promise<any> {
   const contentType = res.headers.get("content-type") || "";
@@ -58,11 +65,12 @@ export async function getPosts(
   perPage: number = 20, 
   search?: string,
   category?: string,
-  lang: string = "ko"
+  lang: string = "ko",
+  tag?: string
 ): Promise<PostsResponse> {
   const isKo = lang === "ko" || !lang;
   const now = Date.now();
-  const isMainFetch = !search && !category;
+  const isMainFetch = !search && !category && !tag;
 
   let allPosts: WPPost[] = [];
 
@@ -77,6 +85,9 @@ export async function getPosts(
       }
       if (category) {
         url += `&categories=${category}`;
+      }
+      if (tag) {
+        url += `&tags=${tag}`;
       }
 
       const firstRes = await fetch(url, {
@@ -107,6 +118,7 @@ export async function getPosts(
             let rUrl = `${WP_API_URL}/posts?_embed&per_page=100&page=${i}&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`;
             if (search) rUrl += `&search=${encodeURIComponent(search)}`;
             if (category) rUrl += `&categories=${category}`;
+            if (tag) rUrl += `&tags=${tag}`;
             remainingUrls.push(rUrl);
           }
 
@@ -199,6 +211,23 @@ export async function getAllCategories(): Promise<WPCategory[]> {
     return categories.filter(c => c.count > 0 && c.slug !== 'uncategorized');
   } catch (err) {
     console.error("Error in getAllCategories:", err);
+    return [];
+  }
+}
+
+export async function getAllTags(): Promise<WPTag[]> {
+  try {
+    const res = await fetch(`${WP_API_URL}/tags?per_page=100`, {
+      next: {
+        revalidate: 86400,
+        tags: ['tags']
+      },
+    });
+    if (!res.ok) throw new Error("Failed to fetch tags");
+    const tags: WPTag[] = await safeJson(res);
+    return tags.filter(t => t.count > 0);
+  } catch (err) {
+    console.error("Error in getAllTags:", err);
     return [];
   }
 }
