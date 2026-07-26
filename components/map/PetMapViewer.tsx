@@ -265,7 +265,7 @@ export default function PetMapViewer({
   };
 
   return (
-    <div className="relative isolate z-0 w-full h-[calc(100vh-140px)] sm:h-[650px] bg-slate-100 rounded-3xl overflow-hidden shadow-inner border border-purple-100">
+    <div className="relative isolate z-0 w-full h-full bg-slate-100 overflow-hidden">
 
       {/* Floating Controls Bar */}
       <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
@@ -306,7 +306,7 @@ export default function PetMapViewer({
 
       {/* VIEW MODE: MAP */}
       {viewMode === 'map' ? (
-        <div className="w-full h-full relative overflow-hidden rounded-3xl border border-purple-100 shadow-md">
+        <div className="w-full h-full relative overflow-hidden">
           {/* Map Container */}
           <div ref={mapContainerRef} className="w-full h-full min-h-[500px]" />
 
