@@ -9,6 +9,9 @@ const REGION_COORDS: Record<string, { name: string; lat: number; lon: number; nx
   '대구': { name: '대구 수성/동성로', lat: 35.8714, lon: 128.6014, nx: 89, ny: 90 },
   '광주': { name: '광주 상무/첨단', lat: 35.1595, lon: 126.8526, nx: 58, ny: 74 },
   '대전': { name: '대전 둔산/유성', lat: 36.3504, lon: 127.3845, nx: 67, ny: 100 },
+  '울산': { name: '울산 남구/삼산동', lat: 35.5384, lon: 129.3114, nx: 102, ny: 84 },
+  '강원': { name: '강원 강릉/원주', lat: 37.7519, lon: 128.8761, nx: 92, ny: 131 },
+  '제주': { name: '제주 제주시/애월', lat: 33.4996, lon: 126.5312, nx: 52, ny: 38 },
 };
 
 export async function GET(request: Request) {
