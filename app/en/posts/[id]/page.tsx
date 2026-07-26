@@ -100,14 +100,30 @@ export default async function EnglishPostDetailPage({ params }: PageProps) {
         targetSlug = post.slug;
       }
     } else {
-      post = await getPostBySlug(id);
+      // If it doesn't end with -en, check if the -en version exists
+      if (!id.endsWith("-en")) {
+        try {
+          const enPost = await getPostBySlug(id + "-en");
+          if (enPost) {
+            shouldRedirect = true;
+            targetSlug = enPost.slug;
+            post = enPost;
+          } else {
+            post = await getPostBySlug(id); // fallback to KR post to know it exists
+          }
+        } catch (e) {
+          post = await getPostBySlug(id);
+        }
+      } else {
+        post = await getPostBySlug(id);
+      }
     }
     
     // Fetch only English posts for related recommendations
     const postsRes = await getPosts(1, 20, undefined, undefined, "en");
     allPosts = postsRes.posts;
   } catch (error) {
-    notFound();
+    // If we completely fail, we'll let it be handled below
   }
 
   if (shouldRedirect && targetSlug) {
@@ -116,10 +132,29 @@ export default async function EnglishPostDetailPage({ params }: PageProps) {
 
   if (!post) notFound();
 
-  // Prevent serving non-English content under English URLs
+  // If the post is not an English post (meaning the translation doesn't exist yet)
   if (post.slug && !post.slug.endsWith("-en")) {
-    notFound();
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center px-4 text-center">
+        <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+          <span className="text-3xl">🌍</span>
+        </div>
+        <h1 className="text-2xl md:text-3xl font-black text-gray-900 mb-4">
+          Translation in Progress
+        </h1>
+        <p className="text-gray-600 mb-8 max-w-md">
+          This article is currently being translated into English by our research team. Please check back later!
+        </p>
+        <Link 
+          href={`/posts/${post.slug}`}
+          className="px-6 py-3 bg-[#E5007E] text-white font-bold rounded-full hover:bg-[#c0006a] transition-colors"
+        >
+          View Original Article (Korean)
+        </Link>
+      </div>
+    );
   }
+
   const relatedPosts = getRelatedPosts(post, allPosts, 3);
   
   const imageUrl = getFeaturedImage(post);
