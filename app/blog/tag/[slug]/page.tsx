@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import BlogListLayout from "@/components/blog/BlogListLayout";
-import { getAllTags } from "@/lib/wp";
+import { getTagBySlugOrName } from "@/lib/wp";
 import { decodeHtmlEntities } from "@/lib/utils";
 import React from "react";
 
@@ -15,8 +15,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const decodedSlug = decodeURIComponent(slug);
   
-  const tags = await getAllTags();
-  const currentTag = tags.find(t => t.slug === decodedSlug || t.name === decodedSlug);
+  const currentTag = await getTagBySlugOrName(decodedSlug);
   
   if (!currentTag) {
     return { title: "태그를 찾을 수 없습니다 | Magentalab" };
@@ -57,8 +56,7 @@ export default async function TagBlogListPage({
   const { page } = await searchParams;
   const decodedSlug = decodeURIComponent(slug);
   
-  const tags = await getAllTags();
-  const currentTag = tags.find(t => t.slug === decodedSlug || t.name === decodedSlug);
+  const currentTag = await getTagBySlugOrName(decodedSlug);
 
   if (!currentTag) {
     notFound();

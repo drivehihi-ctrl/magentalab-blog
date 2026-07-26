@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import BlogListLayout from "@/components/blog/BlogListLayout";
-import { getAllCategories } from "@/lib/wp";
+import { getCategoryBySlugOrName } from "@/lib/wp";
 import { decodeHtmlEntities } from "@/lib/utils";
 import React from "react";
 
@@ -15,8 +15,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const decodedSlug = decodeURIComponent(slug);
   
-  const categories = await getAllCategories().catch(() => []);
-  const currentCategory = categories.find(c => c.slug === decodedSlug || c.name === decodedSlug);
+  const currentCategory = await getCategoryBySlugOrName(decodedSlug);
   
   if (!currentCategory) {
     return { title: "카테고리를 찾을 수 없습니다 | Magentalab" };
@@ -57,8 +56,7 @@ export default async function CategoryBlogListPage({
   const { page } = await searchParams;
   const decodedSlug = decodeURIComponent(slug);
   
-  const categories = await getAllCategories().catch(() => []);
-  const currentCategory = categories.find(c => c.slug === decodedSlug || c.name === decodedSlug);
+  const currentCategory = await getCategoryBySlugOrName(decodedSlug);
 
   if (!currentCategory) {
     notFound();

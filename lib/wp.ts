@@ -232,6 +232,48 @@ export async function getAllTags(): Promise<WPTag[]> {
   }
 }
 
+export async function getTagBySlugOrName(slugOrName: string): Promise<WPTag | null> {
+  try {
+    // Search by name using search parameter
+    const searchRes = await fetch(`${WP_API_URL}/tags?search=${encodeURIComponent(slugOrName)}`, {
+      next: { revalidate: 86400 }
+    });
+    if (searchRes.ok) {
+      const tags: WPTag[] = await safeJson(searchRes);
+      const exactMatch = tags.find(t => 
+        t.name === slugOrName || 
+        decodeURIComponent(t.slug).toLowerCase() === slugOrName.toLowerCase() ||
+        t.slug.toLowerCase() === slugOrName.toLowerCase()
+      );
+      if (exactMatch) return exactMatch;
+    }
+  } catch (err) {
+    console.error("Error in getTagBySlugOrName:", err);
+  }
+  return null;
+}
+
+export async function getCategoryBySlugOrName(slugOrName: string): Promise<WPCategory | null> {
+  try {
+    // Search by name using search parameter
+    const searchRes = await fetch(`${WP_API_URL}/categories?search=${encodeURIComponent(slugOrName)}`, {
+      next: { revalidate: 86400 }
+    });
+    if (searchRes.ok) {
+      const categories: WPCategory[] = await safeJson(searchRes);
+      const exactMatch = categories.find(c => 
+        c.name === slugOrName || 
+        decodeURIComponent(c.slug).toLowerCase() === slugOrName.toLowerCase() ||
+        c.slug.toLowerCase() === slugOrName.toLowerCase()
+      );
+      if (exactMatch) return exactMatch;
+    }
+  } catch (err) {
+    console.error("Error in getCategoryBySlugOrName:", err);
+  }
+  return null;
+}
+
 /**
  * 사이트맵 전용: 전체 글을 페이지네이션으로 모두 가져옵니다.
  * WordPress REST API의 X-WP-TotalPages 헤더를 활용합니다.
