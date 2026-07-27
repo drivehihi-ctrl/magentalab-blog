@@ -591,10 +591,19 @@ export async function searchPosts(query: string, lang: string = "ko"): Promise<W
   if (!query) return [];
   try {
     const isKo = lang === "ko" || !lang;
-    let url = `${WP_API_URL}/posts?_embed&search=${encodeURIComponent(query)}&per_page=100`;
-    if (lang) {
+    let url = "";
+
+    if (query.startsWith("slug:")) {
+      const slug = query.replace("slug:", "").trim();
+      url = `${WP_API_URL}/posts?_embed&slug=${encodeURIComponent(slug)}`;
+    } else {
+      url = `${WP_API_URL}/posts?_embed&search=${encodeURIComponent(query)}&per_page=100`;
+    }
+
+    if (lang && !query.startsWith("slug:")) {
       url += `&lang=${lang}`;
     }
+
     const res = await fetch(url, {
       next: {
         revalidate: 86400,

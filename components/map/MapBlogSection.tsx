@@ -14,7 +14,7 @@ interface BlogPost {
 }
 
 // 나중에 관련 글이 더 생기면 여기 키워드만 바꾸면 됩니다
-const KEYWORDS = ['펫티켓의 정석', '여행', '애견카페', '초콜릿'];
+const KEYWORDS = ['펫티켓의 정석', 'slug:dog-friendly-petiquette-guide', '여행', '애견카페', '초콜릿'];
 
 export default function MapBlogSection() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
