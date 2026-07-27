@@ -6,6 +6,14 @@ import RelatedPosts from "@/components/RelatedPosts";
 export const metadata: Metadata = {
   title: "About Ansim | Magentalab",
   description: "Introducing Magentalab's mascot and chief researcher, Ansim.",
+  alternates: {
+    canonical: "https://www.magentalabblog.com/en/about-ansim",
+    languages: {
+      'ko-KR': 'https://www.magentalabblog.com/about-ansim',
+      'en-US': 'https://www.magentalabblog.com/en/about-ansim',
+      'ja-JP': 'https://www.magentalabblog.com/ja/about-ansim',
+    },
+  },
 };
 
 export default async function EnAboutAnsimPage() {

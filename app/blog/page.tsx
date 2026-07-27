@@ -1,26 +1,44 @@
-import { Metadata } from "next";
+﻿import { Metadata } from "next";
 import BlogListLayout from "@/components/blog/BlogListLayout";
 
 export const revalidate = 86400;
 
-export const metadata: Metadata = {
-  title: "전체 글 목록 | Magentalab",
-  description: "Magentalab 반려동물 연구소의 모든 연구 게시글 and 블로그 포스트를 확인하세요.",
-  alternates: {
-    canonical: "https://www.magentalabblog.com/blog",
-  },
-  openGraph: {
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string, search?: string, category?: string }>;
+}): Promise<Metadata> {
+  const { page, search, category } = await searchParams;
+  let canonicalUrl = "https://www.magentalabblog.com/blog";
+  let searchSuffix = "";
+  if (page && page !== "1") searchSuffix += `?page=${page}`;
+  if (search) searchSuffix += (searchSuffix ? "&" : "?") + `search=${encodeURIComponent(search)}`;
+  if (category) searchSuffix += (searchSuffix ? "&" : "?") + `category=${encodeURIComponent(category)}`;
+
+  return {
     title: "전체 글 목록 | Magentalab",
     description: "Magentalab 반려동물 연구소의 모든 연구 게시글 and 블로그 포스트를 확인하세요.",
-    url: "https://www.magentalabblog.com/blog",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "전체 글 목록 | Magentalab",
-    description: "Magentalab 반려동물 연구소의 모든 연구 게시글 and 블로그 포스트를 확인하세요.",
-  },
-};
+    alternates: {
+      canonical: canonicalUrl + searchSuffix,
+      languages: {
+        'ko-KR': 'https://www.magentalabblog.com/blog' + searchSuffix,
+        'en-US': 'https://www.magentalabblog.com/en/blog' + searchSuffix,
+        'ja-JP': 'https://www.magentalabblog.com/ja/blog' + searchSuffix,
+      },
+    },
+    openGraph: {
+      title: "전체 글 목록 | Magentalab",
+      description: "Magentalab 반려동물 연구소의 모든 연구 게시글 and 블로그 포스트를 확인하세요.",
+      url: canonicalUrl + searchSuffix,
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "전체 글 목록 | Magentalab",
+      description: "Magentalab 반려동물 연구소의 모든 연구 게시글 and 블로그 포스트를 확인하세요.",
+    },
+  };
+}
 
 export default async function BlogListPage({
   searchParams,

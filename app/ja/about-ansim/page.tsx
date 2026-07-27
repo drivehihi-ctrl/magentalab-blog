@@ -6,6 +6,14 @@ import RelatedPosts from "@/components/RelatedPosts";
 export const metadata: Metadata = {
   title: "アンシム紹介 | Magentalab",
   description: "Magentalabのマスコットであり主任研究員、アンシムを紹介します。",
+  alternates: {
+    canonical: "https://www.magentalabblog.com/ja/about-ansim",
+    languages: {
+      'ko-KR': 'https://www.magentalabblog.com/about-ansim',
+      'en-US': 'https://www.magentalabblog.com/en/about-ansim',
+      'ja-JP': 'https://www.magentalabblog.com/ja/about-ansim',
+    },
+  },
 };
 
 export default async function JaAboutAnsimPage() {

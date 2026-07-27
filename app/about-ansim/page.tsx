@@ -7,6 +7,14 @@ import RelatedPosts from "@/components/RelatedPosts";
 export const metadata: Metadata = {
   title: "안심이 소개 | Magentalab",
   description: "마젠타랩의 마스코트이자 수석 연구원, 안심이를 소개합니다.",
+  alternates: {
+    canonical: "https://www.magentalabblog.com/about-ansim",
+    languages: {
+      'ko-KR': 'https://www.magentalabblog.com/about-ansim',
+      'en-US': 'https://www.magentalabblog.com/en/about-ansim',
+      'ja-JP': 'https://www.magentalabblog.com/ja/about-ansim',
+    },
+  },
 };
 
 export default async function AboutAnsimPage() {

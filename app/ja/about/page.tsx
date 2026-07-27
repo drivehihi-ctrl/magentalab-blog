@@ -7,6 +7,11 @@ export const metadata: Metadata = {
   description: "Magentalabペット研究所のミッションと研究分野を紹介します。",
   alternates: {
     canonical: "https://www.magentalabblog.com/ja/about",
+    languages: {
+      'ko-KR': 'https://www.magentalabblog.com/about',
+      'en-US': 'https://www.magentalabblog.com/en/about',
+      'ja-JP': 'https://www.magentalabblog.com/ja/about',
+    },
   },
 };
 

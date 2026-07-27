@@ -3,6 +3,14 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "利用規約 | Magentalab",
   description: "Magentalab伴侶動物研究所の利用規約です。",
+  alternates: {
+    canonical: "https://www.magentalabblog.com/ja/terms",
+    languages: {
+      'ko-KR': 'https://www.magentalabblog.com/terms',
+      'en-US': 'https://www.magentalabblog.com/en/terms',
+      'ja-JP': 'https://www.magentalabblog.com/ja/terms',
+    },
+  },
 };
 
 export default function TermsPage() {

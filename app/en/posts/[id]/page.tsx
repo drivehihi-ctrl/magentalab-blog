@@ -38,11 +38,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const title = sanitizeForSeo(post.title.rendered);
     const description = sanitizeForSeo(post.excerpt.rendered, 160);
 
+    const baseSlug = post.slug.replace(/-en$/, '').replace(/-ja$/, '');
+
     return {
       title: `${title} | Magentalab`,
       description,
       alternates: {
         canonical: `https://www.magentalabblog.com/en/posts/${post.slug}`,
+        languages: {
+          'ko-KR': `https://www.magentalabblog.com/posts/${baseSlug}`,
+          'en-US': `https://www.magentalabblog.com/en/posts/${baseSlug}-en`,
+          'ja-JP': `https://www.magentalabblog.com/ja/posts/${baseSlug}-ja`,
+        },
       },
       openGraph: {
         title,

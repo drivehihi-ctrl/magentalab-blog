@@ -7,6 +7,11 @@ export const metadata: Metadata = {
   description: "Introduction to the mission and research fields of Magentalab Pet Research Lab.",
   alternates: {
     canonical: "https://www.magentalabblog.com/en/about",
+    languages: {
+      'ko-KR': 'https://www.magentalabblog.com/about',
+      'en-US': 'https://www.magentalabblog.com/en/about',
+      'ja-JP': 'https://www.magentalabblog.com/ja/about',
+    },
   },
 };
 

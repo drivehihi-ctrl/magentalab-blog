@@ -3,6 +3,14 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "개인정보처리방침 | Magentalab",
   description: "Magentalab 반려동물 연구소의 개인정보처리방침입니다.",
+  alternates: {
+    canonical: "https://www.magentalabblog.com/privacy",
+    languages: {
+      'ko-KR': 'https://www.magentalabblog.com/privacy',
+      'en-US': 'https://www.magentalabblog.com/en/privacy',
+      'ja-JP': 'https://www.magentalabblog.com/ja/privacy',
+    },
+  },
 };
 
 export default function PrivacyPage() {

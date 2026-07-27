@@ -3,6 +3,14 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "個人情報処理方針 | Magentalab",
   description: "Magentalab伴侶動物研究所の個人情報処理方針です。",
+  alternates: {
+    canonical: "https://www.magentalabblog.com/ja/privacy",
+    languages: {
+      'ko-KR': 'https://www.magentalabblog.com/privacy',
+      'en-US': 'https://www.magentalabblog.com/en/privacy',
+      'ja-JP': 'https://www.magentalabblog.com/ja/privacy',
+    },
+  },
 };
 
 export default function PrivacyPage() {

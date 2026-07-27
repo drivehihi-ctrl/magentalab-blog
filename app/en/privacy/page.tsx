@@ -3,6 +3,14 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Privacy Policy | Magentalab",
   description: "Privacy Policy for Magentalab Companion Animal Research Center.",
+  alternates: {
+    canonical: "https://www.magentalabblog.com/en/privacy",
+    languages: {
+      'ko-KR': 'https://www.magentalabblog.com/privacy',
+      'en-US': 'https://www.magentalabblog.com/en/privacy',
+      'ja-JP': 'https://www.magentalabblog.com/ja/privacy',
+    },
+  },
 };
 
 export default function PrivacyPage() {

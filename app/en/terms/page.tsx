@@ -3,6 +3,14 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Terms of Service | Magentalab",
   description: "Terms of Service for Magentalab Companion Animal Research Center.",
+  alternates: {
+    canonical: "https://www.magentalabblog.com/en/terms",
+    languages: {
+      'ko-KR': 'https://www.magentalabblog.com/terms',
+      'en-US': 'https://www.magentalabblog.com/en/terms',
+      'ja-JP': 'https://www.magentalabblog.com/ja/terms',
+    },
+  },
 };
 
 export default function TermsPage() {

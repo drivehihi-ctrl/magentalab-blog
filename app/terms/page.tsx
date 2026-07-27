@@ -3,6 +3,14 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "이용약관 | Magentalab",
   description: "Magentalab 반려동물 연구소의 이용약관입니다.",
+  alternates: {
+    canonical: "https://www.magentalabblog.com/terms",
+    languages: {
+      'ko-KR': 'https://www.magentalabblog.com/terms',
+      'en-US': 'https://www.magentalabblog.com/en/terms',
+      'ja-JP': 'https://www.magentalabblog.com/ja/terms',
+    },
+  },
 };
 
 export default function TermsPage() {
