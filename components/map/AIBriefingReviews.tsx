@@ -103,43 +103,31 @@ export default function AIBriefingReviews({ placeName, address, initialData }: A
         ))}
       </div>
 
-      {/* 📸 AI Photo Spot & Shooting Tip Section (3 Real Review-Based Tips) */}
-      {((briefingData.photoTips && briefingData.photoTips.length > 0) || briefingData.photoTip) && (
-        <div className="bg-[#1a1a2e] text-white p-4 sm:p-5 rounded-2xl shadow-md border border-[#c9a64c]/30 space-y-3 relative overflow-hidden font-sans">
+      {/* 📸 AI Photo Spot & Shooting Tip Section (1 Single Selected Tip) */}
+      {briefingData.photoTip && (
+        <div className="bg-[#1a1a2e] text-white p-4 sm:p-5 rounded-2xl shadow-md border border-[#c9a64c]/30 space-y-2.5 relative overflow-hidden font-sans">
           <div className="h-[2px] w-full bg-gradient-to-r from-[#E5007E] via-[#c9a64c] to-[#E5007E] absolute top-0 left-0 right-0" />
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-[#c9a64c] text-[#1a1a2e] font-extrabold text-[10px] whitespace-nowrap">
-                📸 AI 꿀팁 3선
-              </span>
-              <h4 className="text-xs sm:text-sm font-extrabold text-[#c9a64c]">
-                실제 후기 기반 인생샷 명당 & 촬영 꿀팁 3가지
-              </h4>
-            </div>
-            <span className="text-[10px] text-gray-400 font-medium shrink-0">실시간 AI 검증</span>
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded-full bg-[#c9a64c] text-[#1a1a2e] font-extrabold text-[10px] whitespace-nowrap">
+              📸 AI 꿀팁
+            </span>
+            <h4 className="text-xs font-extrabold text-[#c9a64c] truncate">
+              {briefingData.photoTip.title || '인스타 대박 인생샷 명당 좌표 & 촬영 팁'}
+            </h4>
           </div>
 
-          <div className="space-y-2.5">
-            {(briefingData.photoTips || (briefingData.photoTip ? [briefingData.photoTip] : [])).slice(0, 3).map((tip, idx) => (
-              <div key={idx} className="bg-white/5 backdrop-blur p-3 rounded-xl border border-white/10 space-y-1 text-xs">
-                {tip.title && (
-                  <div className="text-[#c9a64c] font-extrabold text-[11px] mb-1 flex items-center gap-1">
-                    <span>{tip.title}</span>
-                  </div>
-                )}
-                <p className="text-gray-200 leading-snug">
-                  📍 <strong className="text-[#c9a64c]">Best 포토존:</strong> {tip.location}
-                </p>
-                {tip.bestTime && (
-                  <p className="text-gray-300 leading-snug">
-                    ⏰ <strong className="text-[#c9a64c]">추천 시각:</strong> {tip.bestTime}
-                  </p>
-                )}
-                <div className="bg-white/10 backdrop-blur p-2 rounded-lg border border-white/5 text-[11px] text-gray-200 font-medium leading-relaxed mt-1">
-                  💡 <strong className="text-[#c9a64c]">촬영 팁:</strong> {tip.shootingTip}
-                </div>
-              </div>
-            ))}
+          <div className="space-y-1.5 text-xs">
+            <p className="text-gray-200">
+              📍 <strong className="text-[#c9a64c]">Best 포토존 위치:</strong> {briefingData.photoTip.location}
+            </p>
+            {briefingData.photoTip.bestTime && (
+              <p className="text-gray-200">
+                ⏰ <strong className="text-[#c9a64c]">추천 촬영 시각:</strong> {briefingData.photoTip.bestTime}
+              </p>
+            )}
+            <div className="bg-white/10 backdrop-blur p-2.5 rounded-xl border border-white/10 text-[11px] text-gray-200 font-medium leading-relaxed mt-1">
+              💡 <strong className="text-[#c9a64c]">촬영 팁:</strong> {briefingData.photoTip.shootingTip}
+            </div>
           </div>
         </div>
       )}

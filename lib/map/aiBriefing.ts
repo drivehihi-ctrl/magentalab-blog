@@ -205,6 +205,20 @@ async function fetchGeminiAIBriefingWithNaver(placeName: string, blogSnippets: s
   return null;
 }
 
+function getSinglePhotoTip(cleanQuery: string, geminiTips?: AIPhotoTip[]): AIPhotoTip {
+  if (geminiTips && geminiTips.length > 0 && geminiTips[0]?.location) {
+    return geminiTips[0];
+  }
+  const fallbacks = generateFallbackPhotoTips(cleanQuery);
+  let hash = 0;
+  for (let i = 0; i < cleanQuery.length; i++) {
+    hash = (hash << 5) - hash + cleanQuery.charCodeAt(i);
+    hash |= 0;
+  }
+  const index = Math.abs(hash) % fallbacks.length;
+  return fallbacks[index];
+}
+
 export async function getAIBriefingData(placeName: string, address?: string): Promise<AIBriefingData> {
   let locationKeyword = '';
   if (address) {
@@ -270,7 +284,7 @@ export async function getAIBriefingData(placeName: string, address?: string): Pr
           `실제 반려동물 보호자들이 만족하는 나들이 및 힐링 추천 스팟입니다.`
         ];
 
-        const photoTips: AIPhotoTip[] = geminiResult?.photoTips || generateFallbackPhotoTips(cleanQuery);
+        const selectedTip = getSinglePhotoTip(cleanQuery, geminiResult?.photoTips);
 
         let calculatedRating = 4.7;
         if (totalReviews > 500) calculatedRating = 4.9;
@@ -285,8 +299,8 @@ export async function getAIBriefingData(placeName: string, address?: string): Pr
           realImageUrl: realImageUrl || undefined,
           totalReviews,
           calculatedRating,
-          photoTip: photoTips[0],
-          photoTips,
+          photoTip: selectedTip,
+          photoTips: [selectedTip],
         };
       }
     }
@@ -294,7 +308,7 @@ export async function getAIBriefingData(placeName: string, address?: string): Pr
     console.error('Failed to fetch AI briefing:', error);
   }
 
-  const fallbackTips = generateFallbackPhotoTips(cleanQuery);
+  const selectedTip = getSinglePhotoTip(cleanQuery);
 
   // Fallback
   return {
@@ -312,7 +326,7 @@ export async function getAIBriefingData(placeName: string, address?: string): Pr
     naverSearchUrl,
     totalReviews: 142,
     calculatedRating: 4.8,
-    photoTip: fallbackTips[0],
-    photoTips: fallbackTips,
+    photoTip: selectedTip,
+    photoTips: [selectedTip],
   };
 }
