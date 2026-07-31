@@ -231,7 +231,7 @@ export default function AnsimLabCertification({ placeName, category, placeId }: 
                 {placeName}에 방문하셨나요?
               </p>
               <p className="text-xs text-purple-200/90 leading-relaxed mt-1">
-                직접 5가지 안심 항목을 체크하고 제보하시면 <strong className="text-amber-300">[안심 수석 연구원 🏅]</strong> 뱃지를 수여해 드립니다!
+                직접 8가지 안심 항목을 체크하고 제보하시면 <strong className="text-amber-300">[안심 수석 연구원 🏅]</strong> 뱃지를 수여해 드립니다!
               </p>
             </div>
           </div>

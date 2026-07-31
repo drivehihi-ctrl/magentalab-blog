@@ -9,7 +9,15 @@ export interface ReviewQuoteItem {
   link: string;
 }
 
+export interface ReviewQuoteItem {
+  quote: string;
+  author: string;
+  date: string;
+  link: string;
+}
+
 export interface AIPhotoTip {
+  title?: string;
   location: string;
   bestTime: string;
   shootingTip: string;
@@ -23,6 +31,7 @@ export interface AIBriefingData {
   totalReviews?: number;
   calculatedRating?: number;
   photoTip?: AIPhotoTip;
+  photoTips?: AIPhotoTip[];
 }
 
 function cleanHtml(text: string): string {
@@ -42,6 +51,29 @@ function formatDate(dateStr: string): string {
   const mm = dateStr.substring(4, 6);
   const dd = dateStr.substring(6, 8);
   return `${yyyy}.${mm}.${dd}`;
+}
+
+function generateFallbackPhotoTips(cleanQuery: string): AIPhotoTip[] {
+  return [
+    {
+      title: '📌 대표 메인 포토존',
+      location: `${cleanQuery} 입구 감성 통창 메인 벤치 & 시그니처 포토 존`,
+      bestTime: '햇살이 맑게 들어오는 오후 1시 ~ 3시',
+      shootingTip: '강아지를 의자 중앙에 편안하게 앉히고 보호자님이 눈높이를 맞춰 수평 구도로 찍으시면 인스타 대박 컷 완성!',
+    },
+    {
+      title: '🌅 감성 채광 & 야외 스팟',
+      location: `${cleanQuery} 야외 테라스 & 탁 트인 잔디 산책 공간`,
+      bestTime: '노을빛이 은은하게 쏟아지는 오후 4시 ~ 5시 (골든아워)',
+      shootingTip: '자연광을 측면으로 받고 로우 앵글로 촬영하시면 털 표면이 반짝이는 천사 컷을 담으실 수 있습니다.',
+    },
+    {
+      title: '💡 반려견 시선 맞춤 팁',
+      location: '실내 전용 라운지 아늑한 미니 방석 & 테이블 창가',
+      bestTime: '방문객이 비교적 한가한 평일 오전 또는 늦은 오후',
+      shootingTip: '카메라 렌즈 가까이에 아이가 좋아하는 간식을 올려두고 정면 샷을 찍으시면 심쿵 인생샷 완성!',
+    },
+  ];
 }
 
 /**
@@ -87,7 +119,7 @@ export async function getRealPlaceImageUrl(placeName: string, address?: string):
 
 interface GeminiAIBriefingResult {
   summaryBullets: string[];
-  photoTip?: AIPhotoTip;
+  photoTips?: AIPhotoTip[];
 }
 
 async function fetchGeminiAIBriefingWithNaver(placeName: string, blogSnippets: string[]): Promise<GeminiAIBriefingResult | null> {
@@ -96,22 +128,22 @@ async function fetchGeminiAIBriefingWithNaver(placeName: string, blogSnippets: s
 
     const snippetText = blogSnippets.join('\n- ');
     const prompt = `너는 대한민국 대표 반려동물 연구소 '마젠타랩(MagentaLab)'의 수석 AI 분석가야.
-다음 장소에 대해 네이버 블로거들이 직접 작성한 실제 반려동물 동반 방문 후기 내용을 바탕으로 4줄짜리 명확하고 객관적인 AI 브리핑 요약 및 실제 후기 기반의 포토존/인생샷 촬영 팁을 작성해줘.
+다음 장소에 대해 네이버 블로거들이 직접 작성한 실제 반려동물 동반 방문 후기 내용을 바탕으로 4줄짜리 명확하고 객관적인 AI 브리핑 요약 및 실제 후기 기반의 서로 다른 3가지 인생샷 포토존/촬영 팁을 작성해줘.
 
 [대상 장소]: ${placeName}
 [실제 네이버 블로그 반려동물 동반 후기글들]:
 - ${snippetText}
 
-[핵심 작성 규칙 - 상투적인 인사말 절대 금지 & 100% 실체 후기 및 주차 정보 구성]:
+[핵심 작성 규칙 - 상투적인 인사말 절대 금지 & 100% 실체 후기 및 3가지 포토존 팁 구성]:
 1. summaryBullets (4문장):
    - 첫 번째 문장: 해당 장소의 '주차장 정보(주차 가능 여부, 전용 주차장 공간 및 주차 편의성)'를 팩트 기반 1문장으로 작성해. (만약 후기에 주차 언급이 전혀 없으면 실제 반려동물 방문 후기 요약 1문장으로 작성)
    - 두 번째 문장: 실제 반려동물을 데리고 간 보호자들이 호평하는 실내외 분위기, 청결도 및 반려견 우대 반응 1문장.
    - 세 번째 문장: 실제 보호자가 직접 체험한 반려견 출입 편의성(소형/대형견, 운동장, 개별펜스/울타리, 매너벨트 수칙 등) 팩트 검증 1문장.
    - 네 번째 문장: 실제 보호자가 알아두면 유용한 방문 팁 및 현장 안내 1문장.
-2. photoTip (실제 리뷰에서 언급되거나 추론되는 포토존 및 촬영 팁):
-   - location: 블로그 리뷰들에서 실제 언급되거나 시그니처로 유추되는 대표 포토존/촬영 위치 1곳
-   - bestTime: 리뷰에서 추천하는 방문 시간대나 채광/노을 분위기
-   - shootingTip: 실제 반려견 방문 후기 기반 구체적 사진 촬영 노하우 1문장
+2. photoTips (실제 리뷰에서 언급되거나 추론되는 서로 다른 3가지 맞춤 포토존/촬영 팁 배열):
+   - 1번째 팁 (메인 명당): title="📌 대표 메인 포토존", location=실제 후기 언급 메인 스팟/벤치, bestTime=추천 촬영 시각, shootingTip=구도 노하우 1문장
+   - 2번째 팁 (감성 채광): title="🌅 감성 채광 & 야외 스팟", location=창가/자연광/잔디밭 스팟, bestTime=채광 좋은 시간대, shootingTip=배경 연출 팁 1문장
+   - 3번째 팁 (시선 맞춤): title="💡 반려견 시선 맞춤 팁", location=방석/테이블/안전 공간, bestTime=한가한 방문 타임, shootingTip=간식 유도 및 수평 구도 팁 1문장
 
 반드시 다른 설명 없이 아래 형태의 순수한 JSON으로만 반환해줘:
 {
@@ -121,11 +153,26 @@ async function fetchGeminiAIBriefingWithNaver(placeName: string, blogSnippets: s
     "실제 반려동물 보호자 방문 후기 (시설/펜스/동반편의성) 1문장",
     "실제 보호자 현장 방문 팁 및 안내 1문장"
   ],
-  "photoTip": {
-    "location": "실제 후기 언급 메인 포토존/스팟 위치",
-    "bestTime": "추천 촬영 시각 및 분위기",
-    "shootingTip": "실제 보호자 후기 기반 구체적 사진 촬영 팁 1문장"
-  }
+  "photoTips": [
+    {
+      "title": "📌 대표 메인 포토존",
+      "location": "실제 후기 언급 메인 포토존 위치",
+      "bestTime": "추천 촬영 시각 및 채광 타임",
+      "shootingTip": "구체적 촬영 구도 및 노하우 1문장"
+    },
+    {
+      "title": "🌅 감성 채광 & 야외 스팟",
+      "location": "자연광/창가/야외 등 감성 스팟",
+      "bestTime": "채광 및 햇살/조명 좋은 시간대",
+      "shootingTip": "자연스러운 배경 연출 팁 1문장"
+    },
+    {
+      "title": "💡 반려견 시선 맞춤 팁",
+      "location": "아이 편안한 장소/방석/잔디밭",
+      "bestTime": "방문객 한가한 힐링 시간대",
+      "shootingTip": "간식 유도 및 수평 구도 촬영 팁 1문장"
+    }
+  ]
 }`;
 
     const res = await fetch(url, {
@@ -144,9 +191,10 @@ async function fetchGeminiAIBriefingWithNaver(placeName: string, blogSnippets: s
       if (rawText) {
         const parsed = JSON.parse(rawText);
         if (parsed.summaryBullets && Array.isArray(parsed.summaryBullets)) {
+          const tipsArray = Array.isArray(parsed.photoTips) && parsed.photoTips.length > 0 ? parsed.photoTips : undefined;
           return {
             summaryBullets: parsed.summaryBullets,
-            photoTip: parsed.photoTip && parsed.photoTip.location ? parsed.photoTip : undefined,
+            photoTips: tipsArray,
           };
         }
       }
@@ -222,11 +270,7 @@ export async function getAIBriefingData(placeName: string, address?: string): Pr
           `실제 반려동물 보호자들이 만족하는 나들이 및 힐링 추천 스팟입니다.`
         ];
 
-        const photoTip: AIPhotoTip = geminiResult?.photoTip || {
-          location: `${cleanQuery} 실내외 대표 포토존 및 채광 창가`,
-          bestTime: '실내 채광이 좋은 낮 1시 ~ 3시 또는 늦은 오후',
-          shootingTip: '실제 블로그 후기에 따르면 강아지 눈높이에 맞춰 수평 구도로 찍으시면 예쁜 인생샷을 남길 수 있습니다.'
-        };
+        const photoTips: AIPhotoTip[] = geminiResult?.photoTips || generateFallbackPhotoTips(cleanQuery);
 
         let calculatedRating = 4.7;
         if (totalReviews > 500) calculatedRating = 4.9;
@@ -241,13 +285,16 @@ export async function getAIBriefingData(placeName: string, address?: string): Pr
           realImageUrl: realImageUrl || undefined,
           totalReviews,
           calculatedRating,
-          photoTip,
+          photoTip: photoTips[0],
+          photoTips,
         };
       }
     }
   } catch (error) {
     console.error('Failed to fetch AI briefing:', error);
   }
+
+  const fallbackTips = generateFallbackPhotoTips(cleanQuery);
 
   // Fallback
   return {
@@ -265,10 +312,7 @@ export async function getAIBriefingData(placeName: string, address?: string): Pr
     naverSearchUrl,
     totalReviews: 142,
     calculatedRating: 4.8,
-    photoTip: {
-      location: `${cleanQuery} 대표 메인 포토존`,
-      bestTime: '햇살이 밝은 낮 시간대',
-      shootingTip: '반려견의 눈높이에 카메라 수평을 맞추고 정면 샷을 찍으시면 예쁜 인생샷을 남길 수 있습니다.'
-    }
+    photoTip: fallbackTips[0],
+    photoTips: fallbackTips,
   };
 }
