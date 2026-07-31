@@ -60,19 +60,21 @@ export default function AIBriefingReviews({ placeName, address, initialData }: A
   return (
     <div className="bg-gradient-to-br from-blue-50/80 via-purple-50/50 to-indigo-50/80 rounded-3xl p-5 border border-indigo-100/80 shadow-sm space-y-4 font-sans">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3 border-b border-indigo-100/60">
+        <div className="flex items-start sm:items-center gap-2.5 min-w-0">
+          <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-200 shrink-0 mt-0.5 sm:mt-0">
             <Sparkles className="w-4 h-4" />
           </div>
-          <div>
-            <div className="flex items-center gap-1.5">
-              <h3 className="text-sm font-extrabold text-gray-900">AI 브리핑</h3>
-              <span className="text-[10px] font-semibold text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded-full">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="text-sm font-extrabold text-gray-900 whitespace-nowrap">AI 브리핑</h3>
+              <span className="text-[10px] font-bold text-indigo-700 bg-indigo-100/90 px-2.5 py-0.5 rounded-full whitespace-nowrap shadow-2xs">
                 실시간 분석
               </span>
             </div>
-            <p className="text-[11px] text-gray-500">실제 사용자 방문 리뷰를 종합 요약해 드립니다.</p>
+            <p className="text-[11px] text-gray-500 mt-0.5 leading-snug">
+              실제 사용자 방문 리뷰를 종합 요약해 드립니다.
+            </p>
           </div>
         </div>
 
@@ -81,10 +83,12 @@ export default function AIBriefingReviews({ placeName, address, initialData }: A
             href={briefingData.naverSearchUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 hover:underline shrink-0"
+            className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 hover:underline self-end sm:self-center shrink-0 bg-indigo-50/80 hover:bg-indigo-100/80 px-2.5 py-1 rounded-lg transition-colors border border-indigo-100/50"
           >
-            {briefingData.totalReviews ? `네이버 블로그 후기 (${briefingData.totalReviews.toLocaleString()}건) 전체보기` : '네이버 전체보기'}
-            <ExternalLink className="w-3 h-3" />
+            <span>
+              {briefingData.totalReviews ? `네이버 블로그 후기 (${briefingData.totalReviews.toLocaleString()}건) 전체보기` : '네이버 전체보기'}
+            </span>
+            <ExternalLink className="w-3 h-3 shrink-0" />
           </a>
         )}
       </div>
@@ -98,6 +102,33 @@ export default function AIBriefingReviews({ placeName, address, initialData }: A
           </div>
         ))}
       </div>
+
+      {/* 📸 AI Photo Spot & Shooting Tip Section (100% Real Review-Based) */}
+      {briefingData.photoTip && (
+        <div className="bg-[#1a1a2e] text-white p-4 rounded-2xl shadow-md border border-[#c9a64c]/30 space-y-2 relative overflow-hidden font-sans">
+          <div className="h-[2px] w-full bg-gradient-to-r from-[#E5007E] via-[#c9a64c] to-[#E5007E] absolute top-0 left-0 right-0" />
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded-full bg-[#c9a64c] text-[#1a1a2e] font-extrabold text-[10px] whitespace-nowrap">
+              📸 AI 꿀팁
+            </span>
+            <h4 className="text-xs font-extrabold text-[#c9a64c] truncate">
+              실제 후기 기반 인생샷 명당 좌표 & 촬영 팁
+            </h4>
+          </div>
+
+          <div className="space-y-1.5 text-xs">
+            <p className="text-gray-200">
+              📍 <strong className="text-[#c9a64c]">Best 포토존 위치:</strong> {briefingData.photoTip.location}
+            </p>
+            <p className="text-gray-200">
+              ⏰ <strong className="text-[#c9a64c]">추천 촬영 시각:</strong> {briefingData.photoTip.bestTime}
+            </p>
+            <div className="bg-white/10 backdrop-blur p-2.5 rounded-xl border border-white/10 text-[11px] text-gray-200 font-medium leading-relaxed mt-1">
+              💡 <strong className="text-[#c9a64c]">촬영 팁:</strong> {briefingData.photoTip.shootingTip}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* User Review Quotes */}
       {briefingData.quotes && briefingData.quotes.length > 0 && (

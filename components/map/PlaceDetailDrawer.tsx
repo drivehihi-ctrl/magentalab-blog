@@ -254,35 +254,8 @@ export default function PlaceDetailDrawer({ place, onClose, isFavorite, onToggle
           placeId={place.id}
         />
 
-        {/* AI Briefing Review Section */}
+        {/* AI Briefing Review Section (includes Real Review AI Photo Tip) */}
         <AIBriefingReviews placeName={place.name} address={place.address} />
-
-        {/* 📸 AI Photo Spot & Shooting Tip Section (Hani-inspired design) */}
-        {!isHospital && (
-          <div className="bg-[#1a1a2e] text-white p-4 sm:p-5 rounded-2xl shadow-md border border-[#c9a64c]/30 space-y-2.5 relative overflow-hidden">
-            <div className="h-[2px] w-full bg-gradient-to-r from-[#E5007E] via-[#c9a64c] to-[#E5007E] absolute top-0 left-0 right-0" />
-            <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-[#c9a64c] text-[#1a1a2e] font-extrabold text-[10px]">
-                📸 AI 꿀팁
-              </span>
-              <h4 className="text-xs font-extrabold text-[#c9a64c]">
-                인스타 대박 인생샷 명당 좌표 & 촬영 팁
-              </h4>
-            </div>
-
-            <div className="space-y-1.5 text-xs">
-              <p className="text-gray-200">
-                📍 <strong className="text-[#c9a64c]">Best 포토존 위치:</strong> {photoInfo.location}
-              </p>
-              <p className="text-gray-200">
-                ⏰ <strong className="text-[#c9a64c]">추천 촬영 시각:</strong> {photoInfo.bestTime}
-              </p>
-              <div className="bg-white/10 backdrop-blur p-2.5 rounded-xl border border-white/10 text-[11px] text-gray-200 font-medium leading-relaxed mt-1">
-                💡 <strong className="text-[#c9a64c]">촬영 팁:</strong> {photoInfo.shootingTip}
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* KakaoTalk 1-Second Share Button */}
         <div className="pt-2">

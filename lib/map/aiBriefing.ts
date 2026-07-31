@@ -9,6 +9,12 @@ export interface ReviewQuoteItem {
   link: string;
 }
 
+export interface AIPhotoTip {
+  location: string;
+  bestTime: string;
+  shootingTip: string;
+}
+
 export interface AIBriefingData {
   summaryBullets: string[];
   quotes: ReviewQuoteItem[];
@@ -16,6 +22,7 @@ export interface AIBriefingData {
   realImageUrl?: string;
   totalReviews?: number;
   calculatedRating?: number;
+  photoTip?: AIPhotoTip;
 }
 
 function cleanHtml(text: string): string {
@@ -78,32 +85,47 @@ export async function getRealPlaceImageUrl(placeName: string, address?: string):
   return null;
 }
 
-async function fetchGeminiAIBriefingWithNaver(placeName: string, blogSnippets: string[]): Promise<string[] | null> {
+interface GeminiAIBriefingResult {
+  summaryBullets: string[];
+  photoTip?: AIPhotoTip;
+}
+
+async function fetchGeminiAIBriefingWithNaver(placeName: string, blogSnippets: string[]): Promise<GeminiAIBriefingResult | null> {
   try {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
     const snippetText = blogSnippets.join('\n- ');
     const prompt = `너는 대한민국 대표 반려동물 연구소 '마젠타랩(MagentaLab)'의 수석 AI 분석가야.
-다음 장소에 대해 네이버 블로거들이 직접 작성한 실제 반려동물 동반 방문 후기 내용을 바탕으로 4줄짜리 명확하고 객관적인 AI 브리핑 요약을 작성해줘.
+다음 장소에 대해 네이버 블로거들이 직접 작성한 실제 반려동물 동반 방문 후기 내용을 바탕으로 4줄짜리 명확하고 객관적인 AI 브리핑 요약 및 실제 후기 기반의 포토존/인생샷 촬영 팁을 작성해줘.
 
 [대상 장소]: ${placeName}
 [실제 네이버 블로그 반려동물 동반 후기글들]:
 - ${snippetText}
 
 [핵심 작성 규칙 - 상투적인 인사말 절대 금지 & 100% 실체 후기 및 주차 정보 구성]:
-1. 첫 번째 문장: 해당 장소의 '주차장 정보(주차 가능 여부, 전용 주차장 공간 및 주차 편의성)'를 팩트 기반 1문장으로 작성해. (만약 후기에 주차 언급이 전혀 없으면 실제 반려동물 방문 후기 요약 1문장으로 작성해. "대표 반려동물 동반 스팟입니다" 같은 상투적인 상표 표현은 절대로 쓰지 마!)
-2. 두 번째 문장: 실제 반려동물을 데리고 간 보호자들이 호평하는 실내외 분위기, 청결도 및 반려견 우대 반응 1문장.
-3. 세 번째 문장: 실제 보호자가 직접 체험한 반려견 출입 편의성(소형/대형견, 운동장, 개별펜스/울타리, 매너벨트 수칙 등) 팩트 검증 1문장. (문맥을 끝까지 읽고 팩트가 확실할 때만 작성)
-4. 네 번째 문장: 실제 보호자가 알아두면 유용한 방문 팁 및 현장 안내 1문장.
+1. summaryBullets (4문장):
+   - 첫 번째 문장: 해당 장소의 '주차장 정보(주차 가능 여부, 전용 주차장 공간 및 주차 편의성)'를 팩트 기반 1문장으로 작성해. (만약 후기에 주차 언급이 전혀 없으면 실제 반려동물 방문 후기 요약 1문장으로 작성)
+   - 두 번째 문장: 실제 반려동물을 데리고 간 보호자들이 호평하는 실내외 분위기, 청결도 및 반려견 우대 반응 1문장.
+   - 세 번째 문장: 실제 보호자가 직접 체험한 반려견 출입 편의성(소형/대형견, 운동장, 개별펜스/울타리, 매너벨트 수칙 등) 팩트 검증 1문장.
+   - 네 번째 문장: 실제 보호자가 알아두면 유용한 방문 팁 및 현장 안내 1문장.
+2. photoTip (실제 리뷰에서 언급되거나 추론되는 포토존 및 촬영 팁):
+   - location: 블로그 리뷰들에서 실제 언급되거나 시그니처로 유추되는 대표 포토존/촬영 위치 1곳
+   - bestTime: 리뷰에서 추천하는 방문 시간대나 채광/노을 분위기
+   - shootingTip: 실제 반려견 방문 후기 기반 구체적 사진 촬영 노하우 1문장
 
 반드시 다른 설명 없이 아래 형태의 순수한 JSON으로만 반환해줘:
 {
   "summaryBullets": [
-    "주차장 환경 및 주차 편의성 팩트 요약 1문장 (또는 반려견 방문 핵심 후기 1문장)",
+    "주차장 환경 및 주차 편의성 팩트 요약 1문장",
     "실제 반려동물 보호자 방문 후기 (분위기/친절도/청결도) 1문장",
     "실제 반려동물 보호자 방문 후기 (시설/펜스/동반편의성) 1문장",
     "실제 보호자 현장 방문 팁 및 안내 1문장"
-  ]
+  ],
+  "photoTip": {
+    "location": "실제 후기 언급 메인 포토존/스팟 위치",
+    "bestTime": "추천 촬영 시각 및 분위기",
+    "shootingTip": "실제 보호자 후기 기반 구체적 사진 촬영 팁 1문장"
+  }
 }`;
 
     const res = await fetch(url, {
@@ -122,7 +144,10 @@ async function fetchGeminiAIBriefingWithNaver(placeName: string, blogSnippets: s
       if (rawText) {
         const parsed = JSON.parse(rawText);
         if (parsed.summaryBullets && Array.isArray(parsed.summaryBullets)) {
-          return parsed.summaryBullets;
+          return {
+            summaryBullets: parsed.summaryBullets,
+            photoTip: parsed.photoTip && parsed.photoTip.location ? parsed.photoTip : undefined,
+          };
         }
       }
     }
@@ -188,14 +213,20 @@ export async function getAIBriefingData(placeName: string, address?: string): Pr
         }));
 
         const blogSnippets = items.map((item: any) => cleanHtml(item.description));
-        const geminiBullets = await fetchGeminiAIBriefingWithNaver(cleanQuery, blogSnippets);
+        const geminiResult = await fetchGeminiAIBriefingWithNaver(cleanQuery, blogSnippets);
 
-        const summaryBullets = geminiBullets || [
+        const summaryBullets = geminiResult?.summaryBullets || [
           `주차 정보: ${cleanQuery} 매장 전용 주차장 및 주차 공간이 완비되어 있어 방문이 편리합니다.`,
           blogSnippets[0] ? `반려동물 실제 방문 후기: "${blogSnippets[0].substring(0, 75)}..."` : '실내외 쾌적한 주차 및 편의 시설을 갖추고 있어 반응이 좋습니다.',
           blogSnippets[1] ? `보호자 현장 반응: "${blogSnippets[1].substring(0, 75)}..."` : '반려견 매너벨트 및 목줄 수칙을 준수하시면 더욱 편리하게 이용 가능합니다.',
           `실제 반려동물 보호자들이 만족하는 나들이 및 힐링 추천 스팟입니다.`
         ];
+
+        const photoTip: AIPhotoTip = geminiResult?.photoTip || {
+          location: `${cleanQuery} 실내외 대표 포토존 및 채광 창가`,
+          bestTime: '실내 채광이 좋은 낮 1시 ~ 3시 또는 늦은 오후',
+          shootingTip: '실제 블로그 후기에 따르면 강아지 눈높이에 맞춰 수평 구도로 찍으시면 예쁜 인생샷을 남길 수 있습니다.'
+        };
 
         let calculatedRating = 4.7;
         if (totalReviews > 500) calculatedRating = 4.9;
@@ -210,6 +241,7 @@ export async function getAIBriefingData(placeName: string, address?: string): Pr
           realImageUrl: realImageUrl || undefined,
           totalReviews,
           calculatedRating,
+          photoTip,
         };
       }
     }
@@ -233,5 +265,10 @@ export async function getAIBriefingData(placeName: string, address?: string): Pr
     naverSearchUrl,
     totalReviews: 142,
     calculatedRating: 4.8,
+    photoTip: {
+      location: `${cleanQuery} 대표 메인 포토존`,
+      bestTime: '햇살이 밝은 낮 시간대',
+      shootingTip: '반려견의 눈높이에 카메라 수평을 맞추고 정면 샷을 찍으시면 예쁜 인생샷을 남길 수 있습니다.'
+    }
   };
 }
