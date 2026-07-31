@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Calculator, Activity, HeartPulse, ShieldAlert, Zap, Stethoscope, ArrowRight, Sparkles } from 'lucide-react';
+import { Calculator, Activity, HeartPulse, Droplets, Zap, Stethoscope, ArrowRight, Sparkles } from 'lucide-react';
 
 interface ToolItem {
   id: string;
@@ -48,13 +48,13 @@ const HEALTH_TOOLS: ToolItem[] = [
   },
   {
     id: 'dm',
-    title: 'DM 척수증 진단',
-    subtitle: '보행 장애 & 뒷다리 마비 신경 증상 체크',
+    title: '사료 DM & 음수량 계산기',
+    subtitle: '사료 건물(DM) 성분비 환산 & 하루 필수 음수량 산출',
     href: '/dm-calculator',
-    badge: '신경 질환',
-    icon: ShieldAlert,
-    gradient: 'from-amber-500 to-orange-600',
-    badgeBg: 'bg-amber-100 text-amber-800 border-amber-200',
+    badge: '영양 / 음수량',
+    icon: Droplets,
+    gradient: 'from-sky-500 to-blue-600',
+    badgeBg: 'bg-sky-100 text-sky-800 border-sky-200',
   },
   {
     id: 'emergency',
