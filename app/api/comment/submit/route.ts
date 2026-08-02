@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { post, author_name, author_email, content } = body;
+    const { post, author_name, author_email, content, is_approved } = body;
 
     if (!post || !author_name || !content) {
       return NextResponse.json(
