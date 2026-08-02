@@ -13,16 +13,16 @@ export async function POST(req: Request) {
       );
     }
 
-    // Supabase에 댓글 저장
+    // Supabase에 댓글/질문 저장
     const { data, error } = await supabase
       .from("comments")
       .insert([
         {
-          post_id: parseInt(post),
+          post_id: parseInt(post) || 8888,
           author_name,
-          author_email,
+          author_email: author_email || "ask_ansimi@magentalab.com",
           content,
-          is_approved: true, // 즉시 표시되도록 설정
+          is_approved: is_approved !== undefined ? is_approved : true,
         },
       ])
       .select();

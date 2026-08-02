@@ -50,17 +50,17 @@ export default function AskAnsimiClient() {
     setIsLoading(true);
     setAiAnswer(null);
 
-    // Silently log inquiry to DB so owner can inspect user questions
+    // Save inquiry to Supabase comments table (post_id: 8888) so owner can view in Supabase dashboard
     try {
-      fetch('/api/emergency-log', {
+      fetch('/api/comment/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          type: 'ASK_ANSIMI_INQUIRY',
-          petType,
-          petName,
-          question,
-          created_at: new Date().toISOString(),
+          post: 8888,
+          author_name: `[${petType === 'dog' ? '강아지' : '고양이'}] ${petName.trim() || '보호자님'}`,
+          author_email: 'ask_ansimi@magentalab.com',
+          content: `[안심이 1:1 질문] ${question}`,
+          is_approved: false, // 비공개 저장 (Supabase DB 관리자 화면에서 확인 가능)
         }),
       }).catch(() => {});
     } catch (err) {
