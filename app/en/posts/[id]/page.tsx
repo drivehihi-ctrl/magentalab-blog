@@ -152,25 +152,7 @@ export default async function EnglishPostDetailPage({ params }: PageProps) {
 
   // If the post is not an English post (meaning the translation doesn't exist yet)
   if (fallbackPost.slug && !fallbackPost.slug.endsWith("-en")) {
-    return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center px-4 text-center">
-        <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-          <span className="text-3xl">🌍</span>
-        </div>
-        <h1 className="text-2xl md:text-3xl font-black text-gray-900 mb-4">
-          Translation in Progress
-        </h1>
-        <p className="text-gray-600 mb-8 max-w-md">
-          This article is currently being translated into English by our research team. Please check back later!
-        </p>
-        <Link 
-          href={`/posts/${fallbackPost.slug}`}
-          className="px-6 py-3 bg-[#E5007E] text-white font-bold rounded-full hover:bg-[#c0006a] transition-colors"
-        >
-          View Original Article (Korean)
-        </Link>
-      </div>
-    );
+    permanentRedirect(`/posts/${fallbackPost.slug}`);
   }
 
   // From here on we know post exists and is an English post
