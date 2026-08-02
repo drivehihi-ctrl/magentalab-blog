@@ -5,7 +5,7 @@ import RelatedPosts from "@/components/RelatedPosts";
 import { getPosts } from "@/lib/wp";
 
 export const metadata: Metadata = {
-  title: "ペット年齢の人間換算＆健康ライフステージ計算機 | マゼンタラボ",
+  title: "ペット年齢の人間換算＆健康ライフステージ計算機 | マゼンタラボ (JP)",
   description: "愛犬・愛猫の年齢を人間年齢に素早く換算し、幼少期・成犬期・高齢シニア期に最適化された予防ケア情報を提供します。",
   alternates: {
     canonical: "https://www.magentalabblog.com/ja/age-calculator",
@@ -17,8 +17,8 @@ export const metadata: Metadata = {
   },
   keywords: ["ペットの人間年齢", "犬の年齢換算", "猫の年齢換算", "ペットライフステージ", "シニア犬ケア", "シニア猫ヘルス", "マゼンタラボ"],
   openGraph: {
-    title: "ペット年齢の人間換상＆健康ライフステージ計算機 | マゼンタラボ",
-    description: "誕生年月を入力するだけで、ペットの本当의 年齢を人間用へ換算し、最適な獣医ケアアドバイスを提示します。",
+    title: "ペット年齢の人間換算＆健康ライフステージ計算機 | マゼンタラボ (JP)",
+    description: "誕生年月を入力するだけで、ペットの本当の年齢を人間用へ換算し、最適な獣医ケアアドバイスを提示します。",
     url: "https://www.magentalabblog.com/ja/age-calculator",
     type: "website",
     images: [

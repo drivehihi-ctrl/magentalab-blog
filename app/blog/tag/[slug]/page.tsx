@@ -8,11 +8,14 @@ import React from "react";
 export const revalidate = 86400;
 
 export async function generateMetadata({ 
-  params 
+  params,
+  searchParams
 }: { 
-  params: Promise<{ slug: string }> 
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ page?: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+  const { page } = await searchParams;
   const decodedSlug = decodeURIComponent(slug);
   
   const currentTag = await getTagBySlugOrName(decodedSlug);
@@ -22,19 +25,28 @@ export async function generateMetadata({
   }
 
   const tagName = decodeHtmlEntities(currentTag.name);
-  const title = `${tagName} 핵심 정보 모음 - 마젠타랩`;
-  const description = `반려견, 반려묘의 ${tagName} 관련 전문 연구 데이터와 핵심 정보를 마젠타랩에서 확인하세요.`;
+  let title = `${tagName} 핵심 정보 모음 - 마젠타랩`;
+  let description = `반려견, 반려묘의 ${tagName} 관련 전문 연구 데이터와 핵심 정보를 마젠타랩에서 확인하세요.`;
+
+  if (page && page !== "1") {
+    title += ` (${page}페이지)`;
+    description += ` (${page}페이지 목록)`;
+  }
+
+  const canonicalUrl = page && page !== "1"
+    ? `https://www.magentalabblog.com/blog/tag/${slug}?page=${page}`
+    : `https://www.magentalabblog.com/blog/tag/${slug}`;
 
   return {
     title,
     description,
     alternates: {
-      canonical: `https://www.magentalabblog.com/blog/tag/${slug}`,
+      canonical: canonicalUrl,
     },
     openGraph: {
       title,
       description,
-      url: `https://www.magentalabblog.com/blog/tag/${slug}`,
+      url: canonicalUrl,
       type: "website",
     },
     twitter: {
