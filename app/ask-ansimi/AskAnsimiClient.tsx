@@ -52,7 +52,7 @@ export default function AskAnsimiClient() {
 
     // Save inquiry to Supabase comments table (post_id: 8888) so owner can view in Supabase dashboard
     try {
-      fetch('/api/comment/submit', {
+      await fetch('/api/comment/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -62,9 +62,9 @@ export default function AskAnsimiClient() {
           content: `[안심이 1:1 질문] ${question}`,
           is_approved: false, // 비공개 저장 (Supabase DB 관리자 화면에서 확인 가능)
         }),
-      }).catch(() => {});
+      });
     } catch (err) {
-      // Ignore background log errors
+      console.error("Inquiry DB save error:", err);
     }
 
     // Present instant intelligent Ansim-i advice to the user

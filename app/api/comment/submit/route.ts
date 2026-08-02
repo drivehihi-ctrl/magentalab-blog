@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
+);
 
 export async function POST(req: Request) {
   try {
@@ -14,7 +19,7 @@ export async function POST(req: Request) {
     }
 
     // Supabase에 댓글/질문 저장
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from("comments")
       .insert([
         {
