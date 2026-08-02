@@ -6,9 +6,8 @@ import {
   Trash2, Edit, Plus, X, 
   Settings, ImageIcon, Search, 
   Download, Upload, CheckCircle2,
-  FileText, Sparkles, Link as LinkIcon, Factory, Video, Palette
+  FileText, Sparkles, Link as LinkIcon, Video, Palette
 } from "lucide-react";
-import AICommentAssistant from "@/components/AICommentAssistant";
 
 // --- Types ---
 interface ProductOption { name: string; price?: number; stock?: number; }
@@ -288,10 +287,8 @@ export default function ShopAdminPage() {
               </>
             ) : activeTab === 'banners' ? (
               <button onClick={() => { setIsEditingBanner(true); setCurrentBanner({ image_url: "", link_url: "", order_index: 0, is_active: true }); }} style={primaryBtnStyle}>+ 배너 등록</button>
-            ) : activeTab === 'care-guides' ? (
-              <button onClick={() => { setIsEditingCareGuide(true); setCurrentCareGuide({ title: "", subtitle: "", emoji: "🐾", gradient: "linear-gradient(135deg, #E5007E 0%, #FF6B9D 100%)", video_url: "", order_index: 0, product_id: null }); }} style={primaryBtnStyle}>+ 케어 가이드 등록</button>
             ) : (
-              <div style={{ color: '#98A2B3', fontSize: '13px' }}>AI 페르소나 댓글 생성기 가동 중... 🧪</div>
+              <button onClick={() => { setIsEditingCareGuide(true); setCurrentCareGuide({ title: "", subtitle: "", emoji: "🐾", gradient: "linear-gradient(135deg, #E5007E 0%, #FF6B9D 100%)", video_url: "", order_index: 0, product_id: null }); }} style={primaryBtnStyle}>+ 케어 가이드 등록</button>
             )}
           </div>
         </header>
@@ -301,7 +298,6 @@ export default function ShopAdminPage() {
           <button onClick={() => setActiveTab('products')} style={{ ...tabBtnStyle, color: activeTab === 'products' ? '#00C73C' : '#98A2B3', borderBottom: activeTab === 'products' ? '2px solid #00C73C' : 'none' }}>상품 관리</button>
           <button onClick={() => setActiveTab('banners')} style={{ ...tabBtnStyle, color: activeTab === 'banners' ? '#00C73C' : '#98A2B3', borderBottom: activeTab === 'banners' ? '2px solid #00C73C' : 'none' }}>메인 배너 관리</button>
           <button onClick={() => setActiveTab('care-guides')} style={{ ...tabBtnStyle, color: activeTab === 'care-guides' ? '#00C73C' : '#98A2B3', borderBottom: activeTab === 'care-guides' ? '2px solid #00C73C' : 'none' }}>케어 가이드 관리</button>
-          <button onClick={() => setActiveTab('ai-factory')} style={{ ...tabBtnStyle, color: activeTab === 'ai-factory' ? '#E5007E' : '#98A2B3', borderBottom: activeTab === 'ai-factory' ? '2px solid #E5007E' : 'none' }}>AI 댓글 공장</button>
         </div>
 
         {activeTab === 'products' && (
@@ -768,13 +764,6 @@ export default function ShopAdminPage() {
               </div>
             )}
           </>
-        )}
-
-        {activeTab === 'ai-factory' && (
-          <div style={{ background: '#1D2939', borderRadius: '24px', padding: '40px', border: '1px solid #344054' }}>
-            <SectionTitle icon={Factory} title="AI 댓글 공장" sub="안심이 AI가 5인 5색 페르소나 댓글을 찍어냅니다." />
-            <AICommentAssistant variant="admin" />
-          </div>
         )}
       </div>
     </div>
