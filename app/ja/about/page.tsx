@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { getPosts } from "@/lib/wp";
 import RelatedPosts from "@/components/RelatedPosts";
+import AboutEEATFeatures from "@/components/AboutEEATFeatures";
 
 export const metadata: Metadata = {
   title: "研究所紹介 | Magentalab",
@@ -97,6 +98,7 @@ export default async function JaAboutPage() {
             </ul>
           </div>
 
+          <AboutEEATFeatures lang="ja" />
           <RelatedPosts posts={relatedPosts} lang="ja" />
         </div>
       </div>

@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { getPageBySlug, fixWpLinks, getPosts } from "@/lib/wp";
 import { notFound } from "next/navigation";
 import RelatedPosts from "@/components/RelatedPosts";
+import AboutEEATFeatures from "@/components/AboutEEATFeatures";
 
 export const metadata: Metadata = {
   title: "연구소 소개 | Magentalab",
@@ -69,6 +70,7 @@ export default async function AboutPage() {
               ) 
             }}
           />
+          <AboutEEATFeatures lang="ko" />
           <RelatedPosts posts={relatedPosts} />
         </div>
       </div>
