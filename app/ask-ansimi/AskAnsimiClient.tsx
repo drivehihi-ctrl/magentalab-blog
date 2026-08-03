@@ -255,7 +255,7 @@ export default function AskAnsimiClient() {
                 <span className="text-[#E5007E]">3.</span> 🚨 응급 상황(Emergency) 발생 시 즉시 대처 지침
               </h4>
               <p className="text-gray-600 leading-relaxed text-[12px] sm:text-xs">
-                지속적인 유색 구토(초록색/검은색), 혈변, 갑작스러운 호흡 곤란, 체온 저하, 잇몸 창백함 등의 위급 증상이 동반될 경우 온라인 상담을 대기하지 마시고, 당사 <strong>'긴급 상황 가이드'</strong> 모듈을 참고하신 후 24시 응급 동물병원으로 즉시 내원하셔야 합니다.
+                지속적인 유색 구토(초록색/검은색), 혈변, 갑작스러운 호흡 곤란, 체온 저하, 잇몸 창백함 등의 위급 증상이나 초콜릿·양파 등 독성 물질 섭취 시 온라인 상담을 대기하지 마시고, 당사 <strong>'독성 위험 물질 계산기'</strong> 모듈을 참고하시거나 가까운 24시 응급 동물병원으로 즉시 내원하셔야 합니다.
               </p>
             </div>
           </div>
