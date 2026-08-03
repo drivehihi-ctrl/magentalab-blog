@@ -62,7 +62,7 @@ export default function Header() {
     ageLink: isEn ? "/en/age-calculator" : isJa ? "/ja/age-calculator" : "/age-calculator",
     dm: isEn ? "DM Calculator" : isJa ? "栄養＆飲水量" : "영양 & 음수량",
     dmLink: isEn ? "/en/dm-calculator" : isJa ? "/ja/dm-calculator" : "/dm-calculator",
-    emergency: isEn ? "Emergency Guide" : isJa ? "応急計算機" : "응급 계산기",
+    emergency: isEn ? "Toxicity Calculator" : isJa ? "中毒危険計算機" : "독성 위험 계산기",
     emergencyLink: isEn ? "/en/emergency-calculator" : isJa ? "/ja/emergency-calculator" : "/emergency-calculator",
     patella: isEn ? "Patella Diagnosis" : isJa ? "膝蓋骨診断" : "슬개골 진단",
     patellaLink: isEn ? "/en/patella-diagnoser" : isJa ? "/ja/patella-diagnoser" : "/patella-diagnoser",

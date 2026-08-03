@@ -36,9 +36,9 @@ export default function CalculatorBanner({
         age: "/age-calculator",
         dm: "/dm-calculator",
         emergency: "/emergency-calculator",
-        expenses: "/Petcareexpenses",
-        patella: "/patella",
-        fic: "/FIC"
+        expenses: "/petcare-expenses-calculator",
+        patella: "/patella-diagnoser",
+        fic: "/fic-diagnoser"
       };
       return koMap[type];
     } else {
@@ -77,9 +77,9 @@ export default function CalculatorBanner({
         textAfter: " 링크를 통해 지금 무료로 계산해 볼 수 있습니다."
       },
       emergency: {
-        tag: "🚨 반려동물 중독 응급 계산기",
-        textBefore: "🚨 지금 아이가 위험 음식을 먹어서 당황하셨나요? 몸무게와 먹은 양만 입력하면 위험 단계를 즉시 4단계 등급과 게이지로 진단해 드립니다. ",
-        button: "안심이 수석연구원의 반려동물 중독 응급 계산기 가기 ➔",
+        tag: "🧪 독성 위험 물질 계산기",
+        textBefore: "🚨 지금 아이가 위험 음식이나 독성 성분을 먹어서 당황하셨나요? 몸무게와 먹은 양만 입력하면 위험 단계를 즉시 4단계 등급과 게이지로 진단해 드립니다. ",
+        button: "안심이 수석연구원의 독성 위험 물질 계산기 가기 ➔",
         textAfter: " 링크를 통해 10초 만에 무료로 고위험 여부를 판단해 보세요."
       },
       expenses: {
@@ -121,9 +121,9 @@ export default function CalculatorBanner({
         textAfter: " Get your free nutritional evaluation instantly."
       },
       emergency: {
-        tag: "🚨 Pet Poison Emergency Calculator",
+        tag: "🧪 Pet Toxicity Calculator",
         textBefore: "🚨 Did your dog or cat ingest potentially dangerous foods? Input weight and dosage to screen toxicity hazard levels immediately. ",
-        button: "Open Pet Toxicity Emergency Calculator ➔",
+        button: "Open Pet Toxicity Calculator ➔",
         textAfter: " Verify hazard ratings for chocolates, onions, grapes, etc."
       },
       expenses: {
@@ -165,9 +165,9 @@ export default function CalculatorBanner({
         textAfter: " 愛用のフード情報を入力するだけ。"
       },
       emergency: {
-        tag: "🚨 ペット中毒症状応急判定ツール",
+        tag: "🧪 ペット中毒危険度計算機",
         textBefore: "🚨 チョコレートやネギ類、ブドウなどの危険食品を誤食しましたか？危険レベルを4段階で判定します。 ",
-        button: "ペット中毒応急処置シミュレーターを開く ➔",
+        button: "ペット中毒危険度計算機を開く ➔",
         textAfter: " 直ちに動物病院への来院が必要かチェックします。"
       },
       expenses: {
@@ -184,7 +184,7 @@ export default function CalculatorBanner({
       },
       fic: {
         tag: "🐱 猫のFIC膀胱炎ストレス診断",
-        textBefore: "引っ越しや猫砂の変更後、トイレ以外での排尿トラブルはありませんか？ストレス状態を数値化します。 ",
+        textBefore: "引っ越しや猫砂の変更後、トイレ以外에서의 排尿トラブルはありませんか？ストレス状態を数値化します。 ",
         button: "猫の特発性膀胱炎（FIC）＆ストレス診断を開く ➔",
         textAfter: " 心理的負担を下げる環境づくりのヒントを提供します。"
       }
@@ -344,4 +344,3 @@ export default function CalculatorBanner({
     </div>
   );
 }
-
