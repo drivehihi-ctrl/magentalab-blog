@@ -29,10 +29,10 @@ const COMMON_FAQS = [
     linkText: '슬개골 탈구 자가 진단기'
   },
   {
-    q: '🚨 밤중에 아이가 토하는데 응급실에 당장 가야 할까요?',
-    a: '반복적인 유색(초록/검은색) 토, 혈변, 호흡 곤란, 의식 저하가 동반되면 즉시 24시 응급 동물병원으로 이동하셔야 합니다. 응급 가이드로 체크해 보세요.',
+    q: '🚨 초콜릿이나 독성 음식을 섭취했는데 얼마나 위험한가요?',
+    a: '강아지나 고양이가 먹지 말아야 할 독성 음식/성분을 섭취했을 때, 몸무게와 유전적 특성, 섭취량을 고려하여 신속한 임상 위험도 및 응급 처치 등급을 판단할 수 있습니다.',
     link: '/emergency-calculator',
-    linkText: '긴급 상황 행동 가이드'
+    linkText: '독성 위험 물질 계산기'
   }
 ];
 
@@ -293,7 +293,7 @@ export default function AskAnsimiClient() {
               <ArrowRight className="w-3 h-3 text-gray-400" />
             </Link>
             <Link href="/emergency-calculator" className="p-3 rounded-xl bg-gray-50 hover:bg-magenta/5 hover:text-[#E5007E] border border-gray-100 transition-all flex items-center justify-between">
-              <span>🚨 긴급 상황 가이드</span>
+              <span>🧪 독성 위험 물질 계산기</span>
               <ArrowRight className="w-3 h-3 text-gray-400" />
             </Link>
           </div>
