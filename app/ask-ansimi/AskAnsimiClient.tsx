@@ -224,6 +224,43 @@ export default function AskAnsimiClient() {
           </div>
         </div>
 
+        {/* Veterinary Research Principles & E-E-A-T Guide Text Block */}
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
+          <div className="flex items-center gap-2 border-b border-gray-100 pb-4">
+            <Stethoscope className="w-5 h-5 text-[#E5007E]" />
+            <h3 className="text-base font-extrabold text-gray-900">마젠타랩 수의학 연구 원칙 및 1:1 상담 가이드</h3>
+          </div>
+
+          <div className="prose prose-sm max-w-none text-gray-600 space-y-5 leading-relaxed text-xs sm:text-sm font-medium">
+            <div className="space-y-2">
+              <h4 className="font-extrabold text-gray-900 text-xs sm:text-sm flex items-center gap-1.5">
+                <span className="text-[#E5007E]">1.</span> 🧬 수의학 임상 데이터 및 AI 가이드라인 적용
+              </h4>
+              <p className="text-gray-600 leading-relaxed text-[12px] sm:text-xs">
+                마젠타랩 펫 연구소의 안심이 1:1 상담 시스템은 소형견·대형견 및 고양이의 종별 생리학적 특성과 수의학 임상 가이드라인(AAHA, WSAVA 표준)을 지침으로 합니다. 보호자님이 작성해 주신 연령, 체중, 식습관 및 일시적 증상을 다각도로 대입하여 최적의 케어 팁을 제시합니다.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <h4 className="font-extrabold text-gray-900 text-xs sm:text-sm flex items-center gap-1.5">
+                <span className="text-[#E5007E]">2.</span> 🩺 온라인 건강 자가진단의 목적과 한계 안내
+              </h4>
+              <p className="text-gray-600 leading-relaxed text-[12px] sm:text-xs">
+                본 1:1 상담 및 정밀 헬스케어 계산기 모듈은 수의사의 확진을 대체하는 청진·처방 행위가 아닌, 병원 방문 전 보호자님의 막연한 불안감을 해소하고 일상생활 속 정확한 관찰 지포를 제공하는 자가 케어 보조 도구입니다. 증상이 경미하더라도 48시간 이상 지속되는 경우 수의사 정밀 검진을 권장합니다.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <h4 className="font-extrabold text-gray-900 text-xs sm:text-sm flex items-center gap-1.5">
+                <span className="text-[#E5007E]">3.</span> 🚨 응급 상황(Emergency) 발생 시 즉시 대처 지침
+              </h4>
+              <p className="text-gray-600 leading-relaxed text-[12px] sm:text-xs">
+                지속적인 유색 구토(초록색/검은색), 혈변, 갑작스러운 호흡 곤란, 체온 저하, 잇몸 창백함 등의 위급 증상이 동반될 경우 온라인 상담을 대기하지 마시고, 당사 <strong>'긴급 상황 가이드'</strong> 모듈을 참고하신 후 24시 응급 동물병원으로 즉시 내원하셔야 합니다.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Health Calculator Quick Bar */}
         <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm space-y-4">
           <div className="flex items-center justify-between">

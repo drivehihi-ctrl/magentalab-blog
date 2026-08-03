@@ -60,7 +60,7 @@ export default function Footer() {
             <div className="text-[11px] text-[#8888aa] leading-relaxed space-y-1.5">
               <p>대표이사 : 김범준 &nbsp;|&nbsp; 사업자등록번호 : 448-07-03101</p>
               <p>통신판매업 신고 : 제 2025-경기김포-1339호</p>
-              <p>호스팅 : Vercel Inc.</p>
+              <p>호스팅 제공자 : Vercel Inc. / (주)가비아</p>
             </div>
           </div>
 
