@@ -262,7 +262,7 @@ export default async function PostDetailPage({ params }: PageProps) {
         <div className="max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-2xl shadow-magenta/10 border-4 border-white">
           <Image
             src={imageUrl}
-            alt={post.title.rendered}
+            alt={sanitizeForSeo(post.title.rendered) || "마젠타랩 반려동물 연구소 대표 이미지"}
             width={1200}
             height={675}
             className="w-full h-auto object-cover"

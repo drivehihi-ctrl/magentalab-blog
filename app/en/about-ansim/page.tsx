@@ -58,7 +58,7 @@ export default async function EnAboutAnsimPage() {
           <div className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal mb-16">
             <img 
               src="https://magentalab.mycafe24.com/wp-content/uploads/2026/04/33-17-1024x572.jpeg" 
-              alt="Researcher Ansim" 
+              alt="Magentalab Senior Researcher Ansim Dachshund Mascot" 
               className="rounded-3xl w-full mb-8 shadow-md"
             />
             <p>

@@ -52,7 +52,7 @@ export default async function JaAboutPage() {
           <div className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal mb-12">
             <img 
               src="https://magentalab.mycafe24.com/wp-content/uploads/2026/04/Magentalab_logo_We_202604050029.jpeg" 
-              alt="Magentalab Lab" 
+              alt="マゼンタラボペット研究所概要" 
               className="rounded-3xl w-full mb-8 shadow-md"
             />
             <p>
@@ -83,7 +83,7 @@ export default async function JaAboutPage() {
             <ul>
               <li><strong>Experience (経験):</strong> Magentalabのマスコットであり首席研究員である「ダックスフントのアンシミ」の視点から、実際の飼い主さんが日常の中で直面する現実的な看病の悩みや行動学的な背景を深く捉えます。</li>
               <li><strong>Expertise (専門性):</strong> 高度なデータ分析ツールと獣医学的な乾物量（DM）換算式に基づき、可溶無窒素物（NFE）および1日の必須水分摂取量を精密に逆算し、情報の数値的な信頼性を構築します。</li>
-              <li><strong>Authoritativeness (権威性):</strong> GoogleのYMYL基準を徹底的に遵守し、ペットの健康スコアおよび泌尿器・内分泌疾患管理のための標準的な技術ガイドを目指します。</li>
+              <li><strong>Authoritativeness (権威性):</strong> GoogleのYMYL基準を徹底的に遵守し、ペットの健康スコアおよび泌泌器・内分泌疾患管理のための標準的な技術ガイドを目指します。</li>
               <li><strong>Trust (信頼):</strong> 私たちはペットの命と健康を最優先の価値と考え、ファクトチェック（事実確認）を通過した無欠の知識だけをお届けすることをお約束します。</li>
             </ul>
 

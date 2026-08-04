@@ -37,7 +37,7 @@ export default function PostCard({ post }: PostCardProps) {
       <div className="relative aspect-[16/10] overflow-hidden">
         <Image
           src={imageUrl}
-          alt={sanitizedTitle}
+          alt={sanitizedTitle || (isEn ? "Magentalab Pet Research Featured Image" : isJa ? "マゼンタラボペット研究アイキャッチ画像" : "마젠타랩 반려동물 연구소 대표 이미지")}
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />

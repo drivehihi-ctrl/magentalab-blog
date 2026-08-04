@@ -52,7 +52,7 @@ export default async function EnAboutPage() {
           <div className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal mb-12">
             <img 
               src="https://magentalab.mycafe24.com/wp-content/uploads/2026/04/Magentalab_logo_We_202604050029.jpeg" 
-              alt="Magentalab Lab" 
+              alt="Magentalab Pet Research Institute Overview" 
               className="rounded-3xl w-full mb-8 shadow-md"
             />
             <p>

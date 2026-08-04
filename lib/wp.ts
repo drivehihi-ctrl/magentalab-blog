@@ -503,7 +503,13 @@ export function fixWpLinks(content: string, postTitle?: string, lang: string = '
 
     // 최후 fallback
     if (!altText) {
-      altText = '마젠타랩 반려동물 연구소 이미지';
+      if (lang === 'en') {
+        altText = 'Magentalab Pet Research Lab Image';
+      } else if (lang === 'ja') {
+        altText = 'マゼンタラボペット研究所イメージ';
+      } else {
+        altText = '마젠타랩 반려동물 연구소 이미지';
+      }
     }
 
     // alt 속성이 없으면 추가, 비어있으면 교체

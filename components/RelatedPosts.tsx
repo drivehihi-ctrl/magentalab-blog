@@ -62,7 +62,7 @@ export default function RelatedPosts({ posts, lang = "ko" }: RelatedPostsProps) 
               <div className="relative aspect-[16/10] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-md transition-shadow">
                 <Image
                   src={imageUrl}
-                  alt={sanitizedTitle}
+                  alt={sanitizedTitle || (lang === "en" ? "Magentalab Recommended Research Data Image" : lang === "ja" ? "マゼンタラボおすすめ研究データ画像" : "마젠타랩 추천 연구 데이터 이미지")}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
                 />

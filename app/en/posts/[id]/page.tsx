@@ -280,7 +280,7 @@ export default async function EnglishPostDetailPage({ params }: PageProps) {
         <div className="max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-2xl shadow-magenta/10 border-4 border-white">
           <Image
             src={imageUrl}
-            alt={post.title.rendered}
+            alt={sanitizeForSeo(post.title.rendered) || "Magentalab Pet Research Featured Image"}
             width={1200}
             height={675}
             className="w-full h-auto object-cover"
