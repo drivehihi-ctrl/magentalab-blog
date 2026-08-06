@@ -78,7 +78,7 @@ export default function AboutEEATFeatures({ lang = 'ko' }: AboutEEATFeaturesProp
             <div className="space-y-1">
               <p className="font-bold text-gray-900">소재지 & 사업자 정보</p>
               <p className="text-gray-600 leading-relaxed">
-                경기도 김포시 김포한강11로255번길 149, 112동 701호<br />
+                경기도 김포시 양촌읍 황금산단로 65, 2층<br />
                 대표이사: 김범준 | 사업자등록번호: 448-07-03101<br />
                 통신판매업 신고: 제 2025-경기김포-1339호
               </p>

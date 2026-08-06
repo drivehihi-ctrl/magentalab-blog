@@ -80,7 +80,7 @@ export default function Footer() {
               </a>
               <div className="flex items-start gap-2.5 text-[12px] text-[#8888aa]">
                 <MapPin className="w-3.5 h-3.5 text-[#c9a64c] shrink-0 mt-0.5" />
-                <span>경기도 김포시 김포한강11로255번길 149, 112동 701호</span>
+                <span>경기도 김포시 양촌읍 황금산단로 65, 2층</span>
               </div>
             </div>
           </div>
