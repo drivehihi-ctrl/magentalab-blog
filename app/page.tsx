@@ -270,7 +270,7 @@ export default async function HomePage({
           </a>
         </div>
 
-        <CategoryFilterGrid posts={remainingPosts} lang="ko" />
+        <CategoryFilterGrid posts={allPosts} lang="ko" />
       </section>
     </div>
   );

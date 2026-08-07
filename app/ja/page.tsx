@@ -224,7 +224,7 @@ export default async function JapaneseHomePage({
           </div>
         </div>
 
-        <CategoryFilterGrid posts={remainingPosts} lang="ja" />
+        <CategoryFilterGrid posts={allPosts} lang="ja" />
       </section>
     </div>
   );

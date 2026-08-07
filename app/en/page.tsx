@@ -225,7 +225,7 @@ export default async function EnglishHomePage({
           </div>
         </div>
 
-        <CategoryFilterGrid posts={remainingPosts} lang="en" />
+        <CategoryFilterGrid posts={allPosts} lang="en" />
       </section>
     </div>
   );
