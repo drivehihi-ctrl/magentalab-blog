@@ -161,22 +161,22 @@ export async function getPosts(
   let filteredPosts = allPosts;
 
   if (isKo) {
-    // 한국어 페이지: 슬러그가 -en 또는 -ja로 끝나는 글을 전면 배제
+    // 한국어 페이지: 슬러그가 -en 또는 -ja를 포함하는 글을 전면 배제
     filteredPosts = allPosts.filter((post: any) => {
       const slug = post.slug || "";
-      return !slug.endsWith("-en") && !slug.endsWith("-ja");
+      return !slug.includes("-en") && !slug.includes("-ja");
     });
   } else if (lang === "en") {
-    // 영어 페이지: 슬러그가 -en으로 끝나는 글만 필터링
+    // 영어 페이지: 슬러그가 -en을 포함하거나 끝나는 글만 필터링
     filteredPosts = allPosts.filter((post: any) => {
       const slug = post.slug || "";
-      return slug.endsWith("-en");
+      return slug.includes("-en");
     });
   } else if (lang === "ja") {
-    // 일본어 페이지: 슬러그가 -ja로 끝나는 글만 필터링
+    // 일본어 페이지: 슬러그가 -ja를 포함하거나 끝나는 글만 필터링
     filteredPosts = allPosts.filter((post: any) => {
       const slug = post.slug || "";
-      return slug.endsWith("-ja");
+      return slug.includes("-ja");
     });
   }
 

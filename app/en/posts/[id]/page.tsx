@@ -81,7 +81,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export async function generateStaticParams() {
   try {
-    const { posts } = await getPosts(1, 50, undefined, undefined, "en");
+    const { posts } = await getPosts(1, 500, undefined, undefined, "en");
     return posts.map((post) => ({
       id: post.slug,
     }));
