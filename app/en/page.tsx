@@ -7,6 +7,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Flame, Sparkles, TrendingUp, ArrowRight } from "lucide-react";
 import DraggableScrollContainer from "@/components/DraggableScrollContainer";
+import CategoryFilterGrid from "@/components/CategoryFilterGrid";
 
 export const revalidate = 86400;
 
@@ -228,17 +229,7 @@ export default async function EnglishHomePage({
           </div>
         </div>
 
-        {remainingPosts.length === 0 ? (
-          <div className="py-20 text-center">
-            <p className="text-gray-400">No articles registered yet.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {remainingPosts.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))}
-          </div>
-        )}
+        <CategoryFilterGrid posts={remainingPosts} lang="en" />
 
         {totalPages > 1 && (
           <div className="py-12">

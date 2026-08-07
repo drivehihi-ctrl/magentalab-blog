@@ -7,6 +7,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Flame, Sparkles, TrendingUp, ArrowRight } from "lucide-react";
 import DraggableScrollContainer from "@/components/DraggableScrollContainer";
+import CategoryFilterGrid from "@/components/CategoryFilterGrid";
 
 export const revalidate = 86400;
 
@@ -271,19 +272,7 @@ export default async function HomePage({
           </a>
         </div>
 
-        {remainingPosts.length === 0 ? (
-          <div className="py-20 text-center">
-            <p className="text-[#8888aa]">
-              등록된 게시글이 없습니다.{currentPage > 1 && " 이전 페이지로 돌아가보세요."}
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {remainingPosts.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))}
-          </div>
-        )}
+        <CategoryFilterGrid posts={remainingPosts} lang="ko" />
 
         {totalPages > 1 && (
           <div className="py-12">
