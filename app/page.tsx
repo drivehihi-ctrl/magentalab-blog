@@ -271,12 +271,6 @@ export default async function HomePage({
         </div>
 
         <CategoryFilterGrid posts={remainingPosts} lang="ko" />
-
-        {totalPages > 1 && (
-          <div className="py-12">
-            <Pagination totalPages={totalPages} currentPage={currentPage} />
-          </div>
-        )}
       </section>
     </div>
   );

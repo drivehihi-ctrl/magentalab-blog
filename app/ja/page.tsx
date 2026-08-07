@@ -225,12 +225,6 @@ export default async function JapaneseHomePage({
         </div>
 
         <CategoryFilterGrid posts={remainingPosts} lang="ja" />
-
-        {totalPages > 1 && (
-          <div className="py-12">
-            <Pagination totalPages={totalPages} currentPage={currentPage} />
-          </div>
-        )}
       </section>
     </div>
   );
