@@ -262,12 +262,6 @@ export default async function HomePage({
               최신 연구 & 전체 블로그 데이터
             </h2>
           </div>
-          <a
-            href="/blog"
-            className="text-xs font-bold text-[#E5007E] hover:text-[#c0006a] border-b-2 border-[#E5007E]/30 hover:border-[#E5007E] pb-0.5 transition-all whitespace-nowrap"
-          >
-            카테고리별 전체보기 →
-          </a>
         </div>
 
         <CategoryFilterGrid posts={allPosts} lang="ko" />

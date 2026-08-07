@@ -222,12 +222,6 @@ export default async function JapaneseHomePage({
               すべての記事
             </h2>
           </div>
-          <a
-            href="/ja/blog"
-            className="text-xs font-bold text-[#E5007E] hover:text-[#c0006a] border-b-2 border-[#E5007E]/30 hover:border-[#E5007E] pb-0.5 transition-all whitespace-nowrap"
-          >
-            カテゴリ一覧を見る →
-          </a>
         </div>
 
         <CategoryFilterGrid posts={allPosts} lang="ja" />
