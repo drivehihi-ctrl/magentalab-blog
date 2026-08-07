@@ -20,10 +20,12 @@ export default function DraggableScrollContainer({
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+  const [hasDragged, setHasDragged] = useState(false);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!scrollRef.current) return;
     setIsMouseDown(true);
+    setHasDragged(false);
     setStartX(e.pageX - scrollRef.current.offsetLeft);
     setScrollLeft(scrollRef.current.scrollLeft);
   };
@@ -38,10 +40,19 @@ export default function DraggableScrollContainer({
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isMouseDown || !scrollRef.current) return;
-    e.preventDefault();
     const x = e.pageX - scrollRef.current.offsetLeft;
-    const walk = (x - startX) * 1.8; // scroll speed multiplier
+    const walk = (x - startX) * 1.5;
+    if (Math.abs(walk) > 6) {
+      setHasDragged(true);
+    }
     scrollRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleClickCapture = (e: React.MouseEvent) => {
+    if (hasDragged) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
   };
 
   const scrollBy = (offset: number) => {
@@ -75,14 +86,16 @@ export default function DraggableScrollContainer({
         </button>
       )}
 
-      {/* Scrollable Container with PC Mouse Drag Support */}
+      {/* Scrollable Container with PC Mouse Drag Support & Mobile Vertical Scroll Pass-through */}
       <div
         ref={scrollRef}
         onMouseDown={handleMouseDown}
         onMouseLeave={handleMouseLeave}
         onMouseUp={handleMouseUp}
         onMouseMove={handleMouseMove}
-        className={`flex overflow-x-auto snap-x snap-mandatory pb-4 gap-4 md:gap-6 scrollbar-none touch-pan-x cursor-grab active:cursor-grabbing select-none ${className}`}
+        onClickCapture={handleClickCapture}
+        className={`flex overflow-x-auto snap-x snap-mandatory pb-4 gap-4 md:gap-6 scrollbar-none touch-pan-y touch-pan-x cursor-grab active:cursor-grabbing select-none ${className}`}
+        style={{ touchAction: 'pan-y pan-x' }}
       >
         {children}
       </div>

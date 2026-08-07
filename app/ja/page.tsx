@@ -162,9 +162,10 @@ export default async function JapaneseHomePage({
                 });
 
                 return (
-                  <div
+                  <Link
                     key={post.id}
-                    className="shrink-0 min-w-[280px] w-[82vw] max-w-[340px] sm:w-auto snap-center bg-white rounded-3xl p-5 border border-rose-100 shadow-md hover:shadow-xl hover:border-rose-300 transition-all duration-300 flex flex-col justify-between relative overflow-hidden group"
+                    href={`/ja/posts/${post.slug}`}
+                    className="shrink-0 min-w-[280px] w-[82vw] max-w-[340px] sm:w-auto snap-center bg-white rounded-3xl p-5 border border-rose-100 shadow-md hover:shadow-xl hover:border-rose-300 transition-all duration-300 flex flex-col justify-between relative overflow-hidden group block cursor-pointer"
                   >
                     <div className="absolute top-4 right-4 z-10">
                       <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-gradient-to-r from-rose-500 to-amber-500 text-white shadow-xs">
@@ -200,15 +201,12 @@ export default async function JapaneseHomePage({
 
                     <div className="pt-4 mt-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-400 font-medium">
                       <span>{dateStr}</span>
-                      <Link
-                        href={`/ja/posts/${post.slug}`}
-                        className="text-xs font-bold text-[#E5007E] group-hover:underline flex items-center gap-0.5"
-                      >
+                      <div className="text-xs font-bold text-[#E5007E] group-hover:underline flex items-center gap-0.5">
                         <span>続きを読む</span>
                         <ArrowRight className="w-3 h-3" />
-                      </Link>
+                      </div>
                     </div>
-                  </div>
+                  </Link>
                 );
               })}
             </DraggableScrollContainer>
