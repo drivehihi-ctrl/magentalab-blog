@@ -140,10 +140,10 @@ export default async function EnglishHomePage({
                 </div>
                 <div>
                   <span className="text-[10px] font-black text-rose-600 tracking-widest uppercase bg-rose-100 px-2 py-0.5 rounded-full inline-block mb-0.5">
-                    HOT ISSUE
+                    RECOMMENDED ARTICLES 🌟
                   </span>
                   <h2 className="text-xl sm:text-2xl font-extrabold text-[#1a1a2e] tracking-tight">
-                    Trending Articles 🔥
+                    Featured Research Reports 📌
                   </h2>
                 </div>
               </div>

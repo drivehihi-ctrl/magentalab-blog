@@ -162,11 +162,11 @@ export default async function HomePage({
                 <div>
                   <div className="flex items-center gap-2 mb-0.5">
                     <span className="text-[10px] font-black text-rose-600 tracking-widest uppercase bg-rose-100 px-2 py-0.5 rounded-full inline-block">
-                      실시간 조회수 기준 📊
+                      연구소 추천 포스팅 🌟
                     </span>
                   </div>
                   <h2 className="text-xl sm:text-2xl font-extrabold text-[#1a1a2e] tracking-tight">
-                    지금 뜨고 있는 글 🔥
+                    주요 연구 리포트 📌
                   </h2>
                 </div>
               </div>

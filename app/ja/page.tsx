@@ -139,10 +139,10 @@ export default async function JapaneseHomePage({
                 </div>
                 <div>
                   <span className="text-[10px] font-black text-rose-600 tracking-widest uppercase bg-rose-100 px-2 py-0.5 rounded-full inline-block mb-0.5">
-                    HOT ISSUE
+                    おすすめ記事 🌟
                   </span>
                   <h2 className="text-xl sm:text-2xl font-extrabold text-[#1a1a2e] tracking-tight">
-                    注目の記事 🔥
+                    注目の研究レポート 📌
                   </h2>
                 </div>
               </div>
