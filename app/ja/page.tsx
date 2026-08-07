@@ -129,7 +129,7 @@ export default async function JapaneseHomePage({
       </section>
 
       {/* 🔥 TRENDING POSTS SECTION (JA) */}
-      {currentPage === 1 && trendingPosts.length > 0 && (
+      {trendingPosts.length > 0 && (
         <section className="bg-gradient-to-b from-[#faf6f0] to-white py-12 border-y border-amber-900/10">
           <div className="container mx-auto px-4 sm:px-6">
             <div className="flex items-center justify-between gap-4 mb-8">
