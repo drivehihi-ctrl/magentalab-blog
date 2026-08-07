@@ -36,18 +36,16 @@ export default async function HomePage({
 }: {
   searchParams: Promise<{ page?: string }>;
 }) {
-  const { page } = await searchParams;
-  const currentPage = Number(page) || 1;
-  const { posts, totalPages } = await getPosts(currentPage, 20);
+  const { posts: allPosts } = await getPosts(1, 500, undefined, undefined, "ko");
 
   // 🌟 "지금 뜨고 있는 글" (Trending Posts) - Sort strictly by View Count!
-  const trendingPosts = [...posts]
+  const trendingPosts = [...allPosts]
     .sort((a, b) => getPostViews(b) - getPostViews(a))
     .slice(0, 3);
 
-  // Remove trending posts from main grid only on page 1 for variety
+  // Remove trending posts from main grid only for variety
   const trendingIds = new Set(trendingPosts.map((p) => p.id));
-  const remainingPosts = currentPage === 1 ? posts.filter((p) => !trendingIds.has(p.id)) : posts;
+  const remainingPosts = allPosts.filter((p) => !trendingIds.has(p.id));
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
@@ -152,7 +150,7 @@ export default async function HomePage({
       {/* ═════════════════════════════
           🔥 지금 뜨고 있는 글 (TRENDING POSTS - SORTED BY VIEWS) SECTION
       ═════════════════════════════ */}
-      {currentPage === 1 && trendingPosts.length > 0 && (
+      {trendingPosts.length > 0 && (
         <section className="bg-gradient-to-b from-[#faf6f0] to-white py-12 border-y border-amber-900/10">
           <div className="container mx-auto px-4 sm:px-6">
             {/* Section Header */}
@@ -261,7 +259,7 @@ export default async function HomePage({
               RESEARCH ARTICLES
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1a1a2e] tracking-tight leading-tight">
-              {currentPage === 1 ? "최신 연구 & 전체 블로그 글" : "전체 블로그 글"}
+              최신 연구 & 전체 블로그 데이터
             </h2>
           </div>
           <a

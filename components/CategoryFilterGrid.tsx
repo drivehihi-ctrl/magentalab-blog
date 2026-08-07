@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import PostCard from '@/components/PostCard';
 import { WPPost, getCategories, getTags } from '@/lib/wp';
-import { Sparkles, Layers } from 'lucide-react';
+import { Sparkles, Layers, ChevronDown } from 'lucide-react';
 
 interface CategoryFilterGridProps {
   posts: WPPost[];
@@ -12,8 +12,11 @@ interface CategoryFilterGridProps {
 
 type CategoryKey = 'all' | 'behavior' | 'health' | 'nutrition' | 'cat';
 
+const BATCH_SIZE = 18;
+
 export default function CategoryFilterGrid({ posts, lang = 'ko' }: CategoryFilterGridProps) {
   const [activeCategory, setActiveCategory] = useState<CategoryKey>('all');
+  const [visibleCount, setVisibleCount] = useState<number>(BATCH_SIZE);
 
   // Multi-language Tab Labels
   const tabConfig: Record<CategoryKey, { label: string; icon: string }> = useMemo(() => {
@@ -118,6 +121,18 @@ export default function CategoryFilterGrid({ posts, lang = 'ko' }: CategoryFilte
     return { filteredPosts: filtered, categoryCounts: counts };
   }, [posts, activeCategory]);
 
+  const handleCategoryChange = (key: CategoryKey) => {
+    setActiveCategory(key);
+    setVisibleCount(BATCH_SIZE);
+  };
+
+  const handleLoadMore = () => {
+    setVisibleCount((prev) => prev + BATCH_SIZE);
+  };
+
+  const displayedPosts = filteredPosts.slice(0, visibleCount);
+  const remainingCount = filteredPosts.length - displayedPosts.length;
+
   return (
     <div className="w-full my-8 space-y-6">
       {/* 🌟 Category Filter Pills Bar (Clean, Spacious, Zero Overlap) */}
@@ -153,7 +168,7 @@ export default function CategoryFilterGrid({ posts, lang = 'ko' }: CategoryFilte
               <button
                 key={key}
                 type="button"
-                onClick={() => setActiveCategory(key)}
+                onClick={() => handleCategoryChange(key)}
                 className={`shrink-0 inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer ${
                   isActive
                     ? 'bg-gradient-to-r from-[#E5007E] to-[#c0006a] text-white shadow-md shadow-[#E5007E]/20 scale-[1.02]'
@@ -182,23 +197,45 @@ export default function CategoryFilterGrid({ posts, lang = 'ko' }: CategoryFilte
             {lang === 'en'
               ? 'No articles match this category yet.'
               : lang === 'ja'
-              ? '該当する記事가 아직 없습니다.'
+              ? '該当する記事がまだありません。'
               : '해당 주제의 연구 리포트가 아직 준비 중입니다.'}
           </p>
           <button
             type="button"
-            onClick={() => setActiveCategory('all')}
+            onClick={() => handleCategoryChange('all')}
             className="inline-block mt-2 px-5 py-2 bg-[#E5007E] text-white text-xs font-bold rounded-full shadow-sm hover:bg-[#c0006a] transition"
           >
             {lang === 'en' ? 'View All Articles' : lang === 'ja' ? 'すべての記事を見る' : '전체 글 보기'}
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {filteredPosts.map((post) => (
-            <PostCard key={post.id} post={post} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {displayedPosts.map((post) => (
+              <PostCard key={post.id} post={post} />
+            ))}
+          </div>
+
+          {/* Load More Button (0ms in-place expansion) */}
+          {remainingCount > 0 && (
+            <div className="pt-8 text-center">
+              <button
+                type="button"
+                onClick={handleLoadMore}
+                className="inline-flex items-center gap-2 px-8 py-3.5 bg-white hover:bg-rose-50 text-[#E5007E] font-extrabold text-xs sm:text-sm rounded-full border border-rose-200 shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer group active:scale-95"
+              >
+                <span>
+                  {lang === 'en'
+                    ? `Load More Articles (+${remainingCount})`
+                    : lang === 'ja'
+                    ? `もっと見る (+${remainingCount}件)`
+                    : `관련 연구 데이터 더보기 (+${remainingCount}개)`}
+                </span>
+                <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

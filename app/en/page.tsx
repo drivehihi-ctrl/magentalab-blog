@@ -36,19 +36,15 @@ export default async function EnglishHomePage({
 }: {
   searchParams: Promise<{ page?: string }>;
 }) {
-  const { page } = await searchParams;
-  const currentPage = Number(page) || 1;
-  
-  // Fetch posts with English language option
-  const { posts, totalPages } = await getPosts(currentPage, 20, undefined, undefined, "en");
+  const { posts: allPosts } = await getPosts(1, 500, undefined, undefined, "en");
 
   // Trending Posts (TOP 1~3 sorted by views)
-  const trendingPosts = [...posts]
+  const trendingPosts = [...allPosts]
     .sort((a, b) => getPostViews(b) - getPostViews(a))
     .slice(0, 3);
 
   const trendingIds = new Set(trendingPosts.map((p) => p.id));
-  const remainingPosts = currentPage === 1 ? posts.filter((p) => !trendingIds.has(p.id)) : posts;
+  const remainingPosts = allPosts.filter((p) => !trendingIds.has(p.id));
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
