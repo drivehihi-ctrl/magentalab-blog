@@ -383,21 +383,20 @@ export function getRelatedPosts(currentPost: WPPost, allPosts: WPPost[], limit: 
     .sort((a, b) => b.score - a.score || new Date(b.post.date).getTime() - new Date(a.post.date).getTime())
     .map(p => p.post);
 
-  // 특정 슬러그 상호 교차 1번 고정 매핑 로직
-  const isSensoryMechanism = currentPost.slug === "dog_belly_blowing_sensory_mechanism";
-  const isHateBellyFarts = currentPost.slug && (currentPost.slug.includes("why-dogs-hate-belly-farts") || currentPost.slug.includes("why_dogs_hate_belly_farts"));
+  // 특정 배방구/belly 포스팅 상호 교차 1번 고정 매핑 로직
+  const isBellyPost = currentPost.slug?.includes("belly") || 
+                      currentPost.slug?.includes("배방구") || 
+                      currentPost.title?.rendered?.includes("배방구");
 
-  if (isSensoryMechanism || isHateBellyFarts) {
-    let pinnedPost: WPPost | undefined = undefined;
-    if (isSensoryMechanism) {
-      pinnedPost = allPosts.find(p => p.slug && (p.slug.includes("why-dogs-hate-belly-farts") || p.slug.includes("why_dogs_hate_belly_farts")));
-    } else {
-      pinnedPost = allPosts.find(p => p.slug === "dog_belly_blowing_sensory_mechanism");
-    }
+  if (isBellyPost) {
+    const pinnedPost = allPosts.find(p => 
+      p.id !== currentPost.id && 
+      (p.slug?.includes("belly") || p.slug?.includes("배방구") || p.title?.rendered?.includes("배방구"))
+    );
 
     if (pinnedPost) {
-      // 기존 목록에서 중복 제거 후 맨 앞에 주입
-      const filteredRelated = related.filter(p => p.id !== pinnedPost!.id);
+      // 기존 목록에서 중복 제거 후 맨 앞(1번)에 주입
+      const filteredRelated = related.filter(p => p.id !== pinnedPost.id);
       filteredRelated.unshift(pinnedPost);
       return filteredRelated.slice(0, limit);
     }
