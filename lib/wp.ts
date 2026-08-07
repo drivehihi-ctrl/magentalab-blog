@@ -383,22 +383,25 @@ export function getRelatedPosts(currentPost: WPPost, allPosts: WPPost[], limit: 
     .sort((a, b) => b.score - a.score || new Date(b.post.date).getTime() - new Date(a.post.date).getTime())
     .map(p => p.post);
 
-  // 특정 배방구/belly 포스팅 상호 교차 1번 고정 매핑 로직
+  // 특정 배방구/belly 포스팅 3자 상호 삼각 교차 고정 매핑 로직 (1번, 2번 자리에 나머지 배방구 글 연속 주입)
   const isBellyPost = currentPost.slug?.includes("belly") || 
                       currentPost.slug?.includes("배방구") || 
                       currentPost.title?.rendered?.includes("배방구");
 
   if (isBellyPost) {
-    const pinnedPost = allPosts.find(p => 
+    const otherBellyPosts = allPosts.filter(p => 
       p.id !== currentPost.id && 
       (p.slug?.includes("belly") || p.slug?.includes("배방구") || p.title?.rendered?.includes("배방구"))
     );
 
-    if (pinnedPost) {
-      // 기존 목록에서 중복 제거 후 맨 앞(1번)에 주입
-      const filteredRelated = related.filter(p => p.id !== pinnedPost.id);
-      filteredRelated.unshift(pinnedPost);
-      return filteredRelated.slice(0, limit);
+    if (otherBellyPosts.length > 0) {
+      // 다른 배방구 포스팅 ID 세트 생성
+      const pinnedIds = new Set(otherBellyPosts.map(p => p.id));
+      // 기존 연관 포스트 목록에서 배방구 포스팅 중복 제거
+      const filteredRelated = related.filter(p => !pinnedIds.has(p.id));
+      // 다른 배방구 포스팅들을 맨 앞 1번, 2번 자리에 연속 주입!
+      const combined = [...otherBellyPosts, ...filteredRelated];
+      return combined.slice(0, limit);
     }
   }
 
