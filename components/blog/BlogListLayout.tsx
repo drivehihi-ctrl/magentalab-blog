@@ -1,6 +1,6 @@
 import PostListItem from "@/components/PostListItem";
 import Pagination from "@/components/Pagination";
-import { getPosts, getAllCategories } from "@/lib/wp";
+import { getPosts, getAllCategories, getCategories, getTags } from "@/lib/wp";
 import Link from "next/link";
 import { decodeHtmlEntities } from "@/lib/utils";
 import React from "react";
@@ -15,6 +15,8 @@ interface BlogListLayoutProps {
   badgeText?: string;
   breadcrumbItems?: { name: string; item?: string }[];
 }
+
+const PER_PAGE = 20;
 
 export default async function BlogListLayout({
   page,
@@ -31,20 +33,43 @@ export default async function BlogListLayout({
   const isJa = lang === "ja";
   const basePath = isEn ? "/en/blog" : isJa ? "/ja/blog" : "/blog";
 
-  // Fetch posts and categories with appropriate language
-  const [{ posts, totalPages, totalPosts }, allCategories] = await Promise.all([
-    getPosts(currentPage, 20, search, categoryId, lang, tagId),
+  // 1. Fetch ALL posts for the selected language to calculate 100% accurate post & category counts
+  const [{ posts: allLangPosts }, allCategories] = await Promise.all([
+    getPosts(1, 500, search, undefined, lang, tagId),
     getAllCategories().catch(() => [])
   ]);
 
-  const categories = allCategories.filter((cat: any) => {
-    if (isEn) return /^[a-zA-Z0-9\s-]+$/.test(cat.name) || cat.slug.includes('-en');
-    if (isJa) return /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff]/.test(cat.name) || cat.slug.includes('-ja');
-    const hasKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(cat.name);
-    return hasKorean || cat.slug === 'food-nutrition';
-  });
+  // 2. Filter categories relevant to this language and calculate EXACT matching post counts per category
+  const categoriesWithCounts = allCategories
+    .map((cat: any) => {
+      // Count how many posts in allLangPosts actually belong to this category
+      const count = allLangPosts.filter((post) =>
+        getCategories(post).some((c) => c.id === cat.id || c.slug === cat.slug)
+      ).length;
+      return { ...cat, realCount: count };
+    })
+    .filter((cat: any) => {
+      // Include category if it has at least 1 post in this language
+      if (cat.realCount > 0) return true;
+      if (isEn) return /^[a-zA-Z0-9\s-]+$/.test(cat.name) || cat.slug.includes('-en');
+      if (isJa) return /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff]/.test(cat.name) || cat.slug.includes('-ja');
+      const hasKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(cat.name);
+      return hasKorean || cat.slug === 'food-nutrition';
+    });
 
-  const currentCategory = categories.find((c) => c.id.toString() === categoryId);
+  // 3. Filter posts by selected category if categoryId is present
+  const filteredPosts = categoryId
+    ? allLangPosts.filter((post) =>
+        getCategories(post).some((c) => c.id.toString() === categoryId)
+      )
+    : allLangPosts;
+
+  const totalPosts = filteredPosts.length;
+  const totalPages = Math.ceil(totalPosts / PER_PAGE) || 1;
+  const startIndex = (currentPage - 1) * PER_PAGE;
+  const paginatedPosts = filteredPosts.slice(startIndex, startIndex + PER_PAGE);
+
+  const currentCategory = categoriesWithCounts.find((c: any) => c.id.toString() === categoryId);
 
   // Default Breadcrumb
   const breadcrumbJsonLd = {
@@ -107,7 +132,7 @@ export default async function BlogListLayout({
             {titleNode || defaultTitleNode}
           </h1>
 
-          {/* Category Pills */}
+          {/* Category Chips with Exact Language Counts */}
           {!tagId && (
             <div className="flex items-center gap-2.5 overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-none">
               {/* All Posts Chip */}
@@ -119,10 +144,10 @@ export default async function BlogListLayout({
                     : "bg-gray-50 text-gray-500 border border-gray-100 hover:bg-gray-105 hover:text-gray-750"
                 }`}
               >
-                {isEn ? "View All" : isJa ? "すべて見る" : "전체보기"}
+                {isEn ? `View All (${allLangPosts.length})` : isJa ? `すべて見る (${allLangPosts.length})` : `전체보기 (${allLangPosts.length})`}
               </Link>
               {/* Category Chips */}
-              {categories.map((cat) => {
+              {categoriesWithCounts.map((cat: any) => {
                 const isSelected = categoryId === cat.id.toString();
                 return (
                   <Link
@@ -138,7 +163,7 @@ export default async function BlogListLayout({
                         : "bg-gray-50 text-gray-500 border border-gray-100 hover:bg-gray-105 hover:text-gray-750"
                     }`}
                   >
-                    {decodeHtmlEntities(cat.name)} ({cat.count})
+                    {decodeHtmlEntities(cat.name)} ({cat.realCount})
                   </Link>
                 );
               })}
@@ -153,19 +178,19 @@ export default async function BlogListLayout({
       {/* Post List Section */}
       <section className="container mx-auto px-4 py-12 max-w-5xl">
         <div className="flex flex-col">
-          {posts.map((post) => (
+          {paginatedPosts.map((post) => (
             <PostListItem key={post.id} post={post} lang={lang} />
           ))}
         </div>
         
-        {posts.length === 0 && (
+        {paginatedPosts.length === 0 && (
           <div className="py-20 text-center">
             <p className="text-gray-400 font-medium font-sans">
               {isEn 
-                ? "No research articles found. 📝" 
+                ? "No research articles found in this category. 📝" 
                 : isJa 
-                ? "該当する記事が見つかりません。 📝" 
-                : "등록된 게시글이 없습니다. 📝"}
+                ? "このカテゴリに該当する記事が見つかりません。 📝" 
+                : "해당 카테고리에 등록된 연구 데이터가 없습니다. 📝"}
             </p>
           </div>
         )}
