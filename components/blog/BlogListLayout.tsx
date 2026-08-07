@@ -10,6 +10,7 @@ interface BlogListLayoutProps {
   search?: string;
   categoryId?: string;
   tagId?: string;
+  lang?: "ko" | "en" | "ja";
   titleNode?: React.ReactNode;
   badgeText?: string;
   breadcrumbItems?: { name: string; item?: string }[];
@@ -20,20 +21,25 @@ export default async function BlogListLayout({
   search,
   categoryId,
   tagId,
+  lang = "ko",
   titleNode,
   badgeText,
   breadcrumbItems,
 }: BlogListLayoutProps) {
   const currentPage = Number(page) || 1;
+  const isEn = lang === "en";
+  const isJa = lang === "ja";
+  const basePath = isEn ? "/en/blog" : isJa ? "/ja/blog" : "/blog";
 
-  // 병렬로 포스트와 전체 카테고리 가져오기
+  // Fetch posts and categories with appropriate language
   const [{ posts, totalPages, totalPosts }, allCategories] = await Promise.all([
-    getPosts(currentPage, 20, search, categoryId, "ko", tagId),
+    getPosts(currentPage, 20, search, categoryId, lang, tagId),
     getAllCategories().catch(() => [])
   ]);
 
-  // 한국어 전용 카테고리 필터링 (한글 포함 혹은 slug가 food-nutrition 인 경우)
   const categories = allCategories.filter((cat: any) => {
+    if (isEn) return /^[a-zA-Z0-9\s-]+$/.test(cat.name) || cat.slug.includes('-en');
+    if (isJa) return /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff]/.test(cat.name) || cat.slug.includes('-ja');
     const hasKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(cat.name);
     return hasKorean || cat.slug === 'food-nutrition';
   });
@@ -48,19 +54,23 @@ export default async function BlogListLayout({
       {
         "@type": "ListItem",
         "position": 1,
-        "name": "홈",
-        "item": "https://www.magentalabblog.com"
+        "name": isEn ? "Home" : isJa ? "ホーム" : "홈",
+        "item": `https://www.magentalabblog.com${isEn ? '/en' : isJa ? '/ja' : ''}`
       },
       ...(breadcrumbItems || [
         {
           "@type": "ListItem",
           "position": 2,
-          "name": search ? `검색: ${search}` : currentCategory ? `카테고리: ${decodeHtmlEntities(currentCategory.name)}` : "블로그",
+          "name": search 
+            ? `${isEn ? 'Search' : isJa ? '検索' : '검색'}: ${search}` 
+            : currentCategory 
+              ? `${isEn ? 'Category' : isJa ? 'カテゴリ' : '카테고리'}: ${decodeHtmlEntities(currentCategory.name)}` 
+              : isEn ? "Blog" : isJa ? "ブログ" : "블로그",
           "item": search 
-            ? `https://www.magentalabblog.com/blog?search=${encodeURIComponent(search)}`
+            ? `https://www.magentalabblog.com${basePath}?search=${encodeURIComponent(search)}`
             : categoryId
-              ? `https://www.magentalabblog.com/blog?category=${categoryId}`
-              : "https://www.magentalabblog.com/blog"
+              ? `https://www.magentalabblog.com${basePath}?category=${categoryId}`
+              : `https://www.magentalabblog.com${basePath}`
         }
       ]).map((bc, idx) => ({
         "@type": "ListItem",
@@ -72,11 +82,11 @@ export default async function BlogListLayout({
   };
 
   const defaultTitleNode = search ? (
-    <><span className="text-magenta">'{search}'</span> 검색 결과</>
+    <><span className="text-magenta">'{search}'</span> {isEn ? "Search Results" : isJa ? "検索結果" : "검색 결과"}</>
   ) : currentCategory ? (
-    <><span className="text-magenta">{decodeHtmlEntities(currentCategory.name)}</span> 연구 데이터</>
+    <><span className="text-magenta">{decodeHtmlEntities(currentCategory.name)}</span> {isEn ? "Research Articles" : isJa ? "研究データ" : "연구 데이터"}</>
   ) : (
-    <>블로그 <span className="text-magenta">전체보기</span></>
+    <>{isEn ? "All" : isJa ? "すべての" : "블로그"} <span className="text-magenta">{isEn ? "Articles" : isJa ? "記事" : "전체보기"}</span></>
   );
 
   return (
@@ -97,21 +107,21 @@ export default async function BlogListLayout({
             {titleNode || defaultTitleNode}
           </h1>
 
-          {/* 카테고리 필터 칩 영역 (반응형 가로 스크롤) - 카테고리/검색 일때만 노출 */}
+          {/* Category Pills */}
           {!tagId && (
             <div className="flex items-center gap-2.5 overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-none">
-              {/* 전체보기 칩 */}
+              {/* All Posts Chip */}
               <Link
-                href={search ? `/blog?search=${encodeURIComponent(search)}` : "/blog"}
+                href={search ? `${basePath}?search=${encodeURIComponent(search)}` : basePath}
                 className={`px-4.5 py-2 rounded-full text-xs sm:text-sm font-black whitespace-nowrap transition-all active:scale-95 shadow-sm ${
                   !categoryId
                     ? "bg-magenta text-white shadow-magenta/10"
                     : "bg-gray-50 text-gray-500 border border-gray-100 hover:bg-gray-105 hover:text-gray-750"
                 }`}
               >
-                전체보기
+                {isEn ? "View All" : isJa ? "すべて見る" : "전체보기"}
               </Link>
-              {/* 개별 카테고리 칩 */}
+              {/* Category Chips */}
               {categories.map((cat) => {
                 const isSelected = categoryId === cat.id.toString();
                 return (
@@ -119,8 +129,8 @@ export default async function BlogListLayout({
                     key={cat.id}
                     href={
                       search 
-                        ? `/blog?category=${cat.id}&search=${encodeURIComponent(search)}` 
-                        : `/blog?category=${cat.id}`
+                        ? `${basePath}?category=${cat.id}&search=${encodeURIComponent(search)}` 
+                        : `${basePath}?category=${cat.id}`
                     }
                     className={`px-4.5 py-2 rounded-full text-xs sm:text-sm font-black whitespace-nowrap transition-all active:scale-95 shadow-sm ${
                       isSelected
@@ -136,7 +146,7 @@ export default async function BlogListLayout({
           )}
         </div>
         
-        {/* Decorative elements */}
+        {/* Decorative background */}
         <div className="absolute top-0 right-0 w-1/3 h-full bg-magenta/5 rounded-l-full blur-3xl opacity-30 transform translate-x-1/2" />
       </header>
 
@@ -144,14 +154,18 @@ export default async function BlogListLayout({
       <section className="container mx-auto px-4 py-12 max-w-5xl">
         <div className="flex flex-col">
           {posts.map((post) => (
-            <PostListItem key={post.id} post={post} />
+            <PostListItem key={post.id} post={post} lang={lang} />
           ))}
         </div>
         
         {posts.length === 0 && (
           <div className="py-20 text-center">
             <p className="text-gray-400 font-medium font-sans">
-              {tagId ? "해당 주제로 등록된 연구 데이터가 없습니다. 📝" : search ? `'${search}'에 대한 검색 결과가 없습니다. 🔍` : "등록된 게시글이 없습니다. 📝"}
+              {isEn 
+                ? "No research articles found. 📝" 
+                : isJa 
+                ? "該当する記事が見つかりません。 📝" 
+                : "등록된 게시글이 없습니다. 📝"}
             </p>
           </div>
         )}
@@ -164,11 +178,17 @@ export default async function BlogListLayout({
         )}
       </section>
       
-      {/* Simple Stats or Message */}
+      {/* Stats footer */}
       <div className="container mx-auto px-4 max-w-5xl">
         <div className="py-12 border-t border-gray-100 text-center">
           <p className="text-sm text-gray-400 font-sans">
-            총 <span className="text-magenta font-bold">{totalPosts}</span>개의 연구 데이터가 기록되어 있습니다.
+            {isEn ? (
+              <>Total <span className="text-magenta font-bold">{totalPosts}</span> research articles published.</>
+            ) : isJa ? (
+              <>全 <span className="text-magenta font-bold">{totalPosts}</span> 件の研究データが公開されています。</>
+            ) : (
+              <>총 <span className="text-magenta font-bold">{totalPosts}</span>개의 연구 데이터가 기록되어 있습니다.</>
+            )}
           </p>
         </div>
       </div>

@@ -5,21 +5,23 @@ import { sanitizeForSeo, decodeHtmlEntities } from "@/lib/utils";
 
 interface PostListItemProps {
   post: WPPost;
+  lang?: "ko" | "en" | "ja";
 }
 
-export default function PostListItem({ post }: PostListItemProps) {
+export default function PostListItem({ post, lang = "ko" }: PostListItemProps) {
   const imageUrl = getFeaturedImage(post);
   const categories = getCategories(post);
   const tags = getTags(post);
   const sanitizedTitle = sanitizeForSeo(post.title.rendered);
-  const date = new Date(post.date).toLocaleDateString("ko-KR", {
+  const localeStr = lang === "en" ? "en-US" : lang === "ja" ? "ja-JP" : "ko-KR";
+  const date = new Date(post.date).toLocaleDateString(localeStr, {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
 
-  const isJa = post.slug && post.slug.endsWith("-ja");
-  const isEn = post.slug && post.slug.endsWith("-en");
+  const isJa = lang === "ja" || (post.slug && post.slug.endsWith("-ja"));
+  const isEn = lang === "en" || (post.slug && post.slug.endsWith("-en"));
 
   const href = isJa 
     ? `/ja/posts/${post.slug}` 
