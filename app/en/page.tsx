@@ -223,6 +223,12 @@ export default async function EnglishHomePage({
               All Research Articles
             </h2>
           </div>
+          <a
+            href="/en/blog"
+            className="text-xs font-bold text-[#E5007E] hover:text-[#c0006a] border-b-2 border-[#E5007E]/30 hover:border-[#E5007E] pb-0.5 transition-all whitespace-nowrap"
+          >
+            View All Categories →
+          </a>
         </div>
 
         <CategoryFilterGrid posts={allPosts} lang="en" />
