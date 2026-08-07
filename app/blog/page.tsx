@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import BlogListLayout from "@/components/blog/BlogListLayout";
 
-export const revalidate = 86400;
+export const revalidate = 60;
 
 export async function generateMetadata({
   searchParams,
