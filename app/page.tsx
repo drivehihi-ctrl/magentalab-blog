@@ -170,13 +170,6 @@ export default async function HomePage({
                   </h2>
                 </div>
               </div>
-              <Link
-                href="/blog"
-                className="text-xs font-extrabold text-[#E5007E] hover:text-[#c0006a] flex items-center gap-1 bg-magenta-light/50 px-3 py-1.5 rounded-full border border-[#E5007E]/20 transition"
-              >
-                <span>인기글 더보기</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
             </div>
 
             {/* Trending Cards Grid (PC Mouse Drag & Left/Right Arrows + Mobile Touch Carousel) */}
