@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Flame, Sparkles, TrendingUp, ArrowRight } from "lucide-react";
 import DraggableScrollContainer from "@/components/DraggableScrollContainer";
 import CategoryFilterGrid from "@/components/CategoryFilterGrid";
+import DiagnosticCenterSection from "@/components/DiagnosticCenterSection";
 
 export const revalidate = 86400;
 
@@ -146,6 +147,11 @@ export default async function HomePage({
           </div>
         </div>
       </section>
+
+      {/* ═════════════════════════════
+          🔬 마젠타랩 무료 진단센터 (PET DIAGNOSTIC & CALCULATOR HUB) SECTION
+      ═════════════════════════════ */}
+      <DiagnosticCenterSection lang="ko" />
 
       {/* ═════════════════════════════
           🔥 지금 뜨고 있는 글 (TRENDING POSTS - SORTED BY VIEWS) SECTION

@@ -8,6 +8,7 @@ import CommentsSection from "@/components/CommentsSection";
 import RelatedPosts from "@/components/RelatedPosts";
 import AnsimiSummary from "@/components/AnsimiSummary";
 import SocialShare from "@/components/SocialShare";
+import VeterinaryReferencesSection from "@/components/VeterinaryReferencesSection";
 import CalculatorBanner from "@/components/CalculatorBanner";
 
 export const revalidate = 86400;
@@ -312,6 +313,14 @@ export default async function EnglishPostDetailPage({ params }: PageProps) {
             title={post.title.rendered} 
             postId={post.id.toString()}
             lang="en"
+          />
+
+          {/* 🔬 Veterinary References Section */}
+          <VeterinaryReferencesSection 
+            categories={categories.map(c => c.name)} 
+            title={post.title.rendered} 
+            slug={post.slug} 
+            lang="en" 
           />
         
           {/* Social Share Section */}

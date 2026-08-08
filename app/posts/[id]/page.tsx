@@ -9,6 +9,7 @@ import RelatedPosts from "@/components/RelatedPosts";
 import AnsimiSummary from "@/components/AnsimiSummary";
 import SocialShare from "@/components/SocialShare";
 import AffiliateStoreBanner from "@/components/AffiliateStoreBanner";
+import VeterinaryReferencesSection from "@/components/VeterinaryReferencesSection";
 import CalculatorBanner from "@/components/CalculatorBanner";
 
 // ISR: 1시간마다 재생성 (색인 하이패스 - 빠른 응답 + 최신 데이터 보장)
@@ -293,6 +294,14 @@ export default async function PostDetailPage({ params }: PageProps) {
             content={post.content.rendered} 
             title={post.title.rendered} 
             postId={post.id.toString()}
+          />
+
+          {/* 🔬 수의학 연구 근거 및 학술 참고자료 (EEAT 100점) */}
+          <VeterinaryReferencesSection 
+            categories={categories.map(c => c.name)} 
+            title={post.title.rendered} 
+            slug={post.slug} 
+            lang="ko" 
           />
 
           {/* 제휴몰 배너 (본문 직후) */}

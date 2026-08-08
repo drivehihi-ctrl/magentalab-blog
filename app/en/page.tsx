@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Flame, Sparkles, TrendingUp, ArrowRight } from "lucide-react";
 import DraggableScrollContainer from "@/components/DraggableScrollContainer";
 import CategoryFilterGrid from "@/components/CategoryFilterGrid";
+import DiagnosticCenterSection from "@/components/DiagnosticCenterSection";
 
 export const revalidate = 86400;
 
@@ -128,6 +129,8 @@ export default async function EnglishHomePage({
           </div>
         </div>
       </section>
+
+      <DiagnosticCenterSection lang="en" />
 
       {/* 🔥 TRENDING POSTS SECTION (EN) */}
       {trendingPosts.length > 0 && (
