@@ -175,6 +175,37 @@ export default function VeterinaryReferencesSection({
         url: 'https://www.merckvetmanual.com/',
       },
     ];
+  } else if (text.includes('skin') || text.includes('dermatology') || text.includes('atopic') || text.includes('allergy') || text.includes('피부') || text.includes('아토피') || text.includes('농피증') || text.includes('알레르기') || text.includes('링웜') || text.includes('모낭충') || text.includes('옴')) {
+    keyInsight = isEn
+      ? 'Evaluates clinical dermatology guidelines for canine & feline skin conditions, elimination diet protocols, and environmental allergen controls.'
+      : isJa
+      ? '犬・猫の皮膚疾患（アトピー、食物アレルギー、膿皮症）における獣医皮膚科学的診断体系および環境管理指針を検証。'
+      : '강아지·고양이 피부 질환(아토피, 식이 알레르기, 농피증, 곰팡이 감염)의 수의피부과학적 진단 체계 및 환경 관리 지침을 종합 검토했습니다.';
+    cautionNote = isEn
+      ? 'Medicated shampoo concentrations, antibiotic course durations, and targeted immunosuppressive therapies require direct veterinary diagnosis and monitoring.'
+      : isJa
+      ? '薬用シャンプーの濃度・成分、抗生剤の投与期間、専門処方薬（アポキル、サイトポイント等）は必ず獣医師の直接の診察・指導のもとでご使用ください。'
+      : '약용 샴푸 성분·농도, 항생제 투여 기간 및 전문 처방 약물(아포퀼, 사이토포인트 등)은 반드시 수의사의 직접 진료 및 주관 경과 관찰 하에 투약하셔야 합니다.';
+    references = [
+      {
+        title: isEn ? 'ICADA World Consensus Guidelines for Canine Atopic Dermatitis' : isJa ? 'ICADA 犬のアトピー性皮膚炎世界コンセンサスガイドライン' : 'ICADA 국제동물피부질환학회 강아지 아토피 피부염 진단 지침',
+        org: 'International Committee on Allergic Diseases of Animals',
+        type: 'World Consensus Guideline',
+        url: 'https://wavd.org/',
+      },
+      {
+        title: isEn ? 'ACVD Practice Standards for Diagnosis and Management of Canine Pyoderma & Mycoses' : isJa ? 'ACVD 犬の膿皮症および真菌症の診断・治療標準' : 'ACVD 미국수의피부과학회 강아지 농피증 및 진균증 진단 표준',
+        org: 'American College of Veterinary Dermatology',
+        type: 'Dermatology Standard',
+        url: 'https://www.acvd.org/',
+      },
+      {
+        title: isEn ? 'Merck Veterinary Manual: Canine & Feline Dermatology Edition' : isJa ? 'メルク獣医学マニュアル：犬と猫の皮膚科学エディション' : 'Merck 수의학 매뉴얼: 강아지 및 고양이 수의피부과학 종합 가이드',
+        org: 'Merck & Co., Inc. Veterinary Medicine Division',
+        type: 'Medical Reference Manual',
+        url: 'https://www.merckvetmanual.com/',
+      },
+    ];
   } else {
     // General Healthcare Default
     keyInsight = isEn
