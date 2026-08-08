@@ -136,7 +136,7 @@ export default function DiagnosticCenterSection({ lang = 'ko' }: DiagnosticCente
               ? "Accurate veterinary formula calculators & self-assessment tools developed by Ansim Research Team."
               : isJa
               ? "アンシム研究チームが開発した獣医学計算機とセルフチェックツールで、愛犬・愛猫の健康をすぐ診断。"
-              : "수석 연구원 안심이가 수의학 공식을 기반으로 제작한 8대 무료 정밀 진단 및 계산 도구입니다."}
+              : "수석 연구원 안심이가 수의학 공식을 기반으로 제작한 7대 무료 정밀 진단 및 계산 도구입니다."}
           </p>
         </div>
 
