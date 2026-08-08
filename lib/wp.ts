@@ -60,6 +60,10 @@ let postsCache: {
 
 const CACHE_TTL = 1000 * 60 * 30; // 30 minutes in-memory cache
 
+export function clearPostsCache() {
+  postsCache = null;
+}
+
 export async function getPosts(
   page: number = 1, 
   perPage: number = 20, 
