@@ -184,6 +184,31 @@ body {
   text-decoration-color: var(--magenta);
 }
 
+/* ─── LISTS (UL / OL / LI) ─── */
+.wp-content ul {
+  list-style-type: disc;
+  padding-left: 1.75rem;
+  margin-top: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.wp-content ol {
+  list-style-type: decimal;
+  padding-left: 1.75rem;
+  margin-top: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.wp-content li {
+  margin-bottom: 0.6rem;
+  line-height: 1.7;
+}
+
+.wp-content li::marker {
+  color: var(--magenta);
+  font-weight: bold;
+}
+
 /* ─── ANIMATIONS ─── */
 @keyframes float {
   0%, 100% { transform: translateY(0); }
