@@ -233,16 +233,29 @@ export default function VeterinaryReferencesSection({
         type: 'Clinical Practice Standard',
         url: 'https://www.aaha.org/',
       },
+      {
+        title: isEn ? 'Merck Veterinary Manual: Clinical Veterinary Medicine Edition' : isJa ? 'メルク獣医学マニュアル：臨床獣医学エディション' : 'Merck 수의학 매뉴얼: 임상 수의학 종합 가이드',
+        org: 'Merck Veterinary Medicine Academic Division',
+        type: 'Peer-Reviewed Reference',
+        url: 'https://www.merckvetmanual.com/',
+      },
     ];
   }
 
   // Dynamic extraction of post-specific references from content HTML
-  if (content && (content.includes('🔬') || content.includes('Veterinary Evidence') || content.includes('수의학'))) {
+  if (content && (content.includes('🔬') || content.includes('Veterinary Evidence') || content.includes('수의학') || content.includes('獣医学'))) {
     const parsedRefs: Array<{ title: string; org: string; type: string; url: string }> = [];
 
-    // Extract reference list items
-    const refSectionMatch = content.match(/<h2[^>]*>[\s\S]*?🔬[\s\S]*$/i);
-    const searchArea = refSectionMatch ? refSectionMatch[0] : content;
+    // Find the LAST <h2> block that contains reference keywords
+    const h2Matches = Array.from(content.matchAll(/<h2[^>]*>[\s\S]*?<\/h2>/gi));
+    let refH2Index = -1;
+    for (const match of h2Matches) {
+      if (match[0].includes('🔬') || match[0].includes('수의학 연구 근거') || match[0].includes('Veterinary Evidence') || match[0].includes('獣医学')) {
+        refH2Index = match.index;
+      }
+    }
+
+    const searchArea = refH2Index !== -1 ? content.slice(refH2Index) : content;
 
     const liMatches = searchArea.match(/<li[^>]*>[\s\S]*?<\/li>/gi) || [];
     for (const li of liMatches) {
@@ -276,14 +289,14 @@ export default function VeterinaryReferencesSection({
     }
 
     // Extract Key Medical Evidence Summary
-    const insightMatch = searchArea.match(/<(?:p|strong|li)[^>]*>\s*(?:<strong>)?\s*(?:근거 핵심|이 글의 수의학적 근거 요약|Evidence summary|Key Medical Evidence|根拠の要約)\s*(?:<\/strong>)?\s*:\s*([\s\S]*?)<\/(?:p|strong|li)>/i);
+    const insightMatch = searchArea.match(/(?:근거 핵심|이 글의 수의학적 근거 요약|Evidence summary|Key Medical Evidence|根拠の要約)[^:：]*[:：]\s*([\s\S]*?)(?:<\/p>|<\/strong>|<\/li>)/i);
     if (insightMatch) {
       const extractedInsight = insightMatch[1].replace(/<[^>]+>/g, '').trim();
       if (extractedInsight) keyInsight = extractedInsight;
     }
 
     // Extract Veterinary Caution
-    const cautionMatch = searchArea.match(/<(?:p|strong|li)[^>]*>\s*(?:<strong>)?\s*(?:수의학적 주의사항|Veterinary caution|獣医学的注意)\s*(?:<\/strong>)?\s*:\s*([\s\S]*?)<\/(?:p|strong|li)>/i);
+    const cautionMatch = searchArea.match(/(?:수의학적 주의사항|Veterinary caution|獣医学的注意)[^:：]*[:：]\s*([\s\S]*?)(?:<\/p>|<\/strong>|<\/li>)/i);
     if (cautionMatch) {
       const extractedCaution = cautionMatch[1].replace(/<[^>]+>/g, '').trim();
       if (extractedCaution) cautionNote = extractedCaution;
