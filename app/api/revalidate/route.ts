@@ -22,6 +22,9 @@ export async function GET(request: NextRequest) {
     // @ts-ignore
     revalidateTag('tags');
     revalidatePath('/', 'layout');
+    revalidatePath('/posts/[id]', 'page');
+    revalidatePath('/en/posts/[id]', 'page');
+    revalidatePath('/ja/posts/[id]', 'page');
   } catch (err) {
     console.error("Revalidation error:", err);
   }
