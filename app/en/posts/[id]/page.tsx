@@ -321,6 +321,7 @@ export default async function EnglishPostDetailPage({ params }: PageProps) {
             title={post.title.rendered} 
             slug={post.slug} 
             lang="en" 
+            content={post.content.rendered}
           />
         
           {/* Social Share Section */}

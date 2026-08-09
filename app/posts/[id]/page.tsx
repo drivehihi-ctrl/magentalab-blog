@@ -302,6 +302,7 @@ export default async function PostDetailPage({ params }: PageProps) {
             title={post.title.rendered} 
             slug={post.slug} 
             lang="ko" 
+            content={post.content.rendered}
           />
 
           {/* 제휴몰 배너 (본문 직후) */}

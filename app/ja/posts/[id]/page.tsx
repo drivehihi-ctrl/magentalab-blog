@@ -320,6 +320,7 @@ export default async function JapanesePostDetailPage({ params }: PageProps) {
             title={post.title.rendered} 
             slug={post.slug} 
             lang="ja" 
+            content={post.content.rendered}
           />
         
           {/* Social Share Section */}
