@@ -152,17 +152,17 @@ export default function VeterinaryReferencesSection({
         url: 'https://www.bsava.com/',
       },
     ];
-  } else if (text.includes('poison') || text.includes('emergency') || text.includes('onion') || text.includes('garlic') || text.includes('독성') || text.includes('응급') || text.includes('양파')) {
+  } else if (text.includes('poison') || text.includes('emergency') || text.includes('onion') || text.includes('garlic') || text.includes('chocolate') || text.includes('독성') || text.includes('응급') || text.includes('양파') || text.includes('초콜릿') || text.includes('チョコレート') || text.includes('xylitol') || text.includes('자일리톨')) {
     keyInsight = isEn
-      ? 'Assesses hemolytic toxicity thresholds (g/kg), Heinz body anemia triggers, and veterinary clinical toxicology protocols.'
+      ? 'Assesses toxicity thresholds, methylxanthine/xylitol risk factors, and veterinary clinical toxicology protocols.'
       : isJa
-      ? '溶血性中毒の危険閾値（g/kg）、ハインツ小体貧血の誘発因子、臨床中毒学の緊急応急プロトコルを検証。'
-      : '체중당 독성 유발량(g/kg), 하인츠 소체 빈혈 위험성, 임상 독성학 응급 처치 지침을 검토했습니다.';
+      ? '毒性危険閾値、メチルキサンチン/キシリトールのリスク要因、臨床中毒学の緊急応急プロトコルを検証。'
+      : '체중당 독성 유발량, 메틸잔틴 및 자일리톨 중독 위험성, 임상 독성학 응급 처치 지침을 검토했습니다.';
     cautionNote = isEn
-      ? 'In case of toxic food ingestion (onions, garlic, chocolate, grapes), DO NOT induce vomiting at home; consult a vet ER immediately.'
+      ? 'In case of toxic food ingestion (onions, garlic, chocolate, xylitol, grapes), DO NOT induce vomiting at home; consult a vet ER immediately.'
       : isJa
-      ? '中毒物質（玉ねぎ、ニンニク、チョコ、ブドウ等）の誤食時、自宅での無茶な催吐は危険です。直ちに動物病院を受診してください。'
-      : '양파, 마늘, 초콜릿, 포도 등 독성 음식 섭취 시 집에서 민간요법으로 구토를 유발하지 마시고 즉시 동물병원 응급 진료를 받으셔야 합니다.';
+      ? '中毒物質（玉ねぎ、ニンニク、チョコ、キシリトール、ブドウ等）の誤食時、自宅での無茶な催吐は危険です。直ちに動物病院を受診してください。'
+      : '양파, 마늘, 초콜릿, 자일리톨, 포도 등 독성 음식 섭취 시 집에서 민간요법으로 구토를 유발하지 마시고 즉시 동물병원 응급 진료를 받으셔야 합니다.';
     references = [
       {
         title: isEn ? 'ASPCA Animal Poison Control Center Small Animal Clinical Toxicology Guide' : isJa ? 'ASPCA 動物中毒管理センター 臨床中毒学ガイド' : 'ASPCA 동물중독통제센터 임상 독성학 수의학 지침',
@@ -171,9 +171,46 @@ export default function VeterinaryReferencesSection({
         url: 'https://www.aspca.org/pet-care/animal-poison-control',
       },
       {
-        title: isEn ? 'Merck Veterinary Manual: Toxicology of Small Animals' : isJa ? 'メルク獣医学マニュアル：小動物中毒学' : 'Merck 수의학 매뉴얼: 소동물 독성학 및 응급처치',
+        title: isEn ? 'Merck Veterinary Manual: Chocolate & Small Animal Toxicology' : isJa ? 'メルク獣医学マニュアル：小動物中毒学' : 'Merck 수의학 매뉴얼: 초콜릿 독성학 및 소동물 응급처치',
         org: 'Merck & Co. Veterinary Emergency Protocol',
         type: 'Emergency Medical Manual',
+        url: 'https://www.merckvetmanual.com/toxicology/food-hazards/chocolate-toxicosis-in-animals',
+      },
+      {
+        title: isEn ? 'FDA Consumer Update: Leave Chocolate Out of Rover Celebrations' : isJa ? 'FDA 公式ガイドライン：犬のチョコレート中毒注意報' : 'FDA 미국식품의약국 강아지 초콜릿 중독 공식 주의 가이드',
+        org: 'U.S. Food and Drug Administration (FDA)',
+        type: 'Federal Health Guidance',
+        url: 'https://www.fda.gov/consumers/consumer-updates/leave-chocolate-out-rovers-celebrations',
+      },
+    ];
+  } else if (text.includes('diabetes') || text.includes('insulin') || text.includes('당뇨') || text.includes('인슐린') || text.includes('糖尿病') || text.includes('インスリン')) {
+    keyInsight = isEn
+      ? 'Evaluates individualized insulin protocols, clinical symptom monitoring, and blood glucose curve interpretation in canine & feline diabetes.'
+      : isJa
+      ? '個別化されたインスリンプロトコル、臨床症状のモニタリング、血糖曲線の解釈を最新のAAHAガイドラインに基づき検証。'
+      : '강아지·고양이 당뇨병의 개별화된 인슐린 투여 지침, 혈당곡선 및 임상 증상 모니터링 기준을 AAHA 가이드라인에 따라 종합 검토했습니다.';
+    cautionNote = isEn
+      ? 'Do not adjust, increase, decrease, or skip insulin doses based solely on a single blood glucose reading without veterinary direction.'
+      : isJa
+      ? '1回の血糖値の測定結果のみに基づいて、獣医師の指示なくインスリンの投与量を変更しないでください。'
+      : '단 한 번의 혈당 수치만으로 보호자가 임의로 인슐린 용량을 늘리거나 줄이거나 건너뛰지 마시고 수의사와 협의하셔야 합니다.';
+    references = [
+      {
+        title: isEn ? '2018 AAHA Diabetes Management Guidelines for Dogs and Cats' : isJa ? '2018 AAHA 犬と猫の糖尿病管理ガイドライン' : 'AAHA 2018 강아지·고양이 당뇨병 관리 가이드라인',
+        org: 'American Animal Hospital Association (AAHA)',
+        type: 'Clinical Practice Guideline',
+        url: 'https://www.aaha.org/resources/2018-aaha-diabetes-management-guideline-for-dogs-and-cats/',
+      },
+      {
+        title: isEn ? 'AAHA Guidelines: Blood Glucose Curves Interpretation' : isJa ? 'AAHA 血糖曲線の作成と解釈指針' : 'AAHA 혈당곡선(Blood Glucose Curve) 검사 및 해석 지침',
+        org: 'Journal of the American Animal Hospital Association',
+        type: 'Diagnostic Reference',
+        url: 'https://www.aaha.org/resources/2018-aaha-diabetes-management-guideline-for-dogs-and-cats/blood-glucose-curves/',
+      },
+      {
+        title: isEn ? 'Merck Veterinary Manual: Canine & Feline Diabetes Mellitus' : isJa ? 'メルク獣医学マニュアル：犬と猫の糖尿病' : 'Merck 수의학 매뉴얼: 강아지·고양이 당뇨병 수의학 지침',
+        org: 'Merck & Co. Veterinary Medicine Academic Division',
+        type: 'Medical Reference Manual',
         url: 'https://www.merckvetmanual.com/',
       },
     ];

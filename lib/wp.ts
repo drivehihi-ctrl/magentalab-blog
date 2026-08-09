@@ -556,6 +556,8 @@ export function fixWpLinks(content: string, postTitle?: string, lang: string = '
     const jaDmLink = "https://www.magentalabblog.com/ja/dm-calculator";
     fixed = fixed.replace(/href="https?:\/\/(?:www\.)?magentalabblog\.com\/dm-calculator"/gi, `href="${jaDmLink}"`)
                  .replace(/href="\/dm-calculator"/gi, `href="${jaDmLink}"`);
+  }
+
   // 5. 수의학 연구 근거 섹션(<h2>...🔬...)은 하단 전용 카드 컴포넌트(VeterinaryReferencesSection)로 렌더링되므로 본문 내부 및 목차(TOC)에서 중복 텍스트 제거
   const h2Matches = Array.from(fixed.matchAll(/<h2[^>]*>[\s\S]*?<\/h2>/gi));
   let refH2Index = -1;
