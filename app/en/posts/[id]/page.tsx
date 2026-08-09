@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Metadata } from "next";
 import { getPost, getPostBySlug, getPosts, getFeaturedImage, getCategories, getTags, getRelatedPosts, fixWpLinks } from "@/lib/wp";
-import { sanitizeForSeo, decodeHtmlEntities } from "@/lib/utils";
+import { sanitizeForSeo, decodeHtmlEntities, cleanContentReferences } from "@/lib/utils";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import CommentsSection from "@/components/CommentsSection";
@@ -304,24 +304,24 @@ export default async function EnglishPostDetailPage({ params }: PageProps) {
 
           <div 
             className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal"
-            dangerouslySetInnerHTML={{ __html: fixWpLinks(post.content.rendered, sanitizeForSeo(post.title.rendered), 'en') }}
+            dangerouslySetInnerHTML={{ __html: fixWpLinks(cleanContentReferences(post.content.rendered), sanitizeForSeo(post.title.rendered), 'en') }}
           />
 
-          {/* CalculatorBanner */}
-          <CalculatorBanner 
-            content={post.content.rendered} 
-            title={post.title.rendered} 
-            postId={post.id.toString()}
-            lang="en"
-          />
-
-          {/* 🔬 Veterinary References Section */}
+          {/* 1순위: 🔬 Veterinary References Section (글 바로 아래 배치) */}
           <VeterinaryReferencesSection 
             categories={categories.map(c => c.name)} 
             title={post.title.rendered} 
             slug={post.slug} 
             lang="en" 
             content={post.content.rendered}
+          />
+
+          {/* 2순위: CalculatorBanner (근거 박스 바로 아래 배치) */}
+          <CalculatorBanner 
+            content={post.content.rendered} 
+            title={post.title.rendered} 
+            postId={post.id.toString()}
+            lang="en"
           />
         
           {/* Social Share Section */}

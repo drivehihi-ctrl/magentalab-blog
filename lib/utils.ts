@@ -51,3 +51,22 @@ export function sanitizeForSeo(text: string, maxLength?: number): string {
   
   return sanitized;
 }
+
+/**
+ * 본문 HTML 내부에 하드코딩되었거나 잔재로 남아있는 수의학 근거 HTML 블록을 정제합니다.
+ */
+export function cleanContentReferences(html: string): string {
+  if (!html) return "";
+  let cleaned = html;
+  
+  // 1. 하드코딩된 RICH VETERINARY EVIDENCE & REFERENCES COMPONENT div 블록 및 모든 bg-[#faf6f0] 테두리 껍데기 박스 완전 제거
+  cleaned = cleaned.replace(/<!--[\s\S]*?VETERINARY EVIDENCE[\s\S]*?-->/gi, "");
+  cleaned = cleaned.replace(/<div[^>]*class="[^"]*bg-\[#faf6f0\][^"]*"[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/gi, "");
+  cleaned = cleaned.replace(/<div[^>]*class="[^"]*bg-\[#faf6f0\][^"]*"[\s\S]*?<\/div>\s*<\/div>/gi, "");
+  cleaned = cleaned.replace(/<div[^>]*class="[^"]*bg-\[#faf6f0\][^"]*"[\s\S]*?<\/div>/gi, "");
+
+  // 2. 본문 끝자락의 <h2>🔬 수의학... / Veterinary... / 獣医学...</h2> 섹션 및 하위 문단 제거
+  cleaned = cleaned.replace(/<h2[^>]*>[\s\S]*?(Veterinary Evidence|獣医学根拠|수의학 연구 근거|Veterinary References)[\s\S]*$/gi, "");
+  
+  return cleaned.trim();
+}

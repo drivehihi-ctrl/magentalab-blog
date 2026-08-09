@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Metadata } from "next";
 import { getPost, getPostBySlug, getPosts, getFeaturedImage, getCategories, getTags, getRelatedPosts, fixWpLinks } from "@/lib/wp";
-import { sanitizeForSeo, decodeHtmlEntities } from "@/lib/utils";
+import { sanitizeForSeo, decodeHtmlEntities, cleanContentReferences } from "@/lib/utils";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import CommentsSection from "@/components/CommentsSection";
@@ -286,23 +286,23 @@ export default async function PostDetailPage({ params }: PageProps) {
 
           <div 
             className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal"
-            dangerouslySetInnerHTML={{ __html: fixWpLinks(post.content.rendered, sanitizeForSeo(post.title.rendered), 'ko') }}
+            dangerouslySetInnerHTML={{ __html: fixWpLinks(cleanContentReferences(post.content.rendered), sanitizeForSeo(post.title.rendered), 'ko') }}
           />
 
-          {/* 본문 주제 맞춤형 계산기 추천 배너 */}
-          <CalculatorBanner 
-            content={post.content.rendered} 
-            title={post.title.rendered} 
-            postId={post.id.toString()}
-          />
-
-          {/* 🔬 수의학 연구 근거 및 학술 참고자료 (EEAT 100점) */}
+          {/* 1순위: 🔬 수의학 연구 근거 및 학술 참고자료 (글 바로 아래 1순위 배치) */}
           <VeterinaryReferencesSection 
             categories={categories.map(c => c.name)} 
             title={post.title.rendered} 
             slug={post.slug} 
             lang="ko" 
             content={post.content.rendered}
+          />
+
+          {/* 2순위: 본문 주제 맞춤형 계산기 추천 배너 (근거 박스 바로 아래 2순위 배치) */}
+          <CalculatorBanner 
+            content={post.content.rendered} 
+            title={post.title.rendered} 
+            postId={post.id.toString()}
           />
 
           {/* 제휴몰 배너 (본문 직후) */}

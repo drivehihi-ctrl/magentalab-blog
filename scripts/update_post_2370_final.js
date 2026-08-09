@@ -1,0 +1,423 @@
+require('dotenv').config({ path: '.env.local' });
+const fs = require('fs');
+const path = require('path');
+
+const postId = 2370;
+const title = "강아지 당뇨병 관리 5가지: 인슐린, 혈당곡선, 식사와 저혈당 증상";
+
+const excerpt = `1. 강아지 당뇨병 관리는 ‘완벽한 혈당 숫자 하나’를 만드는 일이 아닙니다. 식사와 인슐린, 물 마시는 양, 소변, 체중과 활동 변화까지 함께 살펴보는 것이 중요합니다.
+
+2. 인슐린의 종류·용량·투여 일정은 아이마다 다를 수 있습니다. 밥을 평소보다 적게 먹거나 토하고 기운이 없다면 보호자가 임의로 인슐린 양이나 시간을 바꾸기보다 담당 수의사에게 상황을 알려야 합니다.
+
+3. 혈당곡선은 하루 동안 혈당이 어떻게 움직이는지 보는 자료입니다. 하지만 혈당곡선 하나만 보고 치료를 결정하지 않고 식욕·갈증·소변·체중·저혈당 증상 등과 함께 해석합니다.
+
+[공감]
+
+당뇨병 진단을 처음 받으면 보호자님 머릿속에는 갑자기 숫자가 너무 많아져요.
+
+혈당은 얼마여야 하는지, 인슐린은 언제 줘야 하는지, 사료의 탄수화물은 몇 퍼센트여야 하는지….
+
+그러다 보면 우리 아이 얼굴보다 숫자만 바라보게 될 수도 있습니다.
+
+안심이가 조금 쉽게 설명해볼게요.
+
+당뇨병 관리에서 보호자님이 해야 할 가장 중요한 일은 수의사가 되는 것이 아니에요.
+
+우리 아이의 평소 하루를 잘 알고, 평소와 달라진 신호를 발견하는 것.
+
+그것부터 시작하면 됩니다.`;
+
+const userBodyHtml = `<p>강아지가 당뇨병 진단을 받으면 평범했던 하루가 갑자기 복잡하게 느껴질 수 있습니다.</p>
+
+<p>밥을 먹을 때마다 시계를 보게 되고, 물을 조금 많이 마시면 걱정되고, 낮잠을 오래 자면 혹시 혈당이 떨어진 것은 아닌지 신경이 쓰이기도 하지요.</p>
+
+<p><strong>안심이가 먼저 한 가지만 정리해볼게요.</strong></p>
+
+<p>강아지 당뇨병 관리는 하나의 혈당 숫자를 맞히는 시험이 아닙니다.</p>
+
+<p><strong>잘 먹고 있는지, 물과 소변은 어떤지, 체중은 유지되는지, 평소처럼 움직이는지, 그리고 인슐린에 어떻게 반응하고 있는지를 함께 보는 과정</strong>에 더 가깝습니다.</p>
+
+<h2>1. 당뇨병 관리는 ‘하루의 흐름’을 보는 일이에요</h2>
+
+<p>당뇨병을 조금 쉽게 생각하면 네 가지가 서로 연결되어 있다고 볼 수 있습니다.</p>
+
+<p><strong>식사 → 인슐린 → 생활 → 관찰</strong></p>
+
+<p>밥을 비슷한 시간과 양으로 먹고, 처방받은 방식으로 인슐린을 사용하고, 평소 생활 패턴이 크게 흔들리지 않으면 아이가 치료에 어떻게 반응하는지 파악하기도 쉬워집니다.</p>
+
+<p>반대로 평소 잘 먹던 아이가 갑자기 밥을 절반밖에 먹지 않았거나, 토하거나, 하루 종일 축 처져 있다면 이야기가 달라집니다.</p>
+
+<p>이럴 때는 인슐린 숫자만 볼 것이 아니라 <strong>“오늘 우리 아이의 하루에서 무엇이 달라졌지?”</strong>부터 보는 것이 중요합니다.</p>
+
+<!-- IMAGE 1 -->
+
+<h2>2. “인슐린은 밥 먹고 몇 분 뒤에 줘야 하나요?”</h2>
+
+<p>당뇨병을 처음 관리하는 보호자님이 정말 많이 궁금해하는 부분입니다.</p>
+
+<p>그런데 인터넷에서 본 하나의 시간을 모든 강아지에게 적용하면 안 됩니다.</p>
+
+<p>사용하는 인슐린의 종류와 투여 계획, 식사 패턴, 다른 질환이 있는지, 실제 혈당 반응이 어떤지에 따라 관리계획이 달라질 수 있기 때문이에요.</p>
+
+<p><strong>안심이가 기억하기 쉽게 정리하면 이렇습니다.</strong></p>
+
+<p><strong>“일정한 생활은 중요하지만, 치료 방법을 보호자가 즉석에서 새로 만들면 안 된다.”</strong></p>
+
+<p>담당 수의사가 정해준 식사와 인슐린 계획이 있다면 그것이 가장 먼저 적용되어야 합니다.</p>
+
+<p>그리고 평소와 달리 밥을 거의 먹지 않거나, 반복해서 토하거나, 갑자기 기운이 없다면 스스로 인슐린을 늘리거나 줄이거나 두 번 투여하는 방식으로 해결하려 하지 말고 담당 병원에 상황을 알려주세요.</p>
+
+<h2>3. 혈당 말고도 보호자가 볼 수 있는 데이터가 많아요</h2>
+
+<p>병원에서는 혈액검사와 혈당 같은 숫자를 볼 수 있습니다.</p>
+
+<p>하지만 보호자님에게만 보이는 데이터도 있어요.</p>
+
+<p><strong>바로 우리 아이의 일상입니다.</strong></p>
+
+<div class="table-responsive">
+<table>
+<thead>
+<tr>
+<th>집에서 볼 것</th>
+<th>안심이가 쉽게 설명하면</th>
+<th>기록하면 좋은 변화</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>물</strong></td>
+<td>당 조절이 잘 되지 않을 때 다시 물을 많이 찾는 모습이 나타날 수 있어요.</td>
+<td>평소보다 물그릇이 훨씬 빨리 비는지</td>
+</tr>
+<tr>
+<td><strong>소변</strong></td>
+<td>물을 많이 마시면 소변 양이나 횟수도 늘어날 수 있어요.</td>
+<td>산책 중 소변 횟수, 소변 양, 집안 실수</td>
+</tr>
+<tr>
+<td><strong>식욕</strong></td>
+<td>당뇨 관리에서는 평소 식사 패턴이 중요한 정보가 됩니다.</td>
+<td>전부 먹음 / 일부만 먹음 / 거부 / 구토</td>
+</tr>
+<tr>
+<td><strong>체중</strong></td>
+<td>잘 먹는데 계속 살이 빠지는 변화는 그냥 지나치지 않는 게 좋아요.</td>
+<td>가능하면 같은 조건에서 주기적으로 측정</td>
+</tr>
+<tr>
+<td><strong>기운과 행동</strong></td>
+<td>갑작스러운 무기력, 떨림, 비틀거림은 평소와 다른 신호일 수 있어요.</td>
+<td>언제 시작됐고 얼마나 지속됐는지</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<p><strong>안심이는 이걸 ‘우리 아이의 생활 데이터’라고 생각하면 쉽다고 봐요.</strong></p>
+
+<p>혈당계가 숫자 하나를 알려준다면, 물·소변·밥·체중·행동은 그 숫자 주변에서 실제로 무슨 일이 일어나고 있는지를 알려줍니다.</p>
+
+<!-- IMAGE 2 -->
+
+<h2>4. 혈당곡선은 왜 보는 걸까요?</h2>
+
+<p>‘혈당곡선’이라는 말을 처음 들으면 어려운 검사처럼 들립니다.</p>
+
+<p>하지만 원리는 생각보다 간단해요.</p>
+
+<p><strong>한 번 측정한 혈당이 사진 한 장이라면, 혈당곡선은 하루의 짧은 동영상에 가깝습니다.</strong></p>
+
+<p>시간이 지나면서 혈당이 어떻게 내려가고 다시 올라오는지를 여러 번 측정해서 흐름을 보는 것입니다.</p>
+
+<p>이 과정에서 수의사는 인슐린 효과가 어느 정도 지속되는지, 혈당이 가장 낮아지는 시점은 어디인지, 지나치게 낮아지는 구간은 없는지 등을 살펴봅니다.</p>
+
+<p>혈당이 가장 낮아지는 지점을 수의학에서는 <strong>나디르(nadir)</strong>라고 부릅니다.</p>
+
+<p>그런데 여기서 한 가지가 정말 중요합니다.</p>
+
+<p><strong>나디르는 보호자가 그 숫자를 보고 바로 인슐린 양을 바꾸라는 숫자가 아닙니다.</strong></p>
+
+<p>혈당곡선은 아이의 식욕과 체중, 물·소변 변화, 사용 중인 인슐린, 저혈당 여부와 함께 해석해야 합니다.</p>
+
+<!-- IMAGE 3 -->
+
+<h2>5. “혈당검사 했는데 왜 생활기록까지 필요하죠?”</h2>
+
+<p>안심이가 예를 하나 들어볼게요.</p>
+
+<p>두 강아지의 혈당 숫자가 어느 순간 똑같았다고 해볼게요.</p>
+
+<p>그런데 한 아이는 밥도 잘 먹고 체중도 유지되며 물 마시는 양도 안정적이고, 다른 아이는 계속 살이 빠지고 물을 많이 마신다면 어떨까요?</p>
+
+<p>숫자 하나만 보면 같지만 <strong>아이의 상태는 전혀 같지 않을 수 있습니다.</strong></p>
+
+<p>그래서 당뇨병 관리에서는 혈당 데이터뿐 아니라 실제 임상증상과 생활 변화를 같이 봅니다.</p>
+
+<p>가정 혈당 측정이나 연속혈당측정기 같은 방법을 활용하는 경우도 있지만, 어떤 방식이 적절한지는 아이의 상태와 담당 수의사의 모니터링 계획에 따라 달라집니다.</p>
+
+<h2>6. 저혈당은 어떤 모습으로 보일까요?</h2>
+
+<p><strong>저혈당은 혈당이 지나치게 낮아진 상태</strong>를 말합니다.</p>
+
+<p>그런데 보호자님에게 더 중요한 것은 용어보다 <strong>“우리 아이가 어떻게 보이는가”</strong>입니다.</p>
+
+<p>처음에는 그냥 평소보다 기운이 없는 것처럼 보일 수도 있어요.</p>
+
+<p>잠이 지나치게 많아지거나, 갑자기 불안해 보이거나, 걸을 때 중심을 잘 잡지 못하는 모습이 나타날 수도 있습니다.</p>
+
+<p>상태가 더 심해지면 몸을 떨거나 방향감각이 흐려지고, 제대로 서기 어렵거나 쓰러지거나 발작이 나타날 수 있습니다.</p>
+
+<p><strong>이 부분은 안심이가 꼭 짚어드리고 싶어요.</strong></p>
+
+<p>이런 상황에서 인터넷 이미지에서 본 방법을 따라 꿀이나 시럽의 양을 계산하거나, 다음 인슐린 양을 임의로 조절하는 방식으로 해결하려 하지 마세요.</p>
+
+<p>저혈당이 의심되면 담당 동물병원이나 응급 진료가 가능한 병원에 신속하게 연락하고, 아이에게 제공받은 개별 응급관리 지침을 따르는 것이 중요합니다.</p>
+
+<p>특히 의식이 떨어져 있거나 정상적으로 삼키지 못하고, 쓰러져 있거나 발작 중이라면 음식이나 액체를 억지로 입안에 넣지 않는 것이 안전합니다.</p>
+
+<h2>7. “그런데 오늘 밥을 잘 안 먹었어요.”</h2>
+
+<p>당뇨병을 관리하다 보면 언젠가는 한 번쯤 생길 수 있는 상황입니다.</p>
+
+<p>평소에는 한 그릇을 깨끗하게 먹던 아이가 어느 날 몇 입만 먹을 수도 있지요.</p>
+
+<p>이때 보호자가 가장 불안해지는 이유는 <strong>“그러면 인슐린은 어떻게 하지?”</strong>라는 생각 때문일 겁니다.</p>
+
+<p>하지만 이 상황에서 인터넷의 고정 공식을 적용하기보다 담당 수의사가 판단할 수 있는 정보를 모아주는 것이 더 중요합니다.</p>
+
+<p><strong>얼마나 먹었는지, 토했는지, 평소처럼 반응하는지, 다른 증상은 없는지, 평소 어떤 인슐린 계획을 사용하는지</strong>를 확인해 병원에 알려주세요.</p>
+
+<p>그 정보가 있어야 현재 아이에게 맞는 다음 행동을 결정할 수 있습니다.</p>
+
+<h2>8. 당뇨병이면 무조건 고식이섬유 사료를 먹어야 하나요?</h2>
+
+<p><strong>꼭 그렇게 단순하게 볼 필요는 없습니다.</strong></p>
+
+<p>당뇨견의 식사는 완전하고 균형 잡힌 영양을 제공하면서 아이가 잘 먹을 수 있어야 하고, 체형과 다른 질환까지 함께 고려해야 합니다.</p>
+
+<p>특히 과체중인 일부 당뇨견에서는 식이섬유가 많은 식단이 체중 관리와 식후 혈당 변화 관리에 도움이 될 수 있습니다.</p>
+
+<p>하지만 마른 당뇨견과 비만한 당뇨견의 영양 목표가 같을 수는 없겠지요.</p>
+
+<p><strong>안심이가 쉽게 말하면, 사료 봉투에 적힌 숫자 하나가 당뇨병을 관리해주는 것은 아닙니다.</strong></p>
+
+<p>아이에게 맞는 체중과 하루 섭취량, 일정한 급여 패턴, 실제 혈당 조절 상태를 함께 보는 것이 더 중요합니다.</p>
+
+<!-- IMAGE 4 -->
+
+<h2>9. 그러면 NFE 계산은 필요 없는 건가요?</h2>
+
+<p>필요 없다는 뜻은 아닙니다.</p>
+
+<p>NFE는 사료의 보증성분을 이용해 탄수화물로 추정되는 부분을 계산할 때 사용하는 방법입니다.</p>
+
+<p>여러 사료를 영양적으로 비교할 때 참고할 수 있는 정보이지요.</p>
+
+<p>하지만 <strong>NFE가 특정 숫자 아래라는 이유만으로 그 사료가 우리 당뇨견에게 가장 적합하다고 말할 수는 없습니다.</strong></p>
+
+<p>더구나 NFE 숫자를 인슐린 용량과 직접 연결해서도 안 됩니다.</p>
+
+<p>그래서 Magentalab 2.0에서는 이 글에서 복잡한 NFE 계산을 길게 다루지 않고, 사료 영양성분을 비교하는 별도의 콘텐츠에서 자세히 설명합니다.</p>
+
+<p><strong>→ 내부링크: 사료 탄수화물·NFE 계산 가이드</strong></p>
+
+<h2>10. 당뇨병 관리에서 ‘완벽한 하루’보다 중요한 것</h2>
+
+<p>매일 정확히 똑같은 하루를 만드는 것은 현실적으로 어렵습니다.</p>
+
+<p>어떤 날은 산책을 조금 더 할 수도 있고, 어떤 날은 밥을 천천히 먹을 수도 있고, 컨디션이 떨어지는 날도 있습니다.</p>
+
+<p>그래서 안심이는 보호자님에게 완벽함을 요구하고 싶지 않아요.</p>
+
+<p><strong>대신 평소의 패턴을 알고, 달라졌을 때 알아차리는 것이 중요합니다.</strong></p>
+
+<p>“오늘 물을 유난히 많이 마시네.”</p>
+
+<p>“며칠 사이 체중이 조금씩 줄었네.”</p>
+
+<p>“오늘은 평소와 달리 식사를 거의 안 했네.”</p>
+
+<p>이런 변화들이 쌓이면 아주 중요한 의료정보가 됩니다.</p>
+
+<h2>11. 당뇨병 재검 때 무엇을 기록해가면 좋을까요?</h2>
+
+<p>혈당 숫자 하나만 가져가기보다 최근 며칠 동안의 생활을 함께 보여주세요.</p>
+
+<p>식욕은 어땠는지, 처방된 인슐린 일정은 어떻게 진행됐는지, 물과 소변이 달라지지는 않았는지, 체중은 어떻게 변했는지, 갑자기 떨거나 기운이 없었던 적은 없었는지를 간단히 기록해두면 도움이 됩니다.</p>
+
+<p>이상한 행동이 잠깐 나타났다가 사라졌다면 스마트폰으로 짧게 찍은 영상도 진료에 도움이 될 수 있어요.</p>
+
+<h2>12. 안심이의 연구노트</h2>
+
+<p>예전에는 당뇨병 관리 글을 보면 숫자가 아주 많이 나왔습니다.</p>
+
+<p>몇 분 안에 인슐린을 투여해야 한다거나, 혈당이 몇이면 어떻게 해야 한다거나, 탄수화물이 몇 퍼센트 이하여야 한다는 식이었어요.</p>
+
+<p>숫자는 중요합니다.</p>
+
+<p>하지만 <strong>그 숫자를 누구에게, 어떤 상황에서 적용하는지가 더 중요합니다.</strong></p>
+
+<p>강아지 당뇨병은 하나의 시간표나 혈당값, 사료 숫자로 관리하는 질환이 아닙니다.</p>
+
+<p><strong>식사, 인슐린, 물, 소변, 식욕, 체중, 활동 그리고 혈당 변화가 함께 하나의 이야기를 만듭니다.</strong></p>
+
+<p>보호자님은 그 이야기를 가장 가까이에서 관찰할 수 있는 사람입니다.</p>
+
+<p>안심이는 그 데이터를 어렵게 만드는 대신, 보호자님이 이해하기 쉽게 정리해드리는 역할을 하겠습니다.</p>`;
+
+function parseCSV(text) {
+  const result = [];
+  let row = [];
+  let field = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    const nextChar = text[i + 1];
+
+    if (char === '"') {
+      if (inQuotes && nextChar === '"') {
+        field += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (char === ',' && !inQuotes) {
+      row.push(field);
+      field = '';
+    } else if ((char === '\r' || char === '\n') && !inQuotes) {
+      if (char === '\r' && nextChar === '\n') {
+        i++;
+      }
+      row.push(field);
+      if (row.length > 1) {
+        result.push(row);
+      }
+      row = [];
+      field = '';
+    } else {
+      field += char;
+    }
+  }
+
+  if (field || row.length > 0) {
+    row.push(field);
+    result.push(row);
+  }
+
+  return result;
+}
+
+function escapeCsvField(field) {
+  if (field === null || field === undefined) return '""';
+  const str = String(field).replace(/"/g, '""');
+  return `"${str}"`;
+}
+
+function cleanHtml(html) {
+  if (!html) return '';
+  return html.replace(/<[^>]*>?/gm, '').replace(/\s+/g, ' ').trim();
+}
+
+async function run() {
+  const wpUser = process.env.WP_USER;
+  const wpPass = process.env.WP_SEO_APP_PASSWORD;
+  const authHeader = 'Basic ' + Buffer.from(wpUser + ':' + wpPass).toString('base64');
+
+const originalImgs = [
+  `<img loading="lazy" decoding="async" class="alignnone size-large wp-image-2372" src="http://magentalab.mycafe24.com/wp-content/uploads/2026/07/1-13-1024x572.jpeg" alt="강아지 당뇨병 관리 5가지: 인슐린, 혈당곡선, 식사와 저혈당 증상" width="1024" height="572" srcset="https://magentalab.mycafe24.com/wp-content/uploads/2026/07/1-13-1024x572.jpeg 1024w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/1-13-300x167.jpeg 300w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/1-13-768x429.jpeg 768w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/1-13.jpeg 1376w" sizes="auto, (max-width: 1024px) 100vw, 1024px" />`,
+  `<img loading="lazy" decoding="async" class="alignnone size-large wp-image-2373" src="http://magentalab.mycafe24.com/wp-content/uploads/2026/07/2-13-1024x572.jpeg" alt="강아지 당뇨병 관리 5가지: 인슐린, 혈당곡선, 식사와 저혈당 증상" width="1024" height="572" srcset="https://magentalab.mycafe24.com/wp-content/uploads/2026/07/2-13-1024x572.jpeg 1024w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/2-13-300x167.jpeg 300w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/2-13-768x429.jpeg 768w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/2-13.jpeg 1376w" sizes="auto, (max-width: 1024px) 100vw, 1024px" />`,
+  `<img loading="lazy" decoding="async" class="alignnone size-large wp-image-2374" src="http://magentalab.mycafe24.com/wp-content/uploads/2026/07/3-13-1024x572.jpeg" alt="강아지 당뇨병 관리 5가지: 인슐린, 혈당곡선, 식사와 저혈당 증상" width="1024" height="572" srcset="https://magentalab.mycafe24.com/wp-content/uploads/2026/07/3-13-1024x572.jpeg 1024w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/3-13-300x167.jpeg 300w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/3-13-768x429.jpeg 768w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/3-13.jpeg 1376w" sizes="auto, (max-width: 1024px) 100vw, 1024px" />`,
+  `<img loading="lazy" decoding="async" class="alignnone size-large wp-image-2375" src="http://magentalab.mycafe24.com/wp-content/uploads/2026/07/4-13-1024x572.jpeg" alt="강아지 당뇨병 관리 5가지: 인슐린, 혈당곡선, 식사와 저혈당 증상" width="1024" height="572" srcset="https://magentalab.mycafe24.com/wp-content/uploads/2026/07/4-13-1024x572.jpeg 1024w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/4-13-300x167.jpeg 300w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/4-13-768x429.jpeg 768w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/4-13.jpeg 1376w" sizes="auto, (max-width: 1024px) 100vw, 1024px" />`,
+  `<img loading="lazy" decoding="async" class="alignnone size-large wp-image-2376" src="http://magentalab.mycafe24.com/wp-content/uploads/2026/07/5-12-1024x572.jpeg" alt="강아지 당뇨병 관리 5가지: 인슐린, 혈당곡선, 식사와 저혈당 증상" width="1024" height="572" srcset="https://magentalab.mycafe24.com/wp-content/uploads/2026/07/5-12-1024x572.jpeg 1024w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/5-12-300x167.jpeg 300w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/5-12-768x429.jpeg 768w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/5-12.jpeg 1376w" sizes="auto, (max-width: 1024px) 100vw, 1024px" />`,
+  `<img loading="lazy" decoding="async" class="alignnone size-large wp-image-2378" src="http://magentalab.mycafe24.com/wp-content/uploads/2026/07/7-1024x572.jpeg" alt="강아지 당뇨병 관리 5가지: 인슐린, 혈당곡선, 식사와 저혈당 증상" width="1024" height="572" srcset="https://magentalab.mycafe24.com/wp-content/uploads/2026/07/7-1024x572.jpeg 1024w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/7-300x167.jpeg 300w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/7-768x429.jpeg 768w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/7.jpeg 1376w" sizes="auto, (max-width: 1024px) 100vw, 1024px" />`,
+  `<img loading="lazy" decoding="async" class="alignnone size-large wp-image-2377" src="http://magentalab.mycafe24.com/wp-content/uploads/2026/07/6-13-1024x572.jpeg" alt="강아지 당뇨병 관리 5가지: 인슐린, 혈당곡선, 식사와 저혈당 증상" width="1024" height="572" srcset="https://magentalab.mycafe24.com/wp-content/uploads/2026/07/6-13-1024x572.jpeg 1024w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/6-13-300x167.jpeg 300w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/6-13-768x429.jpeg 768w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/6-13.jpeg 1376w" sizes="auto, (max-width: 1024px) 100vw, 1024px" />`
+];
+
+  // 2. Replace <!-- IMAGE X --> comments with actual <img> tags
+  let finalContent = userBodyHtml;
+  for (let i = 1; i <= 10; i++) {
+    const commentRegex = new RegExp(`<!--\\s*IMAGE ${i}[^>]*-->`, 'gi');
+    if (i <= originalImgs.length) {
+      const imgHtml = `<p class="my-6">${originalImgs[i - 1]}</p>`;
+      finalContent = finalContent.replace(commentRegex, imgHtml);
+    } else {
+      finalContent = finalContent.replace(commentRegex, '');
+    }
+  }
+
+  // 3. Update WordPress Post via REST API
+  console.log(`Updating WordPress Post ID ${postId}...`);
+  const updateRes = await fetch(`https://magentalab.mycafe24.com/wp-json/wp/v2/posts/${postId}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': authHeader
+    },
+    body: JSON.stringify({
+      title: title,
+      excerpt: excerpt,
+      content: finalContent
+    })
+  });
+
+  if (!updateRes.ok) {
+    const errText = await updateRes.text();
+    throw new Error(`WP API Error (${updateRes.status}): ${errText}`);
+  }
+
+  const updatedPost = await updateRes.json();
+  console.log(`✅ Successfully updated WP Post ID ${updatedPost.id}!`);
+  console.log(`Title: ${updatedPost.title.rendered}`);
+  console.log(`Slug: ${updatedPost.slug}`);
+
+  // 4. Update local magentalab_all_posts_454.csv
+  const csvPath = path.join(process.cwd(), 'magentalab_all_posts_454.csv');
+  if (fs.existsSync(csvPath)) {
+    console.log('Updating magentalab_all_posts_454.csv...');
+    const csvContent = fs.readFileSync(csvPath, 'utf8');
+    const rows = parseCSV(csvContent);
+    let updatedCount = 0;
+
+    const modifiedDateStr = new Date().toISOString().replace(/\.\d{3}Z$/, '');
+
+    const updatedRows = rows.map((r, idx) => {
+      if (idx === 0) return r; // Header row
+      if (r[0] === String(postId)) {
+        updatedCount++;
+        r[3] = title;
+        r[5] = modifiedDateStr;
+        r[9] = cleanHtml(excerpt);
+        r[10] = cleanHtml(finalContent);
+        r[11] = finalContent;
+      }
+      return r;
+    });
+
+    if (updatedCount > 0) {
+      const newCsvStr = updatedRows.map(row => row.map(escapeCsvField).join(',')).join('\n');
+      fs.writeFileSync(csvPath, '\uFEFF' + newCsvStr, 'utf8');
+      console.log(`✅ Updated ${updatedCount} row(s) in magentalab_all_posts_454.csv!`);
+    } else {
+      console.log('⚠️ Post 2370 not found in CSV to update.');
+    }
+  }
+
+  // 5. Trigger Instant CDN Revalidation
+  console.log('Triggering instant CDN revalidation...');
+  try {
+    const revalRes = await fetch('https://www.magentalabblog.com/api/revalidate?secret=magentalab-1234');
+    const revalJson = await revalRes.json();
+    console.log('Revalidate status:', revalJson);
+  } catch (err) {
+    console.log('Revalidation warning:', err.message);
+  }
+
+  console.log('\n🎉 ALL DONE SUCCESSFUL FOR POST 2370!');
+}
+
+run().catch(err => {
+  console.error('❌ Error executing update script:', err);
+  process.exit(1);
+});

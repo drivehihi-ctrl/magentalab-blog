@@ -49,9 +49,14 @@ description: Kodari의 비즈니스 ROI 중심 개발 지침 및 보안/검증�
 8. **기존 본문 이미지 전부 보존 & 순차 재배치**: 원본 `<img>` / `<figure>` 블록 100% 보존 및 문맥에 맞춘 순차 재배치
 9. **위험 표현 교정**: 자가진단, 단정적 투약 수치, 위험한 자가치료 표현을 제거하고 안전한 수의학 지침으로 교정
 10. **안심이 Research Summary**: 안심이 캐릭터의 최종 연구 요약 메시지
-11. **🔬 Veterinary Evidence & References**: 주장별 전문 수의학 학술 근거 및 클릭 가능한 원문 링크 (`View original guideline`)
-12. **의료 면책 및 병원 방문 기준**: 수의학 주의사항 및 즉시 내원 기준 안내
-13. **공통 영역 유지**: 하단 계산기 도구, 관련글, CTA 등 사이트 공통 요소 유지 
+11. **🔬 Veterinary Evidence & References UI 카드 컴포넌트 (본문 직후 1순위 자동 배치)**: 단순 텍스트 목록이 아닌 풍부한 카드 형태의 수의학 근거 컴포넌트(Visual Card UI)로 프론트엔드에서 자동 렌더링. **(⚠️ 본문 HTML 내부에 수의학 근거 카드 블록을 하드코딩으로 중복 포함하지 말 것. 본문에 이미 수의학 근거 텍스트가 존재하는 경우 하단 컴포넌트는 자동으로 중복 생성이 차단됨)**:
+    - ① **상단 헤더**: 아이콘 + `🔬 Veterinary Evidence & References` + 검증 서브타이틀 ("Magentalab Research Team has reviewed relevant veterinary guidelines...")
+    - ② **💡 Key Medical Evidence Summary**: 해당 포스팅 주제에 특화된 수의학적 핵심 근거 하이라이트 박스
+    - ③ **📚 PRIMARY REFERENCES & OFFICIAL DOCUMENTS**: 기관명, 문서 유형(Clinical Practice Guideline 등), 클릭 가능한 `View Source ↗` 원문 링크 버튼이 포함된 2~3개 학술 근거 카드 리스트
+    - ④ **⚠️ Medical Disclaimer & Individual Variance**: 개체차 및 수의사 직접 진료 필요성을 명시한 경고 박스
+    - ⑤ **하단 푸터**: `Evidence Level: Tier 1` (민트 뱃지) + 분류 표준 및 평가 기준 설명 주석
+12. **하단 계산기 도구 및 CTA 배너 (근거 박스 하단 2순위 배치)**: 계산기로 이동하는 추천 URL/배너(`CalculatorBanner`)는 **반드시 수의학 근거(Veterinary Evidence) 박스 밑으로 배치**
+13. **공통 영역 유지**: 소셜 공유, 태그 목록, 관련글 등 사이트 하단 공통 요소 유지 
 
 ## 7. 마젠타랩 454개 글로벌 콘텐츠 재편집 전략 (Global Topic Clustering & Triplet Optimization)
 1. **다국어 삼총사 그룹화 (KO / EN / JA)**:
