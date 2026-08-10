@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Search, X, Loader2, ArrowRight } from "lucide-react";
 import { WPPost, getFeaturedImage } from "@/lib/wp";
+import { usePathname } from "next/navigation";
 
 export default function LiveSearch() {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,13 +25,18 @@ export default function LiveSearch() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const pathname = usePathname() || "";
+  const isEn = pathname.startsWith("/en");
+  const isJa = pathname.startsWith("/ja");
+  const lang = isEn ? "en" : isJa ? "ja" : "ko";
+
   // Debounced search logic
   useEffect(() => {
     const timer = setTimeout(async () => {
       if (query.trim().length >= 2) {
         setIsLoading(true);
         try {
-          const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+          const res = await fetch(`/api/search?q=${encodeURIComponent(query)}&lang=${lang}`);
           if (!res.ok) throw new Error("Search failed");
           const data = await res.json();
           setResults(data);
