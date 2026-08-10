@@ -20,7 +20,11 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-
+      {
+        source: "/en/posts/pet_food_laws_nfe_calculator-en",
+        destination: "/en/posts/cat_struvite_oxalate_stones-en",
+        permanent: true,
+      },
       {
         source: "/patella",
         destination: "/patella-diagnoser",
