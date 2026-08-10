@@ -86,10 +86,27 @@ export default function Header() {
     if (pathSegments[0] === "en" || pathSegments[0] === "ja") pathSegments.shift();
     if (pathSegments[0] === "posts" && pathSegments[1]) {
       const slug = pathSegments[1];
-      const baseSlug = slug.replace(/-en$|-ja$/, "");
-      if (lang === "en") pathSegments[1] = `${baseSlug}-en`;
-      else if (lang === "ja") pathSegments[1] = `${baseSlug}-ja`;
-      else pathSegments[1] = baseSlug;
+      
+      // Get base slug by stripping -en or -ja
+      let baseSlug = slug.replace(/-en$|-ja$/, "");
+      
+      // Known exception: EN slug is plural (calculators), KO/JA are singular (calculator)
+      if (baseSlug === "pet_food_laws_nfe_calculators") {
+        baseSlug = "pet_food_laws_nfe_calculator";
+      }
+
+      if (lang === "en") {
+        // EN exception: uses plural slug
+        if (baseSlug === "pet_food_laws_nfe_calculator") {
+          pathSegments[1] = "pet_food_laws_nfe_calculators-en";
+        } else {
+          pathSegments[1] = `${baseSlug}-en`;
+        }
+      } else if (lang === "ja") {
+        pathSegments[1] = `${baseSlug}-ja`;
+      } else {
+        pathSegments[1] = baseSlug;
+      }
     }
     let targetPath = "";
     if (lang === "en") targetPath = `/en/${pathSegments.join("/")}`;
