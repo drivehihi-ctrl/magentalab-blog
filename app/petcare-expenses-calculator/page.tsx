@@ -49,6 +49,8 @@ export const metadata: Metadata = {
   }
 };
 
+import SeoArticle from "@/components/SeoArticle";
+
 export default async function PetcareExpensesPage() {
   // Schema.org Structured Data - WebApplication / Expense Calculator Tool
   const toolJsonLd = {
@@ -82,6 +84,26 @@ export default async function PetcareExpensesPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(toolJsonLd) }}
       />
       <PetcareExpensesCalculator />
+
+      <SeoArticle title="강아지와 고양이, 평생 양육비는 얼마나 들까요?">
+        <p>
+          "사지 말고 입양하세요."라는 말만큼이나 중요한 것은 **"끝까지 책임질 수 있는 경제적 준비가 되었는가"**입니다. 농림축산식품부의 통계에 따르면 반려동물 1마리를 평생(약 15년 기준) 양육하는 데 드는 비용은 최소 1,500만 원에서 최대 3,000만 원 이상으로 추산됩니다.
+        </p>
+        <p>
+          이 계산기는 예비 보호자와 현재 반려인들이 막연하게 느끼는 **'반려동물 유지비'**를 구체적인 데이터로 시각화해 줍니다. 아이의 나이와 체중에 따른 식비(사료 등급별), 매월 소비되는 배변/모래 등의 위생용품비, 주기적인 미용비, 그리고 가장 부담이 큰 정기 건강검진 및 예방 접종비를 종합하여 한 달 고정 지출과 평생 누적 예상 비용을 산출합니다.
+        </p>
+        <h3 className="text-xl font-bold text-slate-800 mt-6 mb-3">생애주기별 지출 변화와 노령견/노령묘 의료비 대비</h3>
+        <p>
+          반려동물의 양육비는 일정한 그래프를 그리지 않습니다. 1세 미만의 퍼피/키튼 시기에는 기초 접종과 중성화 수술비로 초기 목돈이 발생하며, 1세부터 7세까지의 성견/성묘 시기에는 식비와 위생용품 등 고정 지출이 안정적으로 유지됩니다.
+        </p>
+        <p>
+          하지만 **8세 이후 노령기**에 접어들면 상황이 급변합니다. 백내장, 심장병, 신부전, 관절염 등 노화에 따른 만성 질환이 발생하면서 약값과 특수 처방식, 그리고 수술비로 수백만 원이 일시불로 청구되는 일이 빈번해집니다. 따라서 어릴 때부터 펫보험에 가입하거나, 매월 일정 금액을 **'반려동물 전용 적금'**으로 미리 저축해 두는 것이 선택이 아닌 필수입니다.
+        </p>
+        <p className="bg-slate-100 p-4 rounded-xl mt-4 font-medium text-sm">
+          ⚠️ <strong>안내:</strong> 본 계산기의 결과는 평균적인 시장 물가와 표준 예방 의학 비용을 기준으로 산정되었습니다. 슬개골 탈구 수술, 종양 제거, 응급실 입원 등 예기치 못한 중증 질환 발생 시 수백만 원의 추가적인 의료비가 발생할 수 있음을 항상 인지하셔야 합니다.
+        </p>
+      </SeoArticle>
+
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <CalculatorBanner isRandom={true} excludeType="expenses" />
         <RelatedPosts posts={relatedPosts} />

@@ -1,11 +1,51 @@
 ﻿작업순서,content_id,언어,기존_slug,대분류,주제_클러스터,역할,상위_HUB,slug_판단,통합_분리_판단,제목
-"1 / 454","2451","EN","dog_diabetes_diet_insulin-en","건강·질병","강아지 당뇨·대사","핵심 하부","상위 HUB 미확정","유지 권장","단독 유지 / KO·JA 대응 세트","Canine Diabetes Management: 5 Things to Know About Insulin, Glucose Curves, Meals, and Hypoglycemia"
-"2 / 454","2370","KO","dog_diabetes_diet_insulin","건강·질병","강아지 당뇨·대사","핵심 하부","상위 HUB 미확정","유지 권장","단독 유지 / EN·JA 대응 세트","강아지 당뇨병 관리 5가지: 인슐린, 혈당곡선, 식사와 저혈당 증상"
-"3 / 454","2457","JA","dog_diabetes_diet_insulin-ja","건강·질병","강아지 당뇨·대사","핵심 하부","상위 HUB 미확정","유지 권장","단독 유지 / KO·EN 대응 세트","犬の糖尿病管理で知っておきたい5つのこと：インスリン・血糖曲線・食事・低血糖サイン"
-"4 / 454","5950","KO","dog-skin-disease-symptoms-treatment","건강·질병","피부·피모·알레르기","HUB 후보","해당 글이 클러스터 대표 HUB 후보","유지 권장","단독 유지 / EN·JA 대응 세트","강아지 피부병, 먼저 확인할 7가지 신호: 가려움·비듬·붉은 피부부터 병원 가야 할 때까지"
-"5 / 454","5959","EN","dog-skin-disease-symptoms-treatment-en","건강·질병","피부·피모·알레르기","HUB 후보","해당 글이 클러스터 대표 HUB 후보","유지 권장","단독 유지 / KO·JA 대응 세트","7 Dog Skin Disease Signs to Check First: Itching, Dandruff, Red Skin, Hair Loss, and When to See a Vet"
-"6 / 454","5961","JA","dog-skin-disease-symptoms-treatment-ja","건강·질병","피부·피모·알레르기","HUB 후보","해당 글이 클러스터 대표 HUB 후보","유지 권장","단독 유지 / KO·EN 대응 세트","犬の皮膚病でまず確認したい7つのサイン：かゆみ・フケ・赤み・脱毛と受診の目安"
-"7 / 454","2391","KO","pet_food_laws_nfe_calculator","푸드·영양","사료·영양성분·계산","HUB 후보","해당 글이 클러스터 대표 HUB 후보","유지 권장","KO·EN·JA 3개 언어 대응 세트 유지","반려동물 사료 영양성분표 읽는 법 7가지: 탄수화물·NFE·건물기준(DM)까지"
-"8 / 454","2459","EN","pet_food_laws_nfe_calculators-en","푸드·영양","사료·영양성분·계산","HUB 후보","해당 글이 클러스터 대표 HUB 후보","유지 권장","KO·EN·JA 3개 언어 대응 세트 유지 / plural slug는 현 단계 유지","7 Things to Know When Reading a Pet Food Label: Carbohydrates, NFE, and Dry Matter Explained"
-"9 / 454","2402","EN","pet_food_laws_nfe_calculator-en","건강·질병","고양이 요로·화장실","HUB 후보","고양이 요로결석 대표글 후보","변경 + 301 필요 → cat_struvite_oxalate_stones-en (리디렉션 진행 반영)","NFE 묶음에서 분리 / 고양이 요로결석 KO·JA 대응 세트로 관리","Feline Urinary Stones: 6 Things to Know About Struvite, Calcium Oxalate, Urine pH, Diet, and Blockage"
-"10 / 454","2461","JA","pet_food_laws_nfe_calculator-ja","푸드·영양","사료·영양성분·계산","HUB 후보","해당 글이 클러스터 대표 HUB 후보","유지 권장","KO·EN·JA 3개 언어 대응 세트 유지","ペットフードの成分表示で確認したい7つのポイント：炭水化物・NFE・乾物基準（DM）まで"
+1 / 454,2451,EN,dog_diabetes_diet_insulin-en,건강·질병,강아지 당뇨·대사,핵심 하부,상위 HUB 미확정,유지 권장,단독 유지 / KO·JA 대응 세트,"Canine Diabetes Management: 5 Things to Know About Insulin, Glucose Curves, Meals, and Hypoglycemia"
+2 / 454,2370,KO,dog_diabetes_diet_insulin,건강·질병,강아지 당뇨·대사,핵심 하부,상위 HUB 미확정,유지 권장,단독 유지 / EN·JA 대응 세트,"강아지 당뇨병 관리 5가지: 인슐린, 혈당곡선, 식사와 저혈당 증상"
+3 / 454,2457,JA,dog_diabetes_diet_insulin-ja,건강·질병,강아지 당뇨·대사,핵심 하부,상위 HUB 미확정,유지 권장,단독 유지 / KO·EN 대응 세트,犬の糖尿病管理で知っておきたい5つのこと：インスリン・血糖曲線・食事・低血糖サイン
+4 / 454,5950,KO,dog-skin-disease-symptoms-treatment,건강·질병,피부·피모·알레르기,HUB 후보,해당 글이 클러스터 대표 HUB 후보,유지 권장,단독 유지 / EN·JA 대응 세트,"강아지 피부병, 먼저 확인할 7가지 신호: 가려움·비듬·붉은 피부부터 병원 가야 할 때까지"
+5 / 454,5959,EN,dog-skin-disease-symptoms-treatment-en,건강·질병,피부·피모·알레르기,HUB 후보,해당 글이 클러스터 대표 HUB 후보,유지 권장,단독 유지 / KO·JA 대응 세트,"7 Dog Skin Disease Signs to Check First: Itching, Dandruff, Red Skin, Hair Loss, and When to See a Vet"
+6 / 454,5961,JA,dog-skin-disease-symptoms-treatment-ja,건강·질병,피부·피모·알레르기,HUB 후보,해당 글이 클러스터 대표 HUB 후보,유지 권장,단독 유지 / KO·EN 대응 세트,犬の皮膚病でまず確認したい7つのサイン：かゆみ・フケ・赤み・脱毛と受診の目安
+7 / 454,2391,KO,pet_food_laws_nfe_calculator,푸드·영양,사료·영양성분·계산,HUB 후보,해당 글이 클러스터 대표 HUB 후보,유지 권장,KO·EN·JA 3개 언어 대응 세트 유지,반려동물 사료 영양성분표 읽는 법 7가지: 탄수화물·NFE·건물기준(DM)까지
+8 / 454,2459,EN,pet_food_laws_nfe_calculators-en,푸드·영양,사료·영양성분·계산,HUB 후보,해당 글이 클러스터 대표 HUB 후보,유지 권장,KO·EN·JA 3개 언어 대응 세트 유지 / plural slug는 현 단계 유지,"7 Things to Know When Reading a Pet Food Label: Carbohydrates, NFE, and Dry Matter Explained"
+9 / 454,2402,EN,pet_food_laws_nfe_calculator-en,건강·질병,고양이 요로·화장실,HUB 후보,고양이 요로결석 대표글 후보,변경 + 301 필요 → cat_struvite_oxalate_stones-en (리디렉션 진행 반영),NFE 묶음에서 분리 / 고양이 요로결석 KO·JA 대응 세트로 관리,"Feline Urinary Stones: 6 Things to Know About Struvite, Calcium Oxalate, Urine pH, Diet, and Blockage"
+10 / 454,2461,JA,pet_food_laws_nfe_calculator-ja,푸드·영양,사료·영양성분·계산,HUB 후보,해당 글이 클러스터 대표 HUB 후보,유지 권장,KO·EN·JA 3개 언어 대응 세트 유지,ペットフードの成分表示で確認したい7つのポイント：炭水化物・NFE・乾物基準（DM）まで
+11 / 454,2156,KO,dog-cushings-disease,건강·질병,내분비·호르몬 질환,핵심 하부,상위 HUB 미확정,유지 권장,단독 유지 / 다국어 대응 세트,노령견이 물을 많이 마시고 소변도 늘었다면? 강아지 쿠싱증후군 의심 신호 7가지
+12 / 454,2516,EN,dog-cushings-disease-en,건강·질병,내분비·호르몬 질환,핵심 하부,Upper HUB not yet confirmed,유지 권장,단독 유지 / 다국어 대응 세트,Senior Dog Drinking and Urinating More? 7 Signs That Can Raise Suspicion for Cushing’s Syndrome
+13 / 454,2519,JA,dog-cushings-disease-ja,건강·질병,内分泌・ホルモン疾患,主要サポート記事,上位HUB未確定,유지 권장,단독 유지 / 다국어 대응 세트,シニア犬が水をたくさん飲んで尿も増えた？クッシング症候群を疑う7つのサイン
+14 / 454,2189,KO,cat-kidney-disease-sdma,건강·질병,고양이 신장질환,핵심 하부,상위 HUB 미확정,유지 권장,단독 유지 / 다국어 대응 세트,고양이 만성 신장질환 조기 발견: 크레아티닌·SDMA·소변검사를 함께 봐야 하는 7가지 이유
+15 / 454,2501,EN,cat-kidney-disease-sdma-en,건강·질병,고양이 신장질환,핵심 하부,Upper HUB not yet confirmed,유지 권장,단독 유지 / 다국어 대응 세트,"Feline CKD Early Detection: 7 Reasons to Read Creatinine, SDMA, Urine Tests, and Blood Pressure Together"
+16 / 454,2504,JA,cat-kidney-disease-sdma-ja,健康・病気,猫の腎臓病,主要サポート記事,上位HUB未確定,유지 권장,단독 유지 / 다국어 대응 세트,猫の慢性腎臓病を早く見つけるには？クレアチニン・SDMA・尿検査を一緒に見る7つの理由
+17 / 454,2590,KO,ragdoll_mainecoon_hcm_ate_thrombosis,건강·질병,심장·순환기,핵심 하부,상위 HUB 미확정,유지 권장,단독 유지 / 다국어 대응 세트,메인쿤·랙돌 HCM 유전자검사와 심장초음파: 갑작스러운 뒷다리 마비 ATE까지 꼭 알아둘 7가지
+18 / 454,2600,EN,ragdoll_mainecoon_hcm_ate_thrombosis-en,건강·질병,심장·순환기,핵심 하부,Upper HUB not yet confirmed,유지 권장,단독 유지 / 다국어 대응 세트,"Maine Coon and Ragdoll HCM: 7 Things to Know About Genetic Tests, Echocardiography, and Sudden Hind-Leg Paralysis (ATE)"
+19 / 454,2604,JA,ragdoll_mainecoon_hcm_ate_thrombosis-ja,健康・病気,心臓・循環器,主要サポート記事,上位HUB未確定,유지 권장,단독 유지 / 다국어 대응 세트,メインクーン・ラグドールのHCM：遺伝子検査と心エコー、突然の後肢麻痺ATEで知っておきたい7つ
+20 / 454,2307,KO,cat_calicivirus_stomatitis_extraction,건강·질병,감염·생식기 질환,핵심 하부,상위 HUB 미확정,유지 권장,단독 유지 / 다국어 대응 세트,고양이 만성 구내염과 전발치: 칼리시바이러스·허피스 오해부터 발치 후 예후까지 7가지
+21 / 454,2446,EN,cat_calicivirus_stomatitis_extraction-en,건강·질병,감염·생식기 질환,핵심 하부,Upper HUB not yet confirmed,유지 권장,단독 유지 / 다국어 대응 세트,"Feline Chronic Gingivostomatitis: 7 Things to Know About Calicivirus, Full-Mouth Extraction, Pain, and Prognosis"
+22 / 454,2449,JA,cat_calicivirus_stomatitis_extraction-ja,健康・病気,感染症・口腔関連,主要サポート記事,上位HUB未確定,유지 권장,단독 유지 / 다국어 대응 세트,猫の慢性歯肉口内炎と全顎抜歯：カリシウイルスとの関係、痛み、抜歯後の予後7ポイント
+23 / 454,2530,KO,cat_ringworm_symptoms_woods_lamp,건강·질병,피부·피모·알레르기,핵심 하부,상위 HUB 미확정,유지 권장,단독 유지 / 다국어 대응 세트,"고양이 귀 끝 털 빠짐과 각질, 링웜일까? 피부사상균증 전염·우드등 검사 7가지 체크"
+24 / 454,2539,EN,cat_ringworm_symptoms_woods_lamp-en,건강·질병,피부·피모·알레르기,핵심 하부,Upper HUB not yet confirmed,유지 권장,단독 유지 / 다국어 대응 세트,"Cat Ear-Tip Hair Loss and Scaling: 7 Things to Know About Ringworm, Contagion, and Wood’s Lamp Testing"
+25 / 454,2542,JA,cat_ringworm_symptoms_woods_lamp-ja,健康・病気,皮膚・被毛・アレルギー,主要サポート記事,上位HUB未確定,유지 권장,단독 유지 / 다국어 대응 세트,猫の耳先の脱毛とフケはリングワーム？感染性・ウッド灯検査で確認したい7ポイント
+26 / 454,2279,KO,cat_struvite_oxalate_stones,건강·질병,고양이 요로·화장실,비교·판단 하부,기존 HUB 후보 2035,유지 권장,단독 유지 / 다국어 대응 세트,고양이 스트루바이트·칼슘옥살레이트 결석 차이: 소변 pH와 식단만으로 구별하면 안 되는 7가지 이유
+27 / 454,2404,JA,cat_struvite_oxalate_stones-ja,健康・病気,猫の尿路・トイレ,一般サポート記事,既存HUB候補 2659,유지 권장,단독 유지 / 다국어 대응 세트,猫のストルバイト・シュウ酸カルシウム結石の違い：尿pHと食事だけで判断しない7つの理由
+28 / 454,2110,KO,dog-breed-nutrition-guide,푸드·영양,사료·영양성분·계산,일반 하부,기존 HUB 후보 2391,유지 권장,단독 유지 / 다국어 대응 세트,포메라니안·푸들·리트리버 사료 고르는 법: 견종보다 체중·나이·질환을 먼저 보는 7가지 기준
+29 / 454,2545,EN,dog-breed-nutrition-guide-en,푸드·영양,사료·영양성분·계산,일반 하부,기존 EN HUB 후보 2459,유지 권장,단독 유지 / 다국어 대응 세트,"Choosing Dog Food for Pomeranians, Poodles, and Retrievers: 7 Nutrition Priorities That Matter More Than the Breed Name"
+30 / 454,2548,JA,dog-breed-nutrition-guide-ja,フード・栄養,フード・栄養成分・計算,一般サポート記事,既存JA HUB候補 2461,유지 권장,단독 유지 / 다국어 대응 세트,ポメラニアン・プードル・レトリバーのフード選び：犬種名より先に見る7つの栄養基準
+31 / 454,2223,KO,dog_pancreatitis_fat_limit,건강·질병,소화기·식욕·수분,핵심 하부,상위 HUB 미확정,유지 권장,단독 유지 / 다국어 대응 세트,강아지 췌장염 사료 지방은 얼마나 낮아야 할까? 조지방·건물기준(DM)과 식사 관리 7가지
+32 / 454,2355,EN,dog_pancreatitis_fat_limit-en,건강·질병,소화기·식욕·수분,핵심 하부,Upper HUB not yet confirmed,유지 권장,단독 유지 / 다국어 대응 세트,"Dog Pancreatitis Diet: 7 Things to Know About Crude Fat, Dry Matter, Low-Fat Feeding, and Digestive Enzymes"
+33 / 454,2364,JA,dog_pancreatitis_fat_limit-ja,健康・病気,消化器・食欲・水分,主要サポート記事,上位HUB未確定,유지 권장,단독 유지 / 다국어 대응 세트,犬の膵炎フードは脂肪をどこまで下げる？粗脂肪・乾物基準DM・食事管理の7ポイント
+34 / 454,1811,KO,dog-eating-xylitol-hypoglycemia-liver-failure-id328,건강·질병,강아지 중독·금지음식,핵심 하부,기존 HUB 후보 14,유지 권장,단독 유지 / 다국어 대응 세트,강아지가 자일리톨 껌·캔디를 먹었다면? 저혈당·간손상 전에 해야 할 7가지
+35 / 454,5818,EN,dog-eating-xylitol-hypoglycemia-liver-failure-id328-en,건강·질병,강아지 중독·금지음식,핵심 하부,해당 언어 신규 HUB 필요 (기준 후보: dog-food-danger),유지 권장,단독 유지 / 다국어 대응 세트,Dog Ate Xylitol Gum or Candy? 7 Urgent Things to Know About Hypoglycemia and Liver Injury
+36 / 454,5820,JA,dog-eating-xylitol-hypoglycemia-liver-failure-id328-ja,健康・病気,犬の中毒・危険な食べ物,主要サポート記事,該当言語の新規HUB必要（候補: dog-food-danger）,유지 권장,단독 유지 / 다국어 대응 세트,犬がキシリトールガム・キャンディを食べた？低血糖と肝障害で急いで確認する7つ
+37 / 454,2629,KO,dachshund_welshcorgi_ivdd_paralysis,건강·질병,관절·슬개골·척추,핵심 하부,상위 HUB 미확정,유지 권장,단독 유지 / 다국어 대응 세트,닥스훈트·웰시코기 허리디스크 IVDD: 통증부터 뒷다리 마비까지 병원 판단이 필요한 7단계 신호
+38 / 454,2643,EN,dachshund_welshcorgi_ivdd_paralysis-en,건강·질병,관절·슬개골·척추,핵심 하부,Upper HUB not yet confirmed,유지 권장,단독 유지 / 다국어 대응 세트,IVDD in Dachshunds and Corgis: 7 Signs From Back Pain to Hind-Leg Paralysis That Change the Urgency
+39 / 454,2645,JA,dachshund_welshcorgi_ivdd_paralysis-ja,健康・病気,関節・膝蓋骨・脊椎,主要サポート記事,上位HUB未確定,유지 권장,단독 유지 / 다국어 대응 세트,ダックスフンド・コーギーのIVDD：腰痛から後肢麻痺まで緊急度が変わる7つのサイン
+40 / 454,2303,KO,cat_fip_symptoms_guide,건강·질병,고양이 감염성 질환,핵심 하부,상위 HUB 미확정,유지 권장,단독 유지 / 다국어 대응 세트,"고양이 FIP 초기 증상 7가지: 복수·흉수, 눈 변화, 황달과 신경 증상까지"
+41 / 454,2422,EN,cat_fip_symptoms_guide-en,Health & Disease,Feline infectious disease,Core supporting,Upper HUB not yet confirmed,유지 권장,단독 유지 / 다국어 대응 세트,Feline FIP: 7 Early Signs From Effusion and Eye Changes to Jaundice and Neurologic Symptoms
+42 / 454,2424,JA,cat_fip_symptoms_guide-ja,健康・病気,猫の感染症,主要サポート記事,上位HUB未確定,유지 권장,단독 유지 / 다국어 대응 세트,猫FIPの初期症状7つ：腹水・胸水、目の変化、黄疸、神経症状まで
+43 / 454,1879,KO,why-cats-get-cystitis-idiopathic-vs-bacterial-id336,건강·질병,고양이 요로·화장실,비교·판단 하부,상위 HUB 미확정,유지 권장,단독 유지 / 다국어 대응 세트,고양이 방광염 원인 비교: 특발성 방광염(FIC)과 세균성 방광염을 구별하는 7가지 포인트
+44 / 454,2845,EN,why-cats-get-cystitis-idiopathic-vs-bacterial-id336-en,Health & Disease,Feline urinary tract & litter box,Comparison/supporting,Upper HUB not yet confirmed,유지 권장,단독 유지 / 다국어 대응 세트,Feline Cystitis: 7 Clues That Separate FIC From a Bacterial UTI—and When a Blocked Cat Is an Emergency
+45 / 454,2847,JA,why-cats-get-cystitis-idiopathic-vs-bacterial-id336-ja,健康・病気,猫の尿路・トイレ,比較・サポート,上位HUB未確定,유지 권장,단독 유지 / 다국어 대응 세트,猫の膀胱炎：特発性膀胱炎FICと細菌性尿路感染を見分ける7つのポイント
+46 / 454,618,KO,why-dog-drinking-excessive-water-id245,건강·질병,강아지 내분비·대사,일반 하부,상위 HUB 미확정,유지 권장,단독 유지 / 다국어 대응 세트,강아지가 물을 많이 마시는 이유 8가지: 더위부터 당뇨·쿠싱·신장질환까지 확인할 신호
+47 / 454,2177,KO,dog-hydrocephalus-seizure,건강·질병,신경·뇌,핵심 하부,상위 HUB 미확정,유지 권장,단독 유지 / 다국어 대응 세트,"강아지 뇌수두증 증상 7가지: 열린 천문, 돔형 머리보다 경련·보행·시력 변화를 먼저 보세요"
+48 / 454,2506,EN,dog-hydrocephalus-seizure-en,Health & Disease,Neurology & brain,Core supporting,Upper HUB not yet confirmed,유지 권장,단독 유지 / 다국어 대응 세트,Canine Hydrocephalus: 7 Neurologic Signs That Matter More Than an Open Fontanelle
+49 / 454,2509,JA,dog-hydrocephalus-seizure-ja,健康・病気,神経・脳,主要サポート記事,上位HUB未確定,유지 권장,단독 유지 / 다국어 대응 세트,犬の水頭症で確認したい7つの神経症状：開いた泉門や丸い頭だけで判断しない
+50 / 454,1820,KO,dog-eating-onion-garlic-anemia-id329,건강·질병,중독·응급,핵심 하부,상위 HUB 미확정,유지 권장,단독 유지 / 다국어 대응 세트,강아지가 양파·마늘을 먹었을 때 증상: 익힌 음식·가루도 위험한 이유와 빈혈 신호 7가지

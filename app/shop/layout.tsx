@@ -1,3 +1,12 @@
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
 // shop 페이지는 앱 스타일 UI를 위해 기본 헤더/푸터를 숨기고 자체 탭바를 사용합니다.
 export default function ShopLayout({ children }: { children: React.ReactNode }) {
   return (
