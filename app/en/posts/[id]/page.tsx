@@ -307,14 +307,16 @@ export default async function EnglishPostDetailPage({ params }: PageProps) {
             dangerouslySetInnerHTML={{ __html: fixWpLinks(cleanContentReferences(post.content.rendered), sanitizeForSeo(post.title.rendered), 'en') }}
           />
 
-          {/* 1순위: 🔬 Veterinary References Section (글 바로 아래 배치) */}
-          <VeterinaryReferencesSection 
-            categories={categories.map(c => c.name)} 
-            title={post.title.rendered} 
-            slug={post.slug} 
-            lang="en" 
-            content={post.content.rendered}
-          />
+          {/* 1순위: 🔬 수의학 연구 근거 및 학술 참고자료 (글 바로 아래 1순위 배치) */}
+          {!post.content.rendered.includes('id="custom-vet-references"') && (
+            <VeterinaryReferencesSection 
+              categories={categories.map(c => c.name)} 
+              title={post.title.rendered} 
+              slug={post.slug} 
+              lang="en" 
+              content={post.content.rendered}
+            />
+          )}
 
           {/* 2순위: CalculatorBanner (근거 박스 바로 아래 배치) */}
           <CalculatorBanner 

@@ -290,13 +290,15 @@ export default async function PostDetailPage({ params }: PageProps) {
           />
 
           {/* 1순위: 🔬 수의학 연구 근거 및 학술 참고자료 (글 바로 아래 1순위 배치) */}
-          <VeterinaryReferencesSection 
-            categories={categories.map(c => c.name)} 
-            title={post.title.rendered} 
-            slug={post.slug} 
-            lang="ko" 
-            content={post.content.rendered}
-          />
+          {!post.content.rendered.includes('id="custom-vet-references"') && (
+            <VeterinaryReferencesSection 
+              categories={categories.map(c => c.name)} 
+              title={post.title.rendered} 
+              slug={post.slug} 
+              lang="ko" 
+              content={post.content.rendered}
+            />
+          )}
 
           {/* 2순위: 본문 주제 맞춤형 계산기 추천 배너 (근거 박스 바로 아래 2순위 배치) */}
           <CalculatorBanner 

@@ -307,13 +307,15 @@ export default async function JapanesePostDetailPage({ params }: PageProps) {
           />
 
           {/* 1순위: 🔬 Veterinary References Section (글 바로 아래 배치) */}
-          <VeterinaryReferencesSection 
-            categories={categories.map(c => c.name)} 
-            title={post.title.rendered} 
-            slug={post.slug} 
-            lang="ja" 
-            content={post.content.rendered}
-          />
+          {!post.content.rendered.includes('id="custom-vet-references"') && (
+            <VeterinaryReferencesSection 
+              categories={categories.map(c => c.name)} 
+              title={post.title.rendered} 
+              slug={post.slug} 
+              lang="ja" 
+              content={post.content.rendered}
+            />
+          )}
 
           {/* 2순위: CalculatorBanner (근거 박스 바로 아래 배치) */}
           <CalculatorBanner 
