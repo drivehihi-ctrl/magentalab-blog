@@ -49,6 +49,8 @@ export const metadata: Metadata = {
   }
 };
 
+import SeoArticle from "@/components/SeoArticle";
+
 export default async function PatellaPage() {
   // Schema.org Structured Data - WebApplication / Diagnoser Tool
   const toolJsonLd = {
@@ -82,6 +84,25 @@ export default async function PatellaPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(toolJsonLd) }}
       />
       <PatellaDiagnoser />
+
+      <SeoArticle title="소형견의 숙명, 슬개골 탈구(Patellar Luxation)란?">
+        <p>
+          한국에서 가장 많이 기르는 말티즈, 포메라니안, 푸들, 치와와 같은 소형견들에게 <strong>슬개골 탈구</strong>는 피하기 힘든 숙명과도 같은 질환입니다. 무릎 관절을 보호하고 도르래 역할을 하는 작은 뼈인 '슬개골'이 정상적인 활차구(홈)에서 자꾸 벗어나는 질환을 말합니다. 
+        </p>
+        <p>
+          유전적으로 뼈의 홈이 얕게 태어나는 경우가 많아 선천적인 요인이 크지만, 한국 특유의 <strong>미끄러운 거실 마룻바닥과 소파 위에서 뛰어내리는 후천적 생활 습관</strong>이 병의 진행 속도를 폭발적으로 가속화시킵니다.
+        </p>
+        <h3 className="text-xl font-bold text-slate-800 mt-6 mb-3">놓쳐서는 안 될 슬개골 탈구 기수별 증상</h3>
+        <ul className="list-disc list-inside space-y-2 mt-2">
+          <li><strong>1기:</strong> 슬개골이 빠졌다가 제자리로 금방 돌아갑니다. 아이가 걷다가 가끔 뒷다리를 <strong>'깽깽이 걸음(토끼뜀)'</strong>으로 한두 번 들고 걷는다면 이미 1기가 시작된 것입니다.</li>
+          <li><strong>2기~3기:</strong> 뼈가 밖으로 빠져 있는 시간이 길어지며, 다리 모양이 O자나 X자로 변형되기 시작합니다. 만지면 '뚝뚝' 하는 뼈 마찰음이 들리기도 합니다.</li>
+          <li><strong>4기:</strong> 손으로 밀어 넣어도 슬개골이 제자리로 돌아가지 않으며, 극심한 통증으로 인해 걷기를 거부하거나 주저앉습니다.</li>
+        </ul>
+        <p className="bg-slate-100 p-4 rounded-xl mt-4 font-medium text-sm">
+          ⚠️ <strong>수의학적 면책 조항:</strong> 본 자가 진단기는 걷는 자세와 행동 징후를 통한 예측 도구일 뿐, 정확한 기수 판별은 수의사의 촉진과 방사선(X-ray) 검사로만 가능합니다. 2기 이상으로 진행되기 전 십자인대 파열을 막기 위해 반드시 동물병원에서 조기 검진을 받으시길 권장합니다.
+        </p>
+      </SeoArticle>
+
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <CalculatorBanner isRandom={true} excludeType="patella" />
         <RelatedPosts posts={relatedPosts} />
