@@ -59,6 +59,11 @@ export function cleanContentReferences(html: string): string {
   if (!html) return "";
   let cleaned = html;
   
+  // 만약 완벽한 커스텀 UI 박스가 주입된 포스트라면 원본을 훼손하지 않고 그대로 렌더링
+  if (cleaned.includes('id="custom-vet-references"')) {
+    return cleaned.trim();
+  }
+
   // 1. 하드코딩된 RICH VETERINARY EVIDENCE & REFERENCES COMPONENT div 블록 및 모든 bg-[#faf6f0] 테두리 껍데기 박스 완전 제거
   cleaned = cleaned.replace(/<!--[\s\S]*?VETERINARY EVIDENCE[\s\S]*?-->/gi, "");
   cleaned = cleaned.replace(/<div[^>]*class="[^"]*bg-\[#faf6f0\][^"]*"[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/gi, "");
@@ -66,7 +71,9 @@ export function cleanContentReferences(html: string): string {
   cleaned = cleaned.replace(/<div[^>]*class="[^"]*bg-\[#faf6f0\][^"]*"[\s\S]*?<\/div>/gi, "");
 
   // 2. 본문 끝자락의 <h2>🔬 수의학... / Veterinary... / 獣医学...</h2> 섹션 및 하위 문단 제거
-  cleaned = cleaned.replace(/<h2[^>]*>[\s\S]*?(Veterinary Evidence|獣医学根拠|수의학 연구 근거|Veterinary References)[\s\S]*$/gi, "");
+  // 이전의 정규식은 [\\s\\S]*? 때문에 문서 첫 번째 <h2>부터 매칭되어 본문 전체를 날려버리는 치명적 오류가 있었음.
+  // (?:(?!<h2)[\\s\\S])*? 를 사용하여 해당 키워드를 포함하는 '마지막 <h2>'부터 끝까지만 제거하도록 수정.
+  cleaned = cleaned.replace(/<h2[^>]*>(?:(?!<h2)[\s\S])*?(Veterinary Evidence|獣医学根拠|수의학 연구 근거|Veterinary References)[\s\S]*$/gi, "");
   
   return cleaned.trim();
 }
