@@ -3,7 +3,6 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import DraggableScrollContainer from '@/components/DraggableScrollContainer';
 import { 
   Calculator, 
   Activity, 
@@ -144,14 +143,17 @@ export default function DiagnosticCenterSection({ lang = 'ko' }: DiagnosticCente
 
             {/* Mobile: horizontal swipe carousel (hidden on sm+) */}
             <div className="sm:hidden -mx-4">
-              <DraggableScrollContainer className="flex gap-3 px-4 pb-2">
+              <div
+                className="flex gap-3 px-4 pb-3 overflow-x-auto"
+                style={{ touchAction: 'pan-x', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' }}
+              >
                 {tools.map((item, idx) => {
                   const Icon = item.icon;
                   return (
                     <Link
                       key={idx}
                       href={item.link}
-                      className="group shrink-0 w-[220px] p-5 rounded-2xl border border-rose-100 bg-white flex flex-col justify-between shadow-sm active:scale-95 transition-transform"
+                      className="group shrink-0 w-[220px] p-5 rounded-2xl border border-rose-100 bg-white flex flex-col justify-between shadow-sm"
                     >
                       <div>
                         <div className="flex items-center justify-between gap-2 mb-3">
@@ -176,7 +178,7 @@ export default function DiagnosticCenterSection({ lang = 'ko' }: DiagnosticCente
                     </Link>
                   );
                 })}
-              </DraggableScrollContainer>
+              </div>
             </div>
 
             {/* Desktop: 3-column grid (hidden on mobile) */}
