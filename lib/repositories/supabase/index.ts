@@ -111,7 +111,7 @@ export const supabaseAuditLogRepository: AuditLogRepository = {
 
 export const supabaseEvidenceRepository: EvidenceRepository = {
   async getByPostId(postId: number): Promise<EvidenceData | null> {
-    const { data, error } = await supabaseAdmin.from('ai_evidence').select('*').eq('wordpress_id', postId).single();
+    const { data, error } = await supabaseAdmin.from('ai_evidence').select('*').eq('wordpress_id', postId).maybeSingle();
     if (error || !data) return null;
     return {
       keyInsight: data.key_insight,
