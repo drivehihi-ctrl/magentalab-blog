@@ -48,16 +48,16 @@ export default async function PetcareExpensesCalculatorPageEn() {
 
       <SeoArticle title="How Much Does It Cost to Care for a Dog or Cat Over a Lifetime?">
         <p>
-          Before welcoming a pet into your family, it is important to think not only about love and companionship, but also about whether you are <strong></strong>. Caring for a pet involves ongoing expenses, including food and treats, hygiene supplies, vaccinations and health checkups, grooming, and medical treatment.
+          Before welcoming a pet into your family, it is important to think not only about love and companionship, but also about whether you are **financially prepared to care for that animal throughout its entire life**. Caring for a pet involves ongoing expenses, including food and treats, hygiene supplies, vaccinations and health checkups, grooming, and medical treatment.
         </p>
         <p>
-          According to the <strong></strong> published by South Korea’s Ministry of Agriculture, Food and Rural Affairs, the average monthly cost of caring for one companion animal was approximately <strong></strong>. By species, the average was about <strong></strong> and <strong></strong>, while the overall average monthly veterinary expense was approximately <strong></strong>.
+          According to the **2025 Animal Welfare Public Awareness Survey** published by South Korea’s Ministry of Agriculture, Food and Rural Affairs, the average monthly cost of caring for one companion animal was approximately **KRW 121,000**. By species, the average was about **KRW 135,000 for dogs** and **KRW 92,000 for cats**, while the overall average monthly veterinary expense was approximately **KRW 37,000**.
         </p>
         <p>
           If current prices were assumed to remain unchanged and this monthly average were simply multiplied over 15 years, the overall average would amount to approximately KRW 21.78 million. However, this is only a rough reference obtained by extrapolating the current monthly survey figure. Actual lifetime costs can vary substantially depending on the type and size of the pet, the food it eats, living environment, health status, use of veterinary services, and changes in prices over time.
         </p>
         <p>
-          This calculator is a <strong></strong> for both prospective and current pet owners. By entering food and treat expenses, hygiene supplies such as waste products or cat litter, grooming and routine care costs, and medical expenses such as vaccinations and health examinations, users can estimate monthly spending and long-term cumulative costs.
+          This calculator is a **reference tool designed to break down the often-vague concept of “pet ownership costs” into individual expense categories** for both prospective and current pet owners. By entering food and treat expenses, hygiene supplies such as waste products or cat litter, grooming and routine care costs, and medical expenses such as vaccinations and health examinations, users can estimate monthly spending and long-term cumulative costs.
         </p>
         <p>
           The calculation does not guarantee future expenses. Its purpose is to help owners think ahead about the budget they may need based on their current spending level.
@@ -68,13 +68,13 @@ export default async function PetcareExpensesCalculatorPageEn() {
           The cost of caring for a pet does not remain constant throughout its lifetime.
         </p>
         <p>
-          During the <strong></strong>, expenses may be concentrated around vaccinations, parasite prevention, and health examinations. Depending on the owner’s choice and veterinary advice, one-time expenses such as spaying or neutering may also occur. Initial purchases of essential items such as harnesses, carriers, litter boxes, food bowls, and bedding should also be considered.
+          During the **growth stage, including puppyhood and kittenhood**, expenses may be concentrated around vaccinations, parasite prevention, and health examinations. Depending on the owner’s choice and veterinary advice, one-time expenses such as spaying or neutering may also occur. Initial purchases of essential items such as harnesses, carriers, litter boxes, food bowls, and bedding should also be considered.
         </p>
         <p>
-          During <strong></strong>, recurring expenses such as food, treats, waste supplies or cat litter, and preventive care generally make up a larger share of the budget. However, veterinary expenses may rise if a pet develops skin disease, dental problems, injuries, or other illnesses.
+          During **adulthood**, recurring expenses such as food, treats, waste supplies or cat litter, and preventive care generally make up a larger share of the budget. However, veterinary expenses may rise if a pet develops skin disease, dental problems, injuries, or other illnesses.
         </p>
         <p>
-          During the <strong></strong>, pets may require more frequent health monitoring, and some may become more likely to develop conditions such as chronic kidney disease, joint disease, cardiovascular disease, dental disease, or tumors. As a result, spending on diagnostic tests, medications, therapeutic diets, and treatment may increase compared with earlier life stages.
+          During the **senior stage**, pets may require more frequent health monitoring, and some may become more likely to develop conditions such as chronic kidney disease, joint disease, cardiovascular disease, dental disease, or tumors. As a result, spending on diagnostic tests, medications, therapeutic diets, and treatment may increase compared with earlier life stages.
         </p>
         <p>
           The age at which the senior stage begins is not the same for every pet. In dogs especially, the timing of aging varies considerably according to breed, body size, and expected lifespan, so it is not appropriate to classify every dog as senior based on a single fixed age.
@@ -85,10 +85,10 @@ export default async function PetcareExpensesCalculatorPageEn() {
           Average monthly ownership costs alone cannot account for every possible expense. Unexpected situations such as surgery for patellar luxation or cranial cruciate ligament disease, tumor diagnosis and treatment, dental care, emergency visits, or hospitalization can result in significantly higher veterinary bills than usual.
         </p>
         <p>
-          For this reason, it may be worthwhile to set aside <strong></strong> in addition to routine living costs. Options include saving a fixed amount each month for pet medical expenses or considering pet insurance after comparing coverage limits, deductibles, exclusions, and other policy terms.
+          For this reason, it may be worthwhile to set aside **a separate budget specifically for unexpected veterinary expenses** in addition to routine living costs. Options include saving a fixed amount each month for pet medical expenses or considering pet insurance after comparing coverage limits, deductibles, exclusions, and other policy terms.
         </p>
         <p>
-          Whichever approach you choose, the important point is to consider <strong></strong> before bringing one into your family.
+          Whichever approach you choose, the important point is to consider **not only the current monthly cost of caring for a pet, but also the long-term expenses that may arise throughout the animal’s life** before bringing one into your family.
         </p>
 
         <p className="bg-slate-100 p-4 rounded-xl mt-4 font-medium text-sm">
