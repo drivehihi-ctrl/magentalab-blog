@@ -5,8 +5,8 @@ import { clearPostsCache } from '@/lib/wp';
 export async function GET(request: NextRequest) {
   const secret = request.nextUrl.searchParams.get('secret');
   
-  const expectedSecret = process.env.REVALIDATION_SECRET || 'magentalab-1234';
-  if (secret !== expectedSecret && secret !== 'magentalab-1234') {
+  const expectedSecret = process.env.REVALIDATION_SECRET;
+  if (secret !== expectedSecret) {
     return NextResponse.json({ message: 'Invalid secret' }, { status: 401 });
   }
 

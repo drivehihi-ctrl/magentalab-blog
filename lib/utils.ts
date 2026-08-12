@@ -59,10 +59,9 @@ export function cleanContentReferences(html: string): string {
   if (!html) return "";
   let cleaned = html;
   
-  // 만약 완벽한 커스텀 UI 박스가 주입된 포스트라면 원본을 훼손하지 않고 그대로 렌더링
-  if (cleaned.includes('id="custom-vet-references"')) {
-    return cleaned.trim();
-  }
+  // Phase 4.1: Strip the custom-vet-references script from the frontend output entirely
+  cleaned = cleaned.replace(/<script[^>]*id="custom-vet-references"[^>]*>[\s\S]*?<\/script>/gi, "");
+
 
   // 1. 하드코딩된 RICH VETERINARY EVIDENCE & REFERENCES COMPONENT div 블록 및 모든 bg-[#faf6f0] 테두리 껍데기 박스 완전 제거
   cleaned = cleaned.replace(/<!--[\s\S]*?VETERINARY EVIDENCE[\s\S]*?-->/gi, "");

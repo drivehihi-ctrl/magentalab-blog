@@ -81,8 +81,16 @@ description: Kodari의 비즈니스 ROI 중심 개발 지침 및 보안/검증�
 ## 8. 캐시 재검증 및 화면 유지 운영 지침 (Cache Revalidation Rules)
 1. **WP DB/코드 반영은 정상 진행하되, 자동 캐시 재검증(`api/revalidate`) 호출은 전면 금지**:
    - 포스트 수정/고도화 시 WP REST API 업데이트, CSV 동기화, 필요한 소스코드 Git 배포는 그대로 진행한다.
-   - 단, 수정 직후 자동으로 `https://www.magentalabblog.com/api/revalidate?secret=magentalab-1234`를 호출하지 않는다.
+   - 단, 수정 직후 자동으로 `https://www.magentalabblog.com/api/revalidate?secret=<YOUR_SECRET_HERE>`를 호출하지 않는다.
 2. **목적**:
    - 일반 방문자가 봤을 때 페이지 변화가 생기지 않고, 기존 CDN 캐시 페이지가 그대로 유지되도록 설정한다.
 3. **캐시 갱신 타이밍**:
-   - 사장님이 필요 시 직접 `https://www.magentalabblog.com/api/revalidate?secret=magentalab-1234` 링크를 실행하거나, 저녁에 한꺼번에 캐시 갱신을 요청하실 때만 실행한다.
+   - 사장님이 필요 시 직접 `https://www.magentalabblog.com/api/revalidate?secret=<YOUR_SECRET_HERE>` 링크를 실행하거나, 저녁에 한꺼번에 캐시 갱신을 요청하실 때만 실행한다.
+
+## 9. WordPress AI Integration
+- WordPress/콘텐츠 자동화 관련 개발은 `docs/wordpress-ai-integration.md`를 기준으로 한다.
+- 구현 전 기존 WordPress 연동 코드를 먼저 조사하고 중복 구현하지 않는다.
+- 기존 `content_id`와 slug는 기본적으로 유지한다.
+- 작업 순서는 READ → ANALYZE → REVISION → HUMAN REVIEW → APPLY를 따른다.
+- DELETE, AUTO PUBLISH, AUTO SLUG CHANGE는 기본 금지한다.
+- Phase 1 READ ONLY 검증 전에는 Media Upload, 실제 Update, MCP를 구현하지 않는다.

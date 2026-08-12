@@ -9,6 +9,11 @@ interface VeterinaryReferencesProps {
   slug?: string;
   lang?: 'ko' | 'en' | 'ja';
   content?: string;
+  customEvidence?: {
+    keyInsight: string;
+    cautionNote: string;
+    references: Array<{ title: string; org: string; type: string; url: string }>;
+  };
 }
 
 export default function VeterinaryReferencesSection({
@@ -17,6 +22,7 @@ export default function VeterinaryReferencesSection({
   slug = '',
   lang = 'ko',
   content = '',
+  customEvidence,
 }: VeterinaryReferencesProps) {
   const text = title.toLowerCase() + ' ' + slug.toLowerCase() + ' ' + categories.join(' ').toLowerCase();
 
@@ -28,7 +34,11 @@ export default function VeterinaryReferencesSection({
   let keyInsight = '';
   let cautionNote = '';
 
-  if (text.includes('food') || text.includes('nutrition') || text.includes('사료') || text.includes('영양') || text.includes('음수') || text.includes('칼로리') || text.includes('dm')) {
+  if (customEvidence) {
+    keyInsight = customEvidence.keyInsight;
+    cautionNote = customEvidence.cautionNote;
+    references = customEvidence.references;
+  } else if (text.includes('food') || text.includes('nutrition') || text.includes('사료') || text.includes('영양') || text.includes('음수') || text.includes('칼로리') || text.includes('dm')) {
     keyInsight = isEn 
       ? 'Evaluates dietary protein dry-matter percentage (DM%) and life-stage-specific caloric requirement formulas based on clinical nutrition standards.'
       : isJa

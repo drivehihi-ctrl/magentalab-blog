@@ -10,6 +10,7 @@ import AnsimiSummary from "@/components/AnsimiSummary";
 import SocialShare from "@/components/SocialShare";
 import VeterinaryReferencesSection from "@/components/VeterinaryReferencesSection";
 import CalculatorBanner from "@/components/CalculatorBanner";
+import { evidenceRepository } from "@/lib/repositories";
 
 export const revalidate = 86400;
 export const dynamicParams = true;
@@ -160,7 +161,14 @@ export default async function EnglishPostDetailPage({ params }: PageProps) {
   post = fallbackPost;
 
   const relatedPosts = getRelatedPosts(post, allPosts, 3);
+  let customEvidence = await evidenceRepository.getByPostId(post.id);
   
+  if (!customEvidence) {
+    const scriptMatch = post.content.rendered.match(/<script type="application\/json" id="custom-vet-references">([\s\S]*?)<\/script>/);
+    if (scriptMatch) {
+      try { customEvidence = JSON.parse(scriptMatch[1]); } catch(e) {}
+    }
+  }
   const imageUrl = getFeaturedImage(post);
   const categories = getCategories(post);
   const tags = getTags(post);
@@ -307,16 +315,14 @@ export default async function EnglishPostDetailPage({ params }: PageProps) {
             dangerouslySetInnerHTML={{ __html: fixWpLinks(cleanContentReferences(post.content.rendered), sanitizeForSeo(post.title.rendered), 'en') }}
           />
 
-          {/* 1순위: 🔬 수의학 연구 근거 및 학술 참고자료 (글 바로 아래 1순위 배치) */}
-          {!post.content.rendered.includes('id="custom-vet-references"') && (
-            <VeterinaryReferencesSection 
-              categories={categories.map(c => c.name)} 
-              title={post.title.rendered} 
-              slug={post.slug} 
-              lang="en" 
-              content={post.content.rendered}
-            />
-          )}
+          <VeterinaryReferencesSection 
+            categories={categories.map(c => c.name)} 
+            title={post.title.rendered} 
+            slug={post.slug} 
+            lang="en" 
+            content={post.content.rendered}
+            customEvidence={customEvidence || undefined}
+          />
 
           {/* 2순위: CalculatorBanner (근거 박스 바로 아래 배치) */}
           <CalculatorBanner 
