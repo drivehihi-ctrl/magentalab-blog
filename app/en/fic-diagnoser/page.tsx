@@ -48,19 +48,19 @@ export default async function FicDiagnoserPageEn() {
 
       <SeoArticle title="What Is Feline Idiopathic Cystitis (FIC), a Common Cause of Lower Urinary Tract Disease in Cats?">
         <p>
-          Feline lower urinary tract disease (FLUTD) does not refer to a single specific disease. Rather, it is an umbrella term for a range of disorders affecting the bladder and urethra. Among these, **feline idiopathic cystitis (FIC)** is one of the most commonly diagnosed causes, and several studies have reported that it accounts for approximately 55–65% of cats presenting with signs of FLUTD.
+          Feline lower urinary tract disease (FLUTD) does not refer to a single specific disease. Rather, it is an umbrella term for a range of disorders affecting the bladder and urethra. Among these, <strong></strong> is one of the most commonly diagnosed causes, and several studies have reported that it accounts for approximately 55–65% of cats presenting with signs of FLUTD.
         </p>
         <p>
           The term “idiopathic” means that no clear underlying cause, such as urinary stones, bacterial infection, or a tumor, can be identified to explain the signs. For this reason, FIC is often diagnosed after other possible causes have been ruled out through tests such as urinalysis and diagnostic imaging.
         </p>
         <p>
-          The exact cause of FIC has not been identified as a single factor. Current veterinary understanding is that it is a **multifactorial condition involving stress and environmental factors, nervous system and hormonal stress responses, and changes in bladder sensation and protective function.**
+          The exact cause of FIC has not been identified as a single factor. Current veterinary understanding is that it is a <strong></strong>
         </p>
         <p>
           Cats can be sensitive to changes in their environment and to social tension. Moving to a new home, the arrival of a new family member or pet, conflict with other cats, changes in daily routines, and changes to the litter box environment can all act as stressors for some cats.
         </p>
         <p>
-          However, this does not simply mean that “stress causes cystitis.” Not every stressful event leads to FIC, and individual cats differ in how they respond to stress and in their risk of developing the condition. In cats with recurrent FIC, **environmental enrichment and multimodal environmental modification** aimed at stabilizing the home environment and reducing stressors can be important components of management.
+          However, this does not simply mean that “stress causes cystitis.” Not every stressful event leads to FIC, and individual cats differ in how they respond to stress and in their risk of developing the condition. In cats with recurrent FIC, <strong></strong> aimed at stabilizing the home environment and reducing stressors can be important components of management.
         </p>
 
         <h3 className="text-xl font-bold text-slate-800 mt-6 mb-3">Easy-to-Miss Signs of Feline Lower Urinary Tract Disease</h3>
@@ -75,13 +75,13 @@ export default async function FicDiagnoserPageEn() {
 
         <h3 className="text-xl font-bold text-slate-800 mt-6 mb-3">🚨 In Male Cats, Inability to Urinate Is an Emergency</h3>
         <p>
-          Male cats have a longer and narrower urethra than female cats, which places them at greater risk of **urethral obstruction**. Inflammation associated with FIC, urethral spasm, urethral plugs, or urinary stones can block the urethra and prevent urine from being passed normally.
+          Male cats have a longer and narrower urethra than female cats, which places them at greater risk of <strong></strong>. Inflammation associated with FIC, urethral spasm, urethral plugs, or urinary stones can block the urethra and prevent urine from being passed normally.
         </p>
         <p>
-          If a cat repeatedly enters the litter box and strains but **produces little or no urine, do not wait to see whether the problem resolves on its own.**
+          If a cat repeatedly enters the litter box and strains but <strong></strong>
         </p>
         <p>
-          A complete urethral obstruction can severely affect kidney function and lead to life-threatening complications such as elevated blood potassium, acid-base disturbances, and uremia. Therefore, if a male cat repeatedly assumes a urination posture but no urine is actually being produced, **contact an emergency veterinary clinic immediately and seek veterinary care.**
+          A complete urethral obstruction can severely affect kidney function and lead to life-threatening complications such as elevated blood potassium, acid-base disturbances, and uremia. Therefore, if a male cat repeatedly assumes a urination posture but no urine is actually being produced, <strong></strong>
         </p>
         <p>
           Treatment for urethral obstruction depends on the cat’s overall condition and the severity of the blockage. Stabilization with intravenous fluids and correction of electrolyte abnormalities may be required, and in many cases the obstruction is relieved using a urinary catheter under sedation or anesthesia.
