@@ -140,7 +140,7 @@ export default function DiagnosticCenterSection({ lang = 'ko' }: DiagnosticCente
           </div>
 
           {/* ── RIGHT: Calculator Cards ── */}
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 w-full">
 
             {/* Mobile: horizontal swipe carousel (hidden on sm+) */}
             <DraggableScrollContainer className="sm:hidden -mx-4 px-4 pb-2" showArrows={false}>
