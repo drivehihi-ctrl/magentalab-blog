@@ -23,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function PreviewPage({ params }: PageProps) {
   const { revision_id } = await params;
   
-  const revision = getRevision(revision_id);
+  const revision = await getRevision(revision_id);
   if (!revision) {
     notFound();
   }
