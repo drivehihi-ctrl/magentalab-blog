@@ -286,7 +286,7 @@ export default function FicDiagnoser({ lang = "ko" }: FicDiagnoserProps) {
             <Sparkles className="w-3.5 h-3.5" />
             <span>{t.badge}</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight break-keep">
             {t.title}
           </h1>
           <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
