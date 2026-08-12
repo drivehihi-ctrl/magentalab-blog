@@ -143,41 +143,39 @@ export default function DiagnosticCenterSection({ lang = 'ko' }: DiagnosticCente
           <div className="flex-1 min-w-0">
 
             {/* Mobile: horizontal swipe carousel (hidden on sm+) */}
-            <div className="sm:hidden -mx-4">
-              <DraggableScrollContainer className="px-4 pb-2" showArrows={false}>
-                {tools.map((item, idx) => {
-                  const Icon = item.icon;
-                  return (
-                    <Link
-                      key={idx}
-                      href={item.link}
-                      className="group shrink-0 min-w-[240px] w-[75vw] max-w-[280px] snap-center p-5 rounded-2xl border border-rose-100 bg-white flex flex-col justify-between shadow-sm active:scale-95 transition-transform"
-                    >
-                      <div>
-                        <div className="flex items-center justify-between gap-2 mb-3">
-                          <div className="w-9 h-9 rounded-xl bg-[#E5007E] flex items-center justify-center shadow-md shadow-[#E5007E]/20">
-                            <Icon className="w-[18px] h-[18px] text-white" />
-                          </div>
-                          <span className="text-[10px] font-black tracking-wider px-2 py-0.5 rounded-full bg-rose-50 text-[#E5007E] border border-rose-200/60 uppercase">
-                            {item.tag}
-                          </span>
+            <DraggableScrollContainer className="sm:hidden -mx-4 px-4 pb-2" showArrows={false}>
+              {tools.map((item, idx) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={idx}
+                    href={item.link}
+                    className="group shrink-0 min-w-[240px] w-[75vw] max-w-[280px] snap-center p-5 rounded-2xl border border-rose-100 bg-white flex flex-col justify-between shadow-sm active:scale-95 transition-transform"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between gap-2 mb-3">
+                        <div className="w-9 h-9 rounded-xl bg-[#E5007E] flex items-center justify-center shadow-md shadow-[#E5007E]/20">
+                          <Icon className="w-[18px] h-[18px] text-white" />
                         </div>
-                        <h3 className="text-sm font-extrabold text-gray-900 mb-1.5 leading-snug">
-                          {item.title}
-                        </h3>
-                        <p className="text-xs font-medium text-gray-400 leading-relaxed">
-                          {item.desc}
-                        </p>
+                        <span className="text-[10px] font-black tracking-wider px-2 py-0.5 rounded-full bg-rose-50 text-[#E5007E] border border-rose-200/60 uppercase">
+                          {item.tag}
+                        </span>
                       </div>
-                      <div className="inline-flex items-center gap-0.5 text-xs font-extrabold text-[#E5007E] pt-3 mt-3 border-t border-gray-100">
-                        <span>{isEn ? 'Start Now' : isJa ? '今すぐ診断' : '지금 진단하기'}</span>
-                        <ChevronRight className="w-3.5 h-3.5" />
-                      </div>
-                    </Link>
-                  );
-                })}
-              </DraggableScrollContainer>
-            </div>
+                      <h3 className="text-sm font-extrabold text-gray-900 mb-1.5 leading-snug">
+                        {item.title}
+                      </h3>
+                      <p className="text-xs font-medium text-gray-400 leading-relaxed">
+                        {item.desc}
+                      </p>
+                    </div>
+                    <div className="inline-flex items-center gap-0.5 text-xs font-extrabold text-[#E5007E] pt-3 mt-3 border-t border-gray-100">
+                      <span>{isEn ? 'Start Now' : isJa ? '今すぐ診断' : '지금 진단하기'}</span>
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </div>
+                  </Link>
+                );
+              })}
+            </DraggableScrollContainer>
 
             {/* Desktop: 3-column grid (hidden on mobile) */}
             <div className="hidden sm:grid sm:grid-cols-2 xl:grid-cols-3 gap-3.5">
