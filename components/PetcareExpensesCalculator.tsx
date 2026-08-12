@@ -218,6 +218,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
       calendarTag: "권장",
       calendarDisclaimer: "* 예방접종 비용은 지역 및 동물병원 규모에 따라 상이할 수 있으며, 만 7세 이상 노령기는 주기적인 스크리닝이 아이의 갑작스러운 중증 의료비 폭탄을 방지하는 지름길입니다.",
       btnReset: "다시 계산하기",
+      statDisclaimer: "농림축산식품부 2025 동물복지 국민의식조사 참고 / 실제 비용은 개체 및 생활방식에 따라 다름",
     },
     en: {
       badge: "Ansim-i Expense Assessment",
@@ -279,6 +280,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
       calendarTag: "Recommended",
       calendarDisclaimer: "* Vaccine fees vary depending on location and clinics. Regular checkups for senior pets (7+ yrs) prevent sudden heavy medical costs.",
       btnReset: "Reset Calculator",
+      statDisclaimer: "Reference: MAFRA 2025 Animal Welfare Survey / Actual costs vary by individual and lifestyle",
     },
     ja: {
       badge: "アンシム経費診断レポート",
@@ -340,6 +342,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
       calendarTag: "推奨",
       calendarDisclaimer: "* 予防接種などの費用は地域や動物病院によって異なる場合があります。7歳以上の高齢期は定期的検査を受けることで、急な医療費負担を防げます。",
       btnReset: "もう一度計算する",
+      statDisclaimer: "出典: 農林畜産食品部 2025 動物福祉国民意識調査 / 実際の費用は個体や生活様式により異なります",
     }
   };
 
@@ -1094,6 +1097,9 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
                     .replace("{computedAge}", String(computedAge))
                     .replace("{lifespan}", String(lifespan))
                     .replace("{initCostText}", initCostText)}
+                  <div className="text-[10px] text-gray-400 mt-2 font-medium">
+                    * {t.statDisclaimer}
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-6 p-4 bg-white/40 border border-white/30 rounded-2xl">
