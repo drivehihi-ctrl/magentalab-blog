@@ -1,0 +1,265 @@
+import 'server-only';
+import crypto from 'crypto';
+import { getRevision, saveRevision, saveBackup, logAction } from '@/lib/ai-revisions';
+import { getPost } from '@/lib/wp';
+import { evidenceRepository } from '@/lib/repositories';
+import { getWordPressWriteConfig, getWordPressWriteHeaders } from '@/lib/wp-write-auth';
+import { assessMedicalRisk } from '@/lib/medical-risk';
+
+// ─── Result types ──────────────────────────────────────────────────────────
+
+export type ApplySuccessResult = {
+  success: true;
+  revision_id: string;
+  backup_id: string;
+};
+
+export type ApplyFailureResult = {
+  success: false;
+  revision_id: string;
+  error_code: string;
+  error_message: string;
+};
+
+export type ApplyResult = ApplySuccessResult | ApplyFailureResult;
+
+export interface ApplyOptions {
+  /** source identifier written to audit logs ('single' | 'batch' | string) */
+  source?: string;
+  /** dry-run: run all validations but skip WP write and DB mutations */
+  dryRun?: boolean;
+}
+
+// ─── Internal helper ──────────────────────────────────────────────────────
+
+function fail(revision_id: string, error_code: string, error_message: string): ApplyFailureResult {
+  return { success: false, revision_id, error_code, error_message };
+}
+
+// ─── Core Apply engine ────────────────────────────────────────────────────
+
+/**
+ * Apply a single approved revision to WordPress.
+ * All safety checks are enforced here; callers (single & batch) share this logic.
+ *
+ * Immutable fields guaranteed:
+ *   slug, status, categories, tags, noindex, featured_media
+ *   (featured_media only changes if revision.media_changes.new_featured_media_id is set)
+ *
+ * Forbidden: auto publish, auto cache revalidation, DELETE, status change
+ */
+export async function applyOneRevision(
+  revisionId: string,
+  options: ApplyOptions = {}
+): Promise<ApplyResult> {
+  const { source = 'system', dryRun = false } = options;
+
+  // ── 1. Fetch revision ────────────────────────────────────────────────────
+  const revision = await getRevision(revisionId);
+  if (!revision) {
+    return fail(revisionId, 'NOT_FOUND', 'Revision not found');
+  }
+
+  // ── 2. Status guard: only 'approved' (human review required) ─────────────
+  if (revision.status !== 'approved') {
+    return fail(
+      revisionId,
+      'INVALID_STATUS',
+      `Revision must be 'approved'. Current: ${revision.status}`
+    );
+  }
+
+  // ── 3. Medical risk + evidence gate ──────────────────────────────────────
+  const medicalRisk = assessMedicalRisk(
+    revision.slug,
+    revision.new_title,
+    revision.new_content
+  );
+  if (medicalRisk.isMedical && (!revision.evidence || revision.evidence.references.length === 0)) {
+    return fail(
+      revisionId,
+      'MEDICAL_EVIDENCE_MISSING',
+      'Medical topics require at least 1 evidence reference.'
+    );
+  }
+
+  // ── 4. Content truncation detection ──────────────────────────────────────
+  if (
+    !revision.new_content.includes("Ansim-i's Research Summary") &&
+    !revision.new_content.includes('Research Summary')
+  ) {
+    return fail(revisionId, 'CONTENT_TRUNCATION_DETECTED', 'Missing Research Summary in content');
+  }
+
+  // ── 5. Evidence duplication in body ──────────────────────────────────────
+  if (
+    revision.new_content.includes('[근거]') ||
+    revision.new_content.includes('<h2>🔬 Veterinary Evidence')
+  ) {
+    return fail(
+      revisionId,
+      'EVIDENCE_DUPLICATED_IN_BODY',
+      'Evidence section must not appear directly in the HTML body.'
+    );
+  }
+
+  // ── 6. Fetch current WP post ─────────────────────────────────────────────
+  const currentPost = await getPost(revision.wordpress_id.toString());
+  if (!currentPost) {
+    return fail(revisionId, 'POST_NOT_FOUND', 'Original post not found on WordPress');
+  }
+
+  // ── 7. Optimistic lock ───────────────────────────────────────────────────
+  if (currentPost.modified !== revision.source_modified_at) {
+    await logAction({
+      timestamp: new Date().toISOString(),
+      action: 'CONFLICT_DETECTED',
+      wordpress_id: revision.wordpress_id,
+      content_id: revision.content_id,
+      revision_id: revisionId,
+      source,
+      status: 'error',
+      message: 'WP modified_at has changed since revision creation.',
+    });
+    return fail(
+      revisionId,
+      'POST_CHANGED_SINCE_READ',
+      'Post was modified since revision was created. Recreate revision.'
+    );
+  }
+
+  // ── 8. dry-run: validations passed, skip mutations ────────────────────────
+  if (dryRun) {
+    return { success: true, revision_id: revisionId, backup_id: 'dry-run' };
+  }
+
+  // ── 9. Fetch raw content for backup ──────────────────────────────────────
+  const { baseUrl } = getWordPressWriteConfig();
+  const wpHeaders = getWordPressWriteHeaders();
+
+  let rawTitle = currentPost.title.rendered;
+  let rawContent = currentPost.content.rendered;
+  let rawExcerpt = currentPost.excerpt.rendered;
+
+  try {
+    const editRes = await fetch(
+      `${baseUrl}/wp-json/wp/v2/posts/${currentPost.id}?context=edit`,
+      { headers: wpHeaders }
+    );
+    if (editRes.ok) {
+      const editPost = await editRes.json();
+      if (editPost.title?.raw) rawTitle = editPost.title.raw;
+      if (editPost.content?.raw) rawContent = editPost.content.raw;
+      if (editPost.excerpt?.raw) rawExcerpt = editPost.excerpt.raw;
+    }
+  } catch (e) {
+    console.warn('[applyOneRevision] Could not fetch raw content for backup, using rendered:', e);
+  }
+
+  // ── 10. Create backup before any mutation ────────────────────────────────
+  const backup_id = `bak_${crypto.randomBytes(8).toString('hex')}`;
+  const previousEvidence = await evidenceRepository.getByPostId(currentPost.id);
+
+  await saveBackup({
+    backup_id,
+    revision_id: revisionId,
+    wordpress_id: currentPost.id,
+    title: rawTitle,
+    content: rawContent,
+    excerpt: rawExcerpt,
+    meta_description: '',
+    slug: currentPost.slug,
+    featured_media: currentPost.featured_media,
+    evidence: previousEvidence || undefined,
+    modified_at: currentPost.modified,
+    created_at: new Date().toISOString(),
+  });
+
+  // ── 11. Save evidence (with rollback on WP failure) ───────────────────────
+  let evidenceSaved = false;
+  if (revision.evidence) {
+    try {
+      await evidenceRepository.save(currentPost.id, revision.evidence);
+      evidenceSaved = true;
+      await logAction({
+        timestamp: new Date().toISOString(),
+        action: 'EVIDENCE_EXTERNAL_SAVE_SUCCESS',
+        wordpress_id: revision.wordpress_id,
+        content_id: revision.content_id,
+        revision_id: revisionId,
+        source,
+        status: 'success',
+      });
+    } catch {
+      await logAction({
+        timestamp: new Date().toISOString(),
+        action: 'EVIDENCE_EXTERNAL_SAVE_FAILED',
+        wordpress_id: revision.wordpress_id,
+        content_id: revision.content_id,
+        revision_id: revisionId,
+        source,
+        status: 'error',
+        message: 'Failed to save evidence to repository.',
+      });
+      return fail(revisionId, 'EVIDENCE_DATA_NOT_PERSISTED', 'Failed to persist evidence.');
+    }
+  }
+
+  // ── 12. WordPress write — immutable fields excluded ───────────────────────
+  // NEVER send: slug, status, categories, tags, meta, noindex, password
+  const updatePayload: Record<string, unknown> = {
+    title: revision.new_title,
+    content: revision.new_content,
+    excerpt: revision.new_excerpt,
+    // featured_media only when explicitly set
+    ...(revision.media_changes?.new_featured_media_id != null
+      ? { featured_media: revision.media_changes.new_featured_media_id }
+      : {}),
+  };
+
+  try {
+    const wpRes = await fetch(`${baseUrl}/wp-json/wp/v2/posts/${revision.wordpress_id}`, {
+      method: 'POST',
+      headers: getWordPressWriteHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify(updatePayload),
+    });
+
+    if (!wpRes.ok) {
+      const errorData = await wpRes.text();
+      throw new Error(`WP Update Failed: ${errorData.slice(0, 200)}`);
+    }
+  } catch (wpError: any) {
+    if (evidenceSaved) {
+      await evidenceRepository.restore(currentPost.id, previousEvidence);
+      await logAction({
+        timestamp: new Date().toISOString(),
+        action: 'EVIDENCE_EXTERNAL_ROLLBACK',
+        wordpress_id: revision.wordpress_id,
+        content_id: revision.content_id,
+        revision_id: revisionId,
+        source,
+        status: 'error',
+        message: 'Evidence rolled back due to WP content update failure.',
+      });
+    }
+    return fail(revisionId, 'WP_WRITE_FAILED', wpError.message);
+  }
+
+  // ── 13. Mark revision as applied ─────────────────────────────────────────
+  revision.status = 'applied';
+  await saveRevision(revision);
+
+  // ── 14. Audit log ─────────────────────────────────────────────────────────
+  await logAction({
+    timestamp: new Date().toISOString(),
+    action: 'APPLY_REVISION',
+    wordpress_id: revision.wordpress_id,
+    content_id: revision.content_id,
+    revision_id: revisionId,
+    source,
+    status: 'success',
+    message: `backup_id=${backup_id}`,
+  });
+
+  return { success: true, revision_id: revisionId, backup_id };
+}
