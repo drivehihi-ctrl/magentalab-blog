@@ -1,19 +1,9 @@
 import { NextResponse } from 'next/server';
 import { getPosts } from '@/lib/wp';
-
-function isAuthenticated(req: Request) {
-  const authHeader = req.headers.get('authorization');
-  const secret = process.env.AI_CONTENT_API_SECRET;
-  
-  if (!secret) return false;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) return false;
-  
-  const token = authHeader.split(' ')[1];
-  return token === secret;
-}
+import { isAIContentAuthenticated } from '@/lib/ai-content-auth';
 
 export async function GET(req: Request) {
-  if (!isAuthenticated(req)) {
+  if (!isAIContentAuthenticated(req)) {
     return NextResponse.json({ error: 'AUTH_FAILED', message: 'Invalid or missing API secret' }, { status: 401 });
   }
 
@@ -29,16 +19,16 @@ export async function GET(req: Request) {
     const { posts, totalPages, totalPosts } = await getPosts(page, perPage, search, category, language, tag);
 
     const formattedPosts = posts.map(post => {
-      const slug = post.slug || "";
+      const slug = post.slug || '';
       const lang = slug.endsWith('-en') ? 'en' : slug.endsWith('-ja') ? 'ja' : 'ko';
-      
+
       return {
         wordpress_id: post.id,
         content_id: post.id.toString(),
         language: lang,
         slug: post.slug,
-        title: post.title?.rendered || "",
-        status: "publish",
+        title: post.title?.rendered || '',
+        status: 'publish',
         categories: post.categories || [],
         published_at: post.date,
         modified_at: post.modified,
@@ -53,7 +43,7 @@ export async function GET(req: Request) {
       posts: formattedPosts
     });
   } catch (error: any) {
-    console.error("Error in AI Content Posts API:", error);
+    console.error('Error in AI Content Posts API:', error);
     return NextResponse.json({ error: 'INTERNAL_ERROR', message: error.message }, { status: 500 });
   }
 }
