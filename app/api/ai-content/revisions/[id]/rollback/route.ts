@@ -1,27 +1,11 @@
 import { NextResponse } from 'next/server';
 import { getRevision, saveRevision, getBackupByRevision, logAction } from '@/lib/ai-revisions';
 import { evidenceRepository } from '@/lib/repositories';
-import { clearPostsCache } from '@/lib/wp';
-import { revalidateTag, revalidatePath } from 'next/cache';
-
-function isAuthenticated(req: Request) {
-  const authHeader = req.headers.get('authorization') || req.headers.get('Authorization') || req.headers.get('x-api-secret') || req.headers.get('x-ai-secret');
-  const urlSecret = new URL(req.url).searchParams.get('secret');
-  
-  const token = authHeader ? (authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : authHeader) : urlSecret;
-  if (!token) return false;
-
-  const validSecrets = [
-    process.env.AI_CONTENT_API_SECRET,
-    process.env.REVALIDATION_SECRET,
-    'magentalab-ai-secret-key-1234'
-  ].filter(Boolean).map(s => String(s).trim());
-
-  return validSecrets.includes(token.trim());
-}
+import { isAIContentAuthenticated } from '@/lib/ai-content-auth';
+import { getWordPressWriteConfig, getWordPressWriteHeaders } from '@/lib/wp-write-auth';
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  if (!isAuthenticated(req)) {
+  if (!isAIContentAuthenticated(req)) {
     return NextResponse.json({ error: 'AUTH_FAILED', message: 'Invalid API secret' }, { status: 401 });
   }
 
@@ -46,31 +30,21 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       return NextResponse.json({ error: 'BACKUP_NOT_FOUND', message: 'No backup found for this revision' }, { status: 404 });
     }
 
-    // Restore WP via REST API
-    const WP_URL = "https://magentalab.mycafe24.com";
-    const wpUser = "magentalab";
-    const wpPass = "7q3n UBO5 gHyJ gLos weag GWn9";
-    const auth = 'Basic ' + Buffer.from(wpUser + ':' + wpPass).toString('base64');
+    const { baseUrl } = getWordPressWriteConfig();
 
-    const updatePayload: any = {
+    const updatePayload: Record<string, unknown> = {
       title: backup.title,
       content: backup.content,
-      excerpt: backup.excerpt,
+      excerpt: backup.excerpt
     };
 
     if (backup.featured_media !== undefined) {
       updatePayload.featured_media = backup.featured_media;
     }
 
-    const wpRes = await fetch(`${WP_URL}/wp-json/wp/v2/posts/${backup.wordpress_id}`, {
+    const wpRes = await fetch(`${baseUrl}/wp-json/wp/v2/posts/${backup.wordpress_id}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': auth,
-        'X-Authorization': auth,
-        'x-http-authorization': auth,
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-      },
+      headers: getWordPressWriteHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(updatePayload)
     });
 
@@ -81,7 +55,6 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     await evidenceRepository.restore(backup.wordpress_id, backup.evidence || null);
 
-    // Update local status
     revision.status = 'rolled_back';
     await saveRevision(revision);
 
@@ -95,23 +68,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       status: 'success'
     });
 
-    // Revalidate Cache - DISABLED FOR PHASE 4 E2E
-    // clearPostsCache();
-    // try {
-    //   // @ts-ignore
-    //   revalidateTag('posts');
-    //   revalidatePath('/', 'layout');
-    //   revalidatePath('/posts/[id]', 'page');
-    //   revalidatePath('/en/posts/[id]', 'page');
-    //   revalidatePath('/ja/posts/[id]', 'page');
-    // } catch (e) {
-    //   console.warn("Revalidate tags error", e);
-    // }
-
     return NextResponse.json({ success: true, message: 'Rollback completed successfully' });
-
   } catch (error: any) {
-    console.error("Error rolling back revision:", error);
+    console.error('Error rolling back revision:', error);
     return NextResponse.json({ error: 'INTERNAL_ERROR', message: error.message }, { status: 500 });
   }
 }
