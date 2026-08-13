@@ -22,7 +22,28 @@ export interface EvidenceRepository {
   restore(postId: number, evidence: EvidenceData | null): Promise<void>;
 }
 
+export interface ContentAuditResult {
+  wordpress_id: number;
+  content_id: string;
+  language: 'ko' | 'en' | 'ja';
+  title: string;
+  slug: string;
+  quality_score: number;
+  adsense_risk: number;
+  evidence_score: number;
+  medical_risk: number;
+  medical_risk_level: 'high' | 'low';
+  structure_score: number;
+  media_score: number;
+  freshness_score: number;
+  status: 'green' | 'yellow' | 'red';
+  recommended_action: 'rewrite_with_evidence' | 'enhance_structure' | 'none';
+  reason: string[];
+  details: Record<string, unknown>;
+  request_id: string;
+}
+
 export interface AuditRepository {
-  // To be implemented if/when we need structured audit history fetch
-  saveAuditResult(result: any): Promise<void>;
+  saveAuditResult(result: ContentAuditResult): Promise<void>;
+  saveAuditResults(results: ContentAuditResult[]): Promise<void>;
 }
