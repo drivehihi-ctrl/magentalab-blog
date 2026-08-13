@@ -1,24 +1,32 @@
 import 'server-only';
+import { timingSafeEqual } from 'crypto';
+
+function safeEqual(a: string, b: string): boolean {
+  const aBuf = Buffer.from(a);
+  const bBuf = Buffer.from(b);
+  if (aBuf.length !== bBuf.length) return false;
+  return timingSafeEqual(aBuf, bBuf);
+}
 
 export function isAIContentAuthenticated(req: Request): boolean {
   try {
-    const authHeader = req.headers.get('authorization') || req.headers.get('Authorization') || req.headers.get('x-api-secret') || req.headers.get('x-ai-secret');
-    let urlSecret: string | null = null;
-    try {
-      const parsedUrl = new URL(req.url, 'https://www.magentalabblog.com');
-      urlSecret = parsedUrl.searchParams.get('secret');
-    } catch (e) {}
+    const configuredSecret = process.env.AI_CONTENT_API_SECRET?.trim();
+    if (!configuredSecret) {
+      console.error('AI_CONTENT_API_SECRET is not configured');
+      return false;
+    }
 
-    let token = authHeader || urlSecret;
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader) return false;
+
+    const match = authHeader.match(/^Bearer\s+(.+)$/i);
+    if (!match) return false;
+
+    const token = match[1].trim();
     if (!token) return false;
 
-    if (token.match(/^Bearer\s+/i)) {
-      token = token.replace(/^Bearer\s+/i, '').trim();
-    }
-    token = token.trim();
-
-    return token.length > 0;
-  } catch (e) {
+    return safeEqual(token, configuredSecret);
+  } catch {
     return false;
   }
 }
