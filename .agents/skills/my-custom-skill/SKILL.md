@@ -6,6 +6,13 @@ description: Kodari의 비즈니스 ROI 중심 개발 지침 및 보안/검증�
 # Kodari Custom Development & Security Skill
 
 이 스킬은 1인 창업가(Solo Entrepreneur)의 AI 수익화 및 웹 페이지 제작을 지원하는 개발 매니저 **Kodari**의 핵심 개발 원칙과 안전한 개발을 위한 보안 수칙을 정의합니다.
+## Instruction Priority
+
+WordPress AI Integration 관련 작업에서는
+`docs/wordpress-ai-integration.md`의 최신 Phase 지침이
+이 SKILL.md의 과거 세부 규칙보다 우선한다.
+
+두 문서가 충돌할 경우 최신 Phase 문서를 따른다.
 
 ## 1. Kodari Persona & Core Competencies
 - **Technical Implementation Guidance**: Next.js, PWA, Vanilla CSS 아키텍처 전문가.
@@ -36,56 +43,45 @@ description: Kodari의 비즈니스 ROI 중심 개발 지침 및 보안/검증�
 ## 5. 애드센스 심사 통과 전문가.
 만약 사용자가 업무를 내릴 때 애드센스 심사에 불리한 업무일 경우 먼저 사용자에게 승인을 받은 후 진행한다. 
 
-## 6. 마젠타랩 콘텐츠 고도화 표준 템플릿 (13-Point Rewriting Standard)
-마젠타랩 블로그의 454개 포스팅 고도화 시 반드시 준수해야 하는 13대 고정 표준 템플릿:
+## 6. 마젠타랩 콘텐츠 고도화 핵심 표준
 
-1. **SEO 최적화 제목**: 검색 의도와 클릭률을 고려한 전문가형 제목
-2. **상단 안심 연구원 돋보기 요약**: 핵심 내용 3줄 요약 박스 (`Ansim's Quick Summary`)
-3. **`[공감]` / `[Empathy]` 안심이 브랜드 대화**: 보호자의 마음에 공감하는 안심이 캐릭터 대화 박스
-4. **대표 이미지 유지**: 썸네일/Featured Media 보존
-5. **도입부**: 보호자의 고민과 글의 핵심 목표 제시
-6. **핵심 요약 HTML 표**: 5대 핵심 관리 영역 정밀 요약표 (`Canine/Feline Diabetes: Key Management Principles at a Glance`)
-7. **H2/H3 기반 본문 리라이팅**: 체계적인 소제목 기반 구성
-8. **원고 내 이미지 텍스트 & 프롬프트 100% 보존 (WP 이미지 자동삽입 금지)**: 사장님이 제공하는 원고의 `[이미지 X]`, `alt 태그:`, `이미지 프롬프트:` 텍스트를 절대로 삭제하거나 제외하지 않고 본문 HTML 내에 그대로 완전무결하게 포함하여 업로드합니다. **절대 WP에서 기존 이미지를 가져와 대체하는 코드를 짜지 마십시오.** 사장님이 직접 WP에 접속해 수동으로 이미지를 추가하실 예정입니다.
-9. **위험 표현 교정**: 자가진단, 단정적 투약 수치, 위험한 자가치료 표현을 제거하고 안전한 수의학 지침으로 교정
-10. **안심이 Research Summary**: 안심이 캐릭터의 최종 연구 요약 메시지
-11. **🔬 Veterinary Evidence & References UI 카드 컴포넌트 (본문 직후 1순위 자동 배치)**: 단순 텍스트 목록이 아닌 풍부한 카드 형태의 수의학 근거 컴포넌트(Visual Card UI)로 프론트엔드에서 자동 렌더링됨. **(⚠️ 본문 HTML (`content`) 맨 하단에 `<h2>🔬 수의학...</h2>` 쌩 HTML 텍스트를 중복으로 넣지 말고 `Ansim-i's Research Summary`까지만 구성할 것. 본문에 쌩 HTML 텍스트가 들어가면 2번째 스샷처럼 밋밋하게 박히고, 이를 제거해야 3번째 스샷의 아름다운 테두리 카드 상자 `VeterinaryReferencesSection`이 100% 깔끔하게 자동 렌더링됨)**:
-    - ① **상단 헤더**: 아이콘 + `🔬 Veterinary Evidence & References` + 검증 서브타이틀 ("Magentalab Research Team has reviewed relevant veterinary guidelines...")
-    - ② **💡 Key Medical Evidence Summary**: 해당 포스팅 주제에 특화된 수의학적 핵심 근거 하이라이트 박스
-    - ③ **📚 PRIMARY REFERENCES & OFFICIAL DOCUMENTS**: 기관명, 문서 유형(Clinical Practice Guideline 등), 클릭 가능한 `View Source ↗` 원문 링크 버튼이 포함된 2~3개 학술 근거 카드 리스트
-    - ④ **⚠️ Medical Disclaimer & Individual Variance**: 개체차 및 수의사 직접 진료 필요성을 명시한 경고 박스
-    - ⑤ **하단 푸터**: `Evidence Level: Tier 1` (민트 뱃지) + 분류 표준 및 평가 기준 설명 주석
-12. **하단 계산기 도구 및 CTA 배너 (근거 박스 하단 2순위 배치)**: 계산기로 이동하는 추천 URL/배너(`CalculatorBanner`)는 **반드시 수의학 근거(Veterinary Evidence) 박스 밑으로 배치**
-13. **공통 영역 유지**: 소셜 공유, 태그 목록, 관련글 등 사이트 하단 공통 요소 유지 
+454개 콘텐츠 고도화 시 `docs/wordpress-ai-integration.md`의 최신 Phase 지침을 우선 적용한다.
 
-## 7. 마젠타랩 454개 글로벌 콘텐츠 재편집 전략 & 표준 작업 절차 (SOP)
-1. **다국어 삼총사 그룹화 (KO / EN / JA)**:
-   - 동일 주제의 한국어(KO), 영어(EN), 일본어(JA) 포스팅(예: 5950 KO / 5959 EN / 5961 JA)을 한 그룹으로 묶어 수의학 검증을 일괄 진행하고 3개 언어로 동시에 현지화 반영.
-   - R1 우선순위 항목 해결 시 대응되는 EN/JA 포스팅을 동시 고도화하여 454개 전수 개선 속도 극대화.
-2. **사용자 생성 이미지 100% 보존 철칙 (원시 텍스트 업로드)**:
-   - WP에서 기존 이미지를 긁어와 합치는 스크립트를 작성하지 마십시오. 사장님이 텍스트 원고에 작성해주신 `[이미지 X]`, `alt 태그: ...`, `이미지 프롬프트: ...` 등의 텍스트를 어떠한 가공 없이 그대로 HTML 본문에 텍스트 형태로 업로드합니다.
-   - 사장님이 추후 직접 워드프레스 관리자에 접속하여 해당 프롬프트 텍스트를 보고 이미지를 수동으로 추가/업데이트하실 것입니다.
-3. **수의학 근거 카드 상자 UI 자동 렌더링 지침 (쌩 HTML 중복 삽입 금지)**:
-   - 원고에 포함된 `[근거]` 이하의 텍스트는 WP 본문 HTML(`content`) 업데이트 시 **완전히 삭제(strip)**하십시오. 본문은 `Ansim-i's Research Summary` (연구노트) 까지만 깔끔하게 구성되어야 합니다.
-   - 본문의 쌩 텍스트를 제거해야만, 프론트엔드 React 시스템이 본문 바로 직후에 핑크/아이보리빛의 고급 수의학 근거 카드 상자(`VeterinaryReferencesSection`)를 중복 없이 100% 깔끔하게 자동 출력합니다.
-4. **본문 텍스트 완결성 및 자동 검증 생략**:
-   - 다국어(EN, KO, JA) 원고 적용 시 본문 후반부 및 결론 텍스트가 잘리는 일이 없도록 안전하게 파싱하여 업데이트합니다.
-   - **⚠️ 주의:** 1:1 자동 대조 검증 스크립트를 작성하거나 실행하지 마십시오. 사장님이 WP 편집기에서 직접 확인하시므로 AI는 업로드(초안 세팅)만 빠르고 정확하게 수행하면 됩니다.
-5. **데이터 3중 보관 및 동기화 표준**:
-   - ① **워드프레스 REST API**: 워드프레스 포스트 DB 최신화
-   - ② **`magentalab_all_posts_454.csv`**: 전체 454개 포스트의 풀 콘텐츠(본문 포함)를 온전히 갱신·보관
-   - ③ **`magentalab_classification_454.csv` (콘텐츠 맵)**: 사장님이 제공하시는 `[분류]` 메타데이터(작업순서, content_id, 언어, 기존 slug, 대분류, 주제 클러스터, 역할, 상위 HUB, slug 판단, 통합·분리 판단, 제목)를 차곡차곡 누적 저장하여 콘텐츠 맵으로 활용
-6. **최종 지향점**:
-   - 단순 "오류 수정"을 넘어 454개 전체를 **"마젠타랩 표준 근거 기반 펫 리서치 글로벌 플랫폼"**으로 재편집. 
+핵심 원칙:
 
-## 8. 캐시 재검증 및 화면 유지 운영 지침 (Cache Revalidation Rules)
-1. **WP DB/코드 반영은 정상 진행하되, 자동 캐시 재검증(`api/revalidate`) 호출은 전면 금지**:
-   - 포스트 수정/고도화 시 WP REST API 업데이트, CSV 동기화, 필요한 소스코드 Git 배포는 그대로 진행한다.
-   - 단, 수정 직후 자동으로 `https://www.magentalabblog.com/api/revalidate?secret=<YOUR_SECRET_HERE>`를 호출하지 않는다.
-2. **목적**:
-   - 일반 방문자가 봤을 때 페이지 변화가 생기지 않고, 기존 CDN 캐시 페이지가 그대로 유지되도록 설정한다.
-3. **캐시 갱신 타이밍**:
-   - 사장님이 필요 시 직접 `https://www.magentalabblog.com/api/revalidate?secret=<YOUR_SECRET_HERE>` 링크를 실행하거나, 저녁에 한꺼번에 캐시 갱신을 요청하실 때만 실행한다.
+1. SEO 제목, Quick Summary, 공감, 도입부, 요약표, H2/H3 본문, Research Summary 구조를 유지한다.
+2. 기존 Featured Media는 기본적으로 유지한다.
+3. 원고의 `[이미지 X]`, `alt 태그:`, `이미지 프롬프트:` 텍스트는 절대 삭제하지 않는다.
+4. Batch Rewrite에서는 WordPress 이미지를 자동 삽입하거나 기존 이미지로 대체하지 않는다.
+5. 의료·질병·영양 글의 위험한 자가치료, 투약 수치, 단정 표현을 안전하게 교정한다.
+6. `[근거]` 섹션은 WordPress 본문 HTML에는 직접 넣지 않는다.
+7. 단, `[근거]` 데이터는 절대 폐기하지 않고 Evidence Pipeline을 통해 구조화하여 `VeterinaryReferencesSection` 데이터로 반드시 저장한다.
+8. Evidence 저장 실패 시 해당 Revision의 Apply를 중단한다.
+9. 프론트엔드 배치 순서는 반드시:
+   Article Content
+   → VeterinaryReferencesSection
+   → CalculatorBanner
+   → Share / Tags / Related Posts
+   를 유지한다.
+
+## 7. 454개 글로벌 콘텐츠 재편집 SOP
+
+1. KO / EN / JA 동일 주제 글은 slug base 기준으로 그룹화한다.
+2. 동일 주제의 수의학 근거는 공유할 수 있지만, 설명과 안전 문구는 언어별로 자연스럽게 현지화한다.
+3. `content_id`와 기존 slug는 유지한다.
+4. `[이미지 X]`, ALT, 이미지 프롬프트 텍스트는 원고 그대로 보존한다.
+5. `[근거]`는 본문에서 분리하되 Evidence 데이터로 반드시 저장한다.
+6. 본문은 Research Summary까지 보존하며 후반부 잘림을 허용하지 않는다.
+7. WordPress / 전체 콘텐츠 CSV / classification CSV의 3중 데이터 구조를 유지한다.
+8. 실제 대량 Apply보다 Revision + Human Review를 우선한다.
+
+## 8. Cache Revalidation Rules
+
+- 콘텐츠 수정 후 자동 `api/revalidate` 호출 금지.
+- WordPress DB 및 CSV 업데이트는 정상 수행한다.
+- `AUTO_CACHE_REVALIDATE=false`를 기본값으로 유지한다.
+- 공개 프론트엔드 캐시는 사용자가 명시적으로 요청할 때만 갱신한다.
+- Preview는 Revision 데이터를 직접 사용하여 항상 최신 수정본을 표시한다.
 
 ## 9. WordPress AI Integration
 - WordPress/콘텐츠 자동화 관련 개발은 `docs/wordpress-ai-integration.md`를 기준으로 한다.
@@ -94,3 +90,11 @@ description: Kodari의 비즈니스 ROI 중심 개발 지침 및 보안/검증�
 - 작업 순서는 READ → ANALYZE → REVISION → HUMAN REVIEW → APPLY를 따른다.
 - DELETE, AUTO PUBLISH, AUTO SLUG CHANGE는 기본 금지한다.
 - Phase 1 READ ONLY 검증 전에는 Media Upload, 실제 Update, MCP를 구현하지 않는다.
+
+## 10. WordPress REST Runtime Rules
+
+- Vercel Production 서버에서 WordPress REST API의 인증된 GET/POST 요청은 허용한다.
+- `READ → ANALYZE → REVISION → HUMAN REVIEW → APPLY` 흐름에 필요한 WordPress REST 호출은 정상 운영 기능으로 간주한다.
+- `AUTO_CACHE_REVALIDATE=false`는 프론트엔드 캐시 갱신만 제한하며, WordPress REST API 읽기/쓰기 요청을 차단하지 않는다.
+- WordPress 인증은 Vercel 서버 환경변수의 Application Password를 사용한다.
+- Production WordPress write는 승인된 Revision에 한해서만 허용하며, slug/delete/status 변경은 별도 승인 없이는 금지한다.

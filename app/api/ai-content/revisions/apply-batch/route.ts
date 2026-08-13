@@ -120,7 +120,7 @@ export async function POST(req: Request) {
   return NextResponse.json({
     request_id,
     dry_run: dryRun,
-    attempted: revisionIds.length,
+    attempted: results.length,
     applied,
     failed,
     stopped_on_error,

@@ -69,18 +69,27 @@ export async function applyOneRevision(
     );
   }
 
-  // ── 3. Medical risk + evidence gate ──────────────────────────────────────
+  // ── 3. Medical risk + evidence + medical review gate ──────────────────────
   const medicalRisk = assessMedicalRisk(
     revision.slug,
     revision.new_title,
     revision.new_content
   );
-  if (medicalRisk.isMedical && (!revision.evidence || revision.evidence.references.length === 0)) {
-    return fail(
-      revisionId,
-      'MEDICAL_EVIDENCE_MISSING',
-      'Medical topics require at least 1 evidence reference.'
-    );
+  if (medicalRisk.isMedical) {
+    if (!revision.evidence || revision.evidence.references.length === 0) {
+      return fail(
+        revisionId,
+        'MEDICAL_EVIDENCE_MISSING',
+        'Medical topics require at least 1 evidence reference.'
+      );
+    }
+    if (revision.medical_reviewed !== true && revision.medical_approved !== true) {
+      return fail(
+        revisionId,
+        'MEDICAL_REVIEW_REQUIRED',
+        'Medical topics require explicit medical review confirmation (medical_reviewed: true).'
+      );
+    }
   }
 
   // ── 4. Content truncation detection ──────────────────────────────────────
@@ -206,15 +215,13 @@ export async function applyOneRevision(
   }
 
   // ── 12. WordPress write — immutable fields excluded ───────────────────────
-  // NEVER send: slug, status, categories, tags, meta, noindex, password
+  // NEVER send: slug, status, categories, tags, meta, noindex, password, featured_media
+  // Controlled Content Apply ONLY updates title, content, excerpt.
+  // featured_media changes are reserved strictly for explicit Media Apply flows.
   const updatePayload: Record<string, unknown> = {
     title: revision.new_title,
     content: revision.new_content,
     excerpt: revision.new_excerpt,
-    // featured_media only when explicitly set
-    ...(revision.media_changes?.new_featured_media_id != null
-      ? { featured_media: revision.media_changes.new_featured_media_id }
-      : {}),
   };
 
   try {

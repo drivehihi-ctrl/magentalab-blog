@@ -41,6 +41,8 @@ export interface AIRevision {
   new_meta_description: string;
   media_changes?: AIRevisionMediaChanges; // Added for Phase 3
   evidence?: EvidenceData; // Added for Phase 4
+  medical_reviewed?: boolean; // Added for Phase 5.4 Medical Safety Guard
+  medical_approved?: boolean; // Alias flag for medical review confirmation
   reason: string;
   source: string;
   status: 'pending_review' | 'approved' | 'applied' | 'rejected' | 'rolled_back';
