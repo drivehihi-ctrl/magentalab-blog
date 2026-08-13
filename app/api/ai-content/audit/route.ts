@@ -39,7 +39,6 @@ function checkAuth(req: Request): boolean {
 }
 
 export async function POST(req: Request) {
-  return NextResponse.json({ debug_ok: true, version: '5.3-force-debug' });
   if (!checkAuth(req)) {
     return NextResponse.json({ error: 'AUTH_FAILED', message: 'Invalid API secret (v5.3-resilient)' }, { status: 401 });
   }
