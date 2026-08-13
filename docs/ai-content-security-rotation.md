@@ -25,9 +25,7 @@ Not accepted:
 
 ## WordPress write credentials
 
-All WordPress write operations must use `lib/wp-write-auth.ts`.
-
-Preferred Vercel environment variables:
+All WordPress write operations must use `lib/wp-write-auth.ts` and the following server-only environment variables:
 
 ```text
 WORDPRESS_API_URL
@@ -35,7 +33,7 @@ WORDPRESS_API_USERNAME
 WORDPRESS_API_APP_PASSWORD
 ```
 
-During rotation only, the helper also recognizes existing environment-only aliases:
+Legacy aliases are retired and must not be used by runtime or maintenance code:
 
 ```text
 WP_USER
@@ -58,7 +56,7 @@ There must be no password literal in runtime source code.
 6. Run one controlled WordPress write test through the Revision → Approve → Apply → Rollback flow on a safe test post.
 7. Verify Supabase revision/backup/audit-log persistence.
 8. Only after the new credential is proven in Production, revoke the old WordPress Application Password.
-9. Remove legacy Vercel aliases (`WP_SEO_APP_PASSWORD`, `WP_APP_PASSWORD`) after confirming nothing else depends on them. Keep `WP_USER` only if another non-AI runtime still needs it.
+9. After a repository-wide legacy-reference scan passes, remove `WP_USER`, `WP_SEO_APP_PASSWORD`, and `WP_APP_PASSWORD` from local and hosted environment-variable stores.
 
 ## Failure behavior
 
@@ -77,4 +75,5 @@ Removing a secret from current source does not erase it from Git history. Any cr
 - Production write operations use Vercel environment credentials
 - New WordPress Application Password verified through Apply + Rollback
 - Old WordPress Application Password revoked
+- Legacy WordPress env aliases absent from active code
 - Supabase audit trail confirms the test cycle
