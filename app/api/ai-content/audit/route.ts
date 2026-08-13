@@ -40,7 +40,7 @@ function checkAuth(req: Request): boolean {
 
 export async function POST(req: Request) {
   if (!checkAuth(req)) {
-    return NextResponse.json({ error: 'AUTH_FAILED', message: 'Invalid API secret' }, { status: 401 });
+    return NextResponse.json({ error: 'AUTH_FAILED', message: 'Invalid API secret (v5.3-resilient)' }, { status: 401 });
   }
 
   try {
