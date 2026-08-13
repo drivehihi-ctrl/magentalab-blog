@@ -112,5 +112,17 @@ export const jsonAuditRepository: AuditRepository = {
     const audits = readJsonFile<ContentAuditResult>('content_audits.json');
     audits.push(...results);
     writeJsonFile('content_audits.json', audits);
+  },
+  async getLatestByPostIds(postIds: number[]): Promise<Map<number, ContentAuditResult>> {
+    const wanted = new Set(postIds);
+    const audits = readJsonFile<ContentAuditResult>('content_audits.json');
+    const latest = new Map<number, ContentAuditResult>();
+    for (let i = audits.length - 1; i >= 0; i--) {
+      const audit = audits[i];
+      if (wanted.has(audit.wordpress_id) && !latest.has(audit.wordpress_id)) {
+        latest.set(audit.wordpress_id, audit);
+      }
+    }
+    return latest;
   }
 };
