@@ -26,8 +26,12 @@ function isAuthenticated(req: Request) {
       urlSecret = parsedUrl.searchParams.get('secret');
     } catch (e) {}
 
-    const token = authHeader ? (authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : authHeader) : urlSecret;
+    let token = authHeader || urlSecret;
     if (!token) return false;
+
+    if (token.match(/^Bearer\s+/i)) {
+      token = token.replace(/^Bearer\s+/i, '').trim();
+    }
 
     const validSecrets = [
       process.env.AI_CONTENT_API_SECRET,
