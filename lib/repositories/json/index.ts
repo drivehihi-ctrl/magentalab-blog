@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { RevisionRepository, BackupRepository, EvidenceRepository, AuditLogRepository, AuditRepository } from '../types';
+import { RevisionRepository, BackupRepository, EvidenceRepository, AuditLogRepository, AuditRepository, ContentAuditResult } from '../types';
 import { AIRevision, AIBackup, AILog, EvidenceData } from '@/lib/ai-revisions';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
@@ -68,8 +68,6 @@ export const jsonAuditLogRepository: AuditLogRepository = {
 
 export const jsonEvidenceRepository: EvidenceRepository = {
   async getByPostId(postId: number): Promise<EvidenceData | null> {
-    const db = readJsonFile<any>('evidence_wrapper.json'); // Actually evidence.json is an object not array.
-    // wait, we need custom logic for evidence.json because it's a Record<string, EvidenceData>
     const filePath = path.join(DATA_DIR, 'evidence.json');
     if (!fs.existsSync(filePath)) return null;
     const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
@@ -104,10 +102,15 @@ export const jsonEvidenceRepository: EvidenceRepository = {
 };
 
 export const jsonAuditRepository: AuditRepository = {
-  async saveAuditResult(result: any): Promise<void> {
-    // Phase 4 content audits are just returned in API for now, not saved locally, but we can implement it
-    const audits = readJsonFile<any>('content_audits.json');
+  async saveAuditResult(result: ContentAuditResult): Promise<void> {
+    const audits = readJsonFile<ContentAuditResult>('content_audits.json');
     audits.push(result);
+    writeJsonFile('content_audits.json', audits);
+  },
+  async saveAuditResults(results: ContentAuditResult[]): Promise<void> {
+    if (results.length === 0) return;
+    const audits = readJsonFile<ContentAuditResult>('content_audits.json');
+    audits.push(...results);
     writeJsonFile('content_audits.json', audits);
   }
 };
