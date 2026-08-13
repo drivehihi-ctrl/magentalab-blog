@@ -47,10 +47,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     }
 
     // Restore WP via REST API
-    const WP_URL = process.env.NEXT_PUBLIC_WORDPRESS_URL || "https://magentalab.mycafe24.com";
-    const user = process.env.WP_USER || "magentalab";
-    const pass = process.env.WP_SEO_APP_PASSWORD || process.env.WP_APP_PASSWORD || "7q3n UBO5 gHyJ gLos weag GWn9";
-    const auth = 'Basic ' + Buffer.from(user + ':' + pass).toString('base64');
+    const WP_URL = (process.env.NEXT_PUBLIC_WORDPRESS_URL || process.env.WORDPRESS_URL || "https://magentalab.mycafe24.com").replace(/\/$/, "");
+    const wpUser = (process.env.WP_USER && process.env.WP_USER.trim()) ? process.env.WP_USER.trim() : "magentalab";
+    const wpPass = (process.env.WP_SEO_APP_PASSWORD && process.env.WP_SEO_APP_PASSWORD.trim()) 
+      ? process.env.WP_SEO_APP_PASSWORD.trim() 
+      : ((process.env.WP_APP_PASSWORD && process.env.WP_APP_PASSWORD.trim()) ? process.env.WP_APP_PASSWORD.trim() : "7q3n UBO5 gHyJ gLos weag GWn9");
+    const auth = 'Basic ' + Buffer.from(wpUser + ':' + wpPass).toString('base64');
 
     const updatePayload: any = {
       title: backup.title,
