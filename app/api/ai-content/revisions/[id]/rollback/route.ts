@@ -83,18 +83,18 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       status: 'success'
     });
 
-    // Revalidate Cache
-    clearPostsCache();
-    try {
-      // @ts-ignore
-      revalidateTag('posts');
-      revalidatePath('/', 'layout');
-      revalidatePath('/posts/[id]', 'page');
-      revalidatePath('/en/posts/[id]', 'page');
-      revalidatePath('/ja/posts/[id]', 'page');
-    } catch (e) {
-      console.warn("Revalidate tags error", e);
-    }
+    // Revalidate Cache - DISABLED FOR PHASE 4 E2E
+    // clearPostsCache();
+    // try {
+    //   // @ts-ignore
+    //   revalidateTag('posts');
+    //   revalidatePath('/', 'layout');
+    //   revalidatePath('/posts/[id]', 'page');
+    //   revalidatePath('/en/posts/[id]', 'page');
+    //   revalidatePath('/ja/posts/[id]', 'page');
+    // } catch (e) {
+    //   console.warn("Revalidate tags error", e);
+    // }
 
     return NextResponse.json({ success: true, message: 'Rollback completed successfully' });
 

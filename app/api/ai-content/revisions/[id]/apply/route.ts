@@ -72,7 +72,30 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     // Parse existing evidence for backup
     const existingParsed = parseEvidence(currentPost.content.rendered);
 
-    // 2. Create Backup of current state
+    // 2. Create Backup of current state using raw WP content (context=edit) for exact byte-level restoration
+    const WP_URL = process.env.NEXT_PUBLIC_WORDPRESS_URL || "https://magentalab.mycafe24.com";
+    const user = process.env.WP_USER;
+    const pass = process.env.WP_SEO_APP_PASSWORD || process.env.WP_APP_PASSWORD;
+    const auth = 'Basic ' + Buffer.from(user + ':' + pass).toString('base64');
+
+    let rawTitle = currentPost.title.rendered;
+    let rawContent = currentPost.content.rendered;
+    let rawExcerpt = currentPost.excerpt.rendered;
+
+    try {
+      const editRes = await fetch(`${WP_URL}/wp-json/wp/v2/posts/${currentPost.id}?context=edit`, {
+        headers: { 'Authorization': auth }
+      });
+      if (editRes.ok) {
+        const editPost = await editRes.json();
+        if (editPost.title?.raw) rawTitle = editPost.title.raw;
+        if (editPost.content?.raw) rawContent = editPost.content.raw;
+        if (editPost.excerpt?.raw) rawExcerpt = editPost.excerpt.raw;
+      }
+    } catch (e) {
+      console.warn("Could not fetch raw post content for backup, falling back to rendered:", e);
+    }
+
     const backup_id = `bak_${crypto.randomBytes(8).toString('hex')}`;
     const previousEvidence = await evidenceRepository.getByPostId(currentPost.id);
     
@@ -80,9 +103,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       backup_id,
       revision_id: revision.revision_id,
       wordpress_id: currentPost.id,
-      title: currentPost.title.rendered,
-      content: currentPost.content.rendered,
-      excerpt: currentPost.excerpt.rendered,
+      title: rawTitle,
+      content: rawContent,
+      excerpt: rawExcerpt,
       meta_description: "", // Fallback, not strictly stored on WP fields separately except via SEO plugins, excerpt covers it
       slug: currentPost.slug,
       featured_media: currentPost.featured_media, // Backup original featured media
@@ -129,11 +152,6 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     }
 
     // 4. Update WP via REST API (Transaction Step 2)
-    const WP_URL = process.env.NEXT_PUBLIC_WORDPRESS_URL || "https://magentalab.mycafe24.com";
-    const user = process.env.WP_USER;
-    const pass = process.env.WP_SEO_APP_PASSWORD || process.env.WP_APP_PASSWORD;
-    const auth = 'Basic ' + Buffer.from(user + ':' + pass).toString('base64');
-
     const updatePayload: any = {
       title: revision.new_title,
       content: revision.new_content, // Raw content ONLY, no script injection
