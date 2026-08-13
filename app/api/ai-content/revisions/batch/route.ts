@@ -5,6 +5,7 @@ import { sanitizeForSeo } from '@/lib/utils';
 import { parseEvidence } from '@/lib/evidence-parser';
 import { logAction, saveRevision, AIRevision } from '@/lib/ai-revisions';
 import { auditRepository, revisionRepository } from '@/lib/repositories';
+import { isAIContentAuthenticated } from '@/lib/ai-content-auth';
 
 const MAX_REVISION_BATCH = 5;
 
@@ -16,13 +17,6 @@ type RevisionDraft = {
   reason?: string;
   source?: string;
 };
-
-function isAuthenticated(req: Request) {
-  const authHeader = req.headers.get('authorization');
-  const secret = process.env.AI_CONTENT_API_SECRET;
-  if (!secret || !authHeader?.startsWith('Bearer ')) return false;
-  return authHeader.slice('Bearer '.length).trim() === secret.trim();
-}
 
 function inferLanguage(slug: string): 'ko' | 'en' | 'ja' {
   if (slug.endsWith('-en')) return 'en';
@@ -37,7 +31,7 @@ function containsUnsafeHtml(content?: string) {
 }
 
 export async function POST(req: Request) {
-  if (!isAuthenticated(req)) {
+  if (!isAIContentAuthenticated(req)) {
     return NextResponse.json({ error: 'AUTH_FAILED', message: 'Invalid API secret' }, { status: 401 });
   }
 
@@ -65,7 +59,6 @@ export async function POST(req: Request) {
     const prepared: AIRevision[] = [];
     const warnings: Array<{ wordpress_id: number; code: string }> = [];
 
-    // Validate the entire batch before writing any revision rows.
     for (const draft of drafts) {
       const wordpressId = Number(draft.wordpress_id);
       const audit = latestAudits.get(wordpressId);
@@ -127,7 +120,6 @@ export async function POST(req: Request) {
         warnings.push({ wordpress_id: wordpressId, code: 'MEDICAL_EVIDENCE_REQUIRED_BEFORE_APPLY' });
       }
 
-      const createdAt = new Date().toISOString();
       prepared.push({
         revision_id: `rev_${crypto.randomBytes(8).toString('hex')}`,
         wordpress_id: post.id,
@@ -147,7 +139,7 @@ export async function POST(req: Request) {
         reason: draft.reason || `Phase 5.2 ${audit.recommended_action}`,
         source: draft.source || 'phase5_batch',
         status: 'pending_review',
-        created_at: createdAt
+        created_at: new Date().toISOString()
       });
     }
 
