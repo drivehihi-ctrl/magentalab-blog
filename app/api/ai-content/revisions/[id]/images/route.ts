@@ -1,32 +1,25 @@
 import { NextResponse } from 'next/server';
 import { getRevision, saveRevision, logAction } from '@/lib/ai-revisions';
-
-function isAuthenticated(req: Request) {
-  const authHeader = req.headers.get('authorization');
-  const secret = process.env.AI_CONTENT_API_SECRET;
-  if (!secret || !authHeader || !authHeader.startsWith('Bearer ')) return false;
-  return authHeader.split(' ')[1] === secret;
-}
+import { isAIContentAuthenticated } from '@/lib/ai-content-auth';
 
 function buildGutenbergImage(mediaId: number, src: string, alt: string, caption?: string) {
-  let imgHtml = `<figure class="wp-block-image size-large">
-<img src="${src}" alt="${alt.replace(/"/g, '&quot;')}" class="wp-image-${mediaId}" />`;
-  
+  let imgHtml = `<figure class="wp-block-image size-large">\n<img src="${src}" alt="${alt.replace(/"/g, '&quot;')}" class="wp-image-${mediaId}" />`;
+
   if (caption) {
     imgHtml += `\n<figcaption class="wp-element-caption">${caption.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</figcaption>`;
   }
   imgHtml += `\n</figure>`;
-  
+
   return `\n<!-- wp:image {"id":${mediaId},"sizeSlug":"large"} -->\n${imgHtml}\n<!-- /wp:image -->\n`;
 }
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  if (!isAuthenticated(req)) {
+  if (!isAIContentAuthenticated(req)) {
     return NextResponse.json({ error: 'AUTH_FAILED', message: 'Invalid API secret' }, { status: 401 });
   }
 
   const { id } = await params;
-  
+
   try {
     const revision = await getRevision(id);
     if (!revision) {
@@ -38,10 +31,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     const body = await req.json();
     const { media_id, src, alt, caption, position } = body;
-    
-    // Position can be { type: 'after_heading', heading_text: '...', heading_level: 2 } or { type: 'end_of_content' } etc
-    // Or if it's featured image: { type: 'featured_image' }
-    
+
     if (!revision.media_changes) {
       revision.media_changes = { images_added: [], new_featured_media_id: null };
     }
@@ -49,7 +39,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     if (position?.type === 'featured_image') {
       revision.media_changes.new_featured_media_id = media_id;
       await saveRevision(revision);
-      
+
       await logAction({
         timestamp: new Date().toISOString(),
         action: 'SET_FEATURED_IMAGE_REVISION',
@@ -62,7 +52,6 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       return NextResponse.json({ success: true, message: 'Featured image updated in revision' });
     }
 
-    // Insert into content
     if (!src || !alt) {
       return NextResponse.json({ error: 'INVALID_REQUEST', message: 'src and alt are required for body image' }, { status: 400 });
     }
@@ -71,17 +60,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     let content = revision.new_content;
 
     if (position?.type === 'after_heading' && position.heading_text) {
-      // Find the heading tag
       const level = position.heading_level || 2;
       const occurrence = position.occurrence || 1;
-      
-      // Match <!-- wp:heading ... --> \n <h2...>Heading text</h2> \n <!-- /wp:heading -->
-      // Because Gutenberg tags might be present, or plain HTML.
-      // We will look for <h${level} ...>${heading_text}</h${level}>
-      // This is a naive regex but good for tests. In production a real HTML parser is better.
       const escapeRegExp = (string: string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const headingRegex = new RegExp(`(<h${level}[^>]*>\\s*${escapeRegExp(position.heading_text)}\\s*</h${level}>)`, 'gi');
-      
+
       let matchCount = 0;
       let inserted = false;
       content = content.replace(headingRegex, (match) => {
@@ -97,7 +80,6 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         return NextResponse.json({ error: 'HEADING_NOT_FOUND', message: 'Could not find matching heading to insert after' }, { status: 400 });
       }
     } else {
-      // end_of_content
       content += '\n' + imageBlock;
     }
 
@@ -110,7 +92,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     });
 
     await saveRevision(revision);
-    
+
     await logAction({
       timestamp: new Date().toISOString(),
       action: 'ADD_IMAGE_TO_REVISION',
@@ -122,9 +104,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     });
 
     return NextResponse.json({ success: true, message: 'Image added to revision content' });
-
   } catch (error: any) {
-    console.error("Error adding image to revision:", error);
+    console.error('Error adding image to revision:', error);
     return NextResponse.json({ error: 'INTERNAL_ERROR', message: error.message }, { status: 500 });
   }
 }
