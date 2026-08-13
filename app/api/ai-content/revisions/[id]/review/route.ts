@@ -10,14 +10,15 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   try {
     const { id } = await params;
     const body = await req.json();
-    const { action, confirm } = body;
+    const reviewDecision = body.decision || body.action;
+    const { confirm } = body;
 
     if (!confirm) {
       return NextResponse.json({ error: 'CONFIRMATION_REQUIRED', message: 'confirm: true is required for human review action' }, { status: 400 });
     }
 
-    if (action !== 'approve' && action !== 'reject') {
-      return NextResponse.json({ error: 'INVALID_ACTION', message: 'action must be approve or reject' }, { status: 400 });
+    if (reviewDecision !== 'approve' && reviewDecision !== 'reject') {
+      return NextResponse.json({ error: 'INVALID_ACTION', message: 'decision/action must be approve or reject' }, { status: 400 });
     }
 
     const revision = await getRevision(id);
@@ -25,7 +26,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       return NextResponse.json({ error: 'NOT_FOUND', message: 'Revision not found' }, { status: 404 });
     }
 
-    const newStatus = action === 'approve' ? 'approved' : 'rejected';
+    const newStatus = reviewDecision === 'approve' ? 'approved' : 'rejected';
     await updateRevisionStatus(id, newStatus);
 
     await logAction({

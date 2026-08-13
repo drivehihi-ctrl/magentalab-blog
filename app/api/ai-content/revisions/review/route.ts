@@ -45,7 +45,8 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { revision_id, id, action, confirm } = body;
+    const { revision_id, id, action, decision, confirm } = body;
+    const reviewDecision = decision || action;
 
     const targetId = revision_id || id;
     if (!targetId) {
@@ -56,8 +57,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'CONFIRMATION_REQUIRED', message: 'confirm: true is required for human review action' }, { status: 400 });
     }
 
-    if (action !== 'approve' && action !== 'reject') {
-      return NextResponse.json({ error: 'INVALID_ACTION', message: 'action must be approve or reject' }, { status: 400 });
+    if (reviewDecision !== 'approve' && reviewDecision !== 'reject') {
+      return NextResponse.json({ error: 'INVALID_ACTION', message: 'decision/action must be approve or reject' }, { status: 400 });
     }
 
     const revision = await getRevision(targetId);
