@@ -21,18 +21,19 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mapfile -t files < <(git grep -l -E 'WP_USER|WP_SEO_APP_PASSWORD|WP_APP_PASSWORD' -- '*.js' '*.ts' '*.tsx' '*.mjs' '*.cjs' || true)
-          if [ "${#files[@]}" -eq 0 ]; then
-            echo "No legacy code references found."
-            exit 0
-          fi
+          patterns=( '*.js' '*.ts' '*.tsx' '*.mjs' '*.cjs' '*.py' '*.sh' '*.bash' '*.zsh' '*.yml' '*.yaml' '*.json' )
+          mapfile -t files < <(git grep -l -E 'WP_USER|WP_SEO_APP_PASSWORD|WP_APP_PASSWORD' -- "${patterns[@]}" ':!.github/workflows/legacy-env-migration.yml' || true)
 
           for file in "${files[@]}"; do
-            perl -0pi -e 's/process\.env\.WP_USER/process.env.WORDPRESS_API_USERNAME/g; s/process\.env\.WP_SEO_APP_PASSWORD/process.env.WORDPRESS_API_APP_PASSWORD/g; s/process\.env\.WP_APP_PASSWORD/process.env.WORDPRESS_API_APP_PASSWORD/g' "$file"
+            perl -0pi -e 's/process\.env\.WP_USER/process.env.WORDPRESS_API_USERNAME/g; s/process\.env\.WP_SEO_APP_PASSWORD/process.env.WORDPRESS_API_APP_PASSWORD/g; s/process\.env\.WP_APP_PASSWORD/process.env.WORDPRESS_API_APP_PASSWORD/g; s/\bWP_SEO_APP_PASSWORD\b/WORDPRESS_API_APP_PASSWORD/g; s/\bWP_APP_PASSWORD\b/WORDPRESS_API_APP_PASSWORD/g; s/\bWP_USER\b/WORDPRESS_API_USERNAME/g' "$file"
           done
 
-          echo "Remaining legacy code references:"
-          git grep -n -E 'process\.env\.(WP_USER|WP_SEO_APP_PASSWORD|WP_APP_PASSWORD)' -- '*.js' '*.ts' '*.tsx' '*.mjs' '*.cjs' || true
+          echo "Remaining legacy references in code/config:"
+          if git grep -n -E '\b(WP_USER|WP_SEO_APP_PASSWORD|WP_APP_PASSWORD)\b' -- "${patterns[@]}" ':!.github/workflows/legacy-env-migration.yml'; then
+            echo "Legacy references remain."
+            exit 1
+          fi
+          echo "None."
 
       - name: Commit migration
         shell: bash
@@ -45,5 +46,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -u
-          git commit -m "refactor: standardize WordPress credential env names"
+          git commit -m "refactor: finish legacy WordPress env migration"
           git push
