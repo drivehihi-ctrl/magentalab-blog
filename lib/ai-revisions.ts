@@ -88,6 +88,14 @@ export async function saveRevision(revision: AIRevision): Promise<void> {
   return await revisionRepository.save(revision);
 }
 
+export async function updateRevisionStatus(id: string, status: AIRevision['status']): Promise<void> {
+  const rev = await getRevision(id);
+  if (rev) {
+    rev.status = status;
+    await saveRevision(rev);
+  }
+}
+
 // Audit Log
 export async function logAction(log: AILog): Promise<void> {
   return await auditLogRepository.log(log);

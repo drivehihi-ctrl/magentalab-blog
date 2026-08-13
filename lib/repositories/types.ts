@@ -33,6 +33,7 @@ export interface ContentAuditResult {
   evidence_score: number;
   medical_risk: number;
   medical_risk_level: 'high' | 'low';
+  medical_signals?: string[];
   structure_score: number;
   media_score: number;
   freshness_score: number;
