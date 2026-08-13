@@ -1,32 +1,17 @@
 import { NextResponse } from 'next/server';
 import { getRevision } from '@/lib/ai-revisions';
-
-function isAuthenticated(req: Request) {
-  const authHeader = req.headers.get('authorization') || req.headers.get('Authorization') || req.headers.get('x-api-secret') || req.headers.get('x-ai-secret');
-  const urlSecret = new URL(req.url).searchParams.get('secret');
-  
-  const token = authHeader ? (authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : authHeader) : urlSecret;
-  if (!token) return false;
-
-  const validSecrets = [
-    process.env.AI_CONTENT_API_SECRET,
-    process.env.REVALIDATION_SECRET,
-    'magentalab-ai-secret-key-1234'
-  ].filter(Boolean).map(s => String(s).trim());
-
-  return validSecrets.includes(token.trim());
-}
+import { isAIContentAuthenticated } from '@/lib/ai-content-auth';
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  if (!isAuthenticated(req)) {
+  if (!isAIContentAuthenticated(req)) {
     return NextResponse.json({ error: 'AUTH_FAILED', message: 'Invalid or missing API secret' }, { status: 401 });
   }
 
   const { id } = await params;
-  
+
   try {
     const revision = await getRevision(id);
-    
+
     if (!revision) {
       return NextResponse.json({ error: 'NOT_FOUND', message: 'Revision not found' }, { status: 404 });
     }
@@ -61,9 +46,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       reason: revision.reason,
       created_at: revision.created_at
     });
-
   } catch (error: any) {
-    console.error("Error fetching revision diff:", error);
+    console.error('Error fetching revision diff:', error);
     return NextResponse.json({ error: 'INTERNAL_ERROR', message: error.message }, { status: 500 });
   }
 }
