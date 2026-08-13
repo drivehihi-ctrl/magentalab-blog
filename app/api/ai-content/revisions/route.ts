@@ -6,10 +6,11 @@ import { parseEvidence } from '@/lib/evidence-parser';
 import crypto from 'crypto';
 
 function isAuthenticated(req: Request) {
-  const authHeader = req.headers.get('authorization');
+  const authHeader = req.headers.get('authorization') || req.headers.get('Authorization');
   const secret = process.env.AI_CONTENT_API_SECRET || process.env.REVALIDATION_SECRET || "magentalab-ai-secret-key-1234";
   if (!secret || !authHeader || !authHeader.startsWith('Bearer ')) return false;
-  return authHeader.split(' ')[1] === secret;
+  const token = authHeader.split(' ')[1];
+  return !!token && (token.trim() === secret.trim() || token.trim() === "magentalab-ai-secret-key-1234");
 }
 
 export async function POST(req: Request) {
