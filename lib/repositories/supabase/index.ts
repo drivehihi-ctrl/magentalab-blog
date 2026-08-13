@@ -163,6 +163,31 @@ function toAuditRow(result: ContentAuditResult) {
   };
 }
 
+function fromAuditRow(row: any): ContentAuditResult {
+  const details = row.details || {};
+  return {
+    wordpress_id: Number(row.wordpress_id),
+    content_id: String(row.content_id || row.wordpress_id),
+    language: row.language,
+    title: String(details.title || ''),
+    slug: String(details.slug || ''),
+    quality_score: Number(row.quality_score || 0),
+    adsense_risk: Number(row.adsense_risk || 0),
+    evidence_score: Number(row.evidence_score || 0),
+    medical_risk: Number(row.medical_risk || 0),
+    medical_risk_level: details.medical_risk_level === 'high' ? 'high' : 'low',
+    structure_score: Number(row.structure_score || 0),
+    media_score: Number(row.media_score || 0),
+    freshness_score: Number(row.freshness_score || 0),
+    status: row.status,
+    recommended_action: row.recommended_action,
+    reason: Array.isArray(details.reasons) ? details.reasons : [],
+    details,
+    request_id: String(row.request_id || ''),
+    reviewed_at: row.reviewed_at
+  };
+}
+
 export const supabaseAuditRepository: AuditRepository = {
   async saveAuditResult(result: ContentAuditResult): Promise<void> {
     const { error } = await supabaseAdmin.from('ai_content_audits').insert(toAuditRow(result));
@@ -178,5 +203,27 @@ export const supabaseAuditRepository: AuditRepository = {
       console.error('Supabase saveAuditResults error:', error);
       throw error;
     }
+  },
+  async getLatestByPostIds(postIds: number[]): Promise<Map<number, ContentAuditResult>> {
+    const uniqueIds = [...new Set(postIds)];
+    if (uniqueIds.length === 0) return new Map();
+
+    const { data, error } = await supabaseAdmin
+      .from('ai_content_audits')
+      .select('*')
+      .in('wordpress_id', uniqueIds)
+      .order('reviewed_at', { ascending: false });
+
+    if (error) {
+      console.error('Supabase getLatestByPostIds error:', error);
+      throw error;
+    }
+
+    const latest = new Map<number, ContentAuditResult>();
+    for (const row of data || []) {
+      const postId = Number(row.wordpress_id);
+      if (!latest.has(postId)) latest.set(postId, fromAuditRow(row));
+    }
+    return latest;
   }
 };
