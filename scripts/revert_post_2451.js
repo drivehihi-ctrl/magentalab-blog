@@ -34,8 +34,8 @@ async function revertPost() {
   console.log(`Reverting Post ID ${postId} to original CSV backup...`);
   console.log(`Original Title: ${origData.title}`);
 
-  const wpUser = process.env.WP_USER;
-  const wpPass = process.env.WP_SEO_APP_PASSWORD;
+  const wpUser = process.env.WORDPRESS_API_USERNAME;
+  const wpPass = process.env.WORDPRESS_API_APP_PASSWORD;
   const authHeader = 'Basic ' + Buffer.from(wpUser + ':' + wpPass).toString('base64');
 
   const response = await fetch(`https://magentalab.mycafe24.com/wp-json/wp/v2/posts/${postId}`, {

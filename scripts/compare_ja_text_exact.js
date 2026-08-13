@@ -1,8 +1,8 @@
 require('dotenv').config({ path: '.env.local' });
 
 async function compare() {
-  const wpUser = process.env.WP_USER;
-  const wpPass = process.env.WP_SEO_APP_PASSWORD;
+  const wpUser = process.env.WORDPRESS_API_USERNAME;
+  const wpPass = process.env.WORDPRESS_API_APP_PASSWORD;
   const authHeader = 'Basic ' + Buffer.from(wpUser + ':' + wpPass).toString('base64');
 
   const res = await fetch('https://magentalab.mycafe24.com/wp-json/wp/v2/posts/2457', {

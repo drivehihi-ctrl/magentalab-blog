@@ -5,8 +5,8 @@ const path = require('path');
 const ids = [5950, 5959, 5961, 2391, 2459, 2402, 2461];
 
 async function verify() {
-  const wpUser = process.env.WP_USER;
-  const wpPass = process.env.WP_SEO_APP_PASSWORD;
+  const wpUser = process.env.WORDPRESS_API_USERNAME;
+  const wpPass = process.env.WORDPRESS_API_APP_PASSWORD;
   const authHeader = 'Basic ' + Buffer.from(wpUser + ':' + wpPass).toString('base64');
   
   const textFile = path.join(process.cwd(), 'Magentalab_2.0_작업순서_004-010_최종제작규칙_테스트.txt');

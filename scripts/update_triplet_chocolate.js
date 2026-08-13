@@ -588,8 +588,8 @@ Those details can help your veterinary team assess the exposure much more accura
 ];
 
 async function updateTriplet() {
-  const wpUser = process.env.WP_USER;
-  const wpPass = process.env.WP_SEO_APP_PASSWORD;
+  const wpUser = process.env.WORDPRESS_API_USERNAME;
+  const wpPass = process.env.WORDPRESS_API_APP_PASSWORD;
   const authHeader = 'Basic ' + Buffer.from(wpUser + ':' + wpPass).toString('base64');
 
   console.log(`\n🚀 Starting Batch Triplet Update for Chocolate Toxicity (KO 1792 / EN 5843 / JA 5845)...`);

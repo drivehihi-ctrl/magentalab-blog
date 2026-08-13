@@ -267,8 +267,8 @@ ${img3_html}
 <p>アンシミは、難しい数字を増やすのではなく、その情報を飼い主さんが理解しやすい形に整理していきます。</p>`;
 
 async function run() {
-  const wpUser = process.env.WP_USER;
-  const wpPass = process.env.WP_SEO_APP_PASSWORD;
+  const wpUser = process.env.WORDPRESS_API_USERNAME;
+  const wpPass = process.env.WORDPRESS_API_APP_PASSWORD;
   const authHeader = 'Basic ' + Buffer.from(wpUser + ':' + wpPass).toString('base64');
 
   const postId = 2457;

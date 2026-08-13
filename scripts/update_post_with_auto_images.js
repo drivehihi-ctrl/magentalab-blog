@@ -105,8 +105,8 @@ async function updatePostWithPreservedImages({ postId, title, excerpt, contentHt
   }
 
   // 5. Update WordPress via REST API
-  const wpUser = process.env.WP_USER;
-  const wpPass = process.env.WP_SEO_APP_PASSWORD;
+  const wpUser = process.env.WORDPRESS_API_USERNAME;
+  const wpPass = process.env.WORDPRESS_API_APP_PASSWORD;
   const authHeader = 'Basic ' + Buffer.from(wpUser + ':' + wpPass).toString('base64');
 
   console.log('Sending update to WordPress REST API...');

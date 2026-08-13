@@ -252,8 +252,8 @@ const userBodyTemplate = `<p>A newborn kitten that suddenly stops nursing, becom
 <p><strong>Content review and editing:</strong> Magentalab Research Team</p>`;
 
 async function processPost5661() {
-  const wpUser = process.env.WP_USER;
-  const wpPass = process.env.WP_SEO_APP_PASSWORD;
+  const wpUser = process.env.WORDPRESS_API_USERNAME;
+  const wpPass = process.env.WORDPRESS_API_APP_PASSWORD;
   const authHeader = 'Basic ' + Buffer.from(wpUser + ':' + wpPass).toString('base64');
 
   // 1. Fetch current WP post to extract original 6 <img> tags

@@ -1,8 +1,8 @@
 require('dotenv').config({ path: '.env.local' });
 
 async function run() {
-  const wpUser = process.env.WP_USER;
-  const wpPass = process.env.WP_SEO_APP_PASSWORD;
+  const wpUser = process.env.WORDPRESS_API_USERNAME;
+  const wpPass = process.env.WORDPRESS_API_APP_PASSWORD;
   const authHeader = 'Basic ' + Buffer.from(wpUser + ':' + wpPass).toString('base64');
 
   console.log('Fetching Post ID 2402 from WP REST API...');

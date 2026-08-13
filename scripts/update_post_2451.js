@@ -182,8 +182,8 @@ const content = `<p>When a dog is diagnosed with diabetes, many pet parents beco
 <p>Keep the daily routine consistent, record meaningful changes, and make treatment adjustments with your veterinary team rather than changing insulin because of a single number.</p>`;
 
 async function updatePost() {
-  const wpUser = process.env.WP_USER;
-  const wpPass = process.env.WP_SEO_APP_PASSWORD;
+  const wpUser = process.env.WORDPRESS_API_USERNAME;
+  const wpPass = process.env.WORDPRESS_API_APP_PASSWORD;
   const authHeader = 'Basic ' + Buffer.from(wpUser + ':' + wpPass).toString('base64');
 
   console.log(`Updating WordPress Post ID ${postId}...`);

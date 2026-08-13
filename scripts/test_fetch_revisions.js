@@ -1,8 +1,8 @@
 require('dotenv').config({ path: '.env.local' });
 
 async function testRevisions() {
-  const wpUser = process.env.WP_USER;
-  const wpPass = process.env.WP_SEO_APP_PASSWORD;
+  const wpUser = process.env.WORDPRESS_API_USERNAME;
+  const wpPass = process.env.WORDPRESS_API_APP_PASSWORD;
   const authHeader = 'Basic ' + Buffer.from(wpUser + ':' + wpPass).toString('base64');
   
   // Try to fetch posts to find the one with slug 'cat_fip_symptoms_guide'

@@ -3,8 +3,8 @@ require('dotenv').config({ path: '.env.local' });
 const postIds = [2451, 5661, 5763, 5818, 2370, 5959, 1724, 5928, 5930, 1792, 5843, 5845];
 
 async function cleanAllWpBodyReferences() {
-  const wpUser = process.env.WP_USER;
-  const wpPass = process.env.WP_SEO_APP_PASSWORD;
+  const wpUser = process.env.WORDPRESS_API_USERNAME;
+  const wpPass = process.env.WORDPRESS_API_APP_PASSWORD;
   const authHeader = 'Basic ' + Buffer.from(wpUser + ':' + wpPass).toString('base64');
 
   console.log(`🚀 Cleaning raw 🔬 reference sections from WP DB content for ${postIds.length} posts...`);

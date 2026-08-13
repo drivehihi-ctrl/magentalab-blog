@@ -60,8 +60,8 @@ function extractImagesFromHtml(html) {
 }
 
 async function run() {
-  const wpUser = process.env.WP_USER;
-  const wpPass = process.env.WP_SEO_APP_PASSWORD;
+  const wpUser = process.env.WORDPRESS_API_USERNAME;
+  const wpPass = process.env.WORDPRESS_API_APP_PASSWORD;
   const authHeader = 'Basic ' + Buffer.from(wpUser + ':' + wpPass).toString('base64');
   const textFile = path.join(process.cwd(), 'Magentalab_2.0_작업순서_011-050_최종제작규칙.txt');
   const rawText = fs.readFileSync(textFile, 'utf8');

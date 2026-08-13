@@ -542,8 +542,8 @@ If every meal suddenly feels like a medical appointment after a diabetes diagnos
 ];
 
 async function run() {
-  const wpUser = process.env.WP_USER;
-  const wpPass = process.env.WP_SEO_APP_PASSWORD;
+  const wpUser = process.env.WORDPRESS_API_USERNAME;
+  const wpPass = process.env.WORDPRESS_API_APP_PASSWORD;
   const authHeader = 'Basic ' + Buffer.from(wpUser + ':' + wpPass).toString('base64');
 
   const csvPath = path.join(process.cwd(), 'magentalab_all_posts_454.csv');

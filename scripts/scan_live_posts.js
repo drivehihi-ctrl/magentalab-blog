@@ -1,6 +1,6 @@
 require('dotenv').config({ path: '.env.local' });
 const WP_URL = 'https://magentalab.mycafe24.com/wp-json/wp/v2';
-const auth = 'Basic ' + Buffer.from(process.env.WP_USER + ':' + process.env.WP_SEO_APP_PASSWORD).toString('base64');
+const auth = 'Basic ' + Buffer.from(process.env.WORDPRESS_API_USERNAME + ':' + process.env.WORDPRESS_API_APP_PASSWORD).toString('base64');
 
 async function run() {
   console.log("Fetching latest 50 posts...");

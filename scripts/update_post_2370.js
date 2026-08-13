@@ -323,8 +323,8 @@ const userBodyTemplate = `<p>강아지가 당뇨병 진단을 받으면 보호�
 <p><strong>콘텐츠 검증 및 편집:</strong> Magentalab 수석 연구팀</p>`;
 
 async function processPost2370() {
-  const wpUser = process.env.WP_USER;
-  const wpPass = process.env.WP_SEO_APP_PASSWORD;
+  const wpUser = process.env.WORDPRESS_API_USERNAME;
+  const wpPass = process.env.WORDPRESS_API_APP_PASSWORD;
   const authHeader = 'Basic ' + Buffer.from(wpUser + ':' + wpPass).toString('base64');
 
   // 1. Fetch current WP post to extract original <img> tags
