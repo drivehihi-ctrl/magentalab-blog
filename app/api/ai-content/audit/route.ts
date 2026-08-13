@@ -15,32 +15,9 @@ function inferLanguage(slug: string): 'ko' | 'en' | 'ja' {
   return 'ko';
 }
 
-function checkAuth(req: Request): boolean {
-  try {
-    const authHeader = req.headers.get('authorization') || req.headers.get('Authorization') || req.headers.get('x-api-secret') || req.headers.get('x-ai-secret');
-    let urlSecret: string | null = null;
-    try {
-      const parsedUrl = new URL(req.url, 'https://www.magentalabblog.com');
-      urlSecret = parsedUrl.searchParams.get('secret');
-    } catch (e) {}
-
-    let token = authHeader || urlSecret;
-    if (!token) return false;
-
-    if (token.match(/^Bearer\s+/i)) {
-      token = token.replace(/^Bearer\s+/i, '').trim();
-    }
-    token = token.trim();
-
-    return token.length > 0;
-  } catch (e) {
-    return false;
-  }
-}
-
 export async function POST(req: Request) {
-  if (!checkAuth(req)) {
-    return NextResponse.json({ error: 'AUTH_FAILED', message: 'Invalid API secret (v5.3-resilient)' }, { status: 401 });
+  if (!isAIContentAuthenticated(req)) {
+    return NextResponse.json({ error: 'AUTH_FAILED', message: 'Invalid API secret' }, { status: 401 });
   }
 
   try {
@@ -67,7 +44,6 @@ export async function POST(req: Request) {
     }
 
     const auditResults: ContentAuditResult[] = [];
-
     const totals = {
       total: fullPosts.length,
       green: 0,
