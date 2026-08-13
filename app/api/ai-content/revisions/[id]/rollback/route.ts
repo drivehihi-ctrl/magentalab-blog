@@ -5,11 +5,19 @@ import { clearPostsCache } from '@/lib/wp';
 import { revalidateTag, revalidatePath } from 'next/cache';
 
 function isAuthenticated(req: Request) {
-  const authHeader = req.headers.get('authorization') || req.headers.get('Authorization');
-  const secret = process.env.AI_CONTENT_API_SECRET || process.env.REVALIDATION_SECRET || "magentalab-ai-secret-key-1234";
-  if (!secret || !authHeader || !authHeader.startsWith('Bearer ')) return false;
-  const token = authHeader.split(' ')[1];
-  return !!token && (token.trim() === secret.trim() || token.trim() === "magentalab-ai-secret-key-1234");
+  const authHeader = req.headers.get('authorization') || req.headers.get('Authorization') || req.headers.get('x-api-secret') || req.headers.get('x-ai-secret');
+  const urlSecret = new URL(req.url).searchParams.get('secret');
+  
+  const token = authHeader ? (authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : authHeader) : urlSecret;
+  if (!token) return false;
+
+  const validSecrets = [
+    process.env.AI_CONTENT_API_SECRET,
+    process.env.REVALIDATION_SECRET,
+    'magentalab-ai-secret-key-1234'
+  ].filter(Boolean).map(s => String(s).trim());
+
+  return validSecrets.includes(token.trim());
 }
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
