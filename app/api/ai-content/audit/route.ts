@@ -2,31 +2,8 @@ import { NextResponse } from 'next/server';
 import { getPost, getPosts } from '@/lib/wp';
 import { auditRepository, evidenceRepository } from '@/lib/repositories';
 import type { ContentAuditResult } from '@/lib/repositories/types';
-
-function isAuthenticated(req: Request) {
-  try {
-    const authHeader = req.headers.get('authorization') || req.headers.get('Authorization') || req.headers.get('x-api-secret') || req.headers.get('x-ai-secret');
-    let urlSecret: string | null = null;
-    try {
-      const parsedUrl = new URL(req.url, 'https://www.magentalabblog.com');
-      urlSecret = parsedUrl.searchParams.get('secret');
-    } catch (e) {}
-
-    const token = authHeader ? (authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : authHeader) : urlSecret;
-    if (!token) return false;
-
-    const validSecrets = [
-      process.env.AI_CONTENT_API_SECRET,
-      process.env.REVALIDATION_SECRET,
-      'magentalab-1234',
-      'magentalab-ai-secret-key-1234'
-    ].filter(Boolean).map(s => String(s).trim());
-
-    return validSecrets.includes(token.trim());
-  } catch (e) {
-    return false;
-  }
-}
+import { isAIContentAuthenticated } from '@/lib/ai-content-auth';
+import { assessMedicalRisk } from '@/lib/medical-risk';
 
 function clampScore(value: number) {
   return Math.max(0, Math.min(100, Math.round(value)));
@@ -38,13 +15,8 @@ function inferLanguage(slug: string): 'ko' | 'en' | 'ja' {
   return 'ko';
 }
 
-function isMedicalContent(slug: string, content: string) {
-  return /diabetes|urinary|cystitis|kidney|renal|patella|joint|poison|toxic|emergency|onion|garlic|chocolate|skin|dermatology|atopic|allergy|infection|disease|symptom/i.test(slug)
-    || /당뇨|인슐린|방광|신장|비뇨|슬개골|관절|탈구|골절|독성|응급|양파|마늘|초콜릿|피부|아토피|알레르기|감염|질환|질병|증상/.test(content);
-}
-
 export async function POST(req: Request) {
-  if (!isAuthenticated(req)) {
+  if (!isAIContentAuthenticated(req)) {
     return NextResponse.json({ error: 'AUTH_FAILED', message: 'Invalid API secret' }, { status: 401 });
   }
 
@@ -60,10 +32,8 @@ export async function POST(req: Request) {
     const language = requestedLanguage as 'ko' | 'en' | 'ja';
     const requestId = crypto.randomUUID();
 
-    // getPosts is used only for candidate discovery. Full content is fetched per post below.
     const candidateResponse = await getPosts(1, limit, undefined, undefined, language);
     const candidates = candidateResponse.posts.slice(0, limit);
-
     const fullPosts = (await Promise.all(candidates.map(post => getPost(String(post.id))))).filter(Boolean);
     const auditResults: ContentAuditResult[] = [];
 
@@ -80,6 +50,7 @@ export async function POST(req: Request) {
       if (!post) continue;
 
       const content = post.content?.rendered || '';
+      const title = post.title?.rendered || '';
       const slug = post.slug || '';
       const postLanguage = inferLanguage(slug);
       const charCount = content.length;
@@ -89,7 +60,8 @@ export async function POST(req: Request) {
       const imgCount = (content.match(/<img\b/gi) || []).length;
       const missingAltCount = (content.match(/<img[^>]+alt=["']\s*["'][^>]*>|<img(?![^>]+alt=)[^>]*>/gi) || []).length;
       const researchSummaryExists = /Ansim-i['’]s Research Summary|Research Summary|안심이.*연구|研究まとめ|研究サマリー/i.test(content);
-      const medicalTopic = isMedicalContent(slug, content);
+      const medicalAssessment = assessMedicalRisk(slug, title, content);
+      const medicalTopic = medicalAssessment.isMedical;
       const evidence = await evidenceRepository.getByPostId(post.id);
       const evidenceExists = !!evidence && Array.isArray(evidence.references) && evidence.references.length > 0;
 
@@ -133,8 +105,8 @@ export async function POST(req: Request) {
       const ageDays = Number.isFinite(modifiedAt) ? Math.max(0, (Date.now() - modifiedAt) / 86_400_000) : 9999;
       const freshnessScore = clampScore(ageDays <= 180 ? 100 : ageDays <= 365 ? 80 : ageDays <= 730 ? 60 : 40);
       const evidenceScore = evidenceExists ? 100 : 0;
-      const medicalRisk = medicalTopic ? 100 : 0;
-      const medicalRiskLevel: 'high' | 'low' = medicalTopic ? 'high' : 'low';
+      const medicalRisk = medicalAssessment.score;
+      const medicalRiskLevel = medicalAssessment.level;
 
       qualityScore = clampScore(qualityScore);
       adsenseRisk = clampScore(adsenseRisk);
@@ -155,7 +127,7 @@ export async function POST(req: Request) {
         wordpress_id: post.id,
         content_id: String(post.id),
         language: postLanguage,
-        title: post.title.rendered,
+        title,
         slug,
         quality_score: qualityScore,
         adsense_risk: adsenseRisk,
@@ -169,9 +141,10 @@ export async function POST(req: Request) {
         recommended_action: status === 'red' ? 'rewrite_with_evidence' : status === 'yellow' ? 'enhance_structure' : 'none',
         reason: reasons,
         details: {
-          title: post.title.rendered,
+          title,
           slug,
           medical_risk_level: medicalRiskLevel,
+          medical_signals: medicalAssessment.signals,
           evidence_exists: evidenceExists,
           char_count: charCount,
           h2_count: h2Count,
@@ -186,7 +159,6 @@ export async function POST(req: Request) {
       });
     }
 
-    // Persistence is part of the audit contract. A storage error fails the request rather than silently losing history.
     await auditRepository.saveAuditResults(auditResults);
 
     return NextResponse.json({
