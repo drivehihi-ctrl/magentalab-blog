@@ -1,5 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabase-admin';
-import { RevisionRepository, BackupRepository, EvidenceRepository, AuditLogRepository, AuditRepository } from '../types';
+import { RevisionRepository, BackupRepository, EvidenceRepository, AuditLogRepository, AuditRepository, ContentAuditResult } from '../types';
 import { AIRevision, AIBackup, AILog, EvidenceData } from '@/lib/ai-revisions';
 
 export const supabaseRevisionRepository: RevisionRepository = {
@@ -41,7 +41,6 @@ export const supabaseRevisionRepository: RevisionRepository = {
       source: revision.source,
       status: revision.status,
       created_at: revision.created_at,
-      // update time fields based on status
       updated_at: new Date().toISOString(),
       ...(revision.status === 'approved' ? { approved_at: new Date().toISOString() } : {}),
       ...(revision.status === 'applied' ? { applied_at: new Date().toISOString() } : {}),
@@ -81,7 +80,6 @@ export const supabaseBackupRepository: BackupRepository = {
     if (error) {
       return undefined;
     }
-    // Mapping back to AIBackup shape
     return {
       ...data,
       modified_at: data.source_modified_at,
@@ -104,7 +102,6 @@ export const supabaseAuditLogRepository: AuditLogRepository = {
     });
     if (error) {
       console.error('Supabase logAction error:', error);
-      // We shouldn't throw error to prevent blocking main flow just for a log, usually
     }
   }
 };
@@ -127,7 +124,7 @@ export const supabaseEvidenceRepository: EvidenceRepository = {
       references: evidence.references,
       updated_at: new Date().toISOString()
     }, { onConflict: 'wordpress_id' });
-    
+
     if (error) {
       console.error('Supabase Evidence save error:', error);
       throw error;
@@ -146,23 +143,40 @@ export const supabaseEvidenceRepository: EvidenceRepository = {
   }
 };
 
+function toAuditRow(result: ContentAuditResult) {
+  return {
+    wordpress_id: result.wordpress_id,
+    content_id: result.content_id,
+    language: result.language,
+    quality_score: result.quality_score,
+    adsense_risk: result.adsense_risk,
+    evidence_score: result.evidence_score,
+    medical_risk: result.medical_risk,
+    structure_score: result.structure_score,
+    media_score: result.media_score,
+    freshness_score: result.freshness_score,
+    status: result.status,
+    recommended_action: result.recommended_action,
+    details: result.details,
+    reviewed_at: new Date().toISOString(),
+    request_id: result.request_id
+  };
+}
+
 export const supabaseAuditRepository: AuditRepository = {
-  async saveAuditResult(result: any): Promise<void> {
-    const { error } = await supabaseAdmin.from('ai_content_audits').insert({
-      wordpress_id: result.postId || result.wordpress_id,
-      quality_score: result.quality_score,
-      adsense_risk: result.adsense_risk,
-      evidence_score: result.evidence_score,
-      medical_risk: result.medical_risk,
-      structure_score: result.structure_score,
-      media_score: result.media_score,
-      freshness_score: result.freshness_score,
-      status: result.status,
-      details: result.details,
-      reviewed_at: new Date().toISOString()
-    });
+  async saveAuditResult(result: ContentAuditResult): Promise<void> {
+    const { error } = await supabaseAdmin.from('ai_content_audits').insert(toAuditRow(result));
     if (error) {
       console.error('Supabase saveAuditResult error:', error);
+      throw error;
+    }
+  },
+  async saveAuditResults(results: ContentAuditResult[]): Promise<void> {
+    if (results.length === 0) return;
+    const { error } = await supabaseAdmin.from('ai_content_audits').insert(results.map(toAuditRow));
+    if (error) {
+      console.error('Supabase saveAuditResults error:', error);
+      throw error;
     }
   }
 };
