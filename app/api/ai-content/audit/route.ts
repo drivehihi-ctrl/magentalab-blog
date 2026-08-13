@@ -2,31 +2,8 @@ import { NextResponse } from 'next/server';
 import { getPost, getPosts } from '@/lib/wp';
 import { auditRepository, evidenceRepository } from '@/lib/repositories';
 import type { ContentAuditResult } from '@/lib/repositories/types';
-
-function isAuthenticated(req: Request) {
-  try {
-    const authHeader = req.headers.get('authorization') || req.headers.get('Authorization') || req.headers.get('x-api-secret') || req.headers.get('x-ai-secret');
-    let urlSecret: string | null = null;
-    try {
-      const parsedUrl = new URL(req.url, 'https://www.magentalabblog.com');
-      urlSecret = parsedUrl.searchParams.get('secret');
-    } catch (e) {}
-
-    const token = authHeader ? (authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : authHeader) : urlSecret;
-    if (!token) return false;
-
-    const validSecrets = [
-      process.env.AI_CONTENT_API_SECRET,
-      process.env.REVALIDATION_SECRET,
-      'magentalab-1234',
-      'magentalab-ai-secret-key-1234'
-    ].filter(Boolean).map(s => String(s).trim());
-
-    return validSecrets.includes(token.trim());
-  } catch (e) {
-    return false;
-  }
-}
+import { isAIContentAuthenticated } from '@/lib/ai-content-auth';
+import { assessMedicalRisk } from '@/lib/medical-risk';
 
 function clampScore(value: number) {
   return Math.max(0, Math.min(100, Math.round(value)));
@@ -38,33 +15,8 @@ function inferLanguage(slug: string): 'ko' | 'en' | 'ja' {
   return 'ko';
 }
 
-function getMedicalSignals(slug: string, content: string): string[] {
-  const signals: string[] = [];
-  const regexList = [
-    { name: 'diabetes', pattern: /diabetes|당뇨|인슐린/i },
-    { name: 'urinary_kidney', pattern: /urinary|cystitis|kidney|renal|방광|신장|비뇨/i },
-    { name: 'joint_patella', pattern: /patella|joint|슬개골|관절|탈구|골절/i },
-    { name: 'poison_toxic', pattern: /poison|toxic|독성|양파|마늘|초콜릿/i },
-    { name: 'emergency', pattern: /emergency|응급/i },
-    { name: 'dermatology', pattern: /skin|dermatology|atopic|allergy|피부|아토피|알레르기/i },
-    { name: 'disease_symptom', pattern: /infection|disease|symptom|감염|질환|질병|증상/i }
-  ];
-
-  for (const item of regexList) {
-    if (item.pattern.test(slug) || item.pattern.test(content)) {
-      signals.push(item.name);
-    }
-  }
-
-  return signals;
-}
-
-function isMedicalContent(slug: string, content: string) {
-  return getMedicalSignals(slug, content).length > 0;
-}
-
 export async function POST(req: Request) {
-  if (!isAuthenticated(req)) {
+  if (!isAIContentAuthenticated(req)) {
     return NextResponse.json({ error: 'AUTH_FAILED', message: 'Invalid API secret' }, { status: 401 });
   }
 
@@ -90,6 +42,7 @@ export async function POST(req: Request) {
       const candidates = candidateResponse.posts.slice(0, limit);
       fullPosts = (await Promise.all(candidates.map(post => getPost(String(post.id))))).filter(Boolean);
     }
+
     const auditResults: ContentAuditResult[] = [];
 
     const totals = {
@@ -105,6 +58,7 @@ export async function POST(req: Request) {
       if (!post) continue;
 
       const content = post.content?.rendered || '';
+      const title = post.title?.rendered || '';
       const slug = post.slug || '';
       const postLanguage = inferLanguage(slug);
       const charCount = content.length;
@@ -114,7 +68,8 @@ export async function POST(req: Request) {
       const imgCount = (content.match(/<img\b/gi) || []).length;
       const missingAltCount = (content.match(/<img[^>]+alt=["']\s*["'][^>]*>|<img(?![^>]+alt=)[^>]*>/gi) || []).length;
       const researchSummaryExists = /Ansim-i['’]s Research Summary|Research Summary|안심이.*연구|研究まとめ|研究サマリー/i.test(content);
-      const medicalTopic = isMedicalContent(slug, content);
+      const medicalAssessment = assessMedicalRisk(slug, title, content);
+      const medicalTopic = medicalAssessment.isMedical;
       const evidence = await evidenceRepository.getByPostId(post.id);
       const evidenceExists = !!evidence && Array.isArray(evidence.references) && evidence.references.length > 0;
 
@@ -158,8 +113,9 @@ export async function POST(req: Request) {
       const ageDays = Number.isFinite(modifiedAt) ? Math.max(0, (Date.now() - modifiedAt) / 86_400_000) : 9999;
       const freshnessScore = clampScore(ageDays <= 180 ? 100 : ageDays <= 365 ? 80 : ageDays <= 730 ? 60 : 40);
       const evidenceScore = evidenceExists ? 100 : 0;
-      const medicalRisk = medicalTopic ? 100 : 0;
-      const medicalRiskLevel: 'high' | 'low' = medicalTopic ? 'high' : 'low';
+      const medicalRisk = medicalAssessment.score;
+      const medicalRiskLevel = medicalAssessment.level;
+      const medicalSignals = medicalAssessment.signals || [];
 
       qualityScore = clampScore(qualityScore);
       adsenseRisk = clampScore(adsenseRisk);
@@ -187,7 +143,7 @@ export async function POST(req: Request) {
         evidence_score: evidenceScore,
         medical_risk: medicalRisk,
         medical_risk_level: medicalRiskLevel,
-        medical_signals: getMedicalSignals(slug, content),
+        medical_signals: medicalSignals,
         structure_score: structureScore,
         media_score: mediaScore,
         freshness_score: freshnessScore,
@@ -198,6 +154,7 @@ export async function POST(req: Request) {
           title: post.title.rendered,
           slug,
           medical_risk_level: medicalRiskLevel,
+          medical_signals: medicalSignals,
           evidence_exists: evidenceExists,
           char_count: charCount,
           h2_count: h2Count,
@@ -212,7 +169,6 @@ export async function POST(req: Request) {
       });
     }
 
-    // Persistence is part of the audit contract. A storage error fails the request rather than silently losing history.
     await auditRepository.saveAuditResults(auditResults);
 
     return NextResponse.json({
