@@ -31,7 +31,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     await logAction({
       timestamp: new Date().toISOString(),
-      action: action === 'approve' ? 'APPROVE_REVISION' : 'REJECT_REVISION',
+      action: reviewDecision === 'approve' ? 'APPROVE_REVISION' : 'REJECT_REVISION',
       wordpress_id: revision.wordpress_id,
       content_id: revision.content_id,
       revision_id: revision.revision_id,
@@ -44,7 +44,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       success: true,
       revision_id: id,
       wordpress_id: revision.wordpress_id,
-      action_taken: action,
+      action_taken: reviewDecision,
       status: newStatus
     });
 
