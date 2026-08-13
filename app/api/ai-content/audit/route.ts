@@ -38,9 +38,29 @@ function inferLanguage(slug: string): 'ko' | 'en' | 'ja' {
   return 'ko';
 }
 
+function getMedicalSignals(slug: string, content: string): string[] {
+  const signals: string[] = [];
+  const regexList = [
+    { name: 'diabetes', pattern: /diabetes|당뇨|인슐린/i },
+    { name: 'urinary_kidney', pattern: /urinary|cystitis|kidney|renal|방광|신장|비뇨/i },
+    { name: 'joint_patella', pattern: /patella|joint|슬개골|관절|탈구|골절/i },
+    { name: 'poison_toxic', pattern: /poison|toxic|독성|양파|마늘|초콜릿/i },
+    { name: 'emergency', pattern: /emergency|응급/i },
+    { name: 'dermatology', pattern: /skin|dermatology|atopic|allergy|피부|아토피|알레르기/i },
+    { name: 'disease_symptom', pattern: /infection|disease|symptom|감염|질환|질병|증상/i }
+  ];
+
+  for (const item of regexList) {
+    if (item.pattern.test(slug) || item.pattern.test(content)) {
+      signals.push(item.name);
+    }
+  }
+
+  return signals;
+}
+
 function isMedicalContent(slug: string, content: string) {
-  return /diabetes|urinary|cystitis|kidney|renal|patella|joint|poison|toxic|emergency|onion|garlic|chocolate|skin|dermatology|atopic|allergy|infection|disease|symptom/i.test(slug)
-    || /당뇨|인슐린|방광|신장|비뇨|슬개골|관절|탈구|골절|독성|응급|양파|마늘|초콜릿|피부|아토피|알레르기|감염|질환|질병|증상/.test(content);
+  return getMedicalSignals(slug, content).length > 0;
 }
 
 export async function POST(req: Request) {
@@ -53,6 +73,7 @@ export async function POST(req: Request) {
     const requestedLimit = Number(body.limit ?? 20);
     const limit = Math.max(1, Math.min(50, Number.isFinite(requestedLimit) ? Math.floor(requestedLimit) : 20));
     const requestedLanguage = String(body.language ?? 'ko');
+    const filterWordpressId = body.wordpress_id ? Number(body.wordpress_id) : undefined;
 
     if (!['ko', 'en', 'ja'].includes(requestedLanguage)) {
       return NextResponse.json({ error: 'INVALID_LANGUAGE', message: 'language must be ko, en, or ja' }, { status: 400 });
@@ -60,11 +81,15 @@ export async function POST(req: Request) {
     const language = requestedLanguage as 'ko' | 'en' | 'ja';
     const requestId = crypto.randomUUID();
 
-    // getPosts is used only for candidate discovery. Full content is fetched per post below.
-    const candidateResponse = await getPosts(1, limit, undefined, undefined, language);
-    const candidates = candidateResponse.posts.slice(0, limit);
-
-    const fullPosts = (await Promise.all(candidates.map(post => getPost(String(post.id))))).filter(Boolean);
+    let fullPosts: any[] = [];
+    if (filterWordpressId) {
+      const p = await getPost(String(filterWordpressId));
+      if (p) fullPosts = [p];
+    } else {
+      const candidateResponse = await getPosts(1, limit, undefined, undefined, language);
+      const candidates = candidateResponse.posts.slice(0, limit);
+      fullPosts = (await Promise.all(candidates.map(post => getPost(String(post.id))))).filter(Boolean);
+    }
     const auditResults: ContentAuditResult[] = [];
 
     const totals = {
@@ -162,6 +187,7 @@ export async function POST(req: Request) {
         evidence_score: evidenceScore,
         medical_risk: medicalRisk,
         medical_risk_level: medicalRiskLevel,
+        medical_signals: getMedicalSignals(slug, content),
         structure_score: structureScore,
         media_score: mediaScore,
         freshness_score: freshnessScore,
