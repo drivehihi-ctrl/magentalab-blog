@@ -41,9 +41,11 @@ export interface ContentAuditResult {
   reason: string[];
   details: Record<string, unknown>;
   request_id: string;
+  reviewed_at?: string;
 }
 
 export interface AuditRepository {
   saveAuditResult(result: ContentAuditResult): Promise<void>;
   saveAuditResults(results: ContentAuditResult[]): Promise<void>;
+  getLatestByPostIds(postIds: number[]): Promise<Map<number, ContentAuditResult>>;
 }
