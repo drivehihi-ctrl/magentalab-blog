@@ -93,7 +93,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     try {
       const editRes = await fetch(`${WP_URL}/wp-json/wp/v2/posts/${currentPost.id}?context=edit`, {
-        headers: { 'Authorization': auth }
+        headers: {
+          'Authorization': auth,
+          'X-Authorization': auth,
+          'x-http-authorization': auth
+        }
       });
       if (editRes.ok) {
         const editPost = await editRes.json();
@@ -178,7 +182,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': auth
+          'Authorization': auth,
+          'X-Authorization': auth,
+          'x-http-authorization': auth
         },
         body: JSON.stringify(updatePayload)
       });

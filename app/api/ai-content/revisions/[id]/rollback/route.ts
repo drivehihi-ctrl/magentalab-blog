@@ -66,7 +66,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': auth
+        'Authorization': auth,
+        'X-Authorization': auth,
+        'x-http-authorization': auth
       },
       body: JSON.stringify(updatePayload)
     });
