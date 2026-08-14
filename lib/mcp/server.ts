@@ -1,7 +1,8 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
-import { getPost } from '@/lib/wp';
+import { getPost, getPosts } from '@/lib/wp';
 import { getRevision } from '@/lib/ai-revisions';
+import { auditRepository, revisionRepository } from '@/lib/repositories';
 
 export function createMCPServer(): Server {
   const mcpServer = new Server({
@@ -23,10 +24,9 @@ export function createMCPServer(): Server {
             type: "object",
             properties: {
               language: { type: "string", enum: ["ko", "en", "ja"] },
-              status: { type: "string" },
               search: { type: "string" },
-              limit: { type: "number" },
-              offset: { type: "number" }
+              page: { type: "number" },
+              limit: { type: "number", maximum: 50 }
             }
           }
         },
@@ -92,7 +92,7 @@ export function createMCPServer(): Server {
             type: "object",
             properties: {
               status: { type: "string", enum: ["pending_review", "approved", "rejected"] },
-              limit: { type: "number" }
+              limit: { type: "number", maximum: 100 }
             }
           }
         }
@@ -110,66 +110,133 @@ export function createMCPServer(): Server {
     try {
       switch (name) {
         case "magentalab_list_posts": {
-          const wpUrl = process.env.NEXT_PUBLIC_WORDPRESS_URL;
-          const limit = args.limit || 10;
-          const res = await fetch(`${wpUrl}/wp-json/wp/v2/posts?_fields=id,title,slug,modified,status,excerpt,featured_media&per_page=${limit}`);
-          const data = await res.json();
+          const limit = Math.min(Math.max(Number(args.limit) || 10, 1), 50);
+          const page = Math.max(Number(args.page) || 1, 1);
+          const search = typeof args.search === 'string' ? args.search : undefined;
+          const language = typeof args.language === 'string' ? args.language : "ko";
+          
+          if (!["ko", "en", "ja"].includes(language)) {
+            throw new Error("Invalid language");
+          }
+
+          const data = await getPosts(page, limit, search, undefined, language);
           return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
         }
         
         case "magentalab_get_post": {
-          const post = await getPost(String(args.wordpress_id));
+          const id = Number(args.wordpress_id);
+          if (isNaN(id) || id <= 0) throw new Error("Invalid wordpress_id");
+
+          const post = await getPost(String(id));
           if (!post) throw new Error("NOT_FOUND");
           return { content: [{ type: "text", text: JSON.stringify(post, null, 2) }] };
         }
 
         case "magentalab_get_audit": {
-          const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-          const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-          if (supabaseUrl && supabaseKey) {
-              const res = await fetch(`${supabaseUrl}/rest/v1/ai_audit_logs?wordpress_id=eq.${args.wordpress_id}&order=created_at.desc&limit=1`, {
-                  headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` }
-              });
-              const data = await res.json();
-              return { content: [{ type: "text", text: JSON.stringify(data[0] || {}, null, 2) }] };
+          const id = Number(args.wordpress_id);
+          if (isNaN(id) || id <= 0) throw new Error("Invalid wordpress_id");
+
+          const auditMap = await auditRepository.getLatestByPostIds([id]);
+          const audit = auditMap.get(id);
+          
+          if (!audit) {
+            return { content: [{ type: "text", text: "{}" }] };
           }
-          return { content: [{ type: "text", text: "{}" }] };
+          
+          const output = {
+            quality_score: audit.quality_score,
+            adsense_risk: audit.adsense_risk,
+            evidence_score: audit.evidence_score,
+            medical_risk: audit.medical_risk,
+            medical_risk_level: audit.medical_risk_level,
+            structure_score: audit.structure_score,
+            media_score: audit.media_score,
+            freshness_score: audit.freshness_score,
+            status: audit.status,
+            recommended_action: audit.recommended_action,
+            reasons: (audit as any).reasons || (audit as any).reason
+          };
+          
+          return { content: [{ type: "text", text: JSON.stringify(output, null, 2) }] };
         }
 
         case "magentalab_get_revision": {
-          const rev = await getRevision(args.revision_id as string);
+          const revId = String(args.revision_id || '');
+          if (!revId) throw new Error("Invalid revision_id");
+
+          const rev = await getRevision(revId);
           if (!rev) throw new Error("NOT_FOUND");
           return { content: [{ type: "text", text: JSON.stringify(rev, null, 2) }] };
         }
 
         case "magentalab_get_revision_diff": {
-          const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-          const secret = process.env.AI_CONTENT_API_SECRET;
-          const res = await fetch(`${url}/api/ai-content/revisions/${args.revision_id}/diff`, {
-              headers: { 'Authorization': `Bearer ${secret}` }
-          });
-          const diff = await res.json();
+          const revId = String(args.revision_id || '');
+          if (!revId) throw new Error("Invalid revision_id");
+
+          const revision = await getRevision(revId);
+          if (!revision) throw new Error("NOT_FOUND");
+
+          const diff = {
+            revision_id: revision.revision_id,
+            wordpress_id: revision.wordpress_id,
+            status: revision.status,
+            diff: {
+              title: {
+                previous: revision.previous_title,
+                new: revision.new_title,
+                changed: revision.previous_title !== revision.new_title
+              },
+              excerpt: {
+                previous: revision.previous_excerpt,
+                new: revision.new_excerpt,
+                changed: revision.previous_excerpt !== revision.new_excerpt
+              },
+              meta_description: {
+                previous: revision.previous_meta_description,
+                new: revision.new_meta_description,
+                changed: revision.previous_meta_description !== revision.new_meta_description
+              },
+              content: {
+                previous_length: revision.previous_content?.length || 0,
+                new_length: revision.new_content?.length || 0,
+                changed: revision.previous_content !== revision.new_content
+              }
+            },
+            source: revision.source,
+            reason: revision.reason,
+            created_at: revision.created_at
+          };
+
           return { content: [{ type: "text", text: JSON.stringify(diff, null, 2) }] };
         }
 
         case "magentalab_get_revision_preview": {
-          const previewUrl = `https://www.magentalabblog.com/preview/${args.revision_id}`;
+          const revId = String(args.revision_id || '');
+          if (!revId) throw new Error("Invalid revision_id");
+
+          const previewUrl = `https://www.magentalabblog.com/preview/${revId}`;
           return { content: [{ type: "text", text: JSON.stringify({ preview_url: previewUrl }, null, 2) }] };
         }
 
         case "magentalab_get_review_queue": {
-          const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-          const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-          const status = args.status || 'pending_review';
-          const limit = args.limit || 10;
-          if (supabaseUrl && supabaseKey) {
-              const res = await fetch(`${supabaseUrl}/rest/v1/ai_revisions?status=eq.${status}&order=created_at.desc&limit=${limit}`, {
-                  headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` }
-              });
-              const data = await res.json();
-              return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
-          }
-          return { content: [{ type: "text", text: "[]" }] };
+          const status = typeof args.status === 'string' ? args.status : 'pending_review';
+          const limit = Math.min(Math.max(Number(args.limit) || 10, 1), 100);
+          
+          const allRevisions = await revisionRepository.list();
+          const filtered = allRevisions
+            .filter((r: any) => r.status === status)
+            .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+            .slice(0, limit)
+            .map((r: any) => ({
+              revision_id: r.revision_id,
+              wordpress_id: r.wordpress_id,
+              status: r.status,
+              created_at: r.created_at,
+              source: r.source,
+              reason: r.reason
+            }));
+
+          return { content: [{ type: "text", text: JSON.stringify(filtered, null, 2) }] };
         }
 
         default:

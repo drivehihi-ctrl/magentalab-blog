@@ -5,7 +5,21 @@ import { isAIContentAuthenticated } from '@/lib/ai-content-auth';
 import { createMCPServer } from '@/lib/mcp/server';
 
 function checkOrigin(req: NextRequest) {
-  return true; 
+  const origin = req.headers.get('origin');
+  
+  // 1. If no origin, it's a server-to-server request (e.g. from ChatGPT backend).
+  // We allow it because the request is still protected by the Bearer token (isAIContentAuthenticated).
+  if (!origin) return true;
+
+  // 2. If origin exists, strictly validate against MCP_ALLOWED_ORIGINS allowlist.
+  const allowedOriginsStr = process.env.MCP_ALLOWED_ORIGINS || '';
+  if (!allowedOriginsStr) {
+      // If the environment variable is missing, we strictly reject all browser requests to be safe.
+      return false;
+  }
+  
+  const allowedOrigins = allowedOriginsStr.split(',').map(s => s.trim());
+  return allowedOrigins.includes(origin);
 }
 
 async function handleMCPRequest(req: NextRequest) {
