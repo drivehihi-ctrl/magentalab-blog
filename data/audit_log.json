@@ -1,0 +1,547 @@
+[
+  {
+    "timestamp": "2026-08-12T13:26:43.118Z",
+    "action": "CREATE_REVISION",
+    "wordpress_id": 6042,
+    "content_id": "6042",
+    "revision_id": "rev_ac20cf1bd2dbaa92",
+    "source": "chatgpt",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T13:28:16.609Z",
+    "action": "CREATE_REVISION",
+    "wordpress_id": 6042,
+    "content_id": "6042",
+    "revision_id": "rev_2a60c85e5df12d94",
+    "source": "chatgpt",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T13:29:02.126Z",
+    "action": "CREATE_REVISION",
+    "wordpress_id": 6042,
+    "content_id": "6042",
+    "revision_id": "rev_234cd97f0c5f7ddd",
+    "source": "chatgpt",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T13:29:03.123Z",
+    "action": "APPLY_REVISION",
+    "wordpress_id": 6042,
+    "content_id": "6042",
+    "revision_id": "rev_234cd97f0c5f7ddd",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T13:29:08.174Z",
+    "action": "ROLLBACK_REVISION",
+    "wordpress_id": 6042,
+    "content_id": "6042",
+    "revision_id": "rev_234cd97f0c5f7ddd",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T13:42:11.543Z",
+    "action": "MEDIA_UPLOAD",
+    "wordpress_id": 6668,
+    "content_id": "media",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T13:42:11.820Z",
+    "action": "CREATE_REVISION",
+    "wordpress_id": 6042,
+    "content_id": "6042",
+    "revision_id": "rev_8fa21ef8fc9746cb",
+    "source": "chatgpt",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T13:42:13.057Z",
+    "action": "ADD_IMAGE_TO_REVISION",
+    "wordpress_id": 6042,
+    "content_id": "6042",
+    "revision_id": "rev_8fa21ef8fc9746cb",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T13:42:17.386Z",
+    "action": "APPLY_REVISION",
+    "wordpress_id": 6042,
+    "content_id": "6042",
+    "revision_id": "rev_8fa21ef8fc9746cb",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T13:42:21.751Z",
+    "action": "ROLLBACK_REVISION",
+    "wordpress_id": 6042,
+    "content_id": "6042",
+    "revision_id": "rev_8fa21ef8fc9746cb",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T13:42:25.136Z",
+    "action": "CREATE_REVISION",
+    "wordpress_id": 6042,
+    "content_id": "6042",
+    "revision_id": "rev_3de7b17331b821b2",
+    "source": "chatgpt",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T13:42:25.230Z",
+    "action": "SET_FEATURED_IMAGE_REVISION",
+    "wordpress_id": 6042,
+    "content_id": "6042",
+    "revision_id": "rev_3de7b17331b821b2",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T13:42:25.485Z",
+    "action": "APPLY_REVISION",
+    "wordpress_id": 6042,
+    "content_id": "6042",
+    "revision_id": "rev_3de7b17331b821b2",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T13:42:28.917Z",
+    "action": "ROLLBACK_REVISION",
+    "wordpress_id": 6042,
+    "content_id": "6042",
+    "revision_id": "rev_3de7b17331b821b2",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T14:20:34.079Z",
+    "action": "CREATE_REVISION",
+    "wordpress_id": 6090,
+    "content_id": "6090",
+    "revision_id": "rev_0a55cb2317b864b7",
+    "source": "chatgpt",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T14:20:35.755Z",
+    "action": "APPLY_REVISION",
+    "wordpress_id": 6090,
+    "content_id": "6090",
+    "revision_id": "rev_0a55cb2317b864b7",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T14:21:01.691Z",
+    "action": "CREATE_REVISION",
+    "wordpress_id": 6090,
+    "content_id": "6090",
+    "revision_id": "rev_eefa7b5f5e2ed335",
+    "source": "chatgpt",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T14:21:02.697Z",
+    "action": "APPLY_REVISION",
+    "wordpress_id": 6090,
+    "content_id": "6090",
+    "revision_id": "rev_eefa7b5f5e2ed335",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T14:21:17.115Z",
+    "action": "CREATE_REVISION",
+    "wordpress_id": 6090,
+    "content_id": "6090",
+    "revision_id": "rev_c2c66f264e66823c",
+    "source": "chatgpt",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T14:21:18.871Z",
+    "action": "APPLY_REVISION",
+    "wordpress_id": 6090,
+    "content_id": "6090",
+    "revision_id": "rev_c2c66f264e66823c",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T14:21:55.336Z",
+    "action": "CREATE_REVISION",
+    "wordpress_id": 6090,
+    "content_id": "6090",
+    "revision_id": "rev_f9aed87ad9fadddb",
+    "source": "chatgpt",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T14:21:56.395Z",
+    "action": "APPLY_REVISION",
+    "wordpress_id": 6090,
+    "content_id": "6090",
+    "revision_id": "rev_f9aed87ad9fadddb",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T14:31:11.416Z",
+    "action": "CREATE_REVISION",
+    "wordpress_id": 6090,
+    "content_id": "6090",
+    "revision_id": "rev_8ffe87563758e903",
+    "source": "chatgpt",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T14:31:11.598Z",
+    "action": "EVIDENCE_EXTERNAL_SAVE_SUCCESS",
+    "wordpress_id": 6090,
+    "content_id": "6090",
+    "revision_id": "rev_8ffe87563758e903",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T14:31:14.548Z",
+    "action": "CONTENT_EVIDENCE_SEPARATION_VERIFIED",
+    "wordpress_id": 6090,
+    "content_id": "6090",
+    "revision_id": "rev_8ffe87563758e903",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T14:31:14.558Z",
+    "action": "APPLY_REVISION",
+    "wordpress_id": 6090,
+    "content_id": "6090",
+    "revision_id": "rev_8ffe87563758e903",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T14:32:18.271Z",
+    "action": "CREATE_REVISION",
+    "wordpress_id": 6090,
+    "content_id": "6090",
+    "revision_id": "rev_17d9c25cc2e8f452",
+    "source": "chatgpt",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T14:32:18.455Z",
+    "action": "EVIDENCE_EXTERNAL_SAVE_FAILED",
+    "wordpress_id": 6090,
+    "content_id": "6090",
+    "revision_id": "rev_17d9c25cc2e8f452",
+    "source": "system",
+    "status": "error",
+    "message": "Failed to save evidence to repository."
+  },
+  {
+    "timestamp": "2026-08-12T14:32:18.552Z",
+    "action": "CREATE_REVISION",
+    "wordpress_id": 6090,
+    "content_id": "6090",
+    "revision_id": "rev_72d3da6ef8087b05",
+    "source": "chatgpt",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T14:32:18.685Z",
+    "action": "EVIDENCE_EXTERNAL_SAVE_SUCCESS",
+    "wordpress_id": 6090,
+    "content_id": "6090",
+    "revision_id": "rev_72d3da6ef8087b05",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-12T14:32:18.688Z",
+    "action": "EVIDENCE_EXTERNAL_ROLLBACK",
+    "wordpress_id": 6090,
+    "content_id": "6090",
+    "revision_id": "rev_72d3da6ef8087b05",
+    "source": "system",
+    "status": "error",
+    "message": "Evidence rolled back due to WP content update failure."
+  },
+  {
+    "timestamp": "2026-08-13T01:58:12.082Z",
+    "action": "CREATE_REVISION",
+    "wordpress_id": 68,
+    "content_id": "68",
+    "revision_id": "rev_25069fd7a9780663",
+    "source": "e2e_runner",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-13T01:58:25.849Z",
+    "action": "CREATE_REVISION",
+    "wordpress_id": 68,
+    "content_id": "68",
+    "revision_id": "rev_60ce788c155d6e4a",
+    "source": "e2e_runner",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-13T01:58:57.176Z",
+    "action": "CREATE_REVISION",
+    "wordpress_id": 5885,
+    "content_id": "5885",
+    "revision_id": "rev_4fa566d05838107c",
+    "source": "e2e_runner",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-13T01:58:57.971Z",
+    "action": "CONTENT_EVIDENCE_SEPARATION_VERIFIED",
+    "wordpress_id": 5885,
+    "content_id": "5885",
+    "revision_id": "rev_4fa566d05838107c",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-13T01:58:58.008Z",
+    "action": "APPLY_REVISION",
+    "wordpress_id": 5885,
+    "content_id": "5885",
+    "revision_id": "rev_4fa566d05838107c",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-13T01:59:00.557Z",
+    "action": "ROLLBACK_REVISION",
+    "wordpress_id": 5885,
+    "content_id": "5885",
+    "revision_id": "rev_4fa566d05838107c",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-13T01:59:41.540Z",
+    "action": "CREATE_REVISION",
+    "wordpress_id": 5885,
+    "content_id": "5885",
+    "revision_id": "rev_fea8666212042d4e",
+    "source": "e2e_runner",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-13T01:59:42.187Z",
+    "action": "CONTENT_EVIDENCE_SEPARATION_VERIFIED",
+    "wordpress_id": 5885,
+    "content_id": "5885",
+    "revision_id": "rev_fea8666212042d4e",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-13T01:59:42.196Z",
+    "action": "APPLY_REVISION",
+    "wordpress_id": 5885,
+    "content_id": "5885",
+    "revision_id": "rev_fea8666212042d4e",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-13T01:59:43.127Z",
+    "action": "ROLLBACK_REVISION",
+    "wordpress_id": 5885,
+    "content_id": "5885",
+    "revision_id": "rev_fea8666212042d4e",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-13T02:00:17.691Z",
+    "action": "CREATE_REVISION",
+    "wordpress_id": 5800,
+    "content_id": "5800",
+    "revision_id": "rev_3c517d5a1e05cf2d",
+    "source": "e2e_runner",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-13T02:02:10.581Z",
+    "action": "CREATE_REVISION",
+    "wordpress_id": 5885,
+    "content_id": "5885",
+    "revision_id": "rev_13904c83debc8e17",
+    "source": "e2e_runner",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-13T02:02:13.035Z",
+    "action": "CONTENT_EVIDENCE_SEPARATION_VERIFIED",
+    "wordpress_id": 5885,
+    "content_id": "5885",
+    "revision_id": "rev_13904c83debc8e17",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-13T02:02:13.049Z",
+    "action": "APPLY_REVISION",
+    "wordpress_id": 5885,
+    "content_id": "5885",
+    "revision_id": "rev_13904c83debc8e17",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-13T02:02:14.371Z",
+    "action": "ROLLBACK_REVISION",
+    "wordpress_id": 5885,
+    "content_id": "5885",
+    "revision_id": "rev_13904c83debc8e17",
+    "source": "system",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-14T00:02:04.390Z",
+    "action": "CREATE_REVISION",
+    "wordpress_id": 6130,
+    "content_id": "6130",
+    "revision_id": "rev_14232a1b392864d9",
+    "source": "test",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-14T00:02:05.368Z",
+    "action": "APPROVE_REVISION",
+    "wordpress_id": 6130,
+    "content_id": "6130",
+    "revision_id": "rev_14232a1b392864d9",
+    "source": "human_review",
+    "status": "success",
+    "message": "Revision status updated to approved (medical reviewed)"
+  },
+  {
+    "timestamp": "2026-08-14T00:02:05.650Z",
+    "action": "BATCH_APPLY_STARTED",
+    "wordpress_id": 0,
+    "content_id": "batch_0d65f1844114",
+    "source": "batch",
+    "status": "info",
+    "message": "revision_ids=rev_14232a1b392864d9 dry_run=true"
+  },
+  {
+    "timestamp": "2026-08-14T00:02:05.659Z",
+    "action": "BATCH_APPLY_STOPPED",
+    "wordpress_id": 0,
+    "content_id": "batch_0d65f1844114",
+    "source": "batch",
+    "status": "error",
+    "message": "Stopped at revision rev_14232a1b392864d9: MEDICAL_EVIDENCE_MISSING — Medical topics require at least 1 evidence reference."
+  },
+  {
+    "timestamp": "2026-08-14T00:02:05.661Z",
+    "action": "BATCH_APPLY_COMPLETED",
+    "wordpress_id": 0,
+    "content_id": "batch_0d65f1844114",
+    "source": "batch",
+    "status": "error",
+    "message": "applied=0 failed=1 stopped_on_error=true"
+  },
+  {
+    "timestamp": "2026-08-14T00:02:05.717Z",
+    "action": "CREATE_REVISION",
+    "wordpress_id": 6130,
+    "content_id": "6130",
+    "revision_id": "rev_9aeff5f07faf3d30",
+    "source": "test",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-14T00:02:05.781Z",
+    "action": "APPROVE_REVISION",
+    "wordpress_id": 6130,
+    "content_id": "6130",
+    "revision_id": "rev_9aeff5f07faf3d30",
+    "source": "human_review",
+    "status": "success",
+    "message": "Revision status updated to approved"
+  },
+  {
+    "timestamp": "2026-08-14T00:02:05.823Z",
+    "action": "REJECT_REVISION",
+    "wordpress_id": 6130,
+    "content_id": "6130",
+    "revision_id": "rev_14232a1b392864d9",
+    "source": "human_review",
+    "status": "success",
+    "message": "Revision status updated to rejected (medical reviewed)"
+  },
+  {
+    "timestamp": "2026-08-14T00:02:05.922Z",
+    "action": "REJECT_REVISION",
+    "wordpress_id": 6130,
+    "content_id": "6130",
+    "revision_id": "rev_9aeff5f07faf3d30",
+    "source": "human_review",
+    "status": "success",
+    "message": "Revision status updated to rejected"
+  },
+  {
+    "timestamp": "2026-08-14T03:08:27.958Z",
+    "action": "CREATE_REVISION",
+    "wordpress_id": 5950,
+    "content_id": "5950",
+    "revision_id": "rev_35f26da8b7a49feb",
+    "source": "mcp",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-14T03:08:42.078Z",
+    "action": "CREATE_REVISION",
+    "wordpress_id": 5985,
+    "content_id": "5985",
+    "revision_id": "rev_acbd7ac7f137075f",
+    "source": "mcp",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-14T03:08:58.273Z",
+    "action": "CREATE_REVISION",
+    "wordpress_id": 6007,
+    "content_id": "6007",
+    "revision_id": "rev_91f876c5fc92a151",
+    "source": "mcp",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-14T03:13:11.947Z",
+    "action": "CREATE_REVISION",
+    "wordpress_id": 5800,
+    "content_id": "5800",
+    "revision_id": "rev_d667228f0c4b703e",
+    "source": "mcp",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-08-14T03:13:12.029Z",
+    "action": "CREATE_REVISION",
+    "wordpress_id": 6007,
+    "content_id": "6007",
+    "revision_id": "rev_fbeca592d182f625",
+    "source": "mcp",
+    "status": "success"
+  }
+]

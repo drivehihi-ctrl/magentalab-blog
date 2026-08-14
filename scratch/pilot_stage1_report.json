@@ -1,0 +1,93 @@
+[
+  {
+    "no": 1,
+    "wpId": 5950,
+    "lang": "ko",
+    "oldTitle": "강아지 피부병, 먼저 확인할 7가지 신호: 가려움·비듬·붉은 피부부터 병원 가야 할 때까지",
+    "newTitle": "강아지 피부병, 집에서 먼저 확인하는 7가지 신호와 병원 가야 할 때",
+    "auditStatus": "red",
+    "medical": "YES",
+    "action": "rewrite_with_evidence",
+    "revId": "rev_5bc17d4206d3ec7d",
+    "evidence": "YES",
+    "preview": "https://www.magentalabblog.com/preview/rev_5bc17d4206d3ec7d",
+    "improvements": [
+      "SEO 최적화 제목",
+      "모바일 가독성 개선",
+      "수의학 근거 추가"
+    ],
+    "evidence_summary": "AAHA Guidelines on Allergic Skin Diseases"
+  },
+  {
+    "no": 2,
+    "wpId": 5985,
+    "lang": "ko",
+    "oldTitle": "고양이 캣타워 고르는 법 원목 캣폴 장단점 및 뚱냥이 수직공간 동선 설계 완벽 분석",
+    "newTitle": "고양이 캣타워 완벽 가이드: 원목 캣폴 장단점과 뚱냥이 동선 설계",
+    "auditStatus": "red",
+    "medical": "YES",
+    "action": "rewrite_with_evidence",
+    "revId": "rev_022615d48249382b",
+    "evidence": "NO",
+    "preview": "https://www.magentalabblog.com/preview/rev_022615d48249382b",
+    "improvements": [
+      "GEO 요약 테이블 추가",
+      "딱딱한 문체 안심이 톤으로 변경"
+    ],
+    "evidence_summary": "N/A (비의료/행동)"
+  },
+  {
+    "no": 3,
+    "wpId": 6007,
+    "lang": "ko",
+    "oldTitle": "강아지 고양이 펫보험 비교 가입 조건 가격 보장 범위 완벽 분석",
+    "newTitle": "강아지 고양이 펫보험 완벽 가입 가이드: 조건부터 주요 보장 범위까지",
+    "auditStatus": "red",
+    "medical": "YES",
+    "action": "rewrite_with_evidence",
+    "revId": "rev_f19c1ee8a66bce29",
+    "evidence": "NO",
+    "preview": "https://www.magentalabblog.com/preview/rev_f19c1ee8a66bce29",
+    "improvements": [
+      "정보 구조화",
+      "SEO 제목 최적화"
+    ],
+    "evidence_summary": "N/A (금융/정보)"
+  },
+  {
+    "no": 4,
+    "wpId": 6055,
+    "lang": "ja",
+    "oldTitle": "犬がお腹を撫でられて喜ぶ部位 vs タッチ禁止部位：お腹への「ブーブー」を拒絶する獣医学的理由",
+    "newTitle": "犬がお腹を撫でられて喜ぶ部位 vs タッチ禁止部位！獣医学的解説",
+    "auditStatus": "red",
+    "medical": "NO",
+    "action": "rewrite_with_evidence",
+    "revId": "rev_75a9db5be9f00e3f",
+    "evidence": "NO",
+    "preview": "https://www.magentalabblog.com/preview/rev_75a9db5be9f00e3f",
+    "improvements": [
+      "일본어 화자 안심이 톤 적용",
+      "가독성 개선"
+    ],
+    "evidence_summary": "N/A (行動学)"
+  },
+  {
+    "no": 5,
+    "wpId": 6052,
+    "lang": "en",
+    "oldTitle": "Favorite Belly Rub Spots vs. Forbidden Zones: The Veterinary Reason Your Dog Hates \"Belly Raspberries\"",
+    "newTitle": "Where Dogs Love Belly Rubs vs. Forbidden Zones: Ansim-i's Guide",
+    "auditStatus": "red",
+    "medical": "NO",
+    "action": "rewrite_with_evidence",
+    "revId": "rev_05be504512409b61",
+    "evidence": "NO",
+    "preview": "https://www.magentalabblog.com/preview/rev_05be504512409b61",
+    "improvements": [
+      "English Ansim-i persona applied",
+      "Better mobile structure"
+    ],
+    "evidence_summary": "N/A (Behavioral)"
+  }
+]

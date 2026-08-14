@@ -3,6 +3,7 @@ import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprot
 import { getPost, getPosts } from '@/lib/wp';
 import { getRevision } from '@/lib/ai-revisions';
 import { auditRepository, revisionRepository } from '@/lib/repositories';
+import { createPendingRevision, RevisionError } from '@/lib/services/revision-service';
 
 export function createMCPServer(): Server {
   const mcpServer = new Server({
@@ -94,6 +95,44 @@ export function createMCPServer(): Server {
               status: { type: "string", enum: ["pending_review", "approved", "rejected"] },
               limit: { type: "number", maximum: 100 }
             }
+          }
+        },
+        {
+          name: "magentalab_create_revision",
+          description: "Creates a pending-review revision from content supplied by the caller. This tool does not modify the live WordPress post. The caller is responsible for supplying the completed rewritten content.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              wordpress_id: { type: "number" },
+              source_modified_at: { type: "string" },
+              new_title: { type: "string" },
+              new_content: { type: "string" },
+              new_excerpt: { type: "string" },
+              new_meta_description: { type: "string" },
+              evidence: {
+                type: "object",
+                properties: {
+                  keyInsight: { type: "string" },
+                  cautionNote: { type: "string" },
+                  references: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        title: { type: "string" },
+                        org: { type: "string" },
+                        type: { type: "string" },
+                        url: { type: "string" }
+                      },
+                      required: ["title", "org", "type", "url"]
+                    }
+                  }
+                },
+                required: ["keyInsight", "cautionNote", "references"]
+              },
+              reason: { type: "string" }
+            },
+            required: ["wordpress_id", "new_title", "new_content", "new_excerpt", "reason"]
           }
         }
       ]
@@ -239,10 +278,45 @@ export function createMCPServer(): Server {
           return { content: [{ type: "text", text: JSON.stringify(filtered, null, 2) }] };
         }
 
+        case "magentalab_create_revision": {
+          const rev = await createPendingRevision(args as any, 'mcp');
+          
+          const output = {
+            revision_id: rev.revision_id,
+            wordpress_id: rev.wordpress_id,
+            content_id: rev.content_id,
+            language: rev.language,
+            slug: rev.slug,
+            status: rev.status,
+            medical_risk: rev.medical_risk,
+            medical_risk_level: rev.medical_risk_level,
+            medical_reviewed: rev.medical_reviewed,
+            evidence_persisted: rev.evidence_persisted,
+            source_modified_at: rev.source_modified_at,
+            created_at: rev.created_at,
+            preview_url: `https://www.magentalabblog.com/preview/${rev.revision_id}`,
+            diff: {
+              title_changed: rev.previous_title !== rev.new_title,
+              excerpt_changed: rev.previous_excerpt !== rev.new_excerpt,
+              content_changed: rev.previous_content !== rev.new_content,
+              previous_content_length: rev.previous_content?.length || 0,
+              new_content_length: rev.new_content?.length || 0
+            }
+          };
+          
+          return { content: [{ type: "text", text: JSON.stringify(output, null, 2) }] };
+        }
+
         default:
           throw new Error("MCP_TOOL_NOT_ALLOWED");
       }
     } catch (err: any) {
+      if (err instanceof RevisionError) {
+        return {
+          content: [{ type: "text", text: `Error: ${err.code} - ${err.message}` }],
+          isError: true
+        };
+      }
       return {
         content: [{ type: "text", text: `Error: ${err.message}` }],
         isError: true

@@ -1,0 +1,14 @@
+{
+  "6090": {
+    "keyInsight": "지방 섭취를 엄격히 제한해야 합니다.",
+    "cautionNote": "임의로 사료를 변경하지 마세요.",
+    "references": [
+      {
+        "title": "2018 AAHA Diabetes Management Guidelines:",
+        "org": "AAHA",
+        "type": "Clinical Practice Guideline",
+        "url": "https://www.aaha.org/"
+      }
+    ]
+  }
+}
