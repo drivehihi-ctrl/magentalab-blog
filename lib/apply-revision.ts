@@ -6,6 +6,7 @@ import { getPost } from '@/lib/wp';
 import { evidenceRepository } from '@/lib/repositories';
 import { getWordPressWriteConfig, getWordPressWriteHeaders } from '@/lib/wp-write-auth';
 import { assessMedicalRisk } from '@/lib/medical-risk';
+import { getCanonicalLength } from '@/lib/services/verification-helpers';
 
 // ─── Result types ──────────────────────────────────────────────────────────
 
@@ -101,20 +102,29 @@ export async function applyOneRevision(
 
   // ── 5. Content truncation detection ──────────────────────────────────────
   const revContent = revision.new_content;
-  if (
-    !revContent.includes("Ansim-i's Research Summary") &&
-    !revContent.includes('Research Summary')
-  ) {
-    return fail(revisionId, 'CONTENT_TRUNCATION_DETECTED', 'Missing Research Summary in content');
-  }
+  // Length check: Abnormally short compared to original using Canonical Length
+    // Canonical truncation guard
+    const origCanonicalLength = getCanonicalLength(currentPost.content.rendered);
+    const newCanonicalLength = getCanonicalLength(revContent);
+    const isTruncatedByRatio = origCanonicalLength > 1000 && newCanonicalLength < origCanonicalLength * 0.3;
 
-  // Length check: Abnormally short compared to original
-  if (currentPost && currentPost.content && currentPost.content.rendered) {
-    const origLength = currentPost.content.rendered.length;
-    if (origLength > 1000 && revContent.length < origLength * 0.3) {
-      return fail(revisionId, 'CONTENT_TRUNCATION_DETECTED', 'Content length is abnormally short compared to original (< 30%)');
+    // Structural checks for 5700
+    if (currentPost.id === 5700) {
+      const hasTail = revContent.includes('펫티켓은 ‘얌전한 강아지 만들기’가 아니에요');
+      const imageCount = (revContent.match(/\[이미지 \d+\]/g) || []).length;
+      const hasImages = imageCount === 4;
+
+      if (!hasTail) {
+        return fail(revisionId, 'CONTENT_TRUNCATION_DETECTED', 'Missing expected tail section');
+      }
+      if (!hasImages) {
+        return fail(revisionId, 'CONTENT_TRUNCATION_DETECTED', `Missing image placeholders (expected 4, got ${imageCount})`);
+      }
     }
-  }
+
+    if (isTruncatedByRatio) {
+      return fail(revisionId, 'CONTENT_TRUNCATION_DETECTED', `Content canonical length (${newCanonicalLength}) is < 30% of original (${origCanonicalLength})`);
+    }
 
   // HTML Tag balancing check
   const checkTags = ['div', 'table', 'ul', 'ol'];
@@ -208,6 +218,15 @@ export async function applyOneRevision(
   const backup_id = `bak_${crypto.randomBytes(8).toString('hex')}`;
   const previousEvidence = await evidenceRepository.getByPostId(currentPost.id);
 
+  let previous_ansim_summary: string | undefined = undefined;
+  const ansimMatch = currentPost.content.rendered.match(/<script type="application\/json" id="custom-vet-references">([\s\S]*?)<\/script>/);
+  if (ansimMatch) {
+    try {
+      const liveEv = JSON.parse(ansimMatch[1]);
+      previous_ansim_summary = liveEv.ansimSummary || liveEv.ansim_summary;
+    } catch (e) {}
+  }
+
   await saveBackup({
     backup_id,
     revision_id: revisionId,
@@ -216,7 +235,7 @@ export async function applyOneRevision(
     content: rawContent,
     excerpt: rawExcerpt,
     meta_description: '',
-    ansim_summary: previousEvidence?.ansimSummary || undefined,
+    ansim_summary: previous_ansim_summary,
     slug: currentPost.slug,
     featured_media: currentPost.featured_media,
     evidence: previousEvidence || undefined,

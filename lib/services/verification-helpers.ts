@@ -39,6 +39,14 @@ export function normalizeText(input: string | undefined | null): string {
 }
 
 /**
+ * Returns the length of the canonically normalized text.
+ * Used to prevent raw HTML length distortions (like ez-toc plugins) from causing false truncation alerts.
+ */
+export function getCanonicalLength(input: string | undefined | null): number {
+  return normalizeText(input).length;
+}
+
+/**
  * Compares two strings after canonical normalization.
  * Returns true ONLY if both strings exist and match exactly (normA === normB).
  * No similarity or fuzzy fallback is permitted in verification.
@@ -84,7 +92,6 @@ export interface EvidenceData {
   keyInsight?: string;
   cautionNote?: string;
   references?: EvidenceReference[];
-  ansimSummary?: string;
 }
 
 /**
@@ -94,7 +101,6 @@ export function normalizeEvidence(ev: EvidenceData | undefined | null) {
   if (!ev) return null;
   const keyInsight = (ev.keyInsight || '').trim();
   const cautionNote = (ev.cautionNote || '').trim();
-  const ansimSummary = (ev.ansimSummary || '').trim();
   const references = (ev.references || [])
     .filter(r => r.type !== 'ansim_summary')
     .map(r => ({
@@ -105,11 +111,11 @@ export function normalizeEvidence(ev: EvidenceData | undefined | null) {
     }))
     .sort((a, b) => a.url.localeCompare(b.url) || a.title.localeCompare(b.title));
 
-  if (!keyInsight && !cautionNote && !ansimSummary && references.length === 0) {
+  if (!keyInsight && !cautionNote && references.length === 0) {
     return null;
   }
 
-  return { keyInsight, cautionNote, ansimSummary, references };
+  return { keyInsight, cautionNote, references };
 }
 
 /**

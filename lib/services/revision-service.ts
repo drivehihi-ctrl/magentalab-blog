@@ -3,6 +3,7 @@ import { sanitizeForSeo } from '@/lib/utils';
 import { saveRevision, logAction, AIRevision } from '@/lib/ai-revisions';
 import { assessMedicalRisk } from '@/lib/medical-risk';
 import { revisionRepository } from '@/lib/repositories';
+import { getCanonicalLength } from '@/lib/services/verification-helpers';
 import * as cheerio from 'cheerio';
 import crypto from 'crypto';
 
@@ -23,7 +24,6 @@ export interface CreateRevisionPayload {
       type: string;
       url: string;
     }>;
-    ansimSummary?: string;
   };
   reason: string;
 }
@@ -87,18 +87,32 @@ export async function createPendingRevision(payload: CreateRevisionPayload, sour
   }
 
   // 4. Content Validation (Truncation, structural integrity)
-  // Evidence duplication block
+    // Evidence duplication block
     if (unsafeContent.includes('[근거]')) {
       throw new RevisionError('EVIDENCE_DUPLICATED_IN_BODY', 'Evidence blocks [근거] should not be in the body content');
     }
 
-    if (!unsafeContent.includes("Ansim-i's Research Summary") && !unsafeContent.includes('Research Summary')) {
-      throw new RevisionError('STRUCTURE_VALIDATION', 'Missing Research Summary in content');
+    // Canonical truncation guard
+    const origCanonicalLength = getCanonicalLength(post.content.rendered);
+    const newCanonicalLength = getCanonicalLength(unsafeContent);
+    const isTruncatedByRatio = origCanonicalLength > 1000 && newCanonicalLength < origCanonicalLength * 0.3;
+
+    // Structural checks for 5700
+    if (post.id === 5700) {
+      const hasTail = unsafeContent.includes('펫티켓은 ‘얌전한 강아지 만들기’가 아니에요');
+      const imageCount = (unsafeContent.match(/\[이미지 \d+\]/g) || []).length;
+      const hasImages = imageCount === 4;
+
+      if (!hasTail) {
+        throw new RevisionError('CONTENT_TRUNCATION_DETECTED', 'Missing expected tail section');
+      }
+      if (!hasImages) {
+        throw new RevisionError('CONTENT_TRUNCATION_DETECTED', `Missing image placeholders (expected 4, got ${imageCount})`);
+      }
     }
 
-    const origLength = post.content.rendered.length;
-    if (origLength > 1000 && unsafeContent.length < origLength * 0.3) {
-      throw new RevisionError('CONTENT_TRUNCATION_DETECTED', 'Content length is abnormally short compared to original (< 30%)');
+    if (isTruncatedByRatio) {
+      throw new RevisionError('CONTENT_TRUNCATION_DETECTED', `Content canonical length (${newCanonicalLength}) is < 30% of original (${origCanonicalLength})`);
     }
 
     const checkTags = ['div', 'table', 'ul', 'ol'];
@@ -159,6 +173,15 @@ export async function createPendingRevision(payload: CreateRevisionPayload, sour
     throw new RevisionError('MEDICAL_EVIDENCE_MISSING', 'Medical content requires structured evidence');
   }
 
+  let previous_ansim_summary: string | undefined = undefined;
+  const match = post.content.rendered.match(/<script type="application\/json" id="custom-vet-references">([\s\S]*?)<\/script>/);
+  if (match) {
+    try {
+      const liveEv = JSON.parse(match[1]);
+      previous_ansim_summary = liveEv.ansimSummary || liveEv.ansim_summary;
+    } catch (e) {}
+  }
+
   const revision_id = `rev_${crypto.randomBytes(8).toString('hex')}`;
 
   const revision: AIRevision = {
@@ -176,16 +199,14 @@ export async function createPendingRevision(payload: CreateRevisionPayload, sour
     new_excerpt: new_excerpt || post.excerpt.rendered,
     previous_meta_description: sanitizeForSeo(post.excerpt.rendered, 160),
     new_meta_description: payload.new_meta_description ? sanitizeForSeo(payload.new_meta_description, 160) : sanitizeForSeo(new_excerpt || post.excerpt.rendered, 160),
-    new_ansim_summary: payload.new_ansim_summary || (evidence?.ansimSummary ? evidence.ansimSummary : undefined),
+    previous_ansim_summary,
+    new_ansim_summary: payload.new_ansim_summary,
     reason: reason || 'AI Update',
     source: source,
     status: 'pending_review',
     created_at: new Date().toISOString(),
     medical_reviewed: false,
-    evidence: evidence ? {
-      ...evidence,
-      ...(payload.new_ansim_summary ? { ansimSummary: payload.new_ansim_summary } : {})
-    } : (payload.new_ansim_summary ? { keyInsight: '', cautionNote: '', references: [], ansimSummary: payload.new_ansim_summary } : undefined)
+    evidence: evidence
   };
 
   if (unsafeContent) {
