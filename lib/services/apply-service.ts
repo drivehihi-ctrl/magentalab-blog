@@ -42,6 +42,7 @@ export async function applyRevision(payload: ApplyPayload) {
   const beforeStatus = beforePost.status;
   const beforeMedia = beforePost.featured_media;
   const beforeCategories = JSON.stringify(beforePost.categories || []);
+  const beforeTags = JSON.stringify(beforePost.tags || []);
 
   // Preflight step 1: Run dry-run validation first
   const dryRunResult = await applyOneRevision(revision_id, { source, dryRun: true });
@@ -67,8 +68,9 @@ export async function applyRevision(payload: ApplyPayload) {
   const statusUnchanged = !!afterPost && afterPost.status === beforeStatus;
   const mediaUnchanged = !!afterPost && afterPost.featured_media === beforeMedia;
   const categoriesUnchanged = !!afterPost && JSON.stringify(afterPost.categories || []) === beforeCategories;
+  const tagsUnchanged = !!afterPost && JSON.stringify(afterPost.tags || []) === beforeTags;
 
-  const protectedFieldsUnchanged = slugUnchanged && statusUnchanged && mediaUnchanged && categoriesUnchanged;
+  const protectedFieldsUnchanged = slugUnchanged && statusUnchanged && mediaUnchanged && categoriesUnchanged && tagsUnchanged;
   const verificationPassed = !!afterPost && titleMatch && contentMatch && excerptMatch && protectedFieldsUnchanged;
 
   if (!verificationPassed) {
@@ -80,7 +82,7 @@ export async function applyRevision(payload: ApplyPayload) {
       revision_id: revision.revision_id,
       source,
       status: 'error',
-      message: `Verification failed. afterPost=${!!afterPost}, title=${titleMatch}, content=${contentMatch}, excerpt=${excerptMatch}, protected=${protectedFieldsUnchanged}`,
+      message: `Verification failed. afterPost=${!!afterPost}, title=${titleMatch}, content=${contentMatch}, excerpt=${excerptMatch}, protected=${protectedFieldsUnchanged} (tags=${tagsUnchanged})`,
     });
 
     // Auto-rollback attempt
@@ -128,6 +130,7 @@ export async function applyRevision(payload: ApplyPayload) {
       featured_media_unchanged: mediaUnchanged,
       status_unchanged: statusUnchanged,
       categories_unchanged: categoriesUnchanged,
+      tags_unchanged: tagsUnchanged,
     },
   };
 }

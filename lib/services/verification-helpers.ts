@@ -44,3 +44,52 @@ export function compareNormalized(a: string | undefined | null, b: string | unde
   if (!normA && !normB) return false; // empty string comparison should fail unless explicitly intended
   return normA === normB;
 }
+
+export interface EvidenceReference {
+  title?: string;
+  org?: string;
+  type?: string;
+  url?: string;
+}
+
+export interface EvidenceData {
+  keyInsight?: string;
+  cautionNote?: string;
+  references?: EvidenceReference[];
+}
+
+/**
+ * Normalizes an Evidence object for deterministic canonical comparison.
+ */
+export function normalizeEvidence(ev: EvidenceData | undefined | null) {
+  if (!ev) return null;
+  const keyInsight = (ev.keyInsight || '').trim();
+  const cautionNote = (ev.cautionNote || '').trim();
+  const references = (ev.references || [])
+    .map(r => ({
+      title: (r.title || '').trim(),
+      org: (r.org || '').trim(),
+      type: (r.type || '').trim(),
+      url: (r.url || '').trim(),
+    }))
+    .sort((a, b) => a.url.localeCompare(b.url) || a.title.localeCompare(b.title));
+
+  if (!keyInsight && !cautionNote && references.length === 0) {
+    return null;
+  }
+
+  return { keyInsight, cautionNote, references };
+}
+
+/**
+ * Compares two Evidence objects for exact structure, content, and null symmetry.
+ */
+export function compareEvidence(ev1: EvidenceData | undefined | null, ev2: EvidenceData | undefined | null): boolean {
+  const norm1 = normalizeEvidence(ev1);
+  const norm2 = normalizeEvidence(ev2);
+
+  if (norm1 === null && norm2 === null) return true;
+  if (norm1 === null || norm2 === null) return false;
+
+  return JSON.stringify(norm1) === JSON.stringify(norm2);
+}
