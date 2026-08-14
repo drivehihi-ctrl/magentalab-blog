@@ -3,6 +3,7 @@ import { evidenceRepository } from '@/lib/repositories';
 import { getWordPressWriteConfig, getWordPressWriteHeaders } from '@/lib/wp-write-auth';
 import { getPost } from '@/lib/wp';
 import { RevisionError } from '@/lib/services/revision-service';
+import { compareNormalized } from '@/lib/services/verification-helpers';
 
 export interface RollbackPayload {
   revision_id: string;
@@ -56,11 +57,51 @@ export async function rollbackRevision(payload: RollbackPayload) {
 
   if (!wpRes.ok) {
     const errorData = await wpRes.text();
+    await logAction({
+      timestamp: new Date().toISOString(),
+      action: 'ROLLBACK_FAILED',
+      wordpress_id: revision.wordpress_id,
+      content_id: revision.content_id,
+      revision_id: revision.revision_id,
+      source,
+      status: 'error',
+      message: `WP Rollback Failed: ${errorData.slice(0, 200)}`,
+    });
     throw new RevisionError('WP_WRITE_FAILED', `WP Rollback Failed: ${errorData.slice(0, 200)}`);
   }
 
+  // Restore evidence
   await evidenceRepository.restore(backup.wordpress_id, backup.evidence || null);
+  const restoredEvidence = await evidenceRepository.getByPostId(backup.wordpress_id);
 
+  // Post-rollback verification: fetch live WP post after rollback
+  const currentPost = await getPost(backup.wordpress_id.toString());
+
+  const titleMatch = !!currentPost && compareNormalized(currentPost.title?.rendered, backup.title);
+  const contentMatch = !!currentPost && compareNormalized(currentPost.content?.rendered, backup.content);
+  const excerptMatch = !!currentPost && compareNormalized(currentPost.excerpt?.rendered, backup.excerpt);
+  const slugUnchanged = !!currentPost && currentPost.slug === backup.slug;
+  const mediaUnchanged = !!currentPost && (backup.featured_media === undefined || currentPost.featured_media === backup.featured_media);
+  const evidenceMatch = backup.evidence ? !!restoredEvidence : true;
+
+  const restoreVerified = !!currentPost && titleMatch && contentMatch && excerptMatch && slugUnchanged && mediaUnchanged && evidenceMatch;
+
+  if (!restoreVerified) {
+    await logAction({
+      timestamp: new Date().toISOString(),
+      action: 'ROLLBACK_VERIFICATION_FAILED',
+      wordpress_id: revision.wordpress_id,
+      content_id: revision.content_id,
+      revision_id: revision.revision_id,
+      source,
+      status: 'error',
+      message: `Rollback verification failed. currentPost=${!!currentPost}, title=${titleMatch}, content=${contentMatch}, excerpt=${excerptMatch}, slug=${slugUnchanged}, media=${mediaUnchanged}, evidence=${evidenceMatch}`,
+    });
+    // Do NOT set revision.status to rolled_back if verification failed
+    throw new RevisionError('ROLLBACK_VERIFICATION_FAILED', 'Post-rollback verification failed. Revision status remains applied.');
+  }
+
+  // Save revision status ONLY AFTER verification passes
   revision.status = 'rolled_back';
   await saveRevision(revision);
 
@@ -74,10 +115,6 @@ export async function rollbackRevision(payload: RollbackPayload) {
     status: 'success',
   });
 
-  // Post-rollback verification
-  const currentPost = await getPost(backup.wordpress_id.toString());
-  const restoreVerified = !!currentPost && currentPost.title.rendered === backup.title;
-
   return {
     success: true,
     revision_id: revision.revision_id,
@@ -87,6 +124,6 @@ export async function rollbackRevision(payload: RollbackPayload) {
     backup_id: backup.backup_id,
     rolled_back_at: new Date().toISOString(),
     wordpress_mutation: true,
-    restore_verified: restoreVerified,
+    restore_verified: true,
   };
 }
