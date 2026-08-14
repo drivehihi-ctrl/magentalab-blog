@@ -21,7 +21,9 @@ export function normalizeText(input: string | undefined | null): string {
     .replace(/&#039;/g, "'")
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
-    .replace(/&nbsp;/g, ' ');
+    .replace(/&nbsp;/g, ' ')
+    .replace(/<\/(p|div|h[1-6]|li|tr|td|blockquote|section|article)>/gi, ' ')
+    .replace(/<br\s*\/?>/gi, ' ');
 
   try {
     const $ = cheerio.load(`<body>${text}</body>`);
