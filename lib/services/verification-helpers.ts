@@ -25,13 +25,15 @@ export function normalizeText(input: string | undefined | null): string {
     .replace(/&gt;/g, '>')
     .replace(/&nbsp;/g, ' ')
     .replace(/[“”]/g, '"')
-    .replace(/[‘’]/g, "'")
-    .replace(/<(?:\/?(?:p|div|h[1-6]|li|ul|ol|tr|td|th|table|blockquote|section|article|header|footer|figcaption|figure|hr)|br\s*\/?)>/gi, ' ');
+    .replace(/[‘’]/g, "'");
 
   try {
     const $ = cheerio.load(`<body>${text}</body>`);
+    $('.ez-toc-container, .ez-toc-wrap, nav.ez-toc-wrap, .ez-toc-title-container, nav').remove();
     text = $('body').text();
-  } catch {}
+  } catch {
+    text = text.replace(/<(?:\/?(?:p|div|h[1-6]|li|ul|ol|tr|td|th|table|blockquote|section|article|header|footer|figcaption|figure|hr)|br\s*\/?)>/gi, ' ');
+  }
 
   return text.replace(/[“”]/g, '"').replace(/[‘’]/g, "'").replace(/\s+/g, ' ').trim();
 }
