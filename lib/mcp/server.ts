@@ -4,6 +4,7 @@ import { getPost, getPosts } from '@/lib/wp';
 import { getRevision } from '@/lib/ai-revisions';
 import { auditRepository, revisionRepository } from '@/lib/repositories';
 import { createPendingRevision, RevisionError } from '@/lib/services/revision-service';
+import { controlledApply } from '@/lib/controlled-apply';
 
 export function createMCPServer(): Server {
   const mcpServer = new Server({
@@ -133,6 +134,23 @@ export function createMCPServer(): Server {
               reason: { type: "string" }
             },
             required: ["wordpress_id", "source_modified_at", "new_title", "new_content", "new_excerpt", "reason"],
+            additionalProperties: false
+          }
+        },
+        {
+          name: "magentalab_apply_revision_dry_run",
+          description: "Dry runs applying a batch of revisions. Does not actually modify WordPress, but simulates the apply process to verify it would succeed.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              revision_ids: {
+                type: "array",
+                items: { type: "string" },
+                minItems: 1,
+                maxItems: 3
+              }
+            },
+            required: ["revision_ids"],
             additionalProperties: false
           }
         }
@@ -306,6 +324,16 @@ export function createMCPServer(): Server {
           };
           
           return { content: [{ type: "text", text: JSON.stringify(output, null, 2) }] };
+        }
+
+        case "magentalab_apply_revision_dry_run": {
+          const revisionIds = args.revision_ids as string[];
+          if (!Array.isArray(revisionIds) || revisionIds.length === 0 || revisionIds.length > 3) {
+            throw new Error("Invalid revision_ids array. Must provide 1 to 3 revision IDs.");
+          }
+
+          const result = await controlledApply(revisionIds, { dryRun: true, source: 'mcp' });
+          return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
         }
 
         default:

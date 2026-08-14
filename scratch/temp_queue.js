@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 
-fetch('http://localhost:3000/api/mcp', {
+fetch('https://www.magentalabblog.com/api/mcp', {
   method: 'POST',
   headers: { 
     'Content-Type': 'application/json', 
@@ -11,10 +11,13 @@ fetch('http://localhost:3000/api/mcp', {
   body: JSON.stringify({
     jsonrpc: '2.0',
     id: 'test',
-    method: 'tools/call',
-    params: { name: 'magentalab_get_review_queue', arguments: { status: 'pending_review' } }
+    method: 'tools/list'
   })
 }).then(r => r.json()).then(d => {
-    const arr = JSON.parse(d.result.content[0].text);
-    console.log("Found for 5800:", arr.filter(a => a.wordpress_id === 5800));
+    if (d.result && d.result.tools) {
+        const tools = d.result.tools.map(t => t.name);
+        console.log('Production Tools available (Count:', tools.length, '):', tools);
+    } else {
+        console.log('Production Error:', JSON.stringify(d, null, 2));
+    }
 });
