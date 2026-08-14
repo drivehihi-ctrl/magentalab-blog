@@ -10,10 +10,11 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { wordpress_id, new_title, new_content, new_excerpt, reason, source } = body;
+    const { wordpress_id, source_modified_at, new_title, new_content, new_excerpt, reason, source } = body;
 
     let payload = {
       wordpress_id,
+      source_modified_at,
       new_title,
       new_content,
       new_excerpt,

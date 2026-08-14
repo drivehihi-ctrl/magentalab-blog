@@ -33,7 +33,14 @@ export class RevisionError extends Error {
   }
 }
 
-export async function createPendingRevision(payload: CreateRevisionPayload, source: string = 'chatgpt'): Promise<AIRevision> {
+export interface CreateRevisionResult {
+  revision: AIRevision;
+  medical_risk: number;
+  medical_risk_level: 'high' | 'low';
+  evidence_persisted: boolean;
+}
+
+export async function createPendingRevision(payload: CreateRevisionPayload, source: string = 'chatgpt'): Promise<CreateRevisionResult> {
   const { wordpress_id, source_modified_at, new_title, new_content, new_excerpt, reason, evidence } = payload;
 
   if (!wordpress_id) {
@@ -145,7 +152,7 @@ export async function createPendingRevision(payload: CreateRevisionPayload, sour
         }
       }
     }
-  } else if (risk.medical) {
+  } else if (risk.isMedical) {
     // Medical evidence missing guard
     throw new RevisionError('MEDICAL_EVIDENCE_MISSING', 'Medical content requires structured evidence');
   }
@@ -171,11 +178,8 @@ export async function createPendingRevision(payload: CreateRevisionPayload, sour
     source: source,
     status: 'pending_review',
     created_at: new Date().toISOString(),
-    medical_risk: risk.riskScore,
-    medical_risk_level: risk.level,
     medical_reviewed: false,
-    evidence: evidence,
-    evidence_persisted: false // will verify below
+    evidence: evidence
   };
 
   if (unsafeContent) {
@@ -194,7 +198,7 @@ export async function createPendingRevision(payload: CreateRevisionPayload, sour
 
   await saveRevision(revision);
 
-  // Evidence persistence verification
+  let evidence_persisted = false;
   if (evidence) {
     const savedRevision = await revisionRepository.get(revision.revision_id);
     const sameCount = savedRevision?.evidence?.references?.length === evidence.references.length;
@@ -202,7 +206,7 @@ export async function createPendingRevision(payload: CreateRevisionPayload, sour
     if (!savedRevision || !savedRevision.evidence || !sameCount || !sameUrl) {
       throw new RevisionError('EVIDENCE_DATA_NOT_PERSISTED', 'Failed to verify evidence persistence in repository.');
     }
-    revision.evidence_persisted = true;
+    evidence_persisted = true;
   }
 
   await logAction({
@@ -215,5 +219,10 @@ export async function createPendingRevision(payload: CreateRevisionPayload, sour
     status: 'success'
   });
 
-  return revision;
+  return {
+    revision,
+    medical_risk: risk.score,
+    medical_risk_level: risk.level,
+    evidence_persisted
+  };
 }

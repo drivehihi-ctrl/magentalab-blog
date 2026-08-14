@@ -280,7 +280,8 @@ export function createMCPServer(): Server {
         }
 
         case "magentalab_create_revision": {
-          const rev = await createPendingRevision(args as any, 'mcp');
+          const result = await createPendingRevision(args as any, 'mcp');
+          const rev = result.revision;
           
           const output = {
             revision_id: rev.revision_id,
@@ -289,19 +290,18 @@ export function createMCPServer(): Server {
             language: rev.language,
             slug: rev.slug,
             status: rev.status,
-            medical_risk: rev.medical_risk,
-            medical_risk_level: rev.medical_risk_level,
+            medical_risk: result.medical_risk,
+            medical_risk_level: result.medical_risk_level,
             medical_reviewed: rev.medical_reviewed,
-            evidence_persisted: rev.evidence_persisted,
+            evidence_persisted: result.evidence_persisted,
             source_modified_at: rev.source_modified_at,
             created_at: rev.created_at,
             preview_url: `https://www.magentalabblog.com/preview/${rev.revision_id}`,
             diff: {
               title_changed: rev.previous_title !== rev.new_title,
               excerpt_changed: rev.previous_excerpt !== rev.new_excerpt,
-              content_changed: rev.previous_content !== rev.new_content,
-              previous_content_length: rev.previous_content?.length || 0,
-              new_content_length: rev.new_content?.length || 0
+              meta_desc_changed: rev.previous_meta_description !== rev.new_meta_description,
+              content_changed: rev.previous_content !== rev.new_content
             }
           };
           
