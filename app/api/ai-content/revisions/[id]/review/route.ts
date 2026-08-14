@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { isAIContentAuthenticated } from '@/lib/ai-content-auth';
-import { getRevision, updateRevisionStatus, logAction } from '@/lib/ai-revisions';
+import { getRevision, saveRevision, logAction } from '@/lib/ai-revisions';
+import { assessMedicalRisk } from '@/lib/medical-risk';
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   if (!isAIContentAuthenticated(req)) {
@@ -27,7 +28,19 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     }
 
     const newStatus = reviewDecision === 'approve' ? 'approved' : 'rejected';
-    await updateRevisionStatus(id, newStatus);
+    
+    if (newStatus === 'approved') {
+      const risk = assessMedicalRisk(revision.slug, revision.new_title, revision.new_content);
+      if (risk.isMedical) {
+        if (body.medical_review_confirm !== true) {
+          return NextResponse.json({ error: 'MEDICAL_REVIEW_CONFIRMATION_REQUIRED', message: 'Explicit medical review confirmation is required' }, { status: 400 });
+        }
+        revision.medical_reviewed = true;
+      }
+    }
+    
+    revision.status = newStatus;
+    await saveRevision(revision);
 
     await logAction({
       timestamp: new Date().toISOString(),
@@ -37,7 +50,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       revision_id: revision.revision_id,
       source: 'human_review',
       status: 'success',
-      message: `Revision status updated to ${newStatus}`
+      message: `Revision status updated to ${newStatus}${revision.medical_reviewed ? ' (medical reviewed)' : ''}`
     });
 
     return NextResponse.json({

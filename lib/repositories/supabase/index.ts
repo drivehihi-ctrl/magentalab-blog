@@ -40,6 +40,7 @@ export const supabaseRevisionRepository: RevisionRepository = {
       reason: revision.reason,
       source: revision.source,
       status: revision.status,
+      medical_reviewed: revision.medical_reviewed,
       created_at: revision.created_at,
       updated_at: new Date().toISOString(),
       ...(revision.status === 'approved' ? { approved_at: new Date().toISOString() } : {}),
