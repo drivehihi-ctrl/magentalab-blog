@@ -9,6 +9,7 @@ export interface ReviewPayload {
   confirm: boolean;
   medical_review_confirm?: boolean;
   note?: string;
+  source?: string;
 }
 
 /**
@@ -17,7 +18,7 @@ export interface ReviewPayload {
  * No WordPress mutation occurs – only Supabase revision status and audit log are updated.
  */
 export async function reviewRevision(payload: ReviewPayload) {
-  const { revision_id, decision, confirm, medical_review_confirm, note } = payload;
+  const { revision_id, decision, confirm, medical_review_confirm, note, source = 'mcp' } = payload;
 
   // ---- Guard: confirmation required ----
   if (!confirm) {
@@ -62,7 +63,7 @@ export async function reviewRevision(payload: ReviewPayload) {
     wordpress_id: revision.wordpress_id,
     content_id: revision.content_id,
     revision_id: revision.revision_id,
-    source: 'mcp',
+    source,
     status: 'success',
     message: note ?? undefined,
   });

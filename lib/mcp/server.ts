@@ -4,6 +4,7 @@ import { getPost, getPosts } from '@/lib/wp';
 import { getRevision } from '@/lib/ai-revisions';
 import { auditRepository, revisionRepository } from '@/lib/repositories';
 import { createPendingRevision, RevisionError } from '@/lib/services/revision-service';
+import { reviewRevision } from '@/lib/services/review-service';
 import { controlledApply } from '@/lib/controlled-apply';
 
 export function createMCPServer(): Server {
@@ -138,6 +139,22 @@ export function createMCPServer(): Server {
           }
         },
         {
+          name: "magentalab_review_revision",
+          description: "Changes the human-review status of a pending revision. This does not modify the live WordPress post. Only call after explicit user approval or rejection.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              revision_id: { type: "string" },
+              decision: { type: "string", enum: ["approve", "reject"] },
+              confirm: { type: "boolean", enum: [true] },
+              medical_review_confirm: { type: "boolean", enum: [true] },
+              note: { type: "string" }
+            },
+            required: ["revision_id", "decision", "confirm"],
+            additionalProperties: false
+          }
+        },
+        {
           name: "magentalab_apply_revision_dry_run",
           description: "Dry runs applying a batch of revisions. Does not actually modify WordPress, but simulates the apply process to verify it would succeed.",
           inputSchema: {
@@ -148,9 +165,10 @@ export function createMCPServer(): Server {
                 items: { type: "string" },
                 minItems: 1,
                 maxItems: 3
-              }
+              },
+              confirm: { type: "boolean", enum: [true] }
             },
-            required: ["revision_ids"],
+            required: ["revision_ids", "confirm"],
             additionalProperties: false
           }
         }
@@ -326,10 +344,29 @@ export function createMCPServer(): Server {
           return { content: [{ type: "text", text: JSON.stringify(output, null, 2) }] };
         }
 
+        case "magentalab_review_revision": {
+          const result = await reviewRevision({
+            revision_id: String(args.revision_id || ''),
+            decision: args.decision as 'approve' | 'reject',
+            confirm: args.confirm === true,
+            medical_review_confirm: args.medical_review_confirm === true ? true : undefined,
+            note: args.note ? String(args.note) : undefined,
+            source: 'mcp'
+          });
+          return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+        }
+
         case "magentalab_apply_revision_dry_run": {
+          if (args.confirm !== true) {
+            throw new RevisionError('CONFIRMATION_REQUIRED', 'confirm: true is required');
+          }
+
           const revisionIds = args.revision_ids as string[];
           if (!Array.isArray(revisionIds) || revisionIds.length === 0 || revisionIds.length > 3) {
-            throw new Error("Invalid revision_ids array. Must provide 1 to 3 revision IDs.");
+            throw new RevisionError('INVALID_INPUT', 'Invalid revision_ids array. Must provide 1 to 3 revision IDs.');
+          }
+          if (new Set(revisionIds).size !== revisionIds.length) {
+            throw new RevisionError('INVALID_INPUT', 'Duplicate revision ids are not allowed');
           }
 
           const result = await controlledApply(revisionIds, { dryRun: true, source: 'mcp' });

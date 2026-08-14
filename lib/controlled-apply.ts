@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import { applyOneRevision } from '@/lib/apply-revision';
 import { logAction } from '@/lib/ai-revisions';
+import { RevisionError } from '@/lib/services/revision-service';
 
 export type BatchResultItem = {
   revision_id: string;
@@ -16,9 +17,11 @@ export type ControlledApplyResult = {
   dry_run: boolean;
   attempted: number;
   applied: number;
+  would_apply?: number;
   failed: number;
   stopped_on_error: boolean;
   results: BatchResultItem[];
+  wordpress_mutation?: boolean;
 };
 
 export async function controlledApply(
@@ -27,6 +30,10 @@ export async function controlledApply(
 ): Promise<ControlledApplyResult> {
   const request_id = `batch_${crypto.randomBytes(6).toString('hex')}`;
   const { dryRun, source } = options;
+
+  if (new Set(revisionIds).size !== revisionIds.length) {
+    throw new RevisionError('INVALID_INPUT', 'Duplicate revision ids are not allowed');
+  }
 
   await logAction({
     timestamp: new Date().toISOString(),
@@ -89,7 +96,7 @@ export async function controlledApply(
     message: `applied=${applied} failed=${failed} stopped_on_error=${stopped_on_error}`,
   });
 
-  return {
+  const response: ControlledApplyResult = {
     request_id,
     dry_run: dryRun,
     attempted: results.length,
@@ -98,4 +105,11 @@ export async function controlledApply(
     stopped_on_error,
     results,
   };
+
+  if (dryRun) {
+    response.would_apply = applied;
+    response.wordpress_mutation = false;
+  }
+
+  return response;
 }
