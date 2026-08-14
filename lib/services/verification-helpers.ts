@@ -49,17 +49,29 @@ export function compareNormalized(a: string | undefined | null, b: string | unde
   if (normA.length > 300 && normB.length > 300) {
     if (normA.includes(normB) || normB.includes(normA)) return true;
 
-    // Check word-level overlap for long HTML content reformatted by WordPress wpautop
+    // Word-level overlap
     const wordsA = new Set(normA.split(/\s+/));
     const wordsB = new Set(normB.split(/\s+/));
-    let intersection = 0;
+    let wordIntersect = 0;
     for (const w of wordsB) {
-      if (wordsA.has(w)) intersection++;
+      if (wordsA.has(w)) wordIntersect++;
     }
-    const similarity = intersection / Math.max(wordsA.size, wordsB.size);
-    if (similarity >= 0.90) {
-      return true;
+    const wordSim = wordIntersect / Math.max(wordsA.size, wordsB.size);
+    if (wordSim >= 0.85) return true;
+
+    // Character-level frequency multiset overlap (handles Korean / CJK HTML content reformatted by WP)
+    const mapA = new Map<string, number>();
+    for (const ch of normA) mapA.set(ch, (mapA.get(ch) || 0) + 1);
+    const mapB = new Map<string, number>();
+    for (const ch of normB) mapB.set(ch, (mapB.get(ch) || 0) + 1);
+
+    let charIntersect = 0;
+    for (const [ch, countB] of mapB.entries()) {
+      const countA = mapA.get(ch) || 0;
+      charIntersect += Math.min(countA, countB);
     }
+    const charSim = charIntersect / Math.max(normA.length, normB.length);
+    if (charSim >= 0.85) return true;
   }
 
   return false;
