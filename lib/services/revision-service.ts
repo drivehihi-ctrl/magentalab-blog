@@ -101,13 +101,14 @@ export async function createPendingRevision(payload: CreateRevisionPayload, sour
     if (post.id === 5700) {
       const hasTail = unsafeContent.includes('펫티켓은 ‘얌전한 강아지 만들기’가 아니에요');
       const imageCount = (unsafeContent.match(/\[이미지 \d+\]/g) || []).length;
-      const hasImages = imageCount === 4;
+      const actualImageCount = (unsafeContent.match(/<img[^>]+>/gi) || []).length;
+      const hasImages = imageCount === 4 || actualImageCount >= 4;
 
       if (!hasTail) {
         throw new RevisionError('CONTENT_TRUNCATION_DETECTED', 'Missing expected tail section');
       }
       if (!hasImages) {
-        throw new RevisionError('CONTENT_TRUNCATION_DETECTED', `Missing image placeholders (expected 4, got ${imageCount})`);
+        throw new RevisionError('CONTENT_TRUNCATION_DETECTED', `Missing images (expected 4 placeholders or >=4 imgs, got ${imageCount} placeholders, ${actualImageCount} imgs)`);
       }
     }
 

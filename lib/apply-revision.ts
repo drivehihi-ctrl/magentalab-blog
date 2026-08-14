@@ -112,13 +112,14 @@ export async function applyOneRevision(
     if (currentPost.id === 5700) {
       const hasTail = revContent.includes('펫티켓은 ‘얌전한 강아지 만들기’가 아니에요');
       const imageCount = (revContent.match(/\[이미지 \d+\]/g) || []).length;
-      const hasImages = imageCount === 4;
+      const actualImageCount = (revContent.match(/<img[^>]+>/gi) || []).length;
+      const hasImages = imageCount === 4 || actualImageCount >= 4;
 
       if (!hasTail) {
         return fail(revisionId, 'CONTENT_TRUNCATION_DETECTED', 'Missing expected tail section');
       }
       if (!hasImages) {
-        return fail(revisionId, 'CONTENT_TRUNCATION_DETECTED', `Missing image placeholders (expected 4, got ${imageCount})`);
+        return fail(revisionId, 'CONTENT_TRUNCATION_DETECTED', `Missing images (expected 4 placeholders or >=4 imgs, got ${imageCount} placeholders, ${actualImageCount} imgs)`);
       }
     }
 
