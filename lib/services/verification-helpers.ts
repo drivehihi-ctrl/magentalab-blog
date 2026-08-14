@@ -43,8 +43,12 @@ export function compareNormalized(a: string | undefined | null, b: string | unde
   }
   const normA = normalizeText(a);
   const normB = normalizeText(b);
-  if (!normA && !normB) return false; // empty string comparison should fail unless explicitly intended
-  return normA === normB;
+  if (!normA && !normB) return false;
+  if (normA === normB) return true;
+  if (normA.length > 300 && normB.length > 300) {
+    return normA.includes(normB) || normB.includes(normA);
+  }
+  return false;
 }
 
 export interface EvidenceReference {
