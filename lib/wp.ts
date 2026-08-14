@@ -320,14 +320,17 @@ export async function getAllPostsForSitemap(): Promise<WPPost[]> {
   }
 }
 
-export async function getPost(id: string): Promise<WPPost | null> {
+export async function getPost(id: string, options?: { noCache?: boolean }): Promise<WPPost | null> {
   try {
-    const res = await fetch(`${WP_API_URL}/posts/${id}?_embed`, {
-      next: {
-        revalidate: 86400,
-        tags: [`post-${id}`, 'posts']
-      },
-    });
+    const fetchOptions: RequestInit = options?.noCache
+      ? { cache: 'no-store' }
+      : {
+          next: {
+            revalidate: 86400,
+            tags: [`post-${id}`, 'posts']
+          },
+        };
+    const res = await fetch(`${WP_API_URL}/posts/${id}?_embed`, fetchOptions);
     if (!res.ok) throw new Error(`Failed to fetch post: ${id}`);
     return await safeJson(res);
   } catch (err) {

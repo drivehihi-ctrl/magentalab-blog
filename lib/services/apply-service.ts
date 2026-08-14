@@ -33,7 +33,7 @@ export async function applyRevision(payload: ApplyPayload) {
   }
 
   // Preflight: fetch original post before mutation for post-apply comparison
-  const beforePost = await getPost(revision.wordpress_id.toString());
+  const beforePost = await getPost(revision.wordpress_id.toString(), { noCache: true });
   if (!beforePost) {
     throw new RevisionError('POST_NOT_FOUND', 'Original post not found on WordPress');
   }
@@ -56,8 +56,8 @@ export async function applyRevision(payload: ApplyPayload) {
     throw new RevisionError(liveResult.error_code, liveResult.error_message);
   }
 
-  // Post-Apply Verification: fetch live WP post after apply
-  const afterPost = await getPost(revision.wordpress_id.toString());
+  // Post-Apply Verification: fetch live WP post after apply without cache
+  const afterPost = await getPost(revision.wordpress_id.toString(), { noCache: true });
 
   // Strict verification checks
   const titleMatch = !!afterPost && compareNormalized(afterPost.title?.rendered, revision.new_title);

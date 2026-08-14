@@ -74,8 +74,8 @@ export async function rollbackRevision(payload: RollbackPayload) {
   await evidenceRepository.restore(backup.wordpress_id, backup.evidence || null);
   const restoredEvidence = await evidenceRepository.getByPostId(backup.wordpress_id);
 
-  // Post-rollback verification: fetch live WP post after rollback
-  const currentPost = await getPost(backup.wordpress_id.toString());
+  // Post-rollback verification: fetch live WP post after rollback without cache
+  const currentPost = await getPost(backup.wordpress_id.toString(), { noCache: true });
 
   const titleMatch = !!currentPost && compareNormalized(currentPost.title?.rendered, backup.title);
   const contentMatch = !!currentPost && compareNormalized(currentPost.content?.rendered, backup.content);
