@@ -28,8 +28,8 @@ export async function rollbackRevision(payload: RollbackPayload) {
     throw new RevisionError('NOT_FOUND', 'Revision not found');
   }
 
-  if (revision.status !== 'applied') {
-    throw new RevisionError('INVALID_STATUS', `Only applied revisions can be rolled back. Current status: ${revision.status}`);
+  if (revision.status !== 'applied' && revision.status !== 'applying' && revision.status !== 'approved' && revision.status !== 'rollback_pending') {
+    throw new RevisionError('INVALID_STATUS', `Revision status must be 'applied', 'applying', or 'approved' to rollback. Current status: ${revision.status}`);
   }
 
   const backup = await getBackupByRevision(revision_id);
@@ -67,10 +67,12 @@ export async function rollbackRevision(payload: RollbackPayload) {
       status: 'error',
       message: `WP Rollback Failed: ${errorData.slice(0, 200)}`,
     });
+    revision.status = 'rollback_failed';
+    await saveRevision(revision);
     throw new RevisionError('WP_WRITE_FAILED', `WP Rollback Failed: ${errorData.slice(0, 200)}`);
   }
 
-  // Restore evidence
+  // Restore evidence (including backup ansim_summary if present)
   await evidenceRepository.restore(backup.wordpress_id, backup.evidence || null);
   const restoredEvidence = await evidenceRepository.getByPostId(backup.wordpress_id);
 
@@ -100,8 +102,9 @@ export async function rollbackRevision(payload: RollbackPayload) {
       status: 'error',
       message: `Rollback verification failed [${failureDetails}].`,
     });
-    // Do NOT set revision.status to rolled_back if verification failed
-    throw new RevisionError('ROLLBACK_VERIFICATION_FAILED', `Post-rollback verification failed [${failureDetails}]. Revision status remains applied.`);
+    revision.status = 'rollback_failed';
+    await saveRevision(revision);
+    throw new RevisionError('ROLLBACK_VERIFICATION_FAILED', `Post-rollback verification failed [${failureDetails}]. Revision status set to rollback_failed.`);
   }
 
   // Save revision status ONLY AFTER verification passes

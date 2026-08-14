@@ -216,6 +216,7 @@ export async function applyOneRevision(
     content: rawContent,
     excerpt: rawExcerpt,
     meta_description: '',
+    ansim_summary: previousEvidence?.ansimSummary || undefined,
     slug: currentPost.slug,
     featured_media: currentPost.featured_media,
     evidence: previousEvidence || undefined,
@@ -291,8 +292,8 @@ export async function applyOneRevision(
     return fail(revisionId, 'WP_WRITE_FAILED', wpError.message);
   }
 
-  // ── 13. Mark revision as applied ─────────────────────────────────────────
-  revision.status = 'applied';
+  // ── 13. Mark revision as applying (will be set to applied after post-verification) ─
+  revision.status = 'applying';
   await saveRevision(revision);
 
   // ── 14. Audit log ─────────────────────────────────────────────────────────

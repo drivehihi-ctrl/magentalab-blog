@@ -1,6 +1,7 @@
 import { applyOneRevision } from '@/lib/apply-revision';
-import { getRevision, logAction } from '@/lib/ai-revisions';
+import { getRevision, saveRevision, logAction } from '@/lib/ai-revisions';
 import { getPost } from '@/lib/wp';
+import { evidenceRepository } from '@/lib/repositories';
 import { RevisionError } from '@/lib/services/revision-service';
 import { rollbackRevision } from '@/lib/services/rollback-service';
 import { compareNormalized } from '@/lib/services/verification-helpers';
@@ -58,11 +59,13 @@ export async function applyRevision(payload: ApplyPayload) {
 
   // Post-Apply Verification: fetch live WP post after apply without cache
   const afterPost = await getPost(revision.wordpress_id.toString(), { noCache: true });
+  const liveEvidence = await evidenceRepository.getByPostId(revision.wordpress_id);
 
   // Strict verification checks
   const titleMatch = !!afterPost && compareNormalized(afterPost.title?.rendered, revision.new_title);
   const contentMatch = !!afterPost && compareNormalized(afterPost.content?.rendered, revision.new_content);
   const excerptMatch = !!afterPost && compareNormalized(afterPost.excerpt?.rendered, revision.new_excerpt);
+  const ansimSummaryMatch = !revision.new_ansim_summary || compareNormalized(liveEvidence?.ansimSummary, revision.new_ansim_summary);
 
   const slugUnchanged = !!afterPost && afterPost.slug === beforeSlug;
   const statusUnchanged = !!afterPost && afterPost.status === beforeStatus;
@@ -71,7 +74,7 @@ export async function applyRevision(payload: ApplyPayload) {
   const tagsUnchanged = !!afterPost && JSON.stringify((afterPost.tags || []).slice().sort((a: number, b: number) => a - b)) === beforeTags;
 
   const protectedFieldsUnchanged = slugUnchanged && statusUnchanged && mediaUnchanged && categoriesUnchanged && tagsUnchanged;
-  const verificationPassed = !!afterPost && titleMatch && contentMatch && excerptMatch && protectedFieldsUnchanged;
+  const verificationPassed = !!afterPost && titleMatch && contentMatch && excerptMatch && ansimSummaryMatch && protectedFieldsUnchanged;
 
   if (!verificationPassed) {
     await logAction({
@@ -82,7 +85,7 @@ export async function applyRevision(payload: ApplyPayload) {
       revision_id: revision.revision_id,
       source,
       status: 'error',
-      message: `Verification failed. afterPost=${!!afterPost}, title=${titleMatch}, content=${contentMatch}, excerpt=${excerptMatch}, protected=${protectedFieldsUnchanged} (tags=${tagsUnchanged})`,
+      message: `Verification failed. afterPost=${!!afterPost}, title=${titleMatch}, content=${contentMatch}, excerpt=${excerptMatch}, ansim=${ansimSummaryMatch}, protected=${protectedFieldsUnchanged}`,
     });
 
     // Auto-rollback attempt
@@ -99,19 +102,36 @@ export async function applyRevision(payload: ApplyPayload) {
       console.error('[applyRevision] Auto-rollback failed:', rbErr);
     }
 
-    const failureDetails = `title=${titleMatch}, content=${contentMatch}, excerpt=${excerptMatch}, slug=${slugUnchanged}, status=${statusUnchanged}, media=${mediaUnchanged}, categories=${categoriesUnchanged}, tags=${tagsUnchanged}`;
+    const failureDetails = `title=${titleMatch}, content=${contentMatch}, excerpt=${excerptMatch}, ansim=${ansimSummaryMatch}, slug=${slugUnchanged}, status=${statusUnchanged}, media=${mediaUnchanged}, categories=${categoriesUnchanged}, tags=${tagsUnchanged}`;
 
     if (autoRollbackSuccess) {
+      const revToUpdate = await getRevision(revision_id);
+      if (revToUpdate && revToUpdate.status !== 'rolled_back') {
+        revToUpdate.status = 'rolled_back';
+        await saveRevision(revToUpdate);
+      }
       throw new RevisionError(
         'APPLY_VERIFICATION_FAILED',
         `Post-apply verification failed [${failureDetails}]. Automatic rollback was performed successfully. (rollback_performed: true, rollback_success: true)`
       );
     } else {
+      const revToUpdate = await getRevision(revision_id);
+      if (revToUpdate) {
+        revToUpdate.status = 'rollback_failed';
+        await saveRevision(revToUpdate);
+      }
       throw new RevisionError(
         'CRITICAL_APPLY_ROLLBACK_FAILED',
         `Post-apply verification failed [${failureDetails}] and automatic rollback also failed! Manual intervention required. (rollback_performed: true, rollback_success: false)`
       );
     }
+  }
+
+  // ALL VERIFICATIONS PASSED -> Mark revision as applied
+  const finalRev = await getRevision(revision_id);
+  if (finalRev) {
+    finalRev.status = 'applied';
+    await saveRevision(finalRev);
   }
 
   return {
@@ -128,6 +148,7 @@ export async function applyRevision(payload: ApplyPayload) {
       title_match: titleMatch,
       content_match: contentMatch,
       excerpt_match: excerptMatch,
+      ansim_summary_match: ansimSummaryMatch,
       slug_unchanged: slugUnchanged,
       featured_media_unchanged: mediaUnchanged,
       status_unchanged: statusUnchanged,

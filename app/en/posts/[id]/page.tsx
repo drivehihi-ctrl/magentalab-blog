@@ -304,6 +304,7 @@ export default async function EnglishPostDetailPage({ params }: PageProps) {
           
           {/* GEO Optimized Summary Box */}
           <AnsimiSummary 
+            ansimSummary={customEvidence?.ansimSummary}
             excerpt={post.excerpt.rendered} 
             categoryNames={categories.map(c => c.name)} 
             lang="en"

@@ -13,6 +13,7 @@ export interface CreateRevisionPayload {
   new_content: string;
   new_excerpt: string;
   new_meta_description?: string;
+  new_ansim_summary?: string;
   evidence?: {
     keyInsight: string;
     cautionNote: string;
@@ -22,6 +23,7 @@ export interface CreateRevisionPayload {
       type: string;
       url: string;
     }>;
+    ansimSummary?: string;
   };
   reason: string;
 }
@@ -174,12 +176,16 @@ export async function createPendingRevision(payload: CreateRevisionPayload, sour
     new_excerpt: new_excerpt || post.excerpt.rendered,
     previous_meta_description: sanitizeForSeo(post.excerpt.rendered, 160),
     new_meta_description: payload.new_meta_description ? sanitizeForSeo(payload.new_meta_description, 160) : sanitizeForSeo(new_excerpt || post.excerpt.rendered, 160),
+    new_ansim_summary: payload.new_ansim_summary || (evidence?.ansimSummary ? evidence.ansimSummary : undefined),
     reason: reason || 'AI Update',
     source: source,
     status: 'pending_review',
     created_at: new Date().toISOString(),
     medical_reviewed: false,
-    evidence: evidence
+    evidence: evidence ? {
+      ...evidence,
+      ...(payload.new_ansim_summary ? { ansimSummary: payload.new_ansim_summary } : {})
+    } : (payload.new_ansim_summary ? { keyInsight: '', cautionNote: '', references: [], ansimSummary: payload.new_ansim_summary } : undefined)
   };
 
   if (unsafeContent) {

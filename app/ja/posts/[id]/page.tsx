@@ -303,6 +303,7 @@ export default async function JapanesePostDetailPage({ params }: PageProps) {
           
           {/* GEO Optimized Summary Box */}
           <AnsimiSummary 
+            ansimSummary={customEvidence?.ansimSummary}
             excerpt={post.excerpt.rendered} 
             categoryNames={categories.map(c => c.name)} 
             lang="ja"

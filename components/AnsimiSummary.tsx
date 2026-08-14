@@ -1,16 +1,17 @@
 import Image from "next/image";
 
 interface AnsimiSummaryProps {
-  excerpt: string;
+  ansimSummary?: string;
+  excerpt?: string;
   categoryNames: string[];
   lang?: "ko" | "en" | "ja";
 }
 
-export default function AnsimiSummary({ excerpt, categoryNames, lang = "ko" }: AnsimiSummaryProps) {
+export default function AnsimiSummary({ ansimSummary, excerpt, categoryNames, lang = "ko" }: AnsimiSummaryProps) {
   // Localization dictionaries
   const defaults = {
     ko: {
-      defaultExcerpt: "이 게시글의 핵심 연구 데이터를 확인해 보세요.",
+      defaultExcerpt: "이 게시글의 핵심 수칙과 연구 데이터를 확인해 보세요.",
       titlePre: "안심 연구원의 ",
       titlePost: "돋보기 요약",
       empathyDefault: "우리 아이와 함께하는 행복한 시간, 안심이가 늘 곁에서 도울게요! 🐾",
@@ -19,7 +20,7 @@ export default function AnsimiSummary({ excerpt, categoryNames, lang = "ko" }: A
       empathyBehavior: "아이가 더 편안해하는 법, 차근차근 배우다 보면 어느새 마음이 통해 있을 거예요! 🏠🤝"
     },
     en: {
-      defaultExcerpt: "Check out the key research data of this article.",
+      defaultExcerpt: "Check out the key guidelines and research data of this article.",
       titlePre: "Ansim's ",
       titlePost: "Quick Summary",
       empathyDefault: "Happy times with your companion animal, Ansim will always be by your side to help! 🐾",
@@ -28,7 +29,7 @@ export default function AnsimiSummary({ excerpt, categoryNames, lang = "ko" }: A
       empathyBehavior: "Learning how to make your companion feel more comfortable will build a deeper bond before you know it! 🏠🤝"
     },
     ja: {
-      defaultExcerpt: "この記事の主要な研究データを確認してみましょう。",
+      defaultExcerpt: "この記事の主要なガイドラインと研究データを確認してみましょう。",
       titlePre: "アンシム研究員の",
       titlePost: "虫眼鏡要約",
       empathyDefault: "うちの子と共にする幸せな時間、アンシムがいつもそばでサポートします！ 🐾",
@@ -40,15 +41,14 @@ export default function AnsimiSummary({ excerpt, categoryNames, lang = "ko" }: A
 
   const text = defaults[lang] || defaults.ko;
 
-  // Handle manual empathy message via separator in excerpt
-  let displayExcerpt = excerpt || text.defaultExcerpt;
+  let displayExcerpt = text.defaultExcerpt;
   let manualEmpathyMessage = "";
 
-  // Common explicit separators: [공감], [Empathy], [共感], [message], [summary], ---, <hr /> or standalone line break separators
-  // NOTE: Inline em-dashes (\u2014) inside normal English sentences are preserved and NOT split.
   const separatorPattern = /\[(?:공감|empathy|共感|message|summary)\]|(?:\r?\n)\s*(?:---|—|–|<\s*hr\s*\/?>)\s*(?:\r?\n)/i;
-  
-  if (excerpt && separatorPattern.test(excerpt)) {
+
+  if (ansimSummary && ansimSummary.trim()) {
+    displayExcerpt = ansimSummary.trim();
+  } else if (excerpt && separatorPattern.test(excerpt)) {
     const parts = excerpt.split(separatorPattern);
     displayExcerpt = parts[0]
       .replace(/안심이의\s*|공감\s*|한마디\s*|[:：]\s*$|Empathy\s*|共感\s*/gi, "")

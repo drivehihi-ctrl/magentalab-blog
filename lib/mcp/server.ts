@@ -113,11 +113,13 @@ export function createMCPServer(): Server {
               new_content: { type: "string" },
               new_excerpt: { type: "string" },
               new_meta_description: { type: "string" },
+              new_ansim_summary: { type: "string" },
               evidence: {
                 type: "object",
                 properties: {
                   keyInsight: { type: "string" },
                   cautionNote: { type: "string" },
+                  ansimSummary: { type: "string" },
                   references: {
                     type: "array",
                     items: {

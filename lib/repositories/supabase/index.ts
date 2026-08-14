@@ -20,6 +20,11 @@ export const supabaseRevisionRepository: RevisionRepository = {
     return data as AIRevision;
   },
   async save(revision: AIRevision): Promise<void> {
+    const evidencePayload = revision.evidence ? {
+      ...revision.evidence,
+      ...(revision.new_ansim_summary ? { ansimSummary: revision.new_ansim_summary } : {})
+    } : (revision.new_ansim_summary ? { keyInsight: '', cautionNote: '', references: [], ansimSummary: revision.new_ansim_summary } : undefined);
+
     const { error } = await supabaseAdmin.from('ai_revisions').upsert({
       revision_id: revision.revision_id,
       wordpress_id: revision.wordpress_id,
@@ -36,7 +41,7 @@ export const supabaseRevisionRepository: RevisionRepository = {
       previous_meta_description: revision.previous_meta_description,
       new_meta_description: revision.new_meta_description,
       media_changes: revision.media_changes,
-      evidence: revision.evidence,
+      evidence: evidencePayload,
       reason: revision.reason,
       source: revision.source,
       status: revision.status,
@@ -57,6 +62,11 @@ export const supabaseRevisionRepository: RevisionRepository = {
 
 export const supabaseBackupRepository: BackupRepository = {
   async save(backup: AIBackup): Promise<void> {
+    const evidencePayload = backup.evidence ? {
+      ...backup.evidence,
+      ...(backup.ansim_summary ? { ansimSummary: backup.ansim_summary } : {})
+    } : (backup.ansim_summary ? { keyInsight: '', cautionNote: '', references: [], ansimSummary: backup.ansim_summary } : undefined);
+
     const { error } = await supabaseAdmin.from('ai_backups').upsert({
       backup_id: backup.backup_id,
       revision_id: backup.revision_id,
@@ -67,7 +77,7 @@ export const supabaseBackupRepository: BackupRepository = {
       meta_description: backup.meta_description,
       slug: backup.slug,
       featured_media_id: backup.featured_media,
-      evidence: backup.evidence,
+      evidence: evidencePayload,
       source_modified_at: backup.modified_at,
       created_at: backup.created_at
     }, { onConflict: 'backup_id' });
@@ -78,11 +88,13 @@ export const supabaseBackupRepository: BackupRepository = {
   },
   async getByRevision(revision_id: string): Promise<AIBackup | undefined> {
     const { data, error } = await supabaseAdmin.from('ai_backups').select('*').eq('revision_id', revision_id).single();
-    if (error) {
+    if (error || !data) {
       return undefined;
     }
+    const ansimSummary = data.ansim_summary || data.evidence?.ansimSummary || undefined;
     return {
       ...data,
+      ansim_summary: ansimSummary,
       modified_at: data.source_modified_at,
       featured_media: data.featured_media_id
     } as AIBackup;
@@ -111,18 +123,37 @@ export const supabaseEvidenceRepository: EvidenceRepository = {
   async getByPostId(postId: number): Promise<EvidenceData | null> {
     const { data, error } = await supabaseAdmin.from('ai_evidence').select('*').eq('wordpress_id', postId).maybeSingle();
     if (error || !data) return null;
+    let ansimSummary = data.ansim_summary || data.evidence?.ansimSummary;
+    if (!ansimSummary && Array.isArray(data.references)) {
+      const summaryRef = data.references.find((r: any) => r.type === 'ansim_summary');
+      if (summaryRef && summaryRef.content) {
+        ansimSummary = summaryRef.content;
+      }
+    }
     return {
       keyInsight: data.key_insight,
       cautionNote: data.caution_note,
-      references: data.references
+      references: Array.isArray(data.references) ? data.references.filter((r: any) => r.type !== 'ansim_summary') : [],
+      ansimSummary: ansimSummary || undefined
     };
   },
   async save(postId: number, evidence: EvidenceData): Promise<void> {
+    const cleanReferences = (evidence.references || []).filter((r: any) => r.type !== 'ansim_summary');
+    if (evidence.ansimSummary) {
+      cleanReferences.push({
+        title: 'Ansim Summary',
+        org: 'system',
+        type: 'ansim_summary',
+        url: '',
+        content: evidence.ansimSummary
+      } as any);
+    }
+
     const { error } = await supabaseAdmin.from('ai_evidence').upsert({
       wordpress_id: postId,
       key_insight: evidence.keyInsight,
       caution_note: evidence.cautionNote,
-      references: evidence.references,
+      references: cleanReferences,
       updated_at: new Date().toISOString()
     }, { onConflict: 'wordpress_id' });
 

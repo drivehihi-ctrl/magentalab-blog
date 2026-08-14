@@ -29,7 +29,7 @@ export function normalizeText(input: string | undefined | null): string {
 
   try {
     const $ = cheerio.load(`<body>${text}</body>`);
-    $('.ez-toc-container, .ez-toc-wrap, nav.ez-toc-wrap, .ez-toc-title-container, nav').remove();
+    $('.ez-toc-container, .ez-toc-wrap, nav.ez-toc-wrap, .ez-toc-title-container, span.ez-toc-section, span.ez-toc-section-end, a.ez-toc-link, .ez-toc-widget-container').remove();
     text = $('body').text();
   } catch {
     text = text.replace(/<(?:\/?(?:p|div|h[1-6]|li|ul|ol|tr|td|th|table|blockquote|section|article|header|footer|figcaption|figure|hr)|br\s*\/?)>/gi, ' ');
@@ -84,6 +84,7 @@ export interface EvidenceData {
   keyInsight?: string;
   cautionNote?: string;
   references?: EvidenceReference[];
+  ansimSummary?: string;
 }
 
 /**
@@ -93,7 +94,9 @@ export function normalizeEvidence(ev: EvidenceData | undefined | null) {
   if (!ev) return null;
   const keyInsight = (ev.keyInsight || '').trim();
   const cautionNote = (ev.cautionNote || '').trim();
+  const ansimSummary = (ev.ansimSummary || '').trim();
   const references = (ev.references || [])
+    .filter(r => r.type !== 'ansim_summary')
     .map(r => ({
       title: (r.title || '').trim(),
       org: (r.org || '').trim(),
@@ -102,11 +105,11 @@ export function normalizeEvidence(ev: EvidenceData | undefined | null) {
     }))
     .sort((a, b) => a.url.localeCompare(b.url) || a.title.localeCompare(b.title));
 
-  if (!keyInsight && !cautionNote && references.length === 0) {
+  if (!keyInsight && !cautionNote && !ansimSummary && references.length === 0) {
     return null;
   }
 
-  return { keyInsight, cautionNote, references };
+  return { keyInsight, cautionNote, ansimSummary, references };
 }
 
 /**

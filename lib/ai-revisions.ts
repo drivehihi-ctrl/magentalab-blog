@@ -22,6 +22,7 @@ export interface EvidenceData {
   keyInsight: string;
   cautionNote: string;
   references: EvidenceReference[];
+  ansimSummary?: string;
 }
 
 export interface AIRevision {
@@ -39,13 +40,15 @@ export interface AIRevision {
   new_excerpt: string;
   previous_meta_description: string;
   new_meta_description: string;
+  previous_ansim_summary?: string;
+  new_ansim_summary?: string;
   media_changes?: AIRevisionMediaChanges; // Added for Phase 3
   evidence?: EvidenceData; // Added for Phase 4
   medical_reviewed?: boolean; // Added for Phase 5.4 Medical Safety Guard
   medical_approved?: boolean; // Alias flag for medical review confirmation
   reason: string;
   source: string;
-  status: 'pending_review' | 'approved' | 'applied' | 'rejected' | 'rolled_back';
+  status: 'pending_review' | 'approved' | 'applied' | 'rejected' | 'rolled_back' | 'applying' | 'rollback_pending' | 'apply_failed' | 'rollback_failed';
   created_at: string;
 }
 
@@ -68,6 +71,7 @@ export interface AIBackup {
   content: string;
   excerpt: string;
   meta_description: string;
+  ansim_summary?: string;
   slug: string;
   featured_media?: number; // Added for Phase 3
   evidence?: EvidenceData; // Added for Phase 4
