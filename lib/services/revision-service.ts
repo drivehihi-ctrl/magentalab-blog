@@ -193,7 +193,8 @@ export async function createPendingRevision(payload: CreateRevisionPayload, sour
     (r.status === 'pending_review' || r.status === 'approved')
   );
   if (activeRevisions.length > 0) {
-    throw new RevisionError('MCP_REVISION_CONFLICT', 'An active revision already exists for this post.');
+    const activeIds = activeRevisions.map(r => r.revision_id).join(', ');
+    throw new RevisionError('MCP_REVISION_CONFLICT', `An active revision already exists for this post. (${activeIds})`);
   }
 
   await saveRevision(revision);
