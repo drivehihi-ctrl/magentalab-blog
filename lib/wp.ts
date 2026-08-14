@@ -322,14 +322,26 @@ export async function getAllPostsForSitemap(): Promise<WPPost[]> {
 
 export async function getPost(id: string, options?: { noCache?: boolean }): Promise<WPPost | null> {
   try {
-    const fetchOptions: RequestInit = options?.noCache
-      ? { cache: 'no-store' }
-      : {
-          next: {
-            revalidate: 86400,
-            tags: [`post-${id}`, 'posts']
-          },
-        };
+    let authHeaders: Record<string, string> = {};
+    if (options?.noCache) {
+      const username = (process.env.WORDPRESS_API_USERNAME || '').trim();
+      const appPassword = (process.env.WORDPRESS_API_APP_PASSWORD || '').trim();
+      if (username && appPassword) {
+        const auth = Buffer.from(`${username}:${appPassword}`).toString('base64');
+        authHeaders = { Authorization: `Basic ${auth}` };
+      }
+    }
+    const fetchOptions: RequestInit = {
+      headers: authHeaders,
+      ...(options?.noCache
+        ? { cache: 'no-store' }
+        : {
+            next: {
+              revalidate: 86400,
+              tags: [`post-${id}`, 'posts']
+            },
+          }),
+    };
     const res = await fetch(`${WP_API_URL}/posts/${id}?_embed`, fetchOptions);
     if (!res.ok) throw new Error(`Failed to fetch post: ${id}`);
     return await safeJson(res);
