@@ -59,7 +59,7 @@ export async function createPendingRevision(payload: CreateRevisionPayload, sour
     }
   }
 
-  const post = await getPost(wordpress_id.toString());
+  const post = await getPost(wordpress_id.toString(), { noCache: true });
   if (!post) {
     throw new RevisionError('NOT_FOUND', 'Original post not found');
   }
