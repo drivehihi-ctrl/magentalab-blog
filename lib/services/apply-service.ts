@@ -99,15 +99,17 @@ export async function applyRevision(payload: ApplyPayload) {
       console.error('[applyRevision] Auto-rollback failed:', rbErr);
     }
 
+    const failureDetails = `title=${titleMatch}, content=${contentMatch}, excerpt=${excerptMatch}, slug=${slugUnchanged}, status=${statusUnchanged}, media=${mediaUnchanged}, categories=${categoriesUnchanged}, tags=${tagsUnchanged}`;
+
     if (autoRollbackSuccess) {
       throw new RevisionError(
         'APPLY_VERIFICATION_FAILED',
-        'Post-apply verification failed. Automatic rollback was performed successfully. (rollback_performed: true, rollback_success: true)'
+        `Post-apply verification failed [${failureDetails}]. Automatic rollback was performed successfully. (rollback_performed: true, rollback_success: true)`
       );
     } else {
       throw new RevisionError(
         'CRITICAL_APPLY_ROLLBACK_FAILED',
-        'Post-apply verification failed and automatic rollback also failed! Manual intervention required. (rollback_performed: true, rollback_success: false)'
+        `Post-apply verification failed [${failureDetails}] and automatic rollback also failed! Manual intervention required. (rollback_performed: true, rollback_success: false)`
       );
     }
   }

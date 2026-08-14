@@ -89,6 +89,7 @@ export async function rollbackRevision(payload: RollbackPayload) {
   const restoreVerified = !!currentPost && titleMatch && contentMatch && excerptMatch && slugUnchanged && mediaUnchanged && evidenceMatch;
 
   if (!restoreVerified) {
+    const failureDetails = `title=${titleMatch}, content=${contentMatch}, excerpt=${excerptMatch}, slug=${slugUnchanged}, media=${mediaUnchanged}, evidence=${evidenceMatch}`;
     await logAction({
       timestamp: new Date().toISOString(),
       action: 'ROLLBACK_VERIFICATION_FAILED',
@@ -97,10 +98,10 @@ export async function rollbackRevision(payload: RollbackPayload) {
       revision_id: revision.revision_id,
       source,
       status: 'error',
-      message: `Rollback verification failed. currentPost=${!!currentPost}, title=${titleMatch}, content=${contentMatch}, excerpt=${excerptMatch}, slug=${slugUnchanged}, media=${mediaUnchanged}, evidence=${evidenceMatch}`,
+      message: `Rollback verification failed [${failureDetails}].`,
     });
     // Do NOT set revision.status to rolled_back if verification failed
-    throw new RevisionError('ROLLBACK_VERIFICATION_FAILED', 'Post-rollback verification failed. Revision status remains applied.');
+    throw new RevisionError('ROLLBACK_VERIFICATION_FAILED', `Post-rollback verification failed [${failureDetails}]. Revision status remains applied.`);
   }
 
   // Save revision status ONLY AFTER verification passes
