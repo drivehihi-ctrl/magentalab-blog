@@ -45,9 +45,23 @@ export function compareNormalized(a: string | undefined | null, b: string | unde
   const normB = normalizeText(b);
   if (!normA && !normB) return false;
   if (normA === normB) return true;
+
   if (normA.length > 300 && normB.length > 300) {
-    return normA.includes(normB) || normB.includes(normA);
+    if (normA.includes(normB) || normB.includes(normA)) return true;
+
+    // Check word-level overlap for long HTML content reformatted by WordPress wpautop
+    const wordsA = new Set(normA.split(/\s+/));
+    const wordsB = new Set(normB.split(/\s+/));
+    let intersection = 0;
+    for (const w of wordsB) {
+      if (wordsA.has(w)) intersection++;
+    }
+    const similarity = intersection / Math.max(wordsA.size, wordsB.size);
+    if (similarity >= 0.90) {
+      return true;
+    }
   }
+
   return false;
 }
 
