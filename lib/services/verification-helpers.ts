@@ -3,13 +3,15 @@ import * as cheerio from 'cheerio';
 /**
  * Normalizes text/HTML strings for strict comparison between expected revision values
  * and WordPress REST API rendered values.
- * Handles HTML entity decoding (&amp; -> &, &#8211; -> –, etc.), tag stripping for body text,
- * and whitespace collapsing.
+ * Performs NFC Unicode normalization, zero-width character removal,
+ * HTML entity decoding, block/br tag boundary spacing, tag stripping, and whitespace collapsing.
  */
 export function normalizeText(input: string | undefined | null): string {
   if (!input) return '';
 
   let text = input
+    .normalize('NFC')
+    .replace(/[\u200B-\u200D\uFEFF]/g, '')
     .replace(/&amp;/g, '&')
     .replace(/&#8211;/g, '–')
     .replace(/&#8212;/g, '—')
@@ -22,20 +24,22 @@ export function normalizeText(input: string | undefined | null): string {
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&nbsp;/g, ' ')
-    .replace(/<\/(p|div|h[1-6]|li|tr|td|blockquote|section|article)>/gi, ' ')
-    .replace(/<br\s*\/?>/gi, ' ');
+    .replace(/[“”]/g, '"')
+    .replace(/[‘’]/g, "'")
+    .replace(/<(?:\/?(?:p|div|h[1-6]|li|ul|ol|tr|td|th|table|blockquote|section|article|header|footer|figcaption|figure|hr)|br\s*\/?)>/gi, ' ');
 
   try {
     const $ = cheerio.load(`<body>${text}</body>`);
     text = $('body').text();
   } catch {}
 
-  return text.replace(/\s+/g, ' ').trim();
+  return text.replace(/[“”]/g, '"').replace(/[‘’]/g, "'").replace(/\s+/g, ' ').trim();
 }
 
 /**
- * Compares two strings after normalizing entities and whitespace.
- * Returns true ONLY if both strings exist and match when normalized.
+ * Compares two strings after canonical normalization.
+ * Returns true ONLY if both strings exist and match exactly (normA === normB).
+ * No similarity or fuzzy fallback is permitted in verification.
  */
 export function compareNormalized(a: string | undefined | null, b: string | undefined | null): boolean {
   if (a === undefined || a === null || b === undefined || b === null) {
@@ -44,37 +48,27 @@ export function compareNormalized(a: string | undefined | null, b: string | unde
   const normA = normalizeText(a);
   const normB = normalizeText(b);
   if (!normA && !normB) return false;
-  if (normA === normB) return true;
+  return normA === normB;
+}
 
-  if (normA.length > 300 && normB.length > 300) {
-    if (normA.includes(normB) || normB.includes(normA)) return true;
+/**
+ * Separate helper for similarity checking if needed outside of strict verification.
+ * NOT used for apply/rollback verification.
+ */
+export function compareSimilarity(a: string | undefined | null, b: string | undefined | null): number {
+  if (!a || !b) return 0;
+  const normA = normalizeText(a);
+  const normB = normalizeText(b);
+  if (normA === normB) return 1.0;
+  if (!normA || !normB) return 0;
 
-    // Word-level overlap
-    const wordsA = new Set(normA.split(/\s+/));
-    const wordsB = new Set(normB.split(/\s+/));
-    let wordIntersect = 0;
-    for (const w of wordsB) {
-      if (wordsA.has(w)) wordIntersect++;
-    }
-    const wordSim = wordIntersect / Math.max(wordsA.size, wordsB.size);
-    if (wordSim >= 0.85) return true;
-
-    // Character-level frequency multiset overlap (handles Korean / CJK HTML content reformatted by WP)
-    const mapA = new Map<string, number>();
-    for (const ch of normA) mapA.set(ch, (mapA.get(ch) || 0) + 1);
-    const mapB = new Map<string, number>();
-    for (const ch of normB) mapB.set(ch, (mapB.get(ch) || 0) + 1);
-
-    let charIntersect = 0;
-    for (const [ch, countB] of mapB.entries()) {
-      const countA = mapA.get(ch) || 0;
-      charIntersect += Math.min(countA, countB);
-    }
-    const charSim = charIntersect / Math.max(normA.length, normB.length);
-    if (charSim >= 0.85) return true;
+  const wordsA = new Set(normA.split(/\s+/));
+  const wordsB = new Set(normB.split(/\s+/));
+  let wordIntersect = 0;
+  for (const w of wordsB) {
+    if (wordsA.has(w)) wordIntersect++;
   }
-
-  return false;
+  return wordIntersect / Math.max(wordsA.size, wordsB.size);
 }
 
 export interface EvidenceReference {
