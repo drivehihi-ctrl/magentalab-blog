@@ -96,15 +96,23 @@ async function runTests() {
     // D. missing wordpress_id
     res = await sendRequest("tools/call", { 
         name: "magentalab_create_revision", 
-        arguments: { new_title: "t", new_content: "c", new_excerpt: "e", reason: "r" } 
+        arguments: { source_modified_at: "2020-01-01T00:00:00", new_title: "t", new_content: "c", new_excerpt: "e", reason: "r" } 
     }, { 'Authorization': `Bearer ${secret}` });
     let json = await res.json();
-    printReport("D. missing wordpress_id", checkError(json, "INVALID_REQUEST") || checkError(json, "Invalid")); 
+    printReport("D. missing wordpress_id", checkError(json, "INVALID_REQUEST") || checkError(json, "Invalid") || checkError(json, "invalid_args")); 
+
+    // D2. missing source_modified_at
+    res = await sendRequest("tools/call", { 
+        name: "magentalab_create_revision", 
+        arguments: { wordpress_id: wpId, new_title: "t", new_content: "c", new_excerpt: "e", reason: "r" } 
+    }, { 'Authorization': `Bearer ${secret}` });
+    json = await res.json();
+    printReport("D2. missing source_modified_at", checkError(json, "INVALID_REQUEST") || checkError(json, "invalid_args") || checkError(json, "Invalid")); 
 
     // E. invalid wordpress_id
     res = await sendRequest("tools/call", { 
         name: "magentalab_create_revision", 
-        arguments: { wordpress_id: 99999999, new_title: "t", new_content: "c", new_excerpt: "e", reason: "r" } 
+        arguments: { wordpress_id: 99999999, source_modified_at: "2020-01-01T00:00:00", new_title: "t", new_content: "c", new_excerpt: "e", reason: "r" } 
     }, { 'Authorization': `Bearer ${secret}` });
     json = await res.json();
     printReport("E. invalid wordpress_id (NOT_FOUND)", checkError(json, "NOT_FOUND"));
@@ -112,7 +120,7 @@ async function runTests() {
     // F. empty new_content
     res = await sendRequest("tools/call", { 
         name: "magentalab_create_revision", 
-        arguments: { wordpress_id: wpId, new_title: "t", new_content: "", new_excerpt: "e", reason: "r" } 
+        arguments: { wordpress_id: wpId, source_modified_at: sourceModifiedAt, new_title: "t", new_content: "", new_excerpt: "e", reason: "r" } 
     }, { 'Authorization': `Bearer ${secret}` });
     json = await res.json();
     printReport("F. empty new_content (Truncation guard/Invalid req)", checkError(json, "CONTENT_TRUNCATION_DETECTED") || checkError(json, "INVALID_REQUEST"));
@@ -120,7 +128,7 @@ async function runTests() {
     // G. script/iframe
     res = await sendRequest("tools/call", { 
         name: "magentalab_create_revision", 
-        arguments: { wordpress_id: wpId, new_title: "t", new_content: validContent + "<script>alert(1)</script>", new_excerpt: "e", reason: "r" } 
+        arguments: { wordpress_id: wpId, source_modified_at: sourceModifiedAt, new_title: "t", new_content: validContent + "<script>alert(1)</script>", new_excerpt: "e", reason: "r" } 
     }, { 'Authorization': `Bearer ${secret}` });
     json = await res.json();
     printReport("G. script/iframe included", checkError(json, "UNSAFE_HTML"));
@@ -128,7 +136,7 @@ async function runTests() {
     // H. truncated HTML
     res = await sendRequest("tools/call", { 
         name: "magentalab_create_revision", 
-        arguments: { wordpress_id: wpId, new_title: "t", new_content: validContent + "<div", new_excerpt: "e", reason: "r" } 
+        arguments: { wordpress_id: wpId, source_modified_at: sourceModifiedAt, new_title: "t", new_content: validContent + "<div", new_excerpt: "e", reason: "r" } 
     }, { 'Authorization': `Bearer ${secret}` });
     json = await res.json();
     printReport("H. truncated HTML", checkError(json, "CONTENT_TRUNCATION_DETECTED"));
@@ -136,7 +144,7 @@ async function runTests() {
     // I. placeholder Evidence URL
     res = await sendRequest("tools/call", { 
         name: "magentalab_create_revision", 
-        arguments: { wordpress_id: wpId, new_title: "t", new_content: validContent, new_excerpt: "e", reason: "r", evidence: { ...validEvidence, references: [{title:"A", org:"B", type:"C", url:"http://example.com"}] } } 
+        arguments: { wordpress_id: wpId, source_modified_at: sourceModifiedAt, new_title: "t", new_content: validContent, new_excerpt: "e", reason: "r", evidence: { ...validEvidence, references: [{title:"A", org:"B", type:"C", url:"http://example.com"}] } } 
     }, { 'Authorization': `Bearer ${secret}` });
     json = await res.json();
     printReport("I. placeholder Evidence URL", checkError(json, "MCP_EVIDENCE_INVALID"));
@@ -159,6 +167,7 @@ async function runTests() {
             new_title: testTitle, 
             new_content: validContent, 
             new_excerpt: "Test excerpt", 
+            new_meta_description: "This is a custom meta description for testing.",
             reason: "Phase 6.2 Positive Path Pilot", 
             evidence: validEvidence 
         } 
@@ -171,8 +180,17 @@ async function runTests() {
     }
     
     const result = parseResult(json);
-    let allGood = res.ok && result && result.status === 'pending_review' && result.medical_reviewed === false && result.slug === postData.slug && result.evidence_persisted === true;
-    printReport("Positive path revision creation", allGood, `rev_id: ${result?.revision_id}`);
+    if (!result) {
+        console.error("Positive path failed! Raw MCP json:", JSON.stringify(json, null, 2));
+    }
+    
+    // Call get_revision to verify it saved new_meta_description and evidence
+    const revRes = await sendRequest("tools/call", { name: "magentalab_get_revision", arguments: { revision_id: result?.revision_id } }, { 'Authorization': `Bearer ${secret}` });
+    const fetchedRev = parseResult(await revRes.json());
+    const metaCheck = fetchedRev?.new_meta_description === "This is a custom meta description for testing.";
+    
+    let allGood = res.ok && result && result.status === 'pending_review' && result.medical_reviewed === false && result.slug === postData.slug && result.evidence_persisted === true && metaCheck;
+    printReport("Positive path revision creation", allGood, `rev_id: ${result?.revision_id}, meta_desc: ${metaCheck}`);
     
     if (allGood) {
         // Double check WordPress live post to ensure it's unchanged
@@ -186,15 +204,13 @@ async function runTests() {
         }
     }
 
-    // K. caller alters slug/status (ignored by schema)
-    // We will use another ID for this so it doesn't conflict with our newly created positive path revision!
+    // K. caller alters slug/status (rejected by schema or service)
     res = await sendRequest("tools/call", { 
         name: "magentalab_create_revision", 
-        arguments: { wordpress_id: 6007, slug: "new-slug", status: "published", new_title: "t", new_content: validContent, new_excerpt: "e", reason: "r", evidence: validEvidence } 
+        arguments: { wordpress_id: 6007, source_modified_at: "2020-01-01T00:00:00", slug: "new-slug", status: "published", new_title: "t", new_content: validContent, new_excerpt: "e", reason: "r", evidence: validEvidence } 
     }, { 'Authorization': `Bearer ${secret}` });
-    // Additional arguments usually just ignored by MCP schema or pass, but the service doesn't accept them.
     json = await res.json();
-    printReport("K. caller alters slug/status (ignored by schema)", true);
+    printReport("K. immutable extra field slug/status", checkError(json, "invalid_args") || checkError(json, "MCP_INVALID_INPUT") || checkError(json, "Invalid"));
 
     // L. unknown tool
     res = await sendRequest("tools/call", { name: "unknown", arguments: {} }, { 'Authorization': `Bearer ${secret}` });

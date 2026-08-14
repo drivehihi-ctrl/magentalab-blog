@@ -8,7 +8,7 @@ import crypto from 'crypto';
 
 export interface CreateRevisionPayload {
   wordpress_id: number;
-  source_modified_at?: string;
+  source_modified_at: string;
   new_title: string;
   new_content: string;
   new_excerpt: string;
@@ -39,6 +39,18 @@ export async function createPendingRevision(payload: CreateRevisionPayload, sour
   if (!wordpress_id) {
     throw new RevisionError('INVALID_REQUEST', 'wordpress_id is required');
   }
+  if (!source_modified_at || typeof source_modified_at !== 'string') {
+    throw new RevisionError('INVALID_REQUEST', 'source_modified_at is required and must be a string');
+  }
+
+  // Reject immutable extra fields if they sneak in
+  const immutableFields = ['slug', 'status', 'featured_media', 'categories', 'tags', 'content_id', 'language', 'medical_reviewed'];
+  const passedKeys = Object.keys(payload as any);
+  for (const field of immutableFields) {
+    if (passedKeys.includes(field)) {
+      throw new RevisionError('MCP_INVALID_INPUT', `Cannot mutate immutable field: ${field}`);
+    }
+  }
 
   const post = await getPost(wordpress_id.toString());
   if (!post) {
@@ -46,7 +58,7 @@ export async function createPendingRevision(payload: CreateRevisionPayload, sour
   }
 
   // 1. Optimistic Locking
-  if (source_modified_at && post.modified && source_modified_at !== post.modified) {
+  if (source_modified_at !== post.modified) {
     throw new RevisionError('POST_CHANGED_SINCE_READ', `Post has been modified since it was read. Expected ${source_modified_at}, found ${post.modified}`);
   }
 
@@ -72,7 +84,7 @@ export async function createPendingRevision(payload: CreateRevisionPayload, sour
     }
 
     if (!unsafeContent.includes("Ansim-i's Research Summary") && !unsafeContent.includes('Research Summary')) {
-      throw new RevisionError('CONTENT_TRUNCATION_DETECTED', 'Missing Research Summary in content');
+      throw new RevisionError('STRUCTURE_VALIDATION', 'Missing Research Summary in content');
     }
 
     const origLength = post.content.rendered.length;
@@ -154,7 +166,7 @@ export async function createPendingRevision(payload: CreateRevisionPayload, sour
     previous_excerpt: post.excerpt.rendered,
     new_excerpt: new_excerpt || post.excerpt.rendered,
     previous_meta_description: sanitizeForSeo(post.excerpt.rendered, 160),
-    new_meta_description: sanitizeForSeo(new_excerpt || post.excerpt.rendered, 160),
+    new_meta_description: payload.new_meta_description ? sanitizeForSeo(payload.new_meta_description, 160) : sanitizeForSeo(new_excerpt || post.excerpt.rendered, 160),
     reason: reason || 'AI Update',
     source: source,
     status: 'pending_review',
@@ -163,7 +175,7 @@ export async function createPendingRevision(payload: CreateRevisionPayload, sour
     medical_risk_level: risk.level,
     medical_reviewed: false,
     evidence: evidence,
-    evidence_persisted: !!evidence
+    evidence_persisted: false // will verify below
   };
 
   if (unsafeContent) {
@@ -181,6 +193,17 @@ export async function createPendingRevision(payload: CreateRevisionPayload, sour
   }
 
   await saveRevision(revision);
+
+  // Evidence persistence verification
+  if (evidence) {
+    const savedRevision = await revisionRepository.get(revision.revision_id);
+    const sameCount = savedRevision?.evidence?.references?.length === evidence.references.length;
+    const sameUrl = savedRevision?.evidence?.references?.[0]?.url === evidence.references[0]?.url;
+    if (!savedRevision || !savedRevision.evidence || !sameCount || !sameUrl) {
+      throw new RevisionError('EVIDENCE_DATA_NOT_PERSISTED', 'Failed to verify evidence persistence in repository.');
+    }
+    revision.evidence_persisted = true;
+  }
 
   await logAction({
     timestamp: revision.created_at,

@@ -132,7 +132,8 @@ export function createMCPServer(): Server {
               },
               reason: { type: "string" }
             },
-            required: ["wordpress_id", "new_title", "new_content", "new_excerpt", "reason"]
+            required: ["wordpress_id", "source_modified_at", "new_title", "new_content", "new_excerpt", "reason"],
+            additionalProperties: false
           }
         }
       ]
