@@ -233,7 +233,7 @@ export function createMCPServer(): Server {
           const id = Number(args.wordpress_id);
           if (isNaN(id) || id <= 0) throw new Error("Invalid wordpress_id");
 
-          const post = await getPost(String(id));
+          const post = await getPost(String(id), { noCache: true });
           if (!post) throw new Error("NOT_FOUND");
           return { content: [{ type: "text", text: JSON.stringify(post, null, 2) }] };
         }
