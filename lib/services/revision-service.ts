@@ -190,7 +190,7 @@ export async function createPendingRevision(payload: CreateRevisionPayload, sour
   const allRevisions = await revisionRepository.list();
   const activeRevisions = allRevisions.filter(r => 
     r.wordpress_id === wordpress_id && 
-    (r.status === 'pending_review' || r.status === 'approved')
+    (r.status === 'pending_review' || (r.status === 'approved' && r.source_modified_at === post.modified))
   );
   if (activeRevisions.length > 0) {
     const activeIds = activeRevisions.map(r => r.revision_id).join(', ');

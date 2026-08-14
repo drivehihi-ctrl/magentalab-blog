@@ -37,8 +37,11 @@ export async function reviewRevision(payload: ReviewPayload) {
   }
 
   // ---- Guard: allowed state transition ----
-  if (revision.status !== 'pending_review') {
-    throw new RevisionError('INVALID_STATUS', `Cannot ${decision} a revision with status ${revision.status}`);
+  if (decision === 'approve' && revision.status !== 'pending_review') {
+    throw new RevisionError('INVALID_STATUS', `Cannot approve a revision with status ${revision.status}`);
+  }
+  if (decision === 'reject' && revision.status !== 'pending_review' && revision.status !== 'approved') {
+    throw new RevisionError('INVALID_STATUS', `Cannot reject a revision with status ${revision.status}`);
   }
 
   // ---- Medical content guard ----
