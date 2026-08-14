@@ -146,6 +146,7 @@ export async function createPendingRevision(payload: CreateRevisionPayload, sour
   const risk = assessMedicalRisk(slug, new_title || post.title.rendered, unsafeContent || post.content.rendered);
 
   // 6. Evidence Validation
+  let cleanEvidence = undefined;
   if (evidence) {
     if (evidence.references && Array.isArray(evidence.references)) {
       for (const ref of evidence.references) {
@@ -169,6 +170,13 @@ export async function createPendingRevision(payload: CreateRevisionPayload, sour
         }
       }
     }
+    
+    // Strict data contract: remove any accidental ansimSummary
+    cleanEvidence = {
+      keyInsight: evidence.keyInsight,
+      cautionNote: evidence.cautionNote,
+      references: evidence.references
+    };
   } else if (risk.isMedical) {
     // Medical evidence missing guard
     throw new RevisionError('MEDICAL_EVIDENCE_MISSING', 'Medical content requires structured evidence');
@@ -207,7 +215,7 @@ export async function createPendingRevision(payload: CreateRevisionPayload, sour
     status: 'pending_review',
     created_at: new Date().toISOString(),
     medical_reviewed: false,
-    evidence: evidence
+    evidence: cleanEvidence
   };
 
   if (unsafeContent) {
@@ -228,10 +236,10 @@ export async function createPendingRevision(payload: CreateRevisionPayload, sour
   await saveRevision(revision);
 
   let evidence_persisted = false;
-  if (evidence) {
+  if (cleanEvidence) {
     const savedRevision = await revisionRepository.get(revision.revision_id);
-    const sameCount = savedRevision?.evidence?.references?.length === evidence.references.length;
-    const sameUrl = savedRevision?.evidence?.references?.[0]?.url === evidence.references[0]?.url;
+    const sameCount = savedRevision?.evidence?.references?.length === cleanEvidence.references.length;
+    const sameUrl = savedRevision?.evidence?.references?.[0]?.url === cleanEvidence.references[0]?.url;
     if (!savedRevision || !savedRevision.evidence || !sameCount || !sameUrl) {
       throw new RevisionError('EVIDENCE_DATA_NOT_PERSISTED', 'Failed to verify evidence persistence in repository.');
     }

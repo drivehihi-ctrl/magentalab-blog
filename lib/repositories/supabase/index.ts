@@ -9,7 +9,12 @@ export const supabaseRevisionRepository: RevisionRepository = {
       console.error('Supabase getRevisions error:', error);
       return [];
     }
-    return data as AIRevision[];
+    return data.map((rev: any) => {
+      if (!rev.new_ansim_summary && rev.evidence?.ansimSummary) {
+        rev.new_ansim_summary = rev.evidence.ansimSummary;
+      }
+      return rev as AIRevision;
+    });
   },
   async get(id: string): Promise<AIRevision | undefined> {
     const { data, error } = await supabaseAdmin.from('ai_revisions').select('*').eq('revision_id', id).single();
@@ -17,13 +22,14 @@ export const supabaseRevisionRepository: RevisionRepository = {
       console.error('Supabase getRevision error:', error);
       return undefined;
     }
-    return data as AIRevision;
+    const rev = data as any;
+    if (!rev.new_ansim_summary && rev.evidence?.ansimSummary) {
+      rev.new_ansim_summary = rev.evidence.ansimSummary;
+    }
+    return rev as AIRevision;
   },
   async save(revision: AIRevision): Promise<void> {
-    const evidencePayload = revision.evidence ? {
-      ...revision.evidence,
-      ...(revision.new_ansim_summary ? { ansimSummary: revision.new_ansim_summary } : {})
-    } : (revision.new_ansim_summary ? { keyInsight: '', cautionNote: '', references: [], ansimSummary: revision.new_ansim_summary } : undefined);
+    const evidencePayload = revision.evidence;
 
     const { error } = await supabaseAdmin.from('ai_revisions').upsert({
       revision_id: revision.revision_id,
@@ -40,6 +46,8 @@ export const supabaseRevisionRepository: RevisionRepository = {
       new_excerpt: revision.new_excerpt,
       previous_meta_description: revision.previous_meta_description,
       new_meta_description: revision.new_meta_description,
+      previous_ansim_summary: revision.previous_ansim_summary,
+      new_ansim_summary: revision.new_ansim_summary,
       media_changes: revision.media_changes,
       evidence: evidencePayload,
       reason: revision.reason,
@@ -62,10 +70,7 @@ export const supabaseRevisionRepository: RevisionRepository = {
 
 export const supabaseBackupRepository: BackupRepository = {
   async save(backup: AIBackup): Promise<void> {
-    const evidencePayload = backup.evidence ? {
-      ...backup.evidence,
-      ...(backup.ansim_summary ? { ansimSummary: backup.ansim_summary } : {})
-    } : (backup.ansim_summary ? { keyInsight: '', cautionNote: '', references: [], ansimSummary: backup.ansim_summary } : undefined);
+    const evidencePayload = backup.evidence;
 
     const { error } = await supabaseAdmin.from('ai_backups').upsert({
       backup_id: backup.backup_id,
@@ -75,6 +80,7 @@ export const supabaseBackupRepository: BackupRepository = {
       content: backup.content,
       excerpt: backup.excerpt,
       meta_description: backup.meta_description,
+      ansim_summary: backup.ansim_summary,
       slug: backup.slug,
       featured_media_id: backup.featured_media,
       evidence: evidencePayload,
@@ -133,21 +139,11 @@ export const supabaseEvidenceRepository: EvidenceRepository = {
     return {
       keyInsight: data.key_insight,
       cautionNote: data.caution_note,
-      references: Array.isArray(data.references) ? data.references.filter((r: any) => r.type !== 'ansim_summary') : [],
-      ansimSummary: ansimSummary || undefined
+      references: Array.isArray(data.references) ? data.references.filter((r: any) => r.type !== 'ansim_summary') : []
     };
   },
   async save(postId: number, evidence: EvidenceData): Promise<void> {
     const cleanReferences = (evidence.references || []).filter((r: any) => r.type !== 'ansim_summary');
-    if (evidence.ansimSummary) {
-      cleanReferences.push({
-        title: 'Ansim Summary',
-        org: 'system',
-        type: 'ansim_summary',
-        url: '',
-        content: evidence.ansimSummary
-      } as any);
-    }
 
     const { error } = await supabaseAdmin.from('ai_evidence').upsert({
       wordpress_id: postId,
