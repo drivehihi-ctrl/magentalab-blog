@@ -94,7 +94,7 @@ export async function applyOneRevision(
   }
 
   // ── 4. Fetch current WP post ─────────────────────────────────────────────
-  const currentPost = await getPost(revision.wordpress_id.toString());
+  const currentPost = await getPost(revision.wordpress_id.toString(), { noCache: true });
   if (!currentPost) {
     return fail(revisionId, 'POST_NOT_FOUND', 'Original post not found on WordPress');
   }

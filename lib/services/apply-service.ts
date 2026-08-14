@@ -41,8 +41,8 @@ export async function applyRevision(payload: ApplyPayload) {
   const beforeSlug = beforePost.slug;
   const beforeStatus = beforePost.status;
   const beforeMedia = beforePost.featured_media;
-  const beforeCategories = JSON.stringify(beforePost.categories || []);
-  const beforeTags = JSON.stringify(beforePost.tags || []);
+  const beforeCategories = JSON.stringify((beforePost.categories || []).slice().sort((a: number, b: number) => a - b));
+  const beforeTags = JSON.stringify((beforePost.tags || []).slice().sort((a: number, b: number) => a - b));
 
   // Preflight step 1: Run dry-run validation first
   const dryRunResult = await applyOneRevision(revision_id, { source, dryRun: true });
@@ -67,8 +67,8 @@ export async function applyRevision(payload: ApplyPayload) {
   const slugUnchanged = !!afterPost && afterPost.slug === beforeSlug;
   const statusUnchanged = !!afterPost && afterPost.status === beforeStatus;
   const mediaUnchanged = !!afterPost && afterPost.featured_media === beforeMedia;
-  const categoriesUnchanged = !!afterPost && JSON.stringify(afterPost.categories || []) === beforeCategories;
-  const tagsUnchanged = !!afterPost && JSON.stringify(afterPost.tags || []) === beforeTags;
+  const categoriesUnchanged = !!afterPost && JSON.stringify((afterPost.categories || []).slice().sort((a: number, b: number) => a - b)) === beforeCategories;
+  const tagsUnchanged = !!afterPost && JSON.stringify((afterPost.tags || []).slice().sort((a: number, b: number) => a - b)) === beforeTags;
 
   const protectedFieldsUnchanged = slugUnchanged && statusUnchanged && mediaUnchanged && categoriesUnchanged && tagsUnchanged;
   const verificationPassed = !!afterPost && titleMatch && contentMatch && excerptMatch && protectedFieldsUnchanged;
