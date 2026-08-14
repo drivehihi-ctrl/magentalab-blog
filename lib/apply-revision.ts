@@ -1,5 +1,6 @@
 import 'server-only';
 import crypto from 'crypto';
+import * as cheerio from 'cheerio';
 import { getRevision, saveRevision, saveBackup, logAction } from '@/lib/ai-revisions';
 import { getPost } from '@/lib/wp';
 import { evidenceRepository } from '@/lib/repositories';
@@ -92,15 +93,59 @@ export async function applyOneRevision(
     }
   }
 
-  // ── 4. Content truncation detection ──────────────────────────────────────
+  // ── 4. Fetch current WP post ─────────────────────────────────────────────
+  const currentPost = await getPost(revision.wordpress_id.toString());
+  if (!currentPost) {
+    return fail(revisionId, 'POST_NOT_FOUND', 'Original post not found on WordPress');
+  }
+
+  // ── 5. Content truncation detection ──────────────────────────────────────
+  const revContent = revision.new_content;
   if (
-    !revision.new_content.includes("Ansim-i's Research Summary") &&
-    !revision.new_content.includes('Research Summary')
+    !revContent.includes("Ansim-i's Research Summary") &&
+    !revContent.includes('Research Summary')
   ) {
     return fail(revisionId, 'CONTENT_TRUNCATION_DETECTED', 'Missing Research Summary in content');
   }
 
-  // ── 5. Evidence duplication in body ──────────────────────────────────────
+  // Length check: Abnormally short compared to original
+  if (currentPost && currentPost.content && currentPost.content.rendered) {
+    const origLength = currentPost.content.rendered.length;
+    if (origLength > 1000 && revContent.length < origLength * 0.3) {
+      return fail(revisionId, 'CONTENT_TRUNCATION_DETECTED', 'Content length is abnormally short compared to original (< 30%)');
+    }
+  }
+
+  // HTML Tag balancing check
+  const checkTags = ['div', 'table', 'ul', 'ol'];
+  for (const tag of checkTags) {
+    const openCount = (revContent.match(new RegExp(`<${tag}(\\s|>)`, 'gi')) || []).length;
+    const closeCount = (revContent.match(new RegExp(`</${tag}>`, 'gi')) || []).length;
+    if (openCount > closeCount) {
+      return fail(revisionId, 'CONTENT_TRUNCATION_DETECTED', `Unclosed HTML tag detected: <${tag}> (open: ${openCount}, close: ${closeCount})`);
+    }
+  }
+
+  // Abrupt tag endings
+  const trimmed = revContent.trim();
+  if (/<[a-z]+[^>]*$/i.test(trimmed)) {
+    return fail(revisionId, 'CONTENT_TRUNCATION_DETECTED', 'Content ends abruptly inside an HTML tag');
+  }
+  if (/="[^"]*$/i.test(trimmed)) {
+    return fail(revisionId, 'CONTENT_TRUNCATION_DETECTED', 'Content ends abruptly inside an HTML attribute');
+  }
+
+  // Parse with Cheerio to ensure it parses without throwing
+  try {
+    const $ = cheerio.load(revContent);
+    if (revContent.length > 50 && $('body').text().trim().length === 0 && !revContent.includes('<img')) {
+      return fail(revisionId, 'CONTENT_TRUNCATION_DETECTED', 'Cheerio parsed an empty body from the HTML');
+    }
+  } catch (e) {
+    return fail(revisionId, 'CONTENT_TRUNCATION_DETECTED', 'HTML parsing failed with Cheerio');
+  }
+
+  // ── 6. Evidence duplication in body ──────────────────────────────────────
   if (
     revision.new_content.includes('[근거]') ||
     revision.new_content.includes('<h2>🔬 Veterinary Evidence')
@@ -110,12 +155,6 @@ export async function applyOneRevision(
       'EVIDENCE_DUPLICATED_IN_BODY',
       'Evidence section must not appear directly in the HTML body.'
     );
-  }
-
-  // ── 6. Fetch current WP post ─────────────────────────────────────────────
-  const currentPost = await getPost(revision.wordpress_id.toString());
-  if (!currentPost) {
-    return fail(revisionId, 'POST_NOT_FOUND', 'Original post not found on WordPress');
   }
 
   // ── 7. Optimistic lock ───────────────────────────────────────────────────
