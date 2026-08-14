@@ -1964,7 +1964,22 @@ APPLY
   - `magentalab_get_review_queue`: Human Review 대기열 조회
 - **제한 사항**: 어떠한 WordPress Mutation 기능(Create, Update, Delete)이나 Publish/Revision Approve 기능도 이 Phase에서는 제공되지 않습니다.
 
-### 6.2 ~ 6.4 (향후 로드맵)
-- 6.2 Revision 생성 및 증거 첨부
-- 6.3 Human Review 승인 연동 (옵션)
-- 6.4 최종 Batch Apply 연동
+### 6.2 Create Revision MCP
+- `magentalab_create_revision`: Human-review 대기 상태의 pending revision을 생성합니다.
+
+### 6.3 Review & Dry-Run MCP
+- `magentalab_review_revision`: Human review 대기 중인 revision을 approve/reject 처리합니다.
+- `magentalab_apply_revision_dry_run`: 시뮬레이션 apply를 수행하며, 실제 WordPress mutation 없이 검증 결과만 반환합니다.
+
+### 6.4 Actual Apply + Rollback MCP
+- **워크플로우**: READ → CREATE REVISION → HUMAN REVIEW → DRY RUN → LIVE APPLY → VERIFY → ROLLBACK
+- **Tools**:
+  - `magentalab_apply_revision`: Approved 상태의 revision을 라이브 WordPress 포스트에 실제 반영합니다.
+  - `magentalab_rollback_revision`: Applied 상태의 revision을 획득된 백업을 기반으로 원상 복원합니다.
+- **안전 규칙**:
+  - Apply/rollback은 실제 WordPress mutation을 발생시킵니다.
+  - 2중 명시적 사용자 승인(`confirm: true`, `live_apply_confirm: true` / `rollback_confirm: true`)이 필수입니다.
+  - 보호 필드(slug, status, featured_media, categories, tags)는 불변(immutable)입니다.
+  - mutation 직전 백업 생성(backup)은 필수입니다.
+  - 자동 publish 및 자동 cache revalidate는 제공되지 않습니다. (`AUTO_CACHE_REVALIDATE=false`)
+

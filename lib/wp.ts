@@ -10,6 +10,7 @@ export interface WPPost {
   excerpt: { rendered: string };
   featured_media: number;
   categories: number[];
+  status?: string;
   lang?: string;
   views?: number;
   meta?: {

@@ -5,6 +5,8 @@ import { getRevision } from '@/lib/ai-revisions';
 import { auditRepository, revisionRepository } from '@/lib/repositories';
 import { createPendingRevision, RevisionError } from '@/lib/services/revision-service';
 import { reviewRevision } from '@/lib/services/review-service';
+import { applyRevision } from '@/lib/services/apply-service';
+import { rollbackRevision } from '@/lib/services/rollback-service';
 import { controlledApply } from '@/lib/controlled-apply';
 
 export function createMCPServer(): Server {
@@ -169,6 +171,34 @@ export function createMCPServer(): Server {
               confirm: { type: "boolean", enum: [true] }
             },
             required: ["revision_ids", "confirm"],
+            additionalProperties: false
+          }
+        },
+        {
+          name: "magentalab_apply_revision",
+          description: "Applies an approved revision to the live WordPress post. This causes a real WordPress mutation. Only call after the user explicitly requests live apply. A successful dry-run validation is performed immediately before the live mutation.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              revision_id: { type: "string" },
+              confirm: { type: "boolean", enum: [true] },
+              live_apply_confirm: { type: "boolean", enum: [true] }
+            },
+            required: ["revision_id", "confirm", "live_apply_confirm"],
+            additionalProperties: false
+          }
+        },
+        {
+          name: "magentalab_rollback_revision",
+          description: "Restores a previously applied revision using its recorded backup. This causes a real WordPress mutation. Only call after the user explicitly requests rollback.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              revision_id: { type: "string" },
+              confirm: { type: "boolean", enum: [true] },
+              rollback_confirm: { type: "boolean", enum: [true] }
+            },
+            required: ["revision_id", "confirm", "rollback_confirm"],
             additionalProperties: false
           }
         }
@@ -370,6 +400,26 @@ export function createMCPServer(): Server {
           }
 
           const result = await controlledApply(revisionIds, { dryRun: true, source: 'mcp' });
+          return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+        }
+
+        case "magentalab_apply_revision": {
+          const result = await applyRevision({
+            revision_id: String(args.revision_id || ''),
+            confirm: args.confirm === true,
+            live_apply_confirm: args.live_apply_confirm === true,
+            source: 'mcp'
+          });
+          return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+        }
+
+        case "magentalab_rollback_revision": {
+          const result = await rollbackRevision({
+            revision_id: String(args.revision_id || ''),
+            confirm: args.confirm === true,
+            rollback_confirm: args.rollback_confirm === true,
+            source: 'mcp'
+          });
           return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
         }
 

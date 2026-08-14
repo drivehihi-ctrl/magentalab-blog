@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
-import { getRevision, saveRevision, getBackupByRevision, logAction } from '@/lib/ai-revisions';
-import { evidenceRepository } from '@/lib/repositories';
 import { isAIContentAuthenticated } from '@/lib/ai-content-auth';
-import { getWordPressWriteConfig, getWordPressWriteHeaders } from '@/lib/wp-write-auth';
+import { rollbackRevision } from '@/lib/services/rollback-service';
+import { RevisionError } from '@/lib/services/revision-service';
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   if (!isAIContentAuthenticated(req)) {
@@ -12,64 +11,32 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const { id } = await params;
   const body = await req.json();
 
-  if (body.confirm !== true) {
-    return NextResponse.json({ error: 'REQUIRE_CONFIRM', message: 'confirm: true is required' }, { status: 400 });
-  }
-
   try {
-    const revision = await getRevision(id);
-    if (!revision) {
-      return NextResponse.json({ error: 'NOT_FOUND', message: 'Revision not found' }, { status: 404 });
-    }
-    if (revision.status !== 'applied') {
-      return NextResponse.json({ error: 'INVALID_STATUS', message: 'Only applied revisions can be rolled back' }, { status: 400 });
-    }
-
-    const backup = await getBackupByRevision(id);
-    if (!backup) {
-      return NextResponse.json({ error: 'BACKUP_NOT_FOUND', message: 'No backup found for this revision' }, { status: 404 });
-    }
-
-    const { baseUrl } = getWordPressWriteConfig();
-
-    const updatePayload: Record<string, unknown> = {
-      title: backup.title,
-      content: backup.content,
-      excerpt: backup.excerpt
-    };
-
-    if (backup.featured_media !== undefined) {
-      updatePayload.featured_media = backup.featured_media;
-    }
-
-    const wpRes = await fetch(`${baseUrl}/wp-json/wp/v2/posts/${backup.wordpress_id}`, {
-      method: 'POST',
-      headers: getWordPressWriteHeaders({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify(updatePayload)
+    const result = await rollbackRevision({
+      revision_id: id,
+      confirm: body.confirm,
+      source: 'single',
     });
 
-    if (!wpRes.ok) {
-      const errorData = await wpRes.text();
-      throw new Error(`WP Rollback Failed: ${errorData}`);
-    }
-
-    await evidenceRepository.restore(backup.wordpress_id, backup.evidence || null);
-
-    revision.status = 'rolled_back';
-    await saveRevision(revision);
-
-    await logAction({
-      timestamp: new Date().toISOString(),
-      action: 'ROLLBACK_REVISION',
-      wordpress_id: revision.wordpress_id,
-      content_id: revision.content_id,
-      revision_id: revision.revision_id,
-      source: 'system',
-      status: 'success'
+    return NextResponse.json({
+      success: true,
+      message: 'Rollback completed successfully',
+      revision_id: result.revision_id,
+      backup_id: result.backup_id,
+      status: result.status,
     });
-
-    return NextResponse.json({ success: true, message: 'Rollback completed successfully' });
   } catch (error: any) {
+    if (error instanceof RevisionError) {
+      const statusMap: Record<string, number> = {
+        CONFIRMATION_REQUIRED: 400,
+        ROLLBACK_CONFIRMATION_REQUIRED: 400,
+        NOT_FOUND: 404,
+        INVALID_STATUS: 400,
+        BACKUP_NOT_FOUND: 404,
+        WP_WRITE_FAILED: 500,
+      };
+      return NextResponse.json({ error: error.code, message: error.message }, { status: statusMap[error.code] || 400 });
+    }
     console.error('Error rolling back revision:', error);
     return NextResponse.json({ error: 'INTERNAL_ERROR', message: error.message }, { status: 500 });
   }
