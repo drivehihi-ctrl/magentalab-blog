@@ -3,7 +3,7 @@ import { evidenceRepository } from '@/lib/repositories';
 import { getWordPressWriteConfig, getWordPressWriteHeaders } from '@/lib/wp-write-auth';
 import { getPost } from '@/lib/wp';
 import { RevisionError } from '@/lib/services/revision-service';
-import { compareNormalized, compareEvidence } from '@/lib/services/verification-helpers';
+import { compareNormalized, compareEvidence, compareAnsimSummary } from '@/lib/services/verification-helpers';
 
 export interface RollbackPayload {
   revision_id: string;
@@ -74,7 +74,11 @@ export async function rollbackRevision(payload: RollbackPayload) {
 
   // Restore evidence (including backup ansim_summary if present)
   await evidenceRepository.restore(backup.wordpress_id, backup.evidence || null);
+  if (evidenceRepository.saveAnsimSummary) {
+    await evidenceRepository.saveAnsimSummary(backup.wordpress_id, backup.ansim_summary || null);
+  }
   const restoredEvidence = await evidenceRepository.getByPostId(backup.wordpress_id);
+  const restoredAnsimSummary = evidenceRepository.getAnsimSummary ? await evidenceRepository.getAnsimSummary(backup.wordpress_id) : undefined;
 
   // Post-rollback verification: fetch live WP post after rollback without cache
   const currentPost = await getPost(backup.wordpress_id.toString(), { noCache: true });
@@ -87,11 +91,14 @@ export async function rollbackRevision(payload: RollbackPayload) {
   
   // Strict canonical structure & null symmetry evidence comparison
   const evidenceMatch = compareEvidence(backup.evidence, restoredEvidence);
+  const ansimSummaryMatch = (backup.ansim_summary === undefined || backup.ansim_summary === null)
+    ? (restoredAnsimSummary === undefined || restoredAnsimSummary === null)
+    : compareAnsimSummary(restoredAnsimSummary, backup.ansim_summary);
 
-  const restoreVerified = !!currentPost && titleMatch && contentMatch && excerptMatch && slugUnchanged && mediaUnchanged && evidenceMatch;
+  const restoreVerified = !!currentPost && titleMatch && contentMatch && excerptMatch && slugUnchanged && mediaUnchanged && evidenceMatch && ansimSummaryMatch;
 
   if (!restoreVerified) {
-    const failureDetails = `title=${titleMatch}, content=${contentMatch}, excerpt=${excerptMatch}, slug=${slugUnchanged}, media=${mediaUnchanged}, evidence=${evidenceMatch}`;
+    const failureDetails = `title=${titleMatch}, content=${contentMatch}, excerpt=${excerptMatch}, slug=${slugUnchanged}, media=${mediaUnchanged}, evidence=${evidenceMatch}, ansim=${ansimSummaryMatch}`;
     await logAction({
       timestamp: new Date().toISOString(),
       action: 'ROLLBACK_VERIFICATION_FAILED',

@@ -126,8 +126,8 @@ export const supabaseAuditLogRepository: AuditLogRepository = {
 };
 
 export const supabaseEvidenceRepository: EvidenceRepository = {
-  async getByPostId(postId: number): Promise<EvidenceData | null> {
-    const { data, error } = await supabaseAdmin.from('ai_evidence').select('*').eq('wordpress_id', postId).maybeSingle();
+  async getByPostId(wordpressId: number): Promise<EvidenceData | null> {
+    const { data, error } = await supabaseAdmin.from('ai_evidence').select('*').eq('wordpress_id', wordpressId).maybeSingle();
     if (error || !data) return null;
     let ansimSummary = data.ansim_summary || data.evidence?.ansimSummary;
     if (!ansimSummary && Array.isArray(data.references)) {
@@ -142,11 +142,11 @@ export const supabaseEvidenceRepository: EvidenceRepository = {
       references: Array.isArray(data.references) ? data.references.filter((r: any) => r.type !== 'ansim_summary') : []
     };
   },
-  async save(postId: number, evidence: EvidenceData): Promise<void> {
+  async save(wordpressId: number, evidence: EvidenceData): Promise<void> {
     const cleanReferences = (evidence.references || []).filter((r: any) => r.type !== 'ansim_summary');
 
     const { error } = await supabaseAdmin.from('ai_evidence').upsert({
-      wordpress_id: postId,
+      wordpress_id: wordpressId,
       key_insight: evidence.keyInsight,
       caution_note: evidence.cautionNote,
       references: cleanReferences,
@@ -158,15 +158,50 @@ export const supabaseEvidenceRepository: EvidenceRepository = {
       throw error;
     }
   },
-  async validate(postId: number): Promise<boolean> {
-    const ev = await this.getByPostId(postId);
+  async validate(wordpressId: number): Promise<boolean> {
+    const ev = await this.getByPostId(wordpressId);
     return ev !== null && Array.isArray(ev.references) && ev.references.length > 0;
   },
-  async restore(postId: number, evidence: EvidenceData | null): Promise<void> {
+  async restore(wordpressId: number, evidence: EvidenceData | null): Promise<void> {
     if (evidence === null) {
-      await supabaseAdmin.from('ai_evidence').delete().eq('wordpress_id', postId);
+      await supabaseAdmin.from('ai_evidence').delete().eq('wordpress_id', wordpressId);
     } else {
-      await this.save(postId, evidence);
+      await this.save(wordpressId, evidence);
+    }
+  },
+  async getAnsimSummary(wordpressId: number): Promise<string | null> {
+    const { data, error } = await supabaseAdmin.from('ai_evidence').select('ansim_summary').eq('wordpress_id', wordpressId).maybeSingle();
+    if (error || !data) return null;
+    return data.ansim_summary || null;
+  },
+  async saveAnsimSummary(wordpressId: number, summary: string | null): Promise<void> {
+    const { data: existing } = await supabaseAdmin
+      .from('ai_evidence')
+      .select('id')
+      .eq('wordpress_id', wordpressId)
+      .maybeSingle();
+
+    let error;
+    if (existing) {
+      const res = await supabaseAdmin
+        .from('ai_evidence')
+        .update({ ansim_summary: summary, updated_at: new Date().toISOString() })
+        .eq('wordpress_id', wordpressId);
+      error = res.error;
+    } else {
+      const res = await supabaseAdmin
+        .from('ai_evidence')
+        .insert({
+          wordpress_id: wordpressId,
+          ansim_summary: summary,
+          updated_at: new Date().toISOString(),
+        });
+      error = res.error;
+    }
+
+    if (error) {
+      console.error('Supabase saveAnsimSummary error:', error);
+      throw error;
     }
   }
 };

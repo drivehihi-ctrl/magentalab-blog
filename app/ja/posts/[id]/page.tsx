@@ -162,11 +162,22 @@ export default async function JapanesePostDetailPage({ params }: PageProps) {
   const relatedPosts = getRelatedPosts(post, allPosts, 3);
   let customEvidence = await evidenceRepository.getByPostId(post.id);
   
-  if (!customEvidence) {
-    const scriptMatch = post.content.rendered.match(/<script type="application\/json" id="custom-vet-references">([\s\S]*?)<\/script>/);
-    if (scriptMatch) {
-      try { customEvidence = JSON.parse(scriptMatch[1]); } catch(e) {}
-    }
+  // 1. Authoritative Source
+  const rootAnsimSummary = (evidenceRepository.getAnsimSummary) ? await evidenceRepository.getAnsimSummary(post.id) : null;
+  let ansimSummary: string | undefined = rootAnsimSummary || undefined;
+  
+  // 2. Legacy Fallback
+  const scriptMatch = post.content.rendered.match(/<script type="application\/json" id="custom-vet-references">([\s\S]*?)<\/script>/);
+  if (scriptMatch) {
+    try { 
+      const parsed = JSON.parse(scriptMatch[1]);
+      if (!ansimSummary) {
+        ansimSummary = parsed.ansimSummary || parsed.ansim_summary || undefined;
+      }
+      if (!customEvidence && parsed.references) {
+        customEvidence = parsed;
+      }
+    } catch(e) {}
   }
   const imageUrl = getFeaturedImage(post);
   const categories = getCategories(post);
@@ -303,7 +314,7 @@ export default async function JapanesePostDetailPage({ params }: PageProps) {
           
           {/* GEO Optimized Summary Box */}
           <AnsimiSummary 
-            ansimSummary={customEvidence?.ansimSummary}
+            ansimSummary={ansimSummary}
             excerpt={post.excerpt.rendered} 
             categoryNames={categories.map(c => c.name)} 
             lang="ja"

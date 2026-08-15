@@ -4,7 +4,7 @@ import { getPost } from '@/lib/wp';
 import { evidenceRepository } from '@/lib/repositories';
 import { RevisionError } from '@/lib/services/revision-service';
 import { rollbackRevision } from '@/lib/services/rollback-service';
-import { compareNormalized } from '@/lib/services/verification-helpers';
+import { compareNormalized, compareAnsimSummary } from '@/lib/services/verification-helpers';
 
 export interface ApplyPayload {
   revision_id: string;
@@ -60,12 +60,15 @@ export async function applyRevision(payload: ApplyPayload) {
   // Post-Apply Verification: fetch live WP post after apply without cache
   const afterPost = await getPost(revision.wordpress_id.toString(), { noCache: true });
   const liveEvidence = await evidenceRepository.getByPostId(revision.wordpress_id);
+  const liveAnsimSummary = evidenceRepository.getAnsimSummary ? await evidenceRepository.getAnsimSummary(revision.wordpress_id) : undefined;
 
   // Strict verification checks
   const titleMatch = !!afterPost && compareNormalized(afterPost.title?.rendered, revision.new_title);
   const contentMatch = !!afterPost && compareNormalized(afterPost.content?.rendered, revision.new_content);
   const excerptMatch = !!afterPost && compareNormalized(afterPost.excerpt?.rendered, revision.new_excerpt);
-  const ansimSummaryMatch = !revision.new_ansim_summary || compareNormalized(liveEvidence?.ansimSummary, revision.new_ansim_summary);
+  const ansimSummaryMatch = (revision.new_ansim_summary === undefined || revision.new_ansim_summary === null) 
+    ? true 
+    : compareAnsimSummary(liveAnsimSummary, revision.new_ansim_summary);
 
   const slugUnchanged = !!afterPost && afterPost.slug === beforeSlug;
   const statusUnchanged = !!afterPost && afterPost.status === beforeStatus;
@@ -102,7 +105,7 @@ export async function applyRevision(payload: ApplyPayload) {
       console.error('[applyRevision] Auto-rollback failed:', rbErr);
     }
 
-    const failureDetails = `title=${titleMatch}, content=${contentMatch}, excerpt=${excerptMatch}, ansim=${ansimSummaryMatch}, slug=${slugUnchanged}, status=${statusUnchanged}, media=${mediaUnchanged}, categories=${categoriesUnchanged}, tags=${tagsUnchanged}`;
+    const failureDetails = `title=${titleMatch}, content=${contentMatch}, excerpt=${excerptMatch}, ansimSummary=${ansimSummaryMatch}, slug=${slugUnchanged}, status=${statusUnchanged}, media=${mediaUnchanged}, categories=${categoriesUnchanged}, tags=${tagsUnchanged}`;
 
     if (autoRollbackSuccess) {
       const revToUpdate = await getRevision(revision_id);

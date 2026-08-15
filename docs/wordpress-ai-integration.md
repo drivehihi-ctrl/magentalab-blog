@@ -1983,3 +1983,21 @@ APPLY
   - mutation 직전 백업 생성(backup)은 필수입니다.
   - 자동 publish 및 자동 cache revalidate는 제공되지 않습니다. (`AUTO_CACHE_REVALIDATE=false`)
 
+
+
+## 10. AUTH TEST SAFETY RULE
+
+**WordPress Application Password/Auth 테스트는 절대 POST/PUT/PATCH로 하지 않는다.**
+
+허용:
+- authenticated GET
+- read-only endpoint
+- no-op health/read probe
+
+금지:
+- title=\'test\'
+- content=\'test\'
+- empty update
+- write-based credential verification
+
+이 규칙은 운영 중 사고로 인한 라이브 데이터 오염을 방지하기 위함입니다.

@@ -16,10 +16,12 @@ export interface AuditLogRepository {
 }
 
 export interface EvidenceRepository {
-  getByPostId(postId: number): Promise<EvidenceData | null>;
-  save(postId: number, evidence: EvidenceData): Promise<void>;
-  validate(postId: number): Promise<boolean>;
-  restore(postId: number, evidence: EvidenceData | null): Promise<void>;
+  getByPostId(wordpressId: number): Promise<EvidenceData | null>;
+  save(wordpressId: number, evidence: EvidenceData): Promise<void>;
+  validate(wordpressId: number): Promise<boolean>;
+  restore(wordpressId: number, evidence: EvidenceData | null): Promise<void>;
+  getAnsimSummary(wordpressId: number): Promise<string | null>;
+  saveAnsimSummary(wordpressId: number, summary: string | null): Promise<void>;
 }
 
 export interface ContentAuditResult {

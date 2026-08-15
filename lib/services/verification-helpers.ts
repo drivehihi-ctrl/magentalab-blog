@@ -52,13 +52,37 @@ export function getCanonicalLength(input: string | undefined | null): number {
  * No similarity or fuzzy fallback is permitted in verification.
  */
 export function compareNormalized(a: string | undefined | null, b: string | undefined | null): boolean {
-  if (a === undefined || a === null || b === undefined || b === null) {
-    return false;
-  }
-  const normA = normalizeText(a);
-  const normB = normalizeText(b);
-  if (!normA && !normB) return false;
-  return normA === normB;
+  if (a === b) return true;
+  if (!a && !b) return true;
+  if (!a || !b) return false;
+  return normalizeText(a) === normalizeText(b);
+}
+
+/**
+ * Normalizes ansim_summary text for strict comparison, preserving newlines.
+ * Does not parse HTML or collapse newlines to spaces.
+ */
+export function normalizeAnsimSummary(input: string | undefined | null): string {
+  if (!input) return '';
+  return input
+    .normalize('NFC')
+    .replace(/[\u200B-\u200D\uFEFF]/g, '')
+    .replace(/\r\n/g, '\n')
+    // Remove trailing spaces on each line, but keep the newline
+    .split('\n')
+    .map(line => line.trimEnd())
+    .join('\n')
+    .trim();
+}
+
+/**
+ * Compares two ansim_summary strings, preserving newlines.
+ */
+export function compareAnsimSummary(a: string | undefined | null, b: string | undefined | null): boolean {
+  if (a === b) return true;
+  if (!a && !b) return true;
+  if (!a || !b) return false;
+  return normalizeAnsimSummary(a) === normalizeAnsimSummary(b);
 }
 
 /**

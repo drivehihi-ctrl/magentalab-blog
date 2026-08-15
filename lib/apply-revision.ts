@@ -220,12 +220,17 @@ export async function applyOneRevision(
   const previousEvidence = await evidenceRepository.getByPostId(currentPost.id);
 
   let previous_ansim_summary: string | undefined = undefined;
-  const ansimMatch = currentPost.content.rendered.match(/<script type="application\/json" id="custom-vet-references">([\s\S]*?)<\/script>/);
-  if (ansimMatch) {
-    try {
-      const liveEv = JSON.parse(ansimMatch[1]);
-      previous_ansim_summary = liveEv.ansimSummary || liveEv.ansim_summary;
-    } catch (e) {}
+  const rootAnsimSummary = await evidenceRepository.getAnsimSummary(currentPost.id);
+  if (rootAnsimSummary) {
+    previous_ansim_summary = rootAnsimSummary;
+  } else {
+    const ansimMatch = currentPost.content.rendered.match(/<script type="application\/json" id="custom-vet-references">([\s\S]*?)<\/script>/);
+    if (ansimMatch) {
+      try {
+        const liveEv = JSON.parse(ansimMatch[1]);
+        previous_ansim_summary = liveEv.ansimSummary || liveEv.ansim_summary;
+      } catch (e) {}
+    }
   }
 
   await saveBackup({
@@ -274,6 +279,22 @@ export async function applyOneRevision(
     }
   }
 
+  // ── 11.5 Save Ansim Summary (authoritative source) ───────────────────────
+  let ansimSummarySaved = false;
+  if (revision.new_ansim_summary !== undefined && revision.new_ansim_summary !== null) {
+    try {
+      if (evidenceRepository.saveAnsimSummary) {
+        await evidenceRepository.saveAnsimSummary(currentPost.id, revision.new_ansim_summary);
+      }
+      ansimSummarySaved = true;
+    } catch {
+      if (evidenceSaved) {
+        await evidenceRepository.restore(currentPost.id, previousEvidence);
+      }
+      return fail(revisionId, 'ANSIM_SUMMARY_NOT_PERSISTED', 'Failed to persist ansim summary.');
+    }
+  }
+
   // ── 12. WordPress write — immutable fields excluded ───────────────────────
   // NEVER send: slug, status, categories, tags, meta, noindex, password, featured_media
   // Controlled Content Apply ONLY updates title, content, excerpt.
@@ -298,6 +319,11 @@ export async function applyOneRevision(
   } catch (wpError: any) {
     if (evidenceSaved) {
       await evidenceRepository.restore(currentPost.id, previousEvidence);
+    }
+    if (ansimSummarySaved && evidenceRepository.saveAnsimSummary) {
+      await evidenceRepository.saveAnsimSummary(currentPost.id, previous_ansim_summary || null);
+    }
+    if (evidenceSaved || ansimSummarySaved) {
       await logAction({
         timestamp: new Date().toISOString(),
         action: 'EVIDENCE_EXTERNAL_ROLLBACK',

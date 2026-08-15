@@ -119,7 +119,6 @@ export function createMCPServer(): Server {
                 properties: {
                   keyInsight: { type: "string" },
                   cautionNote: { type: "string" },
-                  ansimSummary: { type: "string" },
                   references: {
                     type: "array",
                     items: {

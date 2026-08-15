@@ -67,35 +67,54 @@ export const jsonAuditLogRepository: AuditLogRepository = {
 };
 
 export const jsonEvidenceRepository: EvidenceRepository = {
-  async getByPostId(postId: number): Promise<EvidenceData | null> {
+  async getByPostId(wordpressId: number): Promise<EvidenceData | null> {
     const filePath = path.join(DATA_DIR, 'evidence.json');
     if (!fs.existsSync(filePath)) return null;
     const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-    return data[postId.toString()] || null;
+    return data[wordpressId.toString()] || null;
   },
-  async save(postId: number, evidence: EvidenceData): Promise<void> {
+  async save(wordpressId: number, evidence: EvidenceData): Promise<void> {
     const filePath = path.join(DATA_DIR, 'evidence.json');
     let data: Record<string, EvidenceData> = {};
     if (fs.existsSync(filePath)) {
       data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
     }
-    data[postId.toString()] = evidence;
+    data[wordpressId.toString()] = evidence;
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
   },
-  async validate(postId: number): Promise<boolean> {
-    const evidence = await this.getByPostId(postId);
-    return evidence !== null && Array.isArray(evidence.references) && evidence.references.length > 0;
+  async validate(wordpressId: number): Promise<boolean> {
+    const ev = await this.getByPostId(wordpressId);
+    return ev !== null && Array.isArray(ev.references) && ev.references.length > 0;
   },
-  async restore(postId: number, evidence: EvidenceData | null): Promise<void> {
+  async restore(wordpressId: number, evidence: EvidenceData | null): Promise<void> {
     const filePath = path.join(DATA_DIR, 'evidence.json');
     let data: Record<string, EvidenceData> = {};
     if (fs.existsSync(filePath)) {
       data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
     }
     if (evidence === null) {
-      delete data[postId.toString()];
+      delete data[wordpressId.toString()];
     } else {
-      data[postId.toString()] = evidence;
+      data[wordpressId.toString()] = evidence;
+    }
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
+  },
+  async getAnsimSummary(wordpressId: number): Promise<string | null> {
+    const filePath = path.join(DATA_DIR, 'ansim_summary.json');
+    if (!fs.existsSync(filePath)) return null;
+    const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    return data[wordpressId.toString()] || null;
+  },
+  async saveAnsimSummary(wordpressId: number, summary: string | null): Promise<void> {
+    const filePath = path.join(DATA_DIR, 'ansim_summary.json');
+    let data: Record<string, string> = {};
+    if (fs.existsSync(filePath)) {
+      data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    }
+    if (summary === null) {
+      delete data[wordpressId.toString()];
+    } else {
+      data[wordpressId.toString()] = summary;
     }
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
   }

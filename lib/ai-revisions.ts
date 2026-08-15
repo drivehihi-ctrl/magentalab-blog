@@ -22,7 +22,6 @@ export interface EvidenceData {
   keyInsight: string;
   cautionNote: string;
   references: EvidenceReference[];
-  ansimSummary?: string;
 }
 
 export interface AIRevision {
