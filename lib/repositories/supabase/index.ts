@@ -93,7 +93,16 @@ export const supabaseBackupRepository: BackupRepository = {
     }
   },
   async getByRevision(revision_id: string): Promise<AIBackup | undefined> {
-    const { data, error } = await supabaseAdmin.from('ai_backups').select('*').eq('revision_id', revision_id).single();
+    // A revision can have more than one backup after a retried apply. Select
+    // the newest snapshot deterministically instead of treating multiple rows
+    // as BACKUP_NOT_FOUND via .single().
+    const { data, error } = await supabaseAdmin
+      .from('ai_backups')
+      .select('*')
+      .eq('revision_id', revision_id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
     if (error || !data) {
       return undefined;
     }
