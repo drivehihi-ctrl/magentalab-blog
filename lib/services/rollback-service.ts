@@ -3,7 +3,7 @@ import { evidenceRepository } from '@/lib/repositories';
 import { getWordPressWriteConfig, getWordPressWriteHeaders } from '@/lib/wp-write-auth';
 import { getPost } from '@/lib/wp';
 import { RevisionError } from '@/lib/services/revision-service';
-import { compareNormalized, compareEvidence, compareAnsimSummary } from '@/lib/services/verification-helpers';
+import { compareNormalized, compareCanonicalContent, compareEvidence, compareAnsimSummary } from '@/lib/services/verification-helpers';
 
 export interface RollbackPayload {
   revision_id: string;
@@ -84,7 +84,7 @@ export async function rollbackRevision(payload: RollbackPayload) {
   const currentPost = await getPost(backup.wordpress_id.toString(), { noCache: true });
 
   const titleMatch = !!currentPost && compareNormalized(currentPost.title?.rendered, backup.title);
-  const contentMatch = !!currentPost && compareNormalized(currentPost.content?.rendered, backup.content);
+  const contentMatch = !!currentPost && compareCanonicalContent(backup.content, currentPost.content?.rendered);
   const excerptMatch = !!currentPost && compareNormalized(currentPost.excerpt?.rendered, backup.excerpt);
   const slugUnchanged = !!currentPost && currentPost.slug === backup.slug;
   const mediaUnchanged = !!currentPost && (backup.featured_media === undefined || currentPost.featured_media === backup.featured_media);

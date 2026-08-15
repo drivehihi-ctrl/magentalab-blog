@@ -4,7 +4,7 @@ import { getPost } from '@/lib/wp';
 import { evidenceRepository } from '@/lib/repositories';
 import { RevisionError } from '@/lib/services/revision-service';
 import { rollbackRevision } from '@/lib/services/rollback-service';
-import { compareNormalized, compareAnsimSummary } from '@/lib/services/verification-helpers';
+import { compareNormalized, compareCanonicalContent, compareAnsimSummary } from '@/lib/services/verification-helpers';
 
 export interface ApplyPayload {
   revision_id: string;
@@ -64,7 +64,7 @@ export async function applyRevision(payload: ApplyPayload) {
 
   // Strict verification checks
   const titleMatch = !!afterPost && compareNormalized(afterPost.title?.rendered, revision.new_title);
-  const contentMatch = !!afterPost && compareNormalized(afterPost.content?.rendered, revision.new_content);
+  const contentMatch = !!afterPost && compareCanonicalContent(revision.new_content, afterPost.content?.rendered);
   const excerptMatch = !!afterPost && compareNormalized(afterPost.excerpt?.rendered, revision.new_excerpt);
   const ansimSummaryMatch = (revision.new_ansim_summary === undefined || revision.new_ansim_summary === null) 
     ? true 
