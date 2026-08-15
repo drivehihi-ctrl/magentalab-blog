@@ -4,6 +4,7 @@ import { getWordPressWriteConfig, getWordPressWriteHeaders } from '@/lib/wp-writ
 import { getPost } from '@/lib/wp';
 import { RevisionError } from '@/lib/services/revision-service';
 import { compareNormalized, compareCanonicalContent, compareEvidence, compareAnsimSummary } from '@/lib/services/verification-helpers';
+import { isRollbackAllowed } from '@/lib/services/rollback-transition';
 
 export interface RollbackPayload {
   revision_id: string;
@@ -28,13 +29,12 @@ export async function rollbackRevision(payload: RollbackPayload) {
     throw new RevisionError('NOT_FOUND', 'Revision not found');
   }
 
-  if (revision.status !== 'applied' && revision.status !== 'applying' && revision.status !== 'approved' && revision.status !== 'rollback_pending') {
-    throw new RevisionError('INVALID_STATUS', `Revision status must be 'applied', 'applying', or 'approved' to rollback. Current status: ${revision.status}`);
-  }
-
   const backup = await getBackupByRevision(revision_id);
   if (!backup) {
     throw new RevisionError('BACKUP_NOT_FOUND', 'No backup found for this revision');
+  }
+  if (!isRollbackAllowed(revision.status, true)) {
+    throw new RevisionError('INVALID_STATUS', `Revision status does not allow rollback. Current status: ${revision.status}`);
   }
 
   const { baseUrl } = getWordPressWriteConfig();
@@ -84,7 +84,11 @@ export async function rollbackRevision(payload: RollbackPayload) {
   const currentPost = await getPost(backup.wordpress_id.toString(), { noCache: true });
 
   const titleMatch = !!currentPost && compareNormalized(currentPost.title?.rendered, backup.title);
-  const contentMatch = !!currentPost && compareCanonicalContent(backup.content, currentPost.content?.rendered);
+  // The backup contains context=edit raw author source, while getPost returns
+  // content.rendered. Verify the restored rendered post against the revision's
+  // same-layer pre-apply rendered snapshot; comparing raw to rendered would
+  // create a false mismatch after normal WordPress rendering.
+  const contentMatch = !!currentPost && compareCanonicalContent(revision.previous_content, currentPost.content?.rendered);
   const excerptMatch = !!currentPost && compareNormalized(currentPost.excerpt?.rendered, backup.excerpt);
   const slugUnchanged = !!currentPost && currentPost.slug === backup.slug;
   const mediaUnchanged = !!currentPost && (backup.featured_media === undefined || currentPost.featured_media === backup.featured_media);
