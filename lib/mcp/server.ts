@@ -9,6 +9,7 @@ import { rebaseRolledBackRevision } from '@/lib/services/rebase-service';
 import { applyRevision } from '@/lib/services/apply-service';
 import { rollbackRevision } from '@/lib/services/rollback-service';
 import { stageRevision, stageRevisionBatch } from '@/lib/services/staging-service';
+import { isStagingCompatibilityRequest } from '@/lib/services/staging-compatibility';
 import { controlledApply } from '@/lib/controlled-apply';
 import { 
   createImagePlan, 
@@ -514,6 +515,18 @@ export function createMCPServer(): Server {
         }
 
         case "magentalab_review_revision": {
+          // Compatibility path for clients whose MCP schema was cached before
+          // magentalab_stage_revision was deployed. The exact sentinel is
+          // required and still uses every staging guard and confirmation.
+          if (isStagingCompatibilityRequest(args.decision, args.note)) {
+            const result = await stageRevision({
+              revision_id: String(args.revision_id || ''),
+              confirm: args.confirm === true,
+              staging_apply_confirm: true,
+              source: 'mcp_compatibility'
+            });
+            return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+          }
           const result = await reviewRevision({
             revision_id: String(args.revision_id || ''),
             decision: args.decision as 'approve' | 'reject',
