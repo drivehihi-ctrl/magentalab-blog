@@ -1,4 +1,4 @@
-import { ImageAsset, ImagePipelineError } from './types';
+import { ImageAsset } from './types';
 import { validateImagePrompt, validateAltText } from './validators';
 import { imageAssetRepository } from '../repositories/image-asset-repository';
 import { auditLogRepository } from '../repositories';

@@ -41,7 +41,7 @@ export async function reviewImageAsset(imageAssetId: string, decision: 'approve'
 
   const newStatus = decision === 'approve' ? 'approved' : 'rejected';
   
-  const updates: any = { status: newStatus };
+  const updates: Partial<ImageAsset> = { status: newStatus };
   if (decision === 'approve') {
     updates.approved_at = new Date().toISOString();
   } else {

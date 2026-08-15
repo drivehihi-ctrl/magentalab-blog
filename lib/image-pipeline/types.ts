@@ -20,6 +20,11 @@ export type ImageSlot =
   | "image_5"
   | "image_6";
 
+export type ImagePlacementType =
+  | "after_title"
+  | "after_heading"
+  | "after_paragraph";
+
 export interface ImageAsset {
   id?: string;
   image_asset_id: string;
@@ -35,10 +40,14 @@ export interface ImageAsset {
   
   prompt: string;
   alt_text: string;
+  tags?: string[];
+  placement_type?: ImagePlacementType | null;
+  anchor_text?: string | null;
+  sort_order?: number | null;
   
   generator?: string | null;
   model?: string | null;
-  generation_metadata?: Record<string, any> | null;
+  generation_metadata?: Record<string, unknown> | null;
   
   original_file_url?: string | null;
   stored_file_url?: string | null;
@@ -63,8 +72,11 @@ export interface ImageAsset {
 }
 
 export class ImagePipelineError extends Error {
-  constructor(public code: string, message: string) {
+  public code: string;
+
+  constructor(code: string, message: string) {
     super(message);
     this.name = 'ImagePipelineError';
+    this.code = code;
   }
 }

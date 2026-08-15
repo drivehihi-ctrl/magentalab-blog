@@ -5,7 +5,7 @@ import { auditLogRepository } from '../repositories';
 export interface RegistrationDetails {
   generator?: string;
   model?: string;
-  generation_metadata?: Record<string, any>;
+  generation_metadata?: Record<string, unknown>;
   original_file_url?: string;
   stored_file_url?: string;
   width?: number;

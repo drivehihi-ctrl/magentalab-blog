@@ -1,25 +1,41 @@
 import { supabaseAdmin } from '@/lib/supabase-admin';
-import { ImageAsset, ImageAssetStatus } from '../image-pipeline/types';
+import { ImageAsset } from '../image-pipeline/types';
+
+function imagePlanRow(asset: ImageAsset) {
+  return {
+    image_asset_id: asset.image_asset_id,
+    wordpress_id: asset.wordpress_id,
+    content_id: asset.content_id,
+    revision_id: asset.revision_id,
+    slot: asset.slot,
+    role: asset.role,
+    source_type: asset.source_type,
+    ansim_required: asset.ansim_required,
+    prompt: asset.prompt,
+    alt_text: asset.alt_text,
+    tags: asset.tags || [],
+    placement_type: asset.placement_type,
+    anchor_text: asset.anchor_text,
+    sort_order: asset.sort_order,
+    status: asset.status,
+  };
+}
 
 export const imageAssetRepository = {
   async createImagePlan(asset: ImageAsset): Promise<void> {
-    const { data, error } = await supabaseAdmin.from('ai_image_assets').insert([{
-      image_asset_id: asset.image_asset_id,
-      wordpress_id: asset.wordpress_id,
-      content_id: asset.content_id,
-      revision_id: asset.revision_id,
-      slot: asset.slot,
-      role: asset.role,
-      source_type: asset.source_type,
-      ansim_required: asset.ansim_required,
-      prompt: asset.prompt,
-      alt_text: asset.alt_text,
-      status: asset.status
-    }]);
+    const { error } = await supabaseAdmin.from('ai_image_assets').insert([imagePlanRow(asset)]);
 
     if (error) {
       console.error('Supabase createImagePlan error:', error);
       throw new Error(`Failed to create image plan: ${error.message}`);
+    }
+  },
+
+  async createRevisionImagePlans(assets: ImageAsset[]): Promise<void> {
+    const { error } = await supabaseAdmin.from('ai_image_assets').insert(assets.map(imagePlanRow));
+    if (error) {
+      console.error('Supabase createRevisionImagePlans error:', error);
+      throw new Error(`Failed to create revision image plans: ${error.message}`);
     }
   },
 
@@ -47,6 +63,20 @@ export const imageAssetRepository = {
     if (error) {
       console.error('Supabase listImageAssetsByPost error:', error);
       return [];
+    }
+    return (data as ImageAsset[]) || [];
+  },
+
+  async listImageAssetsByRevision(revisionId: string): Promise<ImageAsset[]> {
+    const { data, error } = await supabaseAdmin
+      .from('ai_image_assets')
+      .select('*')
+      .eq('revision_id', revisionId)
+      .order('sort_order', { ascending: true });
+
+    if (error) {
+      console.error('Supabase listImageAssetsByRevision error:', error);
+      throw new Error(`Failed to list image plans: ${error.message}`);
     }
     return (data as ImageAsset[]) || [];
   },
