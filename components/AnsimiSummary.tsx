@@ -47,7 +47,14 @@ export default function AnsimiSummary({ ansimSummary, excerpt, categoryNames, la
   const separatorPattern = /\[(?:공감|empathy|共感|message|summary)\]|(?:\r?\n)\s*(?:---|—|–|<\s*hr\s*\/?>)\s*(?:\r?\n)/i;
 
   if (ansimSummary && ansimSummary.trim()) {
-    displayExcerpt = ansimSummary.trim();
+    const blocks = ansimSummary.trim().split(/\n{2,}/);
+    if (blocks.length > 1) {
+      // The last block is typically the empathy message
+      manualEmpathyMessage = blocks.pop()?.trim() || "";
+      displayExcerpt = blocks.join("\n\n");
+    } else {
+      displayExcerpt = ansimSummary.trim();
+    }
   } else if (excerpt && separatorPattern.test(excerpt)) {
     const parts = excerpt.split(separatorPattern);
     displayExcerpt = parts[0]

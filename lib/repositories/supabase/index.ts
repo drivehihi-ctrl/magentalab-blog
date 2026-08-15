@@ -171,7 +171,11 @@ export const supabaseEvidenceRepository: EvidenceRepository = {
   },
   async getAnsimSummary(wordpressId: number): Promise<string | null> {
     const { data, error } = await supabaseAdmin.from('ai_evidence').select('ansim_summary').eq('wordpress_id', wordpressId).maybeSingle();
-    if (error || !data) return null;
+    if (error) {
+      console.error('Supabase getAnsimSummary error:', error);
+      return null;
+    }
+    if (!data) return null;
     return data.ansim_summary || null;
   },
   async saveAnsimSummary(wordpressId: number, summary: string | null): Promise<void> {
