@@ -8,6 +8,7 @@ import { reviewRevision } from '@/lib/services/review-service';
 import { rebaseRolledBackRevision } from '@/lib/services/rebase-service';
 import { applyRevision } from '@/lib/services/apply-service';
 import { rollbackRevision } from '@/lib/services/rollback-service';
+import { stageRevision, stageRevisionBatch } from '@/lib/services/staging-service';
 import { controlledApply } from '@/lib/controlled-apply';
 import { 
   createImagePlan, 
@@ -207,6 +208,34 @@ export function createMCPServer(): Server {
               live_apply_confirm: { type: "boolean", enum: [true] }
             },
             required: ["revision_id", "confirm", "live_apply_confirm"],
+            additionalProperties: false
+          }
+        },
+        {
+          name: "magentalab_stage_revision",
+          description: "Creates an idempotent WordPress draft for one approved revision without modifying the published source post. Runs live-apply preflight guards, verifies the draft, and removes only a newly-created draft if verification fails.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              revision_id: { type: "string" },
+              confirm: { type: "boolean", enum: [true] },
+              staging_apply_confirm: { type: "boolean", enum: [true] }
+            },
+            required: ["revision_id", "confirm", "staging_apply_confirm"],
+            additionalProperties: false
+          }
+        },
+        {
+          name: "magentalab_stage_revision_batch",
+          description: "Creates verified WordPress drafts for 1 to 50 approved revisions. Each item is isolated: failures never stop later items or modify their published source posts.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              revision_ids: { type: "array", items: { type: "string" }, minItems: 1, maxItems: 50 },
+              confirm: { type: "boolean", enum: [true] },
+              staging_apply_confirm: { type: "boolean", enum: [true] }
+            },
+            required: ["revision_ids", "confirm", "staging_apply_confirm"],
             additionalProperties: false
           }
         },
@@ -527,6 +556,26 @@ export function createMCPServer(): Server {
             revision_id: String(args.revision_id || ''),
             confirm: args.confirm === true,
             live_apply_confirm: args.live_apply_confirm === true,
+            source: 'mcp'
+          });
+          return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+        }
+
+        case "magentalab_stage_revision": {
+          const result = await stageRevision({
+            revision_id: String(args.revision_id || ''),
+            confirm: args.confirm === true,
+            staging_apply_confirm: args.staging_apply_confirm === true,
+            source: 'mcp'
+          });
+          return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+        }
+
+        case "magentalab_stage_revision_batch": {
+          const result = await stageRevisionBatch({
+            revision_ids: args.revision_ids as string[],
+            confirm: args.confirm === true,
+            staging_apply_confirm: args.staging_apply_confirm === true,
             source: 'mcp'
           });
           return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
