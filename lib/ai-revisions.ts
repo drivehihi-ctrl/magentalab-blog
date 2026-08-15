@@ -49,6 +49,7 @@ export interface AIRevision {
   source: string;
   status: 'pending_review' | 'approved' | 'applied' | 'rejected' | 'rolled_back' | 'applying' | 'rollback_pending' | 'apply_failed' | 'rollback_failed';
   created_at: string;
+  rolled_back_at?: string;
 }
 
 export interface AILog {

@@ -5,6 +5,7 @@ import { getRevision } from '@/lib/ai-revisions';
 import { auditRepository, revisionRepository } from '@/lib/repositories';
 import { createPendingRevision, RevisionError } from '@/lib/services/revision-service';
 import { reviewRevision } from '@/lib/services/review-service';
+import { rebaseRolledBackRevision } from '@/lib/services/rebase-service';
 import { applyRevision } from '@/lib/services/apply-service';
 import { rollbackRevision } from '@/lib/services/rollback-service';
 import { controlledApply } from '@/lib/controlled-apply';
@@ -179,6 +180,19 @@ export function createMCPServer(): Server {
               confirm: { type: "boolean", enum: [true] }
             },
             required: ["revision_ids", "confirm"],
+            additionalProperties: false
+          }
+        },
+        {
+          name: "magentalab_rebase_rolled_back_revision",
+          description: "Refreshes the optimistic-lock timestamp for a re-approved rolled-back revision only when the live WordPress post still exactly matches both the revision baseline and rollback backup. This does not modify WordPress.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              revision_id: { type: "string" },
+              confirm: { type: "boolean", enum: [true] }
+            },
+            required: ["revision_id", "confirm"],
             additionalProperties: false
           }
         },
@@ -496,6 +510,15 @@ export function createMCPServer(): Server {
           }
 
           const result = await controlledApply(revisionIds, { dryRun: true, source: 'mcp' });
+          return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+        }
+
+        case "magentalab_rebase_rolled_back_revision": {
+          const result = await rebaseRolledBackRevision({
+            revision_id: String(args.revision_id || ''),
+            confirm: args.confirm === true,
+            source: 'mcp'
+          });
           return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
         }
 
