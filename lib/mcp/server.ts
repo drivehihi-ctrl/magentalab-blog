@@ -8,7 +8,12 @@ import { reviewRevision } from '@/lib/services/review-service';
 import { rebaseRolledBackRevision } from '@/lib/services/rebase-service';
 import { applyRevision } from '@/lib/services/apply-service';
 import { rollbackRevision } from '@/lib/services/rollback-service';
-import { stageRevision, stageRevisionBatch } from '@/lib/services/staging-service';
+import {
+  refreshStagingImageSlots,
+  stageRevision,
+  stageRevisionBatch,
+  stageRevisionWithImages,
+} from '@/lib/services/staging-service';
 import { controlledApply } from '@/lib/controlled-apply';
 import { 
   createImagePlan, 
@@ -16,6 +21,9 @@ import {
   submitImageForReview, 
   reviewImageAsset 
 } from '@/lib/image-pipeline';
+import { getRevisionImagePlan, planRevisionImages } from '@/lib/image-pipeline/revision-image-plan-service';
+import type { RevisionImagePlanInput } from '@/lib/image-pipeline/revision-image-plan-service';
+import { ImagePipelineError } from '@/lib/image-pipeline/types';
 import { imageAssetRepository } from '@/lib/repositories/image-asset-repository';
 
 export function createMCPServer(): Server {
@@ -236,6 +244,77 @@ export function createMCPServer(): Server {
               staging_apply_confirm: { type: "boolean", enum: [true] }
             },
             required: ["revision_ids", "confirm", "staging_apply_confirm"],
+            additionalProperties: false
+          }
+        },
+        {
+          name: "magentalab_plan_revision_images",
+          description: "Stores an idempotent, caller-authored plan for 1 to 6 body images in a revision. The caller must first analyze the revision and supply exact placement anchors, prompts, tags, and ALT text. This does not modify WordPress.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              revision_id: { type: "string" },
+              plans: {
+                type: "array",
+                minItems: 1,
+                maxItems: 6,
+                items: {
+                  type: "object",
+                  properties: {
+                    slot: { type: "string", enum: ["image_1", "image_2", "image_3", "image_4", "image_5", "image_6"] },
+                    role: { type: "string" },
+                    prompt: { type: "string" },
+                    alt_text: { type: "string" },
+                    tags: { type: "array", minItems: 1, maxItems: 12, items: { type: "string" } },
+                    placement_type: { type: "string", enum: ["after_title", "after_heading", "after_paragraph"] },
+                    anchor_text: { type: "string" },
+                    ansim_required: { type: "boolean" }
+                  },
+                  required: ["slot", "role", "prompt", "alt_text", "tags", "placement_type"],
+                  additionalProperties: false
+                }
+              }
+            },
+            required: ["revision_id", "plans"],
+            additionalProperties: false
+          }
+        },
+        {
+          name: "magentalab_get_image_plan",
+          description: "Gets the ordered image placement plan, prompts, tags, and ALT text for a revision. Read-only.",
+          inputSchema: {
+            type: "object",
+            properties: { revision_id: { type: "string" } },
+            required: ["revision_id"],
+            additionalProperties: false
+          }
+        },
+        {
+          name: "magentalab_stage_revision_with_images",
+          description: "Creates an idempotent WordPress draft containing visible editor-only image work blocks for an approved revision with 1 to 6 image plans. Never modifies the published source post. If a plain staging draft already exists, use the explicit refresh tool instead.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              revision_id: { type: "string" },
+              confirm: { type: "boolean", enum: [true] },
+              staging_apply_confirm: { type: "boolean", enum: [true] }
+            },
+            required: ["revision_id", "confirm", "staging_apply_confirm"],
+            additionalProperties: false
+          }
+        },
+        {
+          name: "magentalab_refresh_staging_image_slots",
+          description: "Adds managed image work blocks to one exact existing WordPress staging draft. Requires the draft ID, refuses non-drafts, slug mismatches, and edits outside managed slots, verifies the published source is unchanged, and restores the previous draft content if verification fails.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              revision_id: { type: "string" },
+              staging_post_id: { type: "number" },
+              confirm: { type: "boolean", enum: [true] },
+              staging_apply_confirm: { type: "boolean", enum: [true] }
+            },
+            required: ["revision_id", "staging_post_id", "confirm", "staging_apply_confirm"],
             additionalProperties: false
           }
         },
@@ -581,6 +660,41 @@ export function createMCPServer(): Server {
           return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
         }
 
+        case "magentalab_plan_revision_images": {
+          const result = await planRevisionImages({
+            revision_id: String(args.revision_id || ''),
+            plans: args.plans as RevisionImagePlanInput[],
+            source: 'mcp',
+          });
+          return { content: [{ type: "text", text: JSON.stringify({ ...result, wordpress_mutation: false }, null, 2) }] };
+        }
+
+        case "magentalab_get_image_plan": {
+          const result = await getRevisionImagePlan(String(args.revision_id || ''));
+          return { content: [{ type: "text", text: JSON.stringify({ ...result, wordpress_mutation: false }, null, 2) }] };
+        }
+
+        case "magentalab_stage_revision_with_images": {
+          const result = await stageRevisionWithImages({
+            revision_id: String(args.revision_id || ''),
+            confirm: args.confirm === true,
+            staging_apply_confirm: args.staging_apply_confirm === true,
+            source: 'mcp',
+          });
+          return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+        }
+
+        case "magentalab_refresh_staging_image_slots": {
+          const result = await refreshStagingImageSlots({
+            revision_id: String(args.revision_id || ''),
+            staging_post_id: Number(args.staging_post_id),
+            confirm: args.confirm === true,
+            staging_apply_confirm: args.staging_apply_confirm === true,
+            source: 'mcp',
+          });
+          return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+        }
+
         case "magentalab_rollback_revision": {
           if (args.confirm !== true || args.rollback_confirm !== true) {
             throw new Error("Both confirm and rollback_confirm must be explicitly true.");
@@ -646,7 +760,7 @@ export function createMCPServer(): Server {
           throw new Error("Unknown tool");
       }
     } catch (err: any) {
-      if (err instanceof RevisionError) {
+      if (err instanceof RevisionError || err instanceof ImagePipelineError) {
         return {
           content: [{ type: "text", text: `Error: ${err.code} - ${err.message}` }],
           isError: true
