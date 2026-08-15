@@ -8,6 +8,13 @@ import { reviewRevision } from '@/lib/services/review-service';
 import { applyRevision } from '@/lib/services/apply-service';
 import { rollbackRevision } from '@/lib/services/rollback-service';
 import { controlledApply } from '@/lib/controlled-apply';
+import { 
+  createImagePlan, 
+  registerGeneratedImage, 
+  submitImageForReview, 
+  reviewImageAsset 
+} from '@/lib/image-pipeline';
+import { imageAssetRepository } from '@/lib/repositories/image-asset-repository';
 
 export function createMCPServer(): Server {
   const mcpServer = new Server({
@@ -200,6 +207,94 @@ export function createMCPServer(): Server {
               rollback_confirm: { type: "boolean", enum: [true] }
             },
             required: ["revision_id", "confirm", "rollback_confirm"],
+            additionalProperties: false
+          }
+        },
+        {
+          name: "magentalab_list_image_assets",
+          description: "List image assets for a given post.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              wordpress_id: { type: "number" }
+            },
+            required: ["wordpress_id"],
+            additionalProperties: false
+          }
+        },
+        {
+          name: "magentalab_get_image_asset",
+          description: "Get a specific image asset by ID.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              image_asset_id: { type: "string" }
+            },
+            required: ["image_asset_id"],
+            additionalProperties: false
+          }
+        },
+        {
+          name: "magentalab_create_image_plan",
+          description: "Create a new image plan. This does not modify WordPress.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              wordpress_id: { type: "number" },
+              content_id: { type: "string" },
+              revision_id: { type: "string" },
+              slot: { type: "string", enum: ["featured", "image_1", "image_2", "image_3", "image_4", "image_5", "image_6"] },
+              role: { type: "string" },
+              source_type: { type: "string", enum: ["generated", "existing", "external_reference"] },
+              ansim_required: { type: "boolean" },
+              prompt: { type: "string" },
+              alt_text: { type: "string" }
+            },
+            required: ["wordpress_id", "slot", "role", "source_type", "ansim_required", "prompt", "alt_text"],
+            additionalProperties: false
+          }
+        },
+        {
+          name: "magentalab_register_generated_image",
+          description: "Register generation details for a planned image asset. This does not modify WordPress.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              image_asset_id: { type: "string" },
+              generator: { type: "string" },
+              model: { type: "string" },
+              width: { type: "number" },
+              height: { type: "number" },
+              mime_type: { type: "string" }
+            },
+            required: ["image_asset_id"],
+            additionalProperties: false
+          }
+        },
+        {
+          name: "magentalab_submit_image_for_review",
+          description: "Submit a generated image asset for review. This does not modify WordPress.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              image_asset_id: { type: "string" }
+            },
+            required: ["image_asset_id"],
+            additionalProperties: false
+          }
+        },
+        {
+          name: "magentalab_review_image_asset",
+          description: "Approve or reject an image asset under review. This does not modify WordPress.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              image_asset_id: { type: "string" },
+              decision: { type: "string", enum: ["approve", "reject"] },
+              confirm: { type: "boolean", enum: [true] },
+              note: { type: "string" }
+            },
+            required: ["image_asset_id", "decision", "confirm"],
             additionalProperties: false
           }
         }
@@ -415,6 +510,9 @@ export function createMCPServer(): Server {
         }
 
         case "magentalab_rollback_revision": {
+          if (args.confirm !== true || args.rollback_confirm !== true) {
+            throw new Error("Both confirm and rollback_confirm must be explicitly true.");
+          }
           const result = await rollbackRevision({
             revision_id: String(args.revision_id || ''),
             confirm: args.confirm === true,
@@ -424,8 +522,56 @@ export function createMCPServer(): Server {
           return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
         }
 
+        // --- Image Pipeline MCP Handlers ---
+        case "magentalab_list_image_assets": {
+          const id = Number(args.wordpress_id);
+          if (isNaN(id) || id <= 0) throw new Error("Invalid wordpress_id");
+          const data = await imageAssetRepository.listImageAssetsByPost(id);
+          return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+        }
+        case "magentalab_get_image_asset": {
+          const data = await imageAssetRepository.getImageAsset(String(args.image_asset_id));
+          if (!data) throw new Error("NOT_FOUND");
+          return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+        }
+        case "magentalab_create_image_plan": {
+          const plan = await createImagePlan({
+            wordpress_id: Number(args.wordpress_id),
+            content_id: args.content_id ? String(args.content_id) : null,
+            revision_id: args.revision_id ? String(args.revision_id) : null,
+            slot: args.slot as any,
+            role: String(args.role),
+            source_type: args.source_type as any,
+            ansim_required: Boolean(args.ansim_required),
+            prompt: String(args.prompt),
+            alt_text: String(args.alt_text),
+          });
+          return { content: [{ type: "text", text: JSON.stringify({ asset: plan, wordpress_mutation: false }, null, 2) }] };
+        }
+        case "magentalab_register_generated_image": {
+          const res = await registerGeneratedImage(String(args.image_asset_id), {
+            generator: args.generator ? String(args.generator) : undefined,
+            model: args.model ? String(args.model) : undefined,
+            width: args.width ? Number(args.width) : undefined,
+            height: args.height ? Number(args.height) : undefined,
+            mime_type: args.mime_type ? String(args.mime_type) : undefined,
+          });
+          return { content: [{ type: "text", text: JSON.stringify({ asset: res, wordpress_mutation: false }, null, 2) }] };
+        }
+        case "magentalab_submit_image_for_review": {
+          const res = await submitImageForReview(String(args.image_asset_id));
+          return { content: [{ type: "text", text: JSON.stringify({ asset: res, wordpress_mutation: false }, null, 2) }] };
+        }
+        case "magentalab_review_image_asset": {
+          if (args.confirm !== true) {
+            throw new Error("confirm must be true");
+          }
+          const res = await reviewImageAsset(String(args.image_asset_id), args.decision as any, args.note ? String(args.note) : undefined);
+          return { content: [{ type: "text", text: JSON.stringify(res, null, 2) }] };
+        }
+
         default:
-          throw new Error("MCP_TOOL_NOT_ALLOWED");
+          throw new Error("Unknown tool");
       }
     } catch (err: any) {
       if (err instanceof RevisionError) {
