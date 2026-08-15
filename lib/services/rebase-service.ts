@@ -11,8 +11,11 @@ export interface RebaseRevisionPayload {
 
 /**
  * Refreshes only the optimistic-lock timestamp for a previously rolled-back
- * revision after proving that WordPress still exactly matches its rollback
- * baseline. This never writes to WordPress or changes the proposed content.
+ * revision after proving that WordPress still exactly matches the revision's
+ * pre-apply rendered snapshot. The rollback backup must exist, but its raw
+ * author source is not compared to WordPress rendered HTML because those are
+ * different representation layers. This never writes to WordPress or changes
+ * the proposed content.
  */
 export async function rebaseRolledBackRevision(payload: RebaseRevisionPayload) {
   const { revision_id, confirm, source = 'mcp' } = payload;
@@ -45,15 +48,7 @@ export async function rebaseRolledBackRevision(payload: RebaseRevisionPayload) {
     slug: revision.slug,
     featured_media: backup.featured_media,
   }, currentPost);
-  const backupMismatches = getRebaseMismatches({
-    title: backup.title,
-    content: backup.content,
-    excerpt: backup.excerpt,
-    slug: backup.slug,
-    featured_media: backup.featured_media,
-  }, currentPost);
-
-  const mismatches = Array.from(new Set([...revisionMismatches, ...backupMismatches]));
+  const mismatches = revisionMismatches;
   if (mismatches.length > 0) {
     throw new RevisionError(
       'REBASE_BASELINE_MISMATCH',
