@@ -11,3 +11,11 @@ export function isApprovalTransitionAllowed(
 ): boolean {
   return status === 'pending_review' || (status === 'rolled_back' && hasRollbackBackup);
 }
+
+export function isApprovedRollbackRebaseAllowed(
+  status: AIRevision['status'],
+  hasRollbackHistory: boolean,
+  hasRollbackBackup: boolean
+): boolean {
+  return status === 'approved' && hasRollbackHistory && hasRollbackBackup;
+}

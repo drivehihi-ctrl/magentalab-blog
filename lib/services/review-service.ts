@@ -2,7 +2,8 @@
 import { getRevision, getBackupByRevision, saveRevision, logAction } from '@/lib/ai-revisions';
 import { assessMedicalRisk } from '@/lib/medical-risk';
 import { RevisionError } from '@/lib/services/revision-service';
-import { isApprovalTransitionAllowed } from '@/lib/services/review-transition';
+import { rebaseRolledBackRevision } from '@/lib/services/rebase-service';
+import { isApprovalTransitionAllowed, isApprovedRollbackRebaseAllowed } from '@/lib/services/review-transition';
 
 export interface ReviewPayload {
   revision_id: string;
@@ -39,8 +40,11 @@ export async function reviewRevision(payload: ReviewPayload) {
 
   // ---- Guard: allowed state transition ----
   const wasRolledBack = revision.status === 'rolled_back';
-  const rollbackBackup = wasRolledBack ? await getBackupByRevision(revision_id) : undefined;
-  if (decision === 'approve' && !isApprovalTransitionAllowed(revision.status, !!rollbackBackup)) {
+  const isRebaseRequest = decision === 'approve' && revision.status === 'approved' && !!revision.rolled_back_at;
+  const rollbackBackup = (wasRolledBack || isRebaseRequest) ? await getBackupByRevision(revision_id) : undefined;
+  const approvalAllowed = isApprovalTransitionAllowed(revision.status, !!rollbackBackup)
+    || isApprovedRollbackRebaseAllowed(revision.status, !!revision.rolled_back_at, !!rollbackBackup);
+  if (decision === 'approve' && !approvalAllowed) {
     const detail = wasRolledBack && !rollbackBackup ? ' (rollback backup not found)' : '';
     throw new RevisionError('INVALID_STATUS', `Cannot approve a revision with status ${revision.status}${detail}`);
   }
@@ -57,6 +61,20 @@ export async function reviewRevision(payload: ReviewPayload) {
     if (risk.isMedical) {
       revision.medical_reviewed = true;
     }
+  }
+
+  // Repeating approval for a revision that was rolled back and explicitly
+  // re-approved invokes the exact-baseline rebase path. This keeps the
+  // operation accessible to clients whose MCP tool schema is cached.
+  if (isRebaseRequest) {
+    const result = await rebaseRolledBackRevision({ revision_id, confirm, source });
+    return {
+      ...result,
+      content_id: revision.content_id,
+      medical_reviewed: !!revision.medical_reviewed,
+      decision,
+      reviewed_at: new Date().toISOString(),
+    };
   }
 
   // ---- Apply status change ----
