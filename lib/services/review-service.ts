@@ -1,7 +1,8 @@
 // lib/services/review-service.ts
-import { getRevision, saveRevision, logAction } from '@/lib/ai-revisions';
+import { getRevision, getBackupByRevision, saveRevision, logAction } from '@/lib/ai-revisions';
 import { assessMedicalRisk } from '@/lib/medical-risk';
 import { RevisionError } from '@/lib/services/revision-service';
+import { isApprovalTransitionAllowed } from '@/lib/services/review-transition';
 
 export interface ReviewPayload {
   revision_id: string;
@@ -37,8 +38,11 @@ export async function reviewRevision(payload: ReviewPayload) {
   }
 
   // ---- Guard: allowed state transition ----
-  if (decision === 'approve' && revision.status !== 'pending_review') {
-    throw new RevisionError('INVALID_STATUS', `Cannot approve a revision with status ${revision.status}`);
+  const wasRolledBack = revision.status === 'rolled_back';
+  const rollbackBackup = wasRolledBack ? await getBackupByRevision(revision_id) : undefined;
+  if (decision === 'approve' && !isApprovalTransitionAllowed(revision.status, !!rollbackBackup)) {
+    const detail = wasRolledBack && !rollbackBackup ? ' (rollback backup not found)' : '';
+    throw new RevisionError('INVALID_STATUS', `Cannot approve a revision with status ${revision.status}${detail}`);
   }
   if (decision === 'reject' && revision.status !== 'pending_review' && revision.status !== 'approved') {
     throw new RevisionError('INVALID_STATUS', `Cannot reject a revision with status ${revision.status}`);
@@ -62,7 +66,9 @@ export async function reviewRevision(payload: ReviewPayload) {
   // ---- Audit log (message field used, note maps to message) ----
   await logAction({
     timestamp: new Date().toISOString(),
-    action: decision === 'approve' ? 'APPROVE_REVISION' : 'REJECT_REVISION',
+    action: decision === 'approve'
+      ? (wasRolledBack ? 'REAPPROVE_ROLLED_BACK_REVISION' : 'APPROVE_REVISION')
+      : 'REJECT_REVISION',
     wordpress_id: revision.wordpress_id,
     content_id: revision.content_id,
     revision_id: revision.revision_id,
