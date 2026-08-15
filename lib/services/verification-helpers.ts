@@ -59,6 +59,41 @@ export function compareNormalized(a: string | undefined | null, b: string | unde
 }
 
 /**
+ * Canonicalizes WordPress post content without discarding author-authored HTML.
+ *
+ * Easy Table of Contents mutates rendered content by adding its container and
+ * heading marker spans. Those plugin-owned nodes are the only DOM removed here.
+ * All other elements and attributes (including ordinary nav, tables, links and
+ * images) remain part of the exact comparison.
+ */
+export function canonicalizeContent(input: string | undefined | null): string {
+  if (!input) return '';
+
+  const normalized = input
+    .normalize('NFC')
+    .replace(/[\u200B-\u200D\uFEFF]/g, '');
+  const $ = cheerio.load(normalized, null, false);
+
+  $('[id="ez-toc-container"], .ez-toc-section, .ez-toc-section-end').remove();
+
+  return $.html().trim();
+}
+
+/**
+ * Exact normalized equality for WordPress post bodies. No fuzzy, similarity,
+ * substring or text-only fallback is permitted.
+ */
+export function compareCanonicalContent(
+  expected: string | undefined | null,
+  actual: string | undefined | null
+): boolean {
+  if (expected === actual) return true;
+  if (!expected && !actual) return true;
+  if (!expected || !actual) return false;
+  return canonicalizeContent(expected) === canonicalizeContent(actual);
+}
+
+/**
  * Normalizes ansim_summary text for strict comparison, preserving newlines.
  * Does not parse HTML or collapse newlines to spaces.
  */
