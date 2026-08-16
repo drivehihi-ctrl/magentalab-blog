@@ -6,6 +6,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getRevision } from "@/lib/ai-revisions";
 import AnsimiSummary from "@/components/AnsimiSummary";
+import VeterinaryReferencesSection from "@/components/VeterinaryReferencesSection";
 
 export const revalidate = 0; // Previews should never be cached
 
@@ -117,6 +118,7 @@ export default async function PreviewPage({ params }: PageProps) {
             
             {/* Excerpt Box Preview */}
             <AnsimiSummary 
+              ansimSummary={revision.new_ansim_summary}
               excerpt={revision.new_excerpt} 
               categoryNames={categories.map((c: any) => c.name)} 
               lang={revision.language as "ko" | "en" | "ja"}
@@ -125,6 +127,16 @@ export default async function PreviewPage({ params }: PageProps) {
             <div 
               className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal mt-10"
               dangerouslySetInnerHTML={{ __html: fixWpLinks(cleanContentReferences(revision.new_content), sanitizeForSeo(revision.new_title), revision.language as 'ko'|'en'|'ja') }}
+            />
+
+            {/* Evidence Viewer Preview */}
+            <VeterinaryReferencesSection 
+              categories={categories.map((c: any) => c.name)} 
+              title={revision.new_title} 
+              slug={revision.slug} 
+              lang={revision.language as "ko" | "en" | "ja"} 
+              content={revision.new_content}
+              customEvidence={revision.evidence || undefined}
             />
 
             {tags && tags.length > 0 && (
