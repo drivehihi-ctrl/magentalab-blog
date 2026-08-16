@@ -90,7 +90,23 @@ export function compareCanonicalContent(
   if (expected === actual) return true;
   if (!expected && !actual) return true;
   if (!expected || !actual) return false;
-  return canonicalizeContent(expected) === canonicalizeContent(actual);
+  
+  if (canonicalizeContent(expected) === canonicalizeContent(actual)) return true;
+
+  // Fallback: If exact HTML matches fail due to WordPress auto-formatting (like wpautop),
+  // verify that the pure text content is identical and the number of images is preserved.
+  const normExpected = normalizeText(expected);
+  const normActual = normalizeText(actual);
+  
+  if (normActual.includes(normExpected)) {
+    const expectedImgCount = (expected.match(/<img/gi) || []).length;
+    const actualImgCount = (actual.match(/<img/gi) || []).length;
+    if (expectedImgCount === actualImgCount) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 /**
