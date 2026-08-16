@@ -55,6 +55,27 @@ export default function AnsimiSummary({ ansimSummary, excerpt, categoryNames, la
     } else {
       displayExcerpt = ansimSummary.trim();
     }
+    
+    // [FIX] If manualEmpathyMessage is empty but excerpt is provided, use excerpt as the empathy message
+    if (!manualEmpathyMessage && excerpt && excerpt.trim()) {
+      const cleanExcerpt = excerpt
+        .replace(/<[^>]*>?/gm, "") 
+        .replace(/&nbsp;/g, " ")    
+        .replace(/&#8220;|&#8221;/g, '"') 
+        .replace(/&#8216;|&#8217;/g, "'") 
+        .replace(/&#8230;/g, "...")        
+        .replace(/^F형 공감[:：\s]*|^공감[:：\s]*|^한마디[:：\s]*/gi, "") 
+        .trim();
+      
+      if (separatorPattern.test(cleanExcerpt)) {
+        const parts = cleanExcerpt.split(separatorPattern);
+        if (parts.length > 1 && parts[parts.length - 1].trim()) {
+          manualEmpathyMessage = parts[parts.length - 1].trim();
+        }
+      } else {
+        manualEmpathyMessage = cleanExcerpt;
+      }
+    }
   } else if (excerpt && separatorPattern.test(excerpt)) {
     const parts = excerpt.split(separatorPattern);
     displayExcerpt = parts[0]
