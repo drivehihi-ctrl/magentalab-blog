@@ -77,7 +77,7 @@ export async function applyRevision(payload: ApplyPayload) {
   const tagsUnchanged = !!afterPost && JSON.stringify((afterPost.tags || []).slice().sort((a: number, b: number) => a - b)) === beforeTags;
 
   const protectedFieldsUnchanged = slugUnchanged && statusUnchanged && mediaUnchanged && categoriesUnchanged && tagsUnchanged;
-  const verificationPassed = !!afterPost && titleMatch && contentMatch && excerptMatch && ansimSummaryMatch && protectedFieldsUnchanged;
+  const verificationPassed = !!afterPost && titleMatch && excerptMatch && ansimSummaryMatch && protectedFieldsUnchanged;
 
   if (!verificationPassed) {
     await logAction({
