@@ -368,3 +368,16 @@ body {
 /* ─── SCROLLBAR HIDE UTILITY ─── */
 .scrollbar-none::-webkit-scrollbar { display: none; }
 .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ─── AI IMAGE PROMPT PREVIEW ─── */
+.ai-preview-mode .ai-image-prompt {
+  display: block !important;
+  background-color: var(--cream);
+  border: 2px dashed var(--magenta);
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  margin: 2rem 0;
+  font-size: 0.95rem;
+  color: var(--deep-navy);
+}
+

@@ -61,7 +61,7 @@ export default async function PreviewPage({ params }: PageProps) {
   });
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-gray-50 min-h-screen ai-preview-mode">
       {/* AI Preview Admin Banner */}
       <div className="bg-yellow-400 text-black p-4 text-center sticky top-0 z-50 shadow-md font-bold flex justify-center items-center gap-4">
         ⚠️ AI 콘텐츠 미리보기 모드입니다. (Revision: {revision.revision_id})
