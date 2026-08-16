@@ -31,8 +31,11 @@ export function parseV3Content(html: string): ParsedV3Content {
   const [ansimRaw, evidenceRest] = ansimRest.split(evidenceRegex);
   const [evidenceRaw, htmlContent] = evidenceRest.split(contentRegex);
 
+  let listIndex = 1;
+  const ansimWithNumbers = ansimRaw.replace(/<li[^>]*>/gi, () => `${listIndex++}. `);
+
   // Convert block tags and <br> to newlines before stripping HTML so text doesn't merge
-  const ansimWithNewlines = ansimRaw.replace(/<\/?(p|div|li)[^>]*>/gi, '\n').replace(/<br[^>]*>/gi, '\n');
+  const ansimWithNewlines = ansimWithNumbers.replace(/<\/?(p|div)[^>]*>/gi, '\n').replace(/<br[^>]*>/gi, '\n');
   const ansimClean = decodeHtmlEntities(stripHtml(ansimWithNewlines)).replace(/&nbsp;/g, ' ').trim();
   
   const empathySplit = ansimClean.split(/F형 공감:/);
