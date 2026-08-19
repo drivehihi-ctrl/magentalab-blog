@@ -11,6 +11,7 @@ import SocialShare from "@/components/SocialShare";
 import VeterinaryReferencesSection from "@/components/VeterinaryReferencesSection";
 import CalculatorBanner from "@/components/CalculatorBanner";
 import { evidenceRepository } from "@/lib/repositories";
+import { parseV3Content } from "@/lib/utils/parse-v3-content";
 
 export const revalidate = 86400;
 export const dynamicParams = true;
@@ -165,6 +166,18 @@ export default async function JapanesePostDetailPage({ params }: PageProps) {
   // 1. Authoritative Source
   const rootAnsimSummary = (evidenceRepository.getAnsimSummary) ? await evidenceRepository.getAnsimSummary(post.id) : null;
   let ansimSummary: string | undefined = rootAnsimSummary || undefined;
+
+  let contentHtml = post.content.rendered;
+  let empathyText: string | undefined = undefined;
+
+  // 0. Parse V3 Content
+  const v3Parsed = parseV3Content(post.content.rendered);
+  if (v3Parsed.isV3) {
+    ansimSummary = v3Parsed.ansimSummary;
+    empathyText = v3Parsed.empathyText;
+    customEvidence = v3Parsed.evidence as any || null;
+    contentHtml = v3Parsed.htmlContent;
+  }
   
   // 2. Legacy Fallback
   const scriptMatch = post.content.rendered.match(/<script type="application\/json" id="custom-vet-references">([\s\S]*?)<\/script>/);
@@ -315,7 +328,7 @@ export default async function JapanesePostDetailPage({ params }: PageProps) {
           {/* GEO Optimized Summary Box */}
           <AnsimiSummary 
             ansimSummary={ansimSummary}
-            excerpt={post.excerpt.rendered} 
+            excerpt={empathyText || post.excerpt.rendered} 
             categoryNames={categories.map(c => c.name)} 
             lang="ja"
           />
@@ -323,7 +336,7 @@ export default async function JapanesePostDetailPage({ params }: PageProps) {
 
           <div 
             className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal"
-            dangerouslySetInnerHTML={{ __html: fixWpLinks(cleanContentReferences(post.content.rendered), sanitizeForSeo(post.title.rendered), 'ja') }}
+            dangerouslySetInnerHTML={{ __html: fixWpLinks(cleanContentReferences(contentHtml), sanitizeForSeo(post.title.rendered), 'ja') }}
           />
 
           {/* Parse custom evidence from content if it exists */}
@@ -332,13 +345,13 @@ export default async function JapanesePostDetailPage({ params }: PageProps) {
             title={post.title.rendered} 
             slug={post.slug} 
             lang="ja" 
-            content={post.content.rendered}
+            content={contentHtml}
             customEvidence={customEvidence || undefined}
           />
 
           {/* 2순위: CalculatorBanner (근거 박스 바로 아래 배치) */}
           <CalculatorBanner 
-            content={post.content.rendered} 
+            content={contentHtml} 
             title={post.title.rendered} 
             postId={post.id.toString()}
             lang="ja"
