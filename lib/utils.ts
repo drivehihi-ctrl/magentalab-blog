@@ -70,9 +70,8 @@ export function cleanContentReferences(html: string): string {
   cleaned = cleaned.replace(/<div[^>]*class="[^"]*bg-\[#faf6f0\][^"]*"[\s\S]*?<\/div>/gi, "");
 
   // 2. 본문 끝자락의 <h2>🔬 수의학... / Veterinary... / 獣医学...</h2> 섹션 및 하위 문단 제거
-  // 이전의 정규식은 [\\s\\S]*? 때문에 문서 첫 번째 <h2>부터 매칭되어 본문 전체를 날려버리는 치명적 오류가 있었음.
-  // (?:(?!<h2)[\\s\\S])*? 를 사용하여 해당 키워드를 포함하는 '마지막 <h2>'부터 끝까지만 제거하도록 수정.
-  cleaned = cleaned.replace(/<h2[^>]*>(?:(?!<h2)[\s\S])*?(Veterinary Evidence|獣医学根拠|수의학 연구 근거|Veterinary References)[\s\S]*$/gi, "");
+  // <h2> 내부의 텍스트만 검사하도록 (?!<\/h2>) 사용
+  cleaned = cleaned.replace(/<h2[^>]*>(?:(?!<\/h2>)[\s\S])*?(Veterinary Evidence|獣医学根拠|수의학 연구 근거|Veterinary References)[\s\S]*$/gi, "");
   
   return cleaned.trim();
 }
