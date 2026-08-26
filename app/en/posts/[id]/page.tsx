@@ -367,7 +367,8 @@ export default async function EnglishPostDetailPage({ params }: PageProps) {
                 {tags.map((tag: any) => (
                   <Link 
                     key={tag.id} 
-                    href={`/en?search=${encodeURIComponent(tag.name)}`}
+                    href={`/en/blog?search=${encodeURIComponent(tag.name)}`}
+                    rel="nofollow"
                     className="px-3 py-1 bg-gray-50 text-gray-500 rounded-lg font-medium transition-colors hover:bg-magenta-light/20 hover:text-magenta"
                   >
                     #{tag.name}

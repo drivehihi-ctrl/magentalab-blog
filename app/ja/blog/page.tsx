@@ -26,21 +26,28 @@ export async function generateMetadata({
     pageTitle = `'${search}' 検索結果 - ${pageTitle}`;
   }
 
+  let canonicalSuffix = "";
+  if (page && page !== "1") canonicalSuffix += `?page=${page}`;
+  if (category) canonicalSuffix += (canonicalSuffix ? "&" : "?") + `category=${encodeURIComponent(category)}`;
+
+  const robots = search ? { index: false, follow: true } : { index: true, follow: true };
+
   return {
     title: `${pageTitle} | Magentalab`,
     description: pageDesc,
+    robots,
     alternates: {
-      canonical: canonicalUrl + searchSuffix,
+      canonical: canonicalUrl + canonicalSuffix,
       languages: {
-        'ko-KR': 'https://www.magentalabblog.com/blog' + searchSuffix,
-        'en-US': 'https://www.magentalabblog.com/en/blog' + searchSuffix,
-        'ja-JP': 'https://www.magentalabblog.com/ja/blog' + searchSuffix,
+        'ko-KR': 'https://www.magentalabblog.com/blog' + canonicalSuffix,
+        'en-US': 'https://www.magentalabblog.com/en/blog' + canonicalSuffix,
+        'ja-JP': 'https://www.magentalabblog.com/ja/blog' + canonicalSuffix,
       },
     },
     openGraph: {
       title: `${pageTitle} | Magentalab`,
       description: pageDesc,
-      url: canonicalUrl + searchSuffix,
+      url: canonicalUrl + canonicalSuffix,
       type: "website",
     },
     twitter: {
