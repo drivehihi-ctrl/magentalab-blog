@@ -39,10 +39,16 @@ export default async function EnglishHomePage({
 }) {
   const { posts: allPosts } = await getPosts(1, 500, undefined, undefined, "en");
 
-  // Trending Posts (TOP 1~3 sorted by views)
-  const trendingPosts = [...allPosts]
-    .sort((a, b) => getPostViews(b) - getPostViews(a))
-    .slice(0, 3);
+  // Trending Posts (Fixed List by User Request)
+  const fixedSlugs = [
+    "why-dogs-hate-belly-farts-id308-en",
+    "why-cats-rub-face-on-wall-id287-en",
+    "cat-matted-fur-solutions-id225-en",
+  ];
+
+  const trendingPosts = fixedSlugs
+    .map((slug) => allPosts.find((p) => p.slug === slug))
+    .filter(Boolean) as any[];
 
   const trendingIds = new Set(trendingPosts.map((p) => p.id));
   const remainingPosts = allPosts.filter((p) => !trendingIds.has(p.id));

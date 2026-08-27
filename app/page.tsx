@@ -39,10 +39,16 @@ export default async function HomePage({
 }) {
   const { posts: allPosts } = await getPosts(1, 500, undefined, undefined, "ko");
 
-  // 🌟 "지금 뜨고 있는 글" (Trending Posts) - Sort strictly by View Count!
-  const trendingPosts = [...allPosts]
-    .sort((a, b) => getPostViews(b) - getPostViews(a))
-    .slice(0, 3);
+  // 🌟 "지금 뜨고 있는 글" (Trending Posts) - Fixed List by User Request
+  const fixedSlugs = [
+    "why-dogs-hate-belly-farts-id308",
+    "why-cats-rub-face-on-wall-id287",
+    "cat-matted-fur-solutions-id225",
+  ];
+
+  const trendingPosts = fixedSlugs
+    .map((slug) => allPosts.find((p) => p.slug === slug))
+    .filter(Boolean) as any[];
 
   // Remove trending posts from main grid only for variety
   const trendingIds = new Set(trendingPosts.map((p) => p.id));
