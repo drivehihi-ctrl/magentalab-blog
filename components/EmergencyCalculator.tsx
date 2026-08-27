@@ -20,12 +20,7 @@ interface EmergencyCalculatorProps {
 type SubstanceId = "chocolate" | "grapes" | "xylitol" | "allium" | "lilies";
 
 export default function EmergencyCalculator({ lang = "ko" }: EmergencyCalculatorProps) {
-  const [isMounted, setIsMounted] = useState<boolean>(false);
   const t = getToxicityDict(lang);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   const [petType, setPetType] = useState<"dog" | "cat">("dog");
   const [weight, setWeight] = useState<string>("5.0");
@@ -135,7 +130,6 @@ export default function EmergencyCalculator({ lang = "ko" }: EmergencyCalculator
     setResult(null);
   };
 
-  if (!isMounted) return <div className="min-h-screen py-20 bg-slate-900" />;
 
   const tUI = {
     ko: {

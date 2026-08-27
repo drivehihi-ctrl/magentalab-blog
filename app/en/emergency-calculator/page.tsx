@@ -6,7 +6,7 @@ import { getPosts } from "@/lib/wp";
 
 export const metadata: Metadata = {
   title: "Pet Poison Toxicity Emergency Calculator | Magentalab",
-  description: "Assess toxicity risks for dogs and cats after ingesting chocolate, grapes, onions, or other harmful foods. Enter weight and dosage to find clinical guidelines.",
+  description: "Assess medical risk and action levels for dogs and cats after ingesting chocolate, grapes, onions, or other harmful foods. Enter weight and dosage for clinical guidelines.",
   alternates: {
     canonical: "https://www.magentalabblog.com/en/emergency-calculator",
     languages: {
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   keywords: ["pet poison calculator", "dog chocolate toxicity", "onion poisoning dogs", "canine toxicity emergency", "harmful food list dogs", "feline toxicity index", "Magentalab"],
   openGraph: {
     title: "Pet Poison Toxicity Emergency Calculator | Magentalab",
-    description: "Real-time veterinary toxicity level diagnostic screener based on pet weight and ingested dosage.",
+    description: "Veterinary risk assessment and action level screener based on pet weight and ingested substance.",
     url: "https://www.magentalabblog.com/en/emergency-calculator",
     type: "website",
     images: [
@@ -29,6 +29,12 @@ export const metadata: Metadata = {
         alt: "Magentalab Pet Toxicity Calculator",
       }
     ]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pet Poison Toxicity Emergency Calculator | Magentalab",
+    description: "Veterinary risk assessment and action level screener based on pet weight and ingested substance.",
+    images: ["/images/favicon.png"],
   }
 };
 

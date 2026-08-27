@@ -16,6 +16,17 @@ export async function POST(request: NextRequest) {
       decisionMode, riskAssessment, actionLevel, calculatedDose, doseUnit, ingredientKnown 
     } = body;
 
+    // Number.isFinite를 활용한 명시적 유효 숫자 검사 함수
+    const parseOrNull = (...vals: any[]) => {
+      for (const val of vals) {
+        if (val !== undefined && val !== null) {
+          const parsed = parseFloat(val);
+          if (Number.isFinite(parsed)) return parsed;
+        }
+      }
+      return null;
+    };
+
     // Supabase에 비동기 로그 저장 시도
     const { data, error } = await supabaseAdmin
       .from("emergency_calculator_logs")
@@ -24,10 +35,10 @@ export async function POST(request: NextRequest) {
           // V1 fields
           pet_type: pet_type || species,
           breed,
-          weight: parseFloat(weight) || parseFloat(weightKg) || 0,
+          weight: parseOrNull(weight, weightKg),
           threat_id: threat_id || substance,
-          amount: parseFloat(amount) || parseFloat(ingestionAmount) || 0,
-          toxicity_ratio: parseFloat(toxicity_ratio) || 0,
+          amount: parseOrNull(amount, ingestionAmount),
+          toxicity_ratio: parseOrNull(toxicity_ratio),
           severity,
           
           // V2 new fields (nullable additive migration)

@@ -5,8 +5,8 @@ import RelatedPosts from "@/components/RelatedPosts";
 import { getPosts } from "@/lib/wp";
 
 export const metadata: Metadata = {
-  title: "ペット誤食中毒症状応急判定シミュレーター | マゼンタラボ",
-  description: "チョコレート、ネギ類、ブドウ、キシリトールなど犬・猫の中毒物質誤食時に、体重と摂取量から危険レベルを判定し臨床ガイドを提供します。",
+  title: "ペット誤食中毒症状 応急判定シミュレーター | マゼンタラボ",
+  description: "チョコレート、ネギ類、ブドウ、キシリトールなど犬・猫の中毒物質誤食時に、体重と摂取量から医学的リスク評価(Risk Assessment)と推奨アクション(Action Level)を判定します。",
   alternates: {
     canonical: "https://www.magentalabblog.com/ja/emergency-calculator",
     languages: {
@@ -17,8 +17,8 @@ export const metadata: Metadata = {
   },
   keywords: ["ペット誤食中毒", "犬のチョコレート中毒", "キシリトール犬誤食", "ペット危険食べ物", "猫中毒判定", "マゼンタラボ"],
   openGraph: {
-    title: "ペット誤食中毒症状応急判定シミュレーター | マゼンタラボ",
-    description: "誤食した成分量とペットの体重から、危険度判定（4段階）と家庭での初期応急処置情報を案内。",
+    title: "ペット誤食中毒症状 応急判定シミュレーター | マゼンタラボ",
+    description: "誤食した成分量とペットの体重から、医学的リスク評価と家庭での初期応急処置情報を案内。",
     url: "https://www.magentalabblog.com/ja/emergency-calculator",
     type: "website",
     images: [
@@ -29,6 +29,12 @@ export const metadata: Metadata = {
         alt: "マゼンタラボ 中毒応急計算機",
       }
     ]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ペット誤食中毒症状 応急判定シミュレーター | マゼンタラボ",
+    description: "誤食した成分量とペットの体重から、医学的リスク評価と家庭での初期応急処置情報を案内。",
+    images: ["/images/favicon.png"],
   }
 };
 

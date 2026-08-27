@@ -6,8 +6,8 @@ import { searchPosts } from "@/lib/wp";
 
 // 구글 및 네이버 검색 노출을 위한 응급 계산기 전용 SEO 메타데이터 설정
 export const metadata: Metadata = {
-  title: "반려동물 응급 독성 계산기 (강아지 초콜릿/고양이 백합 위험 물질 판정) | 마젠타랩",
-  description: "강아지나 고양이가 초콜릿(밀크/다크), 포도, 자일리톨, 양파, 백합 등 위험 물질을 섭취했을 때 체중 대비 치사 독성 농도를 즉시 계산합니다. 4단계 위험도 신호 및 신속 대처 레벨 수록.",
+  title: "반려동물 응급 독성 계산기 (강아지 초콜릿/고양이 백합 등 위험 물질 판정) | 마젠타랩",
+  description: "강아지나 고양이가 초콜릿(밀크/다크), 포도, 자일리톨, 양파, 백합 등 위험 물질을 섭취했을 때 체중 대비 의학적 위험 평가(Risk Assessment)와 권장 행동(Action Level)을 즉시 분석합니다.",
   alternates: {
     canonical: "https://www.magentalabblog.com/emergency-calculator",
     languages: {
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     "고양이 초콜릿 계산기",
     "고양이 양파 중독",
     "강아지 포도 먹었을때", 
-    "강아지 자일리톨 치사량", 
+    "강아지 자일리톨 위험도", 
     "테오브로민 계산기", 
     "반려동물 응급실", 
     "마젠타랩 응급 계산기", 
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "반려동물 통합 응급 독성 계산기 | 마젠타랩",
-    description: "아이가 먹은 초콜릿, 백합, 포도, 양파 등의 독성 용량과 신속 대처 레벨을 0초 만에 분석 진단해 보세요.",
+    description: "아이가 먹은 초콜릿, 백합, 포도, 양파 등의 의학적 위험 평가와 신속 대처 레벨을 분석해 보세요.",
     url: "https://www.magentalabblog.com/emergency-calculator",
     type: "website",
     siteName: "Magentalab 반려동물 연구소",
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "반려동물 통합 응급 독성 계산기 | 마젠타랩",
-    description: "반려동물 오섭취 독성 성분별 수의학 치사량 및 응급 대처 가이드 실시간 분석.",
+    description: "반려동물 위험 물질 섭취 시 의학적 위험 평가 및 권장 행동 가이드 실시간 분석.",
     images: ["/images/favicon.png"],
   }
 };

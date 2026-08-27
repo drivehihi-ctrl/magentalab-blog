@@ -7,8 +7,13 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: '*',
-        allow: '/',
-        disallow: ['/api/', '/shop/'],
+        allow: [
+          '/',
+          '/emergency-calculator',
+          '/en/emergency-calculator',
+          '/ja/emergency-calculator',
+        ],
+        disallow: ['/api/', '/shop/', '/shop', '/shop/admin', '/map', '/map/'],
         crawlDelay: 10,
       },
       {
@@ -19,7 +24,14 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: 'Google-AdSense-Display',
         allow: '/',
       },
+      {
+        userAgent: ['GPTBot', 'ChatGPT-User', 'ClaudeBot', 'PerplexityBot', 'Bytespider', 'CCBot', 'Diffbot', 'FacebookBot', 'Google-Extended'],
+        disallow: '/',
+      },
     ],
-    sitemap: `${baseUrl}/sitemap.xml`,
+    sitemap: [
+      `${baseUrl}/sitemap.xml`,
+      `${baseUrl}/rss.xml`
+    ],
   };
 }
