@@ -27,11 +27,7 @@ interface BCSCalculatorProps {
 }
 
 export default function BCSCalculator({ lang = "ko" }: BCSCalculatorProps) {
-  const [isMounted, setIsMounted] = useState<boolean>(false);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   // 입력 폼 상태 관리
   const [petType, setPetType] = useState<"dog" | "cat">("dog");
@@ -466,16 +462,7 @@ export default function BCSCalculator({ lang = "ko" }: BCSCalculatorProps) {
 
   const themeColors = getThemeColors(currentBcsInfo.level);
 
-  if (!isMounted) {
-    return (
-      <div className="bg-slate-50 min-h-screen py-20 px-4 flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-magenta mx-auto"></div>
-          <p className="text-slate-500 font-bold text-sm">{t.loading}</p>
-        </div>
-      </div>
-    );
-  }
+
 
   return (
     <div className="bg-slate-50 min-h-screen py-10 px-4 sm:px-6">

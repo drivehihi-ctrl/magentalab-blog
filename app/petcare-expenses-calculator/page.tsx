@@ -57,7 +57,7 @@ export default async function PetcareExpensesPage() {
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": "반려동물 평생 양육비 및 월간 유지비 계산기",
-    "url": "https://www.magentalabblog.com/Petcareexpenses",
+    "url": "https://www.magentalabblog.com/petcare-expenses-calculator",
     "applicationCategory": "FinanceApplication",
     "operatingSystem": "All",
     "browserRequirements": "Requires JavaScript. Requires HTML5.",

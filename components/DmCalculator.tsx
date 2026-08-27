@@ -17,11 +17,7 @@ interface DmCalculatorProps {
 }
 
 export default function DmCalculator({ lang = "ko" }: DmCalculatorProps) {
-  const [isMounted, setIsMounted] = useState<boolean>(false);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   // --- 1. 하루 필수 음수량 계산기 상태 ---
   const [petType, setPetType] = useState<"dog" | "cat">("cat");
@@ -287,17 +283,6 @@ export default function DmCalculator({ lang = "ko" }: DmCalculatorProps) {
   };
 
   const ratingInfo = getRatingBadge(proteinRating);
-
-  if (!isMounted) {
-    return (
-      <div className="bg-slate-900 min-h-screen py-20 px-4 flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-magenta mx-auto"></div>
-          <p className="text-slate-400 font-bold text-sm">{t.loading}</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="bg-slate-950 min-h-screen py-12 px-4 sm:px-6 relative overflow-hidden flex items-center justify-center">

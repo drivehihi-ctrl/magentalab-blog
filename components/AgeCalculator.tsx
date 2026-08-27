@@ -29,12 +29,10 @@ interface AgeCalculatorProps {
 }
 
 export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
-  const [isMounted, setIsMounted] = useState<boolean>(false);
   const [currentYear, setCurrentYear] = useState<number>(2026);
   const [currentMonth, setCurrentMonth] = useState<number>(6);
 
   useEffect(() => {
-    setIsMounted(true);
     const now = new Date();
     setCurrentYear(now.getFullYear());
     setCurrentMonth(now.getMonth() + 1);
@@ -416,17 +414,6 @@ export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
     setBirthMonth("6");
     setShowResult(false);
   };
-
-  if (!isMounted) {
-    return (
-      <div className="bg-slate-900 min-h-screen py-20 px-4 flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-magenta mx-auto"></div>
-          <p className="text-slate-400 font-bold text-sm">{t.loading}</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="bg-slate-950 min-h-screen py-12 px-4 sm:px-6 relative overflow-hidden flex items-center justify-center">

@@ -58,7 +58,7 @@ export default async function FicPage() {
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": "고양이 스트레스 및 특발성 방광염(FIC) 자가 진단기",
-    "url": "https://www.magentalabblog.com/FIC",
+    "url": "https://www.magentalabblog.com/fic-diagnoser",
     "applicationCategory": "HealthApplication",
     "operatingSystem": "All",
     "browserRequirements": "Requires JavaScript. Requires HTML5.",

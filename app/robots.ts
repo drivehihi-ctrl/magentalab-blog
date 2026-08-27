@@ -12,8 +12,10 @@ export default function robots(): MetadataRoute.Robots {
           '/emergency-calculator',
           '/en/emergency-calculator',
           '/ja/emergency-calculator',
+          '/map',
+          '/map/',
         ],
-        disallow: ['/api/', '/shop/', '/shop', '/shop/admin', '/map', '/map/'],
+        disallow: ['/api/', '/shop/', '/shop', '/shop/admin'],
         crawlDelay: 10,
       },
       {

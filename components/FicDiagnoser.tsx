@@ -22,11 +22,7 @@ interface FicDiagnoserProps {
 }
 
 export default function FicDiagnoser({ lang = "ko" }: FicDiagnoserProps) {
-  const [isMounted, setIsMounted] = useState<boolean>(false);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   // 입력 폼 상태 관리
   const [age, setAge] = useState<string>("3");
@@ -264,17 +260,6 @@ export default function FicDiagnoser({ lang = "ko" }: FicDiagnoserProps) {
 
   const diag = getDiagnosis();
   const nextCalculatorLink = lang === "ko" ? "/dm-calculator" : lang === "ja" ? "/ja/dm-calculator" : "/en/dm-calculator";
-
-  if (!isMounted) {
-    return (
-      <div className="bg-slate-50 min-h-screen py-20 px-4 flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-magenta mx-auto"></div>
-          <p className="text-slate-500 font-bold text-sm">{t.loading}</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="bg-slate-50 min-h-screen py-10 px-4 sm:px-6">
