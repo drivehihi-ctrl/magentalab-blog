@@ -73,7 +73,7 @@ export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
       guideTitle: "맞춤형 생활 관리 가이드",
       guideSubtitle: "생활 관리 추천 수칙 4가지:",
       tipTitle: "잠깐! 알고 계셨나요?",
-      tipDesc: "반려동물의 시간은 인간보다 약 5~7배 빠르게 흘러갑니다. 특히 대형견은 소형견보다 몸집이 크고 신진대사가 달라 노화 진행 속도가 훨씬 가파릅니다. 나이에 최적화된 올바른 보조 영양제 급여와 식단 관리가 건강 수명을 최대 3년 이상 연장할 수 있습니다.",
+      tipDesc: "반려동물의 시간은 인간보다 약 5~7배 빠르게 흘러갑니다. 특히 대형견은 소형견보다 몸집이 크고 신진대사가 달라 노화 진행 속도가 훨씬 가파릅니다. 나이에 맞는 체중 관리와 예방진료는 건강한 노년기 준비에 도움이 될 수 있습니다.",
       years: "살",
       months: "개월",
       yearsUnit: "세",
@@ -83,7 +83,7 @@ export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
           stageName: "성장기 (Growth / Junior)",
           desc: "기초 체력과 면역 시스템이 활발하게 형성되는 생애 첫 단계입니다.",
           tips: [
-            "성장기 전용 고단백·고칼슘 사료(초유 성분 및 L-라이신 풍부)를 급여해 주세요.",
+            "성장 단계에 맞는 영양 균형이 갖춰진 완전사료를 급여해 주세요.",
             "생후 3~4개월 시기의 기초 예방접종(종합백신 등) 일정을 철저히 지켜야 합니다.",
             "올바른 사회화 교육을 위해 매일 다양한 소리, 환경, 낯선 자극을 경험하도록 유도하세요.",
             "이갈이 시기에는 잇몸 통증 완화와 영구치 관리를 위해 안전한 터그/치석 토이를 제공해 주세요."
@@ -94,7 +94,7 @@ export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
           desc: "신체 기능이 절정에 달하고 에너지가 가장 넘치는 건강한 성년 단계입니다.",
           tips: [
             "중성화 수술 이후 대사량이 감소해 비만이 되기 쉬우므로 저칼로리 식단과 체중 관리가 필요합니다.",
-            "하루 최소 30분 이상(강아지는 야외 산책, 고양이는 낚싯대 사냥 놀이)의 에너지 해소가 필수적입니다.",
+            "하루 최소 30분 이상(강아지는 야외 산책, 고양이는 낚싯대 사냥 놀이)의 적절한 신체 활동을 권장합니다.",
             "구강 건강이 나빠지기 시작하므로 하루 1회 칫솔질 및 플라그 제거 껌 급여를 루틴화해 주세요.",
             "매년 1회 정기 종합 백신 추가 접종 및 기본적인 심장사상충 예방을 잊지 마세요."
           ]
@@ -113,7 +113,7 @@ export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
           stageName: "노령기 (Senior / Geriatric)",
           desc: "세심한 밀착 케어와 만성 질환 예방관리가 최우선시되는 노후 실버 단계입니다.",
           tips: [
-            "관절 통증 완화와 연골 보호를 위해 콘드로이친, 글루코사민, 초록입홍합 성분의 영양제를 필수로 급여하세요.",
+            "관절 통증 완화와 연골 보호를 위해 필요시 수의사와 상담하여 관절 건강에 도움을 줄 수 있는 보조제를 고려해 보세요.",
             "신장 및 간 기능 저하 여부를 체크하기 위해 최소 6개월 주기로 동물병원 혈액/검뇨 검사를 진행하세요.",
             "치매(인지기능장애증후군)를 방지하기 위해 노즈워크 놀이와 가벼운 후각 자극 산책을 꾸준히 이어 가세요.",
             "체온 조절 능력이 저하되므로 실내 온도를 항상 따뜻하게 유지하고, 푹신한 정형외과용 메모리폼 쿠션을 제공하세요."
@@ -146,7 +146,7 @@ export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
       guideTitle: "Tailored Lifestyle Guide",
       guideSubtitle: "4 Recommended Lifestyle Rules:",
       tipTitle: "Did You Know?",
-      tipDesc: "A pet's time flows approximately 5 to 7 times faster than a human's. Large breeds age much quicker due to metabolism and size constraints. Providing age-appropriate food and antioxidants can extend their healthy lifespan by up to 3 years.",
+      tipDesc: "A pet's time flows approximately 5 to 7 times faster than a human's. Large breeds age much quicker due to metabolism and size constraints. Age-appropriate weight management and preventive care can help prepare for a healthy senior stage.",
       years: " years",
       months: " months",
       yearsUnit: " years old",
@@ -156,7 +156,7 @@ export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
           stageName: "Growth / Junior",
           desc: "The first developmental phase of life where basic physical stamina and immune systems are established.",
           tips: [
-            "Feed high-protein and high-calcium kitten/puppy specific formulas rich in colostrum and L-lysine.",
+            "Feed a well-balanced, complete diet appropriate for their growth stage.",
             "Carefully follow vaccination schedules at 3 to 4 months of age.",
             "Expose them to different sounds, environments, and new stimuli daily for healthy socialization.",
             "Provide safe chew toys to relieve teething pain and protect erupting permanent teeth."
@@ -167,7 +167,7 @@ export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
           desc: "A healthy prime adult stage where bodily functions peak and energy levels are highest.",
           tips: [
             "Monitor calories and weights post-neutering as metabolic rates drop, leading to obesity risks.",
-            "Ensure at least 30 minutes of energy release daily (outdoor walks for dogs, wand toys for cats).",
+            "Recommend at least 30 minutes of appropriate physical activity daily (outdoor walks for dogs, wand toys for cats).",
             "Establish daily teeth brushing routines and dental chews to prevent early periodontal diseases.",
             "Schedule annual checkups, core vaccine boosters, and heartworm preventatives."
           ]
@@ -186,7 +186,7 @@ export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
           stageName: "Senior / Geriatric",
           desc: "A golden age where comprehensive close care and chronic disease management are top priorities.",
           tips: [
-            "Feed joint supplements containing chondroitin, glucosamine, and green-lipped mussel.",
+            "Consider discussing joint support supplements with your vet if needed.",
             "Run geriatric blood and urine panels every 6 months to monitor renal and liver functions.",
             "Perform nosework and light sniffing walks to prevent cognitive dysfunction syndrome (dementia).",
             "Keep rooms warm as thermoregulation drops, and provide orthotic memory foam beds."
@@ -219,7 +219,7 @@ export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
       guideTitle: "オーダーメイド生活管理ガイド",
       guideSubtitle: "生活管理の4つの推奨ルール:",
       tipTitle: "ご存知でしたか？",
-      tipDesc: "ペットの時間は人間の約5〜7倍の速さで流れます。特に大型犬は小型犬よりも体が大きく代謝が異なるため、老化の進行が非常に早いです。年齢に最適化されたサプリメントや食事管理を行うことで、健康寿命を最大3年以上延ばすことができます。",
+      tipDesc: "ペットの時間は人間の約5〜7倍の速さで流れます。特に大型犬は小型犬よりも体が大きく代謝が異なるため、老化の進行が非常に早いです。年齢に合った体重管理と予防ケアは、健康なシニア期への準備に役立ちます。",
       years: "歳",
       months: "ヶ月",
       yearsUnit: "歳",
@@ -229,7 +229,7 @@ export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
           stageName: "成長期 (Growth / Junior)",
           desc: "基礎体力と免疫システムが活発に形成される生涯の最初の段階です。",
           tips: [
-            "成長期専用の高タンパク・高カルシウムフード（初乳成分やL-リジンが豊富）を与えてください。",
+            "成長段階に合わせた栄養バランスの取れた総合栄養食を与えてください。",
             "生後3〜4ヶ月頃の基礎予防接種（混合ワクチンなど）のスケジュールを厳守してください。",
             "適切な社会化教育のため、毎日様々な音、環境、新しい刺激を経験させてあげましょう。",
             "歯の生え変わり時期には、歯茎の痛みの緩和と永久歯の管理のために安全な噛むおもちゃを与えてください。"
@@ -240,7 +240,7 @@ export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
           desc: "身体機能がピークに達し、エネルギーが最も満ち溢れる健康な成犬・成猫段階です。",
           tips: [
             "去勢・避妊手術後は代謝量が減少し肥満になりやすいため、低カロリー食と体重管理が必要です。",
-            "一日最低30分以上（犬は散歩、猫はおもちゃでの狩りごっこ）の運動が必須です。",
+            "一日最低30分以上（犬は散歩、猫はおもちゃでの狩りごっこ）の適度な運動をお勧めします。",
             "口腔環境が悪化しやすいため、一日1回の歯磨きやデンタルガムの給与を習慣化してください。",
             "年に1回の定期混合ワクチンの追加接種と、基本的なフィラリア予防を忘れないでください。"
           ]
@@ -259,7 +259,7 @@ export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
           stageName: "高齢期 (Senior / Geriatric)",
           desc: "細やかなケアと慢性疾患の予防・管理が最優先されるシニア・シルバー段階です。",
           tips: [
-            "関節痛の緩和と軟骨保護のため、コンドロイチン、グルコサミン、緑イ貝配合のサプリメントを与えてください。",
+            "必要に応じて、獣医師と相談しながら関節の健康をサポートするサプリメントを検討してみてください。",
             "腎臓や肝臓の機能低下をチェックするため、最低6ヶ月周期で動物病院で血液・尿検査を行ってください。",
             "認知症（認知機能障害症候群）を予防するため、ノーズワーク遊びや軽い散歩を続けてください。",
             "体温調節能力が低下するため、室温を常に暖かく保ち、体圧分散のメモリフォームベッドを用意してください。"
