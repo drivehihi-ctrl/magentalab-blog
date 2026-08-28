@@ -49,9 +49,9 @@ export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
   // Multilingual translation dictionaries
   const dict = {
     ko: {
-      title: "반려동물 인간 나이 & 생애주기 진단기",
-      desc: "축종, 체형 크기, 정확한 출생일(개월 수) 데이터를 기반으로 수의학 표준 나이 변환 공식 및 최적의 신체 생애주기 가이드를 실시간 계산합니다.",
-      badge: "2026년형 프리미엄 스마트 진단엔진",
+      title: "반려동물 나이 계산기 & 생애주기 가이드",
+      desc: "반려동물의 종류, 체격, 출생 연월을 기반으로 사람 나이 환산 참고값과 생애주기를 안내합니다.",
+      badge: "생애주기 계산기",
       labelPetType: "반려동물 종류",
       dog: "강아지 (Dog)",
       cat: "고양이 (Cat)",
@@ -63,15 +63,15 @@ export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
       sizeLarge: "대형견",
       sizeLargeDesc: "25kg 초과",
       labelBirth: "출생 연월 선택",
-      birthDesc: "정확한 출생 연월을 선택하면 개월 수 비례에 따라 수의학 보간법을 적용해 인간 나이로 오차 없이 미세 정산됩니다.",
-      btnCalculate: "생애주기 진단하기",
-      btnAnalyzing: "AI 생애분석 중...",
+      birthDesc: "정확한 출생 연월을 선택하면 개월 수에 비례한 사람 나이 참고값을 계산해 드립니다.",
+      btnCalculate: "나이와 생애주기 확인하기",
+      btnAnalyzing: "계산 중...",
       btnReset: "초기화",
-      resultTitle: "진단 결과서",
+      resultTitle: "나이 및 생애주기 안내",
       resultIntro: "올해 실제 나이 살 개월인 우리 아이는",
       resultMain: "인간 나이로 환산 시 입니다.",
-      guideTitle: "맞춤형 영양 & 건강 솔루션",
-      guideSubtitle: "수의사 추천 건강 관리 수칙 4가지:",
+      guideTitle: "맞춤형 생활 관리 가이드",
+      guideSubtitle: "생활 관리 추천 수칙 4가지:",
       tipTitle: "잠깐! 알고 계셨나요?",
       tipDesc: "반려동물의 시간은 인간보다 약 5~7배 빠르게 흘러갑니다. 특히 대형견은 소형견보다 몸집이 크고 신진대사가 달라 노화 진행 속도가 훨씬 가파릅니다. 나이에 최적화된 올바른 보조 영양제 급여와 식단 관리가 건강 수명을 최대 3년 이상 연장할 수 있습니다.",
       years: "살",
@@ -122,9 +122,9 @@ export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
       }
     },
     en: {
-      title: "Pet Human Age & Life Stage Diagnoser",
-      desc: "Convert your pet's age to human years based on species, breed size, and exact months of age, then receive customized veterinary life stage guides.",
-      badge: "2026 Premium Smart Diagnosis Engine",
+      title: "Pet Age Calculator & Life Stage Guide",
+      desc: "Calculates approximate human age equivalents and life stages based on your pet's species, breed size, and exact age.",
+      badge: "Life Stage Calculator",
       labelPetType: "Pet Type",
       dog: "Dog",
       cat: "Cat",
@@ -136,15 +136,15 @@ export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
       sizeLarge: "Large Dog",
       sizeLargeDesc: "Over 25kg",
       labelBirth: "Select Date of Birth",
-      birthDesc: "Providing the exact birth year and month calculates human age equivalents without rounding errors based on linear veterinary interpolation.",
-      btnCalculate: "Diagnose Life Stage",
-      btnAnalyzing: "Analyzing AI Profile...",
+      birthDesc: "Select the exact birth year and month for a more accurate human age estimate.",
+      btnCalculate: "Check Age & Life Stage",
+      btnAnalyzing: "Calculating...",
       btnReset: "Reset",
-      resultTitle: "Diagnosis Report",
+      resultTitle: "Age & Life Stage Guide",
       resultIntro: "Your pet, currently years and months old,",
       resultMain: "is equivalent to a human aged years old.",
-      guideTitle: "Tailored Nutrition & Health Guide",
-      guideSubtitle: "4 Essential Vet-Recommended Rules:",
+      guideTitle: "Tailored Lifestyle Guide",
+      guideSubtitle: "4 Recommended Lifestyle Rules:",
       tipTitle: "Did You Know?",
       tipDesc: "A pet's time flows approximately 5 to 7 times faster than a human's. Large breeds age much quicker due to metabolism and size constraints. Providing age-appropriate food and antioxidants can extend their healthy lifespan by up to 3 years.",
       years: " years",
@@ -195,9 +195,9 @@ export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
       }
     },
     ja: {
-      title: "ペット人間年齢＆ライフステージ診断機",
-      desc: "動物の種類、体の大きさ、正確な生月数データに基づいて、獣医学標準年齢換算式と最適なライフステージケアガイドをリアルタイムで計算します。",
-      badge: "2026年型プレミアムスマート診断エンジン",
+      title: "ペット年齢計算機＆ライフステージガイド",
+      desc: "動物の種類、体の大きさ、誕生年月を基に、人間の年齢換算参考値とライフステージをご案内します。",
+      badge: "ライフステージ計算機",
       labelPetType: "ペットの種類",
       dog: "犬 (Dog)",
       cat: "猫 (Cat)",
@@ -209,15 +209,15 @@ export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
       sizeLarge: "大型犬",
       sizeLargeDesc: "25kg 超過",
       labelBirth: "誕生年月選択",
-      birthDesc: "正確な誕生年月を選択すると、生月数の比率に応じて獣医学補間法を適用し、人間の年齢に誤差なく精密計算されます。",
-      btnCalculate: "ライフステージを診断する",
-      btnAnalyzing: "AI解析中...",
+      birthDesc: "正確な誕生年月を選択すると、生月数に比例した人間の年齢参考値を計算します。",
+      btnCalculate: "年齢とライフステージを確認する",
+      btnAnalyzing: "計算中...",
       btnReset: "リセット",
-      resultTitle: "診断結果書",
+      resultTitle: "年齢およびライフステージのご案内",
       resultIntro: "今年で実年齢が 歳 ヶ月になるうちの子は",
       resultMain: "人間の年齢に換算すると 歳になります。",
-      guideTitle: "オーダーメイド栄養＆健康ソリューション",
-      guideSubtitle: "獣医師が推奨する健康管理の4つのルール:",
+      guideTitle: "オーダーメイド生活管理ガイド",
+      guideSubtitle: "生活管理の4つの推奨ルール:",
       tipTitle: "ご存知でしたか？",
       tipDesc: "ペットの時間は人間の約5〜7倍の速さで流れます。特に大型犬は小型犬よりも体が大きく代謝が異なるため、老化の進行が非常に早いです。年齢に最適化されたサプリメントや食事管理を行うことで、健康寿命を最大3年以上延ばすことができます。",
       years: "歳",
@@ -329,7 +329,6 @@ export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
       const birthY = parseInt(birthYear);
       const birthM = parseInt(birthMonth);
 
-      // 개월 수 차이 계산
       const diffMonths = Math.max(0, (currentYear - birthY) * 12 + (currentMonth - birthM));
       const petYears = Math.floor(diffMonths / 12);
       const petMonths = diffMonths % 12;
@@ -339,16 +338,10 @@ export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
       let humanAge = 0;
 
       if (petType === "cat") {
-        if (diffMonths <= 1) {
-          humanAge = diffMonths * 1;
-        } else if (diffMonths <= 3) {
-          humanAge = 1 + (diffMonths - 1) * ((5 - 1) / (3 - 1));
-        } else if (diffMonths <= 6) {
-          humanAge = 5 + (diffMonths - 3) * ((10 - 5) / (6 - 3));
-        } else if (diffMonths <= 12) {
-          humanAge = 10 + (diffMonths - 6) * ((15 - 10) / (12 - 6));
+        if (diffMonths <= 12) {
+          humanAge = diffMonths * (15 / 12);
         } else if (diffMonths <= 24) {
-          humanAge = 15 + (diffMonths - 12) * ((24 - 15) / (24 - 12));
+          humanAge = 15 + (diffMonths - 12) * ((24 - 15) / 12);
         } else {
           humanAge = 24 + (diffMonths - 24) * (4 / 12);
         }
@@ -357,7 +350,7 @@ export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
           if (diffMonths <= 12) {
             humanAge = diffMonths * (15 / 12);
           } else if (diffMonths <= 24) {
-            humanAge = 15 + (diffMonths - 12) * ((24 - 15) / (24 - 12));
+            humanAge = 15 + (diffMonths - 12) * ((24 - 15) / 12);
           } else {
             humanAge = 24 + (diffMonths - 24) * (4 / 12);
           }
@@ -365,34 +358,48 @@ export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
           if (diffMonths <= 12) {
             humanAge = diffMonths * (15 / 12);
           } else if (diffMonths <= 24) {
-            humanAge = 15 + (diffMonths - 12) * ((24 - 15) / (24 - 12));
+            humanAge = 15 + (diffMonths - 12) * ((24 - 15) / 12);
           } else {
             humanAge = 24 + (diffMonths - 24) * (5 / 12);
           }
         } else {
           if (diffMonths <= 12) {
-            humanAge = diffMonths * (12 / 12);
+            humanAge = diffMonths * (15 / 12); // AVMA typically uses 15 for year 1 across sizes
           } else if (diffMonths <= 24) {
-            humanAge = 12 + (diffMonths - 12) * ((22 - 12) / (24 - 12));
+            humanAge = 15 + (diffMonths - 12) * ((24 - 15) / 12);
           } else {
-            humanAge = 22 + (diffMonths - 24) * (7.5 / 12);
+            humanAge = 24 + (diffMonths - 24) * (7.5 / 12);
           }
         }
       }
 
-      const finalHumanAge = Math.max(0, Math.round(humanAge * 10) / 10);
+      const finalHumanAge = Math.max(0, Math.round(humanAge));
       setComputedHumanAge(finalHumanAge);
 
-      // 생애주기 판정 단계 지정
-      let stage: LifeStageInfo = lifeStagesData.growth;
-      if (finalHumanAge >= 55) {
-        stage = lifeStagesData.senior;
-      } else if (finalHumanAge >= 40) {
-        stage = lifeStagesData.matureAdulthood;
-      } else if (finalHumanAge >= 20) {
-        stage = lifeStagesData.maturity;
+      const getDogLifeStage = (months: number, size: string) => {
+        if (months < 12) return lifeStagesData.growth;
+        if (months < 84) return lifeStagesData.maturity;
+        if (size === "large") {
+           if (months < 96) return lifeStagesData.matureAdulthood;
+           return lifeStagesData.senior;
+        } else {
+           if (months < 120) return lifeStagesData.matureAdulthood;
+           return lifeStagesData.senior;
+        }
+      };
+
+      const getCatLifeStage = (months: number) => {
+        if (months < 12) return lifeStagesData.growth;
+        if (months < 84) return lifeStagesData.maturity;
+        if (months < 120) return lifeStagesData.matureAdulthood;
+        return lifeStagesData.senior;
+      };
+
+      let stage: LifeStageInfo;
+      if (petType === "cat") {
+        stage = getCatLifeStage(diffMonths);
       } else {
-        stage = lifeStagesData.growth;
+        stage = getDogLifeStage(diffMonths, dogSize);
       }
 
       setCurrentStage(stage);
@@ -603,111 +610,59 @@ export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
           >
             <div className="border-t border-white/10 pt-8 space-y-6">
               
-              {/* 메인 진단 결과 보드 */}
+              {/* 메인 결과 안내 보드 */}
               <div className="bg-slate-900/60 border border-white/10 rounded-3xl p-6 sm:p-8 space-y-6 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-36 h-36 bg-magenta/10 rounded-full blur-2xl pointer-events-none" />
                 
-                <div className="space-y-4 text-center">
+                <div className="text-center mb-6">
                   <span className="text-xs font-black tracking-widest text-magenta uppercase bg-magenta-light/10 border border-magenta/20 px-3 py-1 rounded-full">
                     {t.resultTitle}
                   </span>
-                  
-                  <div className="space-y-2">
-                    {lang === "ko" && (
-                      <p className="text-slate-300 text-sm sm:text-base font-bold">
-                        올해 실제 나이 <strong className="text-white text-lg font-black">{computedPetAge.years}살 {computedPetAge.months}개월</strong>인 우리 아이는
-                      </p>
-                    )}
-                    {lang === "en" && (
-                      <p className="text-slate-300 text-sm sm:text-base font-bold">
-                        Your pet, currently <strong className="text-white text-lg font-black">{computedPetAge.years} years and {computedPetAge.months} months</strong> old,
-                      </p>
-                    )}
-                    {lang === "ja" && (
-                      <p className="text-slate-300 text-sm sm:text-base font-bold">
-                        今年で実年齢が <strong className="text-white text-lg font-black">{computedPetAge.years}歳 {computedPetAge.months}ヶ月</strong>になるうちの子は
-                      </p>
-                    )}
-                    
-                    <h2 className="text-2xl sm:text-3xl font-black text-white leading-normal tracking-tight">
-                      {lang === "ko" && (
-                        <>
-                          인간 나이로 환산 시{" "}
-                          <span className="text-magenta drop-shadow-[0_0_8px_rgba(229,0,126,0.3)]">
-                            {computedHumanAge}세
-                          </span>{" "}
-                          <span className="text-slate-300">
-                            [{currentStage.stageName.split(" (")[0]}]
-                          </span>
-                          입니다.
-                        </>
-                      )}
-                      {lang === "en" && (
-                        <>
-                          is equivalent to a human aged{" "}
-                          <span className="text-magenta drop-shadow-[0_0_8px_rgba(229,0,126,0.3)]">
-                            {computedHumanAge} years old
-                          </span>{" "}
-                          <span className="text-slate-300">
-                            [{currentStage.stageName.split(" (")[0]}]
-                          </span>.
-                        </>
-                      )}
-                      {lang === "ja" && (
-                        <>
-                          人間の年齢に換算すると{" "}
-                          <span className="text-magenta drop-shadow-[0_0_8px_rgba(229,0,126,0.3)]">
-                            {computedHumanAge}歳
-                          </span>{" "}
-                          <span className="text-slate-300">
-                            [{currentStage.stageName.split(" (")[0]}]
-                          </span>
-                          になります。
-                        </>
-                      )}
-                    </h2>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* 섹션 1: 실제 나이 */}
+                  <div className="bg-white/5 border border-white/10 rounded-2xl p-5 text-center flex flex-col justify-center">
+                    <p className="text-slate-400 text-xs sm:text-sm font-bold mb-1">
+                      {lang === "ko" ? "실제 나이" : lang === "ja" ? "実年齢" : "Actual Age"}
+                    </p>
+                    <p className="text-white text-xl sm:text-2xl font-black">
+                      {lang === "en" 
+                        ? `${computedPetAge.years}yrs ${computedPetAge.months}mo` 
+                        : `${computedPetAge.years}${t.years} ${computedPetAge.months}${t.months}`}
+                    </p>
+                  </div>
+
+                  {/* 섹션 2: 사람 나이 */}
+                  <div className="bg-white/5 border border-white/10 rounded-2xl p-5 text-center flex flex-col justify-center relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-16 h-16 bg-magenta/20 rounded-full blur-xl pointer-events-none" />
+                    <p className="text-slate-400 text-xs sm:text-sm font-bold mb-1">
+                      {lang === "ko" ? "사람 나이 참고값" : lang === "ja" ? "人間の年齢参考値" : "Approx. Human Age"}
+                    </p>
+                    <p className="text-magenta drop-shadow-[0_0_8px_rgba(229,0,126,0.3)] text-2xl sm:text-3xl font-black">
+                      {lang === "ko" ? `약 ${computedHumanAge}세` : lang === "ja" ? `約${computedHumanAge}歳` : `~${computedHumanAge} years`}
+                    </p>
+                  </div>
+
+                  {/* 섹션 3: 생애주기 */}
+                  <div className={`border rounded-2xl p-5 text-center flex flex-col justify-center ${currentStage.colorClass}`}>
+                    <p className="opacity-70 text-xs sm:text-sm font-bold mb-1">
+                      {lang === "ko" ? "현재 생애주기" : lang === "ja" ? "現在のライフステージ" : "Current Life Stage"}
+                    </p>
+                    <p className="text-xl sm:text-2xl font-black">
+                      {currentStage.stageName.split(" (")[0]}
+                    </p>
                   </div>
                 </div>
 
-                {/* 생애주기 비주얼 슬라이드바 */}
-                <div className="space-y-2 pt-2">
-                  <div className="flex justify-between text-[11px] font-bold text-slate-400">
-                    {lang === "ko" ? (
-                      <>
-                        <span>성장기 (~19세)</span>
-                        <span>성숙기 (20~39세)</span>
-                        <span>장년기 (40~54세)</span>
-                        <span>노령기 (55세~)</span>
-                      </>
-                    ) : lang === "ja" ? (
-                      <>
-                        <span>成長期 (~19歳)</span>
-                        <span>成熟期 (20~39歳)</span>
-                        <span>中年期 (40~54歳)</span>
-                        <span>高齢期 (55歳~)</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>Growth (~19yo)</span>
-                        <span>Adult (20~39yo)</span>
-                        <span>Mature (40~54yo)</span>
-                        <span>Senior (55yo~)</span>
-                      </>
-                    )}
-                  </div>
-                  
-                  <div className="h-3 rounded-full bg-slate-950 p-0.5 overflow-hidden flex relative">
-                    <div 
-                      className="h-full rounded-full bg-gradient-to-r from-blue-500 via-emerald-500 via-amber-500 to-rose-500 transition-all duration-1000"
-                      style={{ width: `${Math.min(100, (computedHumanAge / 80) * 100)}%` }}
-                    />
-                    <div 
-                      className="absolute top-0.5 -mt-1 w-5 h-5 rounded-full border-2 border-white bg-magenta shadow-md shadow-magenta/50 -translate-x-1/2 transition-all duration-1000"
-                      style={{ left: `${Math.min(100, (computedHumanAge / 80) * 100)}%` }}
-                    />
-                  </div>
+                <div className="bg-slate-800/50 rounded-xl p-4 mt-4 space-y-2">
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    <span className="font-bold text-magenta">안내:</span> {lang === "ko" ? "사람 나이는 이해를 돕기 위한 대략적인 환산값입니다. 실제 노화 속도는 품종, 체격, 건강 상태에 따라 다를 수 있습니다." : lang === "ja" ? "人間の年齢は理解を助けるための大まかな換算値です。実際の老化の進行は、品種、体格、健康状態によって異なる場合があります。" : "Human age is an approximate equivalent to help understanding. Actual aging speed varies by breed, size, and health."}
+                  </p>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    <span className="font-bold text-magenta">안내:</span> {lang === "ko" ? "크기와 품종에 따라 생애주기 전환 시점은 조금씩 다를 수 있으나, 전반적인 건강 관리에서는 참고용 사람 나이보다 실제 나이와 생애주기를 더 중요하게 봅니다." : lang === "ja" ? "体格や品種によってライフステージの移行時期は異なりますが、健康管理においては人間の年齢よりも実年齢とライフステージをより重視します。" : "Life stage transition times vary by size and breed, but for general healthcare, actual age and life stage are more important than human age equivalents."}
+                  </p>
                 </div>
-
               </div>
 
               {/* 맞춤형 수의학 가이드 솔루션 */}
