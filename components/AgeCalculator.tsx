@@ -29,14 +29,8 @@ interface AgeCalculatorProps {
 }
 
 export default function AgeCalculator({ lang = "ko" }: AgeCalculatorProps) {
-  const [currentYear, setCurrentYear] = useState<number>(2026);
-  const [currentMonth, setCurrentMonth] = useState<number>(6);
-
-  useEffect(() => {
-    const now = new Date();
-    setCurrentYear(now.getFullYear());
-    setCurrentMonth(now.getMonth() + 1);
-  }, []);
+  const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear());
+  const [currentMonth, setCurrentMonth] = useState<number>(new Date().getMonth() + 1);
 
   // 입력 폼 상태 관리
   const [petType, setPetType] = useState<"dog" | "cat">("dog");
