@@ -5,7 +5,7 @@ import RelatedPosts from "@/components/RelatedPosts";
 import AboutEEATFeatures from "@/components/AboutEEATFeatures";
 
 export const metadata: Metadata = {
-  title: "About Magentalab | Magentalab",
+  title: "About Magentalab",
   description: "Introducing Magentalab's mission and content creation principles, which started from pet parents' questions.",
   alternates: {
     canonical: "https://www.magentalabblog.com/en/about",
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "About Magentalab | Magentalab",
+    title: "About Magentalab",
     description: "Introducing Magentalab's mission and content creation principles, which started from pet parents' questions.",
     url: "https://www.magentalabblog.com/en/about",
     type: "website",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "About Magentalab | Magentalab",
+    title: "About Magentalab",
     description: "Introducing Magentalab's mission and content creation principles, which started from pet parents' questions.",
     images: ["/images/favicon.png"]
   }
@@ -86,7 +86,7 @@ export default async function EnAboutPage() {
           </div>
 
           <AboutEEATFeatures lang="en" />
-          <RelatedPosts posts={relatedPosts} lang="en" />
+          
         </div>
       </div>
       

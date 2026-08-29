@@ -4,7 +4,7 @@ import Link from "next/link";
 import RelatedPosts from "@/components/RelatedPosts";
 
 export const metadata: Metadata = {
-  title: "안심이 소개 | Magentalab",
+  title: "안심이 소개",
   description: "마젠타랩의 브랜드 캐릭터이자 보호자를 위한 가이드, 안심이를 소개합니다.",
   alternates: {
     canonical: "https://www.magentalabblog.com/about-ansim",
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "안심이 소개 | Magentalab",
+    title: "안심이 소개",
     description: "마젠타랩의 브랜드 캐릭터이자 보호자를 위한 가이드, 안심이를 소개합니다.",
     url: "https://www.magentalabblog.com/about-ansim",
     type: "website",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "안심이 소개 | Magentalab",
+    title: "안심이 소개",
     description: "마젠타랩의 브랜드 캐릭터이자 보호자를 위한 가이드, 안심이를 소개합니다.",
     images: ["/images/favicon.png"]
   }
@@ -97,7 +97,7 @@ export default async function AboutAnsimPage() {
             <p>모르는 것은 모른다고 정직하게 말하고, 새로운 근거가 확인되면 내용을 다시 검토하고 필요한 부분을 수정합니다. 무엇보다 온라인 검색보다 생명이 우선이기에, 응급 상황에서는 지체 없이 동물병원 진료를 받도록 안내하는 것을 가장 중요한 원칙으로 삼겠습니다.</p>
           </div>
           
-          <RelatedPosts posts={relatedPosts} />
+          
           
           {/* CTA / Footer */}
           <div className="mt-20 pt-12 border-t border-gray-100 text-center">

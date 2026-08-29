@@ -4,7 +4,7 @@ import Link from "next/link";
 import RelatedPosts from "@/components/RelatedPosts";
 
 export const metadata: Metadata = {
-  title: "About Ansim | Magentalab",
+  title: "About Ansim",
   description: "Introducing Ansim, Magentalab's mascot and a guide for pet parents.",
   alternates: {
     canonical: "https://www.magentalabblog.com/en/about-ansim",
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "About Ansim | Magentalab",
+    title: "About Ansim",
     description: "Introducing Ansim, Magentalab's mascot and a guide for pet parents.",
     url: "https://www.magentalabblog.com/en/about-ansim",
     type: "website",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "About Ansim | Magentalab",
+    title: "About Ansim",
     description: "Introducing Ansim, Magentalab's mascot and a guide for pet parents.",
     images: ["/images/favicon.png"]
   }
@@ -97,7 +97,7 @@ export default async function EnAboutAnsimPage() {
             <p>We honestly say when we don't know something. If new evidence is confirmed, we review the content and make necessary updates. Above all, because a life is more important than an online search, guiding you to a vet clinic without delay during emergencies will always be our top priority.</p>
           </div>
           
-          <RelatedPosts posts={relatedPosts} lang="en" />
+          
           
           {/* CTA / Footer */}
           <div className="mt-20 pt-12 border-t border-gray-100 text-center">

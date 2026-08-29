@@ -5,7 +5,7 @@ import RelatedPosts from "@/components/RelatedPosts";
 import AboutEEATFeatures from "@/components/AboutEEATFeatures";
 
 export const metadata: Metadata = {
-  title: "マゼンタラボ紹介 | Magentalab",
+  title: "マゼンタラボ紹介",
   description: "飼い主さんの疑問から出発したマゼンタラボのミッションと、コンテンツ作成の原則についてご紹介します。",
   alternates: {
     canonical: "https://www.magentalabblog.com/ja/about",
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "マゼンタラボ紹介 | Magentalab",
+    title: "マゼンタラボ紹介",
     description: "飼い主さんの疑問から出発したマゼンタラボのミッションと、コンテンツ作成の原則についてご紹介します。",
     url: "https://www.magentalabblog.com/ja/about",
     type: "website",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "マゼンタラボ紹介 | Magentalab",
+    title: "マゼンタラボ紹介",
     description: "飼い主さんの疑問から出発したマゼンタラボのミッションと、コンテンツ作成の原則についてご紹介します。",
     images: ["/images/favicon.png"]
   }
@@ -86,7 +86,7 @@ export default async function JaAboutPage() {
           </div>
 
           <AboutEEATFeatures lang="ja" />
-          <RelatedPosts posts={relatedPosts} lang="ja" />
+          
         </div>
       </div>
       

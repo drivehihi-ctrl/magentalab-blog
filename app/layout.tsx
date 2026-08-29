@@ -17,8 +17,7 @@ export const metadata: Metadata = {
     template: "%s | Magentalab"
   },
   description: "Magentalab 반려동물 연구소의 최신 연구 소식과 반려동물 건강 정보를 확인하세요.",
-  keywords: ["반려동물", "강아지", "고양이", "건강", "행동연구", "전용몰", "안심이"],
-  authors: [{ name: "Magentalab" }],
+    authors: [{ name: "Magentalab" }],
   creator: "Magentalab",
   publisher: "Magentalab",
   formatDetection: {

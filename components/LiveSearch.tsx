@@ -71,7 +71,7 @@ export default function LiveSearch() {
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="정보를 검색해 보세요"
+          placeholder={pathname.startsWith("/en") ? "Search for information" : pathname.startsWith("/ja") ? "情報を検索してください" : "정보를 검색해 보세요"}
           className={`ml-2 w-full bg-transparent border-none outline-none text-sm font-medium text-gray-900 placeholder:text-gray-400 transition-opacity duration-300 ${
             isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
           }`}

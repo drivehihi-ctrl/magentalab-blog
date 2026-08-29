@@ -4,7 +4,7 @@ import Link from "next/link";
 import RelatedPosts from "@/components/RelatedPosts";
 
 export const metadata: Metadata = {
-  title: "アンシム紹介 | Magentalab",
+  title: "アンシム紹介",
   description: "マゼンタラボのブランドキャラクターであり、飼い主さんのためのガイドであるアンシムをご紹介します。",
   alternates: {
     canonical: "https://www.magentalabblog.com/ja/about-ansim",
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "アンシム紹介 | Magentalab",
+    title: "アンシム紹介",
     description: "マゼンタラボのブランドキャラクターであり、飼い主さんのためのガイドであるアンシムをご紹介します。",
     url: "https://www.magentalabblog.com/ja/about-ansim",
     type: "website",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "アンシム紹介 | Magentalab",
+    title: "アンシム紹介",
     description: "マゼンタラボのブランドキャラクターであり、飼い主さんのためのガイドであるアンシムをご紹介します。",
     images: ["/images/favicon.png"]
   }
@@ -97,7 +97,7 @@ export default async function JaAboutAnsimPage() {
             <p>分からないことは正直に分からないとお伝えし、新しい根拠が確認された場合は内容を再検討し、必要な部分を修正します。何よりも、オンラインでの検索より命が最優先であるため、緊急時には遅滞なく動物病院での診療を受けるようご案内することを最優先の原則とします。</p>
           </div>
           
-          <RelatedPosts posts={relatedPosts} lang="ja" />
+          
           
           {/* CTA / Footer */}
           <div className="mt-20 pt-12 border-t border-gray-100 text-center">

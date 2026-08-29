@@ -28,10 +28,10 @@ export default function AboutEEATFeatures({ lang = 'ko' }: AboutEEATFeaturesProp
   const mapLink = isEn ? "/en" : isJa ? "/ja" : "/map";
 
   const trustTitle = isEn
-    ? "🏢 Magentalab Pet Research Lab Official Governance & Transparency"
+    ? "🏢 Magentalab Pet Research Lab Company Information & Contact"
     : isJa
-    ? "🏢 マゼンタラボペット研究所 公式ガバナンス＆透明性保証"
-    : "🏢 마젠타랩 반려동물 연구소 공식 정보 및 투명성 보증";
+    ? "🏢 マゼンタラボペット研究所 運営情報・お問い合わせ"
+    : "🏢 마젠타랩 반려동물 연구소 운영 정보 및 문의처";
 
   return (
     <div className="space-y-8 my-12 pt-8 border-t border-gray-100">

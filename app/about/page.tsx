@@ -5,7 +5,7 @@ import RelatedPosts from "@/components/RelatedPosts";
 import AboutEEATFeatures from "@/components/AboutEEATFeatures";
 
 export const metadata: Metadata = {
-  title: "마젠타랩 소개 | Magentalab",
+  title: "연구소 소개",
   description: "보호자의 질문에서 시작한 마젠타랩의 미션과 콘텐츠 작성 원칙을 소개합니다.",
   alternates: {
     canonical: "https://www.magentalabblog.com/about",
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "마젠타랩 소개 | Magentalab",
+    title: "연구소 소개",
     description: "보호자의 질문에서 시작한 마젠타랩의 미션과 콘텐츠 작성 원칙을 소개합니다.",
     url: "https://www.magentalabblog.com/about",
     type: "website",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "마젠타랩 소개 | Magentalab",
+    title: "연구소 소개",
     description: "보호자의 질문에서 시작한 마젠타랩의 미션과 콘텐츠 작성 원칙을 소개합니다.",
     images: ["/images/favicon.png"]
   }
@@ -86,7 +86,6 @@ export default async function AboutPage() {
           </div>
 
           <AboutEEATFeatures lang="ko" />
-          <RelatedPosts posts={relatedPosts} />
         </div>
       </div>
       
