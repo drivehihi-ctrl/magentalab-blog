@@ -34,6 +34,7 @@ export default function BCSCalculator({ lang = "ko" }: BCSCalculatorProps) {
   const [ageType, setAgeType] = useState<"month" | "year">("year");
   const [ageValue, setAgeValue] = useState<string>("");
   const [weight, setWeight] = useState<string>("");
+  const [isTouched, setIsTouched] = useState<boolean>(false);
   const [status, setStatus] = useState<string>("dog_neutered");
   const [bcs, setBcs] = useState<number>(5);
   
@@ -571,6 +572,7 @@ export default function BCSCalculator({ lang = "ko" }: BCSCalculatorProps) {
                     inputMode="decimal"
                     value={weight}
                     onChange={(e) => handleWeightChange(e.target.value)}
+                    onBlur={() => setIsTouched(true)}
                     placeholder="예: 5.4"
                     className="w-full pl-4 pr-12 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-magenta/30 focus:border-magenta text-slate-800 font-semibold"
                   />

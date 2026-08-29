@@ -58,9 +58,9 @@ export default function Footer() {
               {isEn ? "Company Info" : isJa ? "会社情報" : "사업자 정보"}
             </h3>
             <div className="text-[11px] text-[#8888aa] leading-relaxed space-y-1.5">
-              <p>대표이사 : 김범준 &nbsp;|&nbsp; 사업자등록번호 : 448-07-03101</p>
-              <p>통신판매업 신고 : 제 2025-경기김포-1339호</p>
-              <p>호스팅 제공자 : Vercel Inc. / (주)가비아</p>
+              <p>{isEn ? "CEO: Kim Beomjun" : isJa ? "代表者: Kim Beomjun" : "대표이사 : 김범준"} &nbsp;|&nbsp; {isEn ? "Business Registration No.: 448-07-03101" : isJa ? "事業者登録番号: 448-07-03101" : "사업자등록번호 : 448-07-03101"}</p>
+              <p>{isEn ? "E-commerce Registration: 2025-Gyeonggimpo-1339" : isJa ? "通信販売業届出: 第2025-京畿金浦-1339号" : "통신판매업 신고 : 제 2025-경기김포-1339호"}</p>
+              <p>{isEn ? "Hosting Provider: Vercel Inc. / Gabia Inc." : isJa ? "ホスティング提供者: Vercel Inc. / (株)ガビア" : "호스팅 제공자 : Vercel Inc. / (주)가비아"}</p>
             </div>
           </div>
 
@@ -89,7 +89,7 @@ export default function Footer() {
         {/* Bottom copyright bar */}
         <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2 text-[10px] text-[#5a5a7a] uppercase tracking-[0.15em]">
           <span>© 2026 Magentalab. All rights reserved.</span>
-          <span className="text-[#c9a64c]/60 font-bold">반려동물과 함께 더 나은 내일을 🐾</span>
+          <span className="text-[#c9a64c]/60 font-bold">{isEn ? "A better tomorrow with our pets 🐾" : isJa ? "ペットと共により良い明日を 🐾" : "반려동물과 함께 더 나은 내일을 🐾"}</span>
         </div>
       </div>
     </footer>
