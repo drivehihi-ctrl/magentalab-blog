@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "반려동물 사료 영양성분(DM) 및 하루 참고 음수량 계산기 | 마젠타랩",
-    description: "수의학 공식을 바탕으로 한 우리 아이 일일 참고 음수량 및 사료 건물 성분 분석 시스템.",
+    description: "체중 기반 일일 참고 음수량과 사료의 건물 기준 영양성분을 확인하는 참고 계산 도구입니다.",
     images: ["/images/favicon.png"],
   }
 };

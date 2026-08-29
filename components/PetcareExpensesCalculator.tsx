@@ -587,7 +587,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
       return {
         stageName: lang === "ko" ? "담당 수의사 판단에 따른 주기적 관리" : lang === "ja" ? "年次追加接種期" : "Annual Booster Stage",
         desc: lang === "ko" 
-          ? "건강 유지를 위해 면역력 유지를 위한 추가 접종과 매월 내외부 기생충 관리가 권장됩니다." 
+          ? "건강 상태와 생활환경에 따라 추가 접종과 내·외부 기생충 예방 관리가 필요할 수 있으며, 구체적인 예방 주기는 제품과 지역 위험도, 담당 수의사의 안내에 따라 달라질 수 있습니다." 
           : lang === "ja" 
           ? "健康な成猫・成犬期の維持のため、年1回の免疫補強追加接種と毎月の内外寄生虫予防が推奨されます。" 
           : "Annual boosters support active immunity. Monthly preventative parasite control is highly advised.",

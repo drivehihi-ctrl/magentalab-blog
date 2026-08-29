@@ -7,7 +7,7 @@ import { searchPosts } from "@/lib/wp";
 // 검색 엔진 노출을 위한 고양이 FIC 자가확인기 전용 메타데이터 설정
 export const metadata: Metadata = {
   title: "고양이 스트레스 및 특발성 방광염(FIC) 위험 신호 확인 도구 | 마젠타랩",
-  description: "최근 이사나 모래 교체 등 영역 환경 변화가 있었나요? 고양이의 기본 프로필, 행동 시그널 및 환경 스트레스 요소를 참고용으로 확인하여 특발성 방광염(FIC) 위험 신호를 무료로 위험도 확인해 드립니다.",
+  description: "고양이의 행동과 환경 변화를 바탕으로 FIC 관련 위험 신호를 참고용으로 확인합니다.",
   alternates: {
     canonical: "https://www.magentalabblog.com/fic-diagnoser",
     languages: {
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "고양이 스트레스 및 특발성 방광염(FIC) 위험 신호 확인 도구 | 마젠타랩",
-    description: "아이의 나이, 체형 및 스트레스 환경 체크를 통해 방광염 위험 신호를 간단하게 위험도를 확인해 보세요.",
+    description: "고양이의 행동과 환경 변화를 바탕으로 FIC 관련 위험 신호를 참고용으로 확인합니다.",
     url: "https://www.magentalabblog.com/fic-diagnoser",
     type: "website",
     siteName: "Magentalab 반려동물 연구소",
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "고양이 스트레스 및 특발성 방광염(FIC) 위험 신호 확인 도구 | 마젠타랩",
-    description: "고양이 스트레스 징후 분석을 통해 특발성 방광염 위험도를 참고용으로 확인하는 가이드.",
+    description: "고양이의 행동과 환경 변화를 바탕으로 FIC 관련 위험 신호를 참고용으로 확인하는 가이드입니다.",
     images: ["/images/favicon.png"],
   }
 };

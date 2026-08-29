@@ -462,10 +462,16 @@ export default function FicDiagnoser({ lang = "ko" }: FicDiagnoserProps) {
                 <div className="bg-white/40 backdrop-blur-md border border-white/50 p-6 rounded-2xl text-center space-y-3 shadow-inner">
                   <span className="text-xs font-extrabold text-slate-500 uppercase tracking-widest block">{t.scoreLabel}</span>
                   <div className="flex items-baseline justify-center gap-1">
-                    <span className="text-5xl font-black text-slate-900 tracking-tighter">
-                      {score}
-                    </span>
-                    <span className="text-slate-500 font-extrabold text-base">{t.scoreOutOf}</span>
+                    {diag.level === "empty" ? (
+                      <span className="text-5xl font-black text-slate-300 tracking-tighter">-</span>
+                    ) : (
+                      <>
+                        <span className="text-5xl font-black text-slate-900 tracking-tighter">
+                          {score}
+                        </span>
+                        <span className="text-slate-500 font-extrabold text-base">{t.scoreOutOf}</span>
+                      </>
+                    )}
                   </div>
                   
                   <div className="flex justify-center pt-1">
