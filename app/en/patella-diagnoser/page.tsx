@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PatellaRisk Checker from "@/components/PatellaRisk Checker";
+import PatellaDiagnoser from "@/components/PatellaDiagnoser";
 import CalculatorBanner from "@/components/CalculatorBanner";
 import RelatedPosts from "@/components/RelatedPosts";
 import { getPosts } from "@/lib/wp";
@@ -45,7 +45,7 @@ export default async function PatellaRisk CheckerPageEn() {
 
   return (
     <div className="bg-slate-50 pb-20">
-      <PatellaRisk Checker lang="en" />
+      <PatellaDiagnoser lang="en" />
       
       <SeoArticle title="What Is Patellar Luxation, a Common Condition in Small Dogs?">
         <p>

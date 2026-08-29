@@ -25,7 +25,7 @@ interface PatellaRisk CheckerProps {
   lang?: "ko" | "en" | "ja";
 }
 
-export default function PatellaRisk Checker({ lang = "ko" }: PatellaRisk CheckerProps) {
+export default function PatellaDiagnoser({ lang = "ko" }: PatellaRisk CheckerProps) {
   const [dogSize, setDogSize] = useState<DogSize>("small");
   const [age, setAge] = useState<string>("");
   const [weight, setWeight] = useState<string>("");

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import FicRisk Checker from "@/components/FicRisk Checker";
+import FicDiagnoser from "@/components/FicDiagnoser";
 import CalculatorBanner from "@/components/CalculatorBanner";
 import RelatedPosts from "@/components/RelatedPosts";
 import { getPosts } from "@/lib/wp";
@@ -44,7 +44,7 @@ export default async function FicRisk CheckerPageJa() {
 
   return (
     <div className="bg-slate-50 pb-20">
-      <FicRisk Checker lang="ja" />
+      <FicDiagnoser lang="ja" />
 
       <SeoArticle title="猫に多い下部尿路疾患、特発性膀胱炎（FIC）とは？">
         <p>

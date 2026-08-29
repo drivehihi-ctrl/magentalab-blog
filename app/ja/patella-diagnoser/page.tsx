@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PatellaRisk Checker from "@/components/PatellaRisk Checker";
+import PatellaDiagnoser from "@/components/PatellaDiagnoser";
 import CalculatorBanner from "@/components/CalculatorBanner";
 import RelatedPosts from "@/components/RelatedPosts";
 import { getPosts } from "@/lib/wp";
@@ -45,7 +45,7 @@ export default async function PatellaRisk CheckerPageJa() {
 
   return (
     <div className="bg-slate-50 pb-20">
-      <PatellaRisk Checker lang="ja" />
+      <PatellaDiagnoser lang="ja" />
       
       <SeoArticle title="小型犬に多い膝蓋骨脱臼（Patellar Luxation）とは？">
         <p>

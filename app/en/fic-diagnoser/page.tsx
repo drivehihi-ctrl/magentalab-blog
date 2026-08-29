@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import FicRisk Checker from "@/components/FicRisk Checker";
+import FicDiagnoser from "@/components/FicDiagnoser";
 import CalculatorBanner from "@/components/CalculatorBanner";
 import RelatedPosts from "@/components/RelatedPosts";
 import { getPosts } from "@/lib/wp";
@@ -44,7 +44,7 @@ export default async function FicRisk CheckerPageEn() {
 
   return (
     <div className="bg-slate-50 pb-20">
-      <FicRisk Checker lang="en" />
+      <FicDiagnoser lang="en" />
 
       <SeoArticle title="What Is Feline Idiopathic Cystitis (FIC), a Common Cause of Lower Urinary Tract Disease in Cats?">
         <p>

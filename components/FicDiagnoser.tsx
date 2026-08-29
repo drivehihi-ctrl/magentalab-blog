@@ -21,7 +21,7 @@ interface FicRisk CheckerProps {
   lang?: "ko" | "en" | "ja";
 }
 
-export default function FicRisk Checker({ lang = "ko" }: FicRisk CheckerProps) {
+export default function FicDiagnoser({ lang = "ko" }: FicRisk CheckerProps) {
 
 
   // 입력 폼 상태 관리

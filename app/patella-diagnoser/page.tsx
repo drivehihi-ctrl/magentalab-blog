@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PatellaRisk Checker from "@/components/PatellaRisk Checker";
+import PatellaDiagnoser from "@/components/PatellaDiagnoser";
 import CalculatorBanner from "@/components/CalculatorBanner";
 import RelatedPosts from "@/components/RelatedPosts";
 import { searchPosts } from "@/lib/wp";
@@ -83,7 +83,7 @@ export default async function PatellaPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(toolJsonLd) }}
       />
-      <PatellaRisk Checker />
+      <PatellaDiagnoser />
 
       <SeoArticle title="소형견에서 흔한 슬개골 탈구(Patellar Luxation)란?">
         <p>

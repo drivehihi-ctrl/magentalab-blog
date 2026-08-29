@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import FicRisk Checker from "@/components/FicRisk Checker";
+import FicDiagnoser from "@/components/FicDiagnoser";
 import CalculatorBanner from "@/components/CalculatorBanner";
 import RelatedPosts from "@/components/RelatedPosts";
 import { searchPosts } from "@/lib/wp";
@@ -84,7 +84,7 @@ export default async function FicPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(toolJsonLd) }}
       />
-      <FicRisk Checker />
+      <FicDiagnoser />
 
       <SeoArticle title="고양이에게 흔한 하부요로질환, 특발성 방광염(FIC)이란?">
         <p>
