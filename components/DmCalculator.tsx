@@ -346,7 +346,7 @@ export default function DmCalculator({ lang = "ko" }: DmCalculatorProps) {
                         kg
                       </span>
                     </div>
-                    {!isWaterValid && (
+                    {!isWaterValid && weight !== "" && (
                       <p className="text-[11px] text-rose-400 font-medium">{t.waterWeightError}</p>
                     )}
                   </div>

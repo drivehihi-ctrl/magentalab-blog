@@ -605,10 +605,10 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
             detail: lang === "ko" ? "단체 이용/호텔링 시 권장되는 예방 접종 완료증 갱신" : lang === "ja" ? "ドッグラン・ホテル利用時に必須となる接種証明書の更新" : "Update dynamic proof for hoteling or public dog facilities." 
           },
           { 
-            name: lang === "ko" ? "1년치 심장사상충 및 내외부 기생충 예방약" : lang === "ja" ? "フィラリア＆内外寄生虫予防薬 (1年分)" : "1-Yr Supply Heartworm & Tick Spot-ons", 
-            period: lang === "ko" ? "매월 복용/바름 (연간)" : lang === "ja" ? "毎月投与 (年間)" : "Monthly administrations", 
+            name: lang === "ko" ? "심장사상충 및 내·외부 기생충 예방 관리" : lang === "ja" ? "フィラリア＆内外寄生虫予防薬 (1年分)" : "1-Yr Supply Heartworm & Tick Spot-ons", 
+            period: lang === "ko" ? "제품 종류, 지역 위험도, 생활환경과 담당 수의사의 안내에 따라 예방 주기가 달라질 수 있습니다." : lang === "ja" ? "毎月投与 (年間)" : "Monthly administrations", 
             cost: getVaccineCost("annual_parasite"), 
-            detail: lang === "ko" ? "모기 매개 치명 심장사상충 및 진드기 매개 살인진드기병 발생 위험을 낮춤" : lang === "ja" ? "蚊媒介の致命的なフィラリアおよびマダニ感染症の予防" : "Blocks lethal heartworms and tick-borne diseases." 
+            detail: lang === "ko" ? "심장사상충과 일부 진드기 매개 감염병 위험을 낮추기 위한 예방 관리" : lang === "ja" ? "蚊媒介の致命的なフィラリアおよびマダニ感染症の予防" : "Blocks lethal heartworms and tick-borne diseases." 
           }
         ]
       };

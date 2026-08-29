@@ -213,7 +213,21 @@ export default function FicDiagnoser({ lang = "ko" }: FicDiagnoserProps) {
 
   // 판정 단계 반환
   const getEvaluation = () => {
-    if (score < 20) {
+    if (selectedBehavior.length === 0 && selectedEnvironment.length === 0 && score === 0) {
+      return {
+        level: "empty",
+        badge: lang === "ko" ? "체크 전" : lang === "ja" ? "チェック前" : "Pending Check",
+        badgeColor: "bg-slate-500 text-white",
+        textColor: "text-slate-800",
+        bgClass: "from-slate-500/10 to-gray-500/10 border-slate-500/20",
+        glassClass: "bg-slate-500/10 border-slate-500/20 shadow-slate-500/5",
+        desc: lang === "ko" 
+          ? "현재 관찰되는 행동과 환경 변화를 선택하면 참고 결과가 표시됩니다."
+          : lang === "ja"
+          ? "現在観察される行動と環境の変化を選択すると、参考結果が表示されます。"
+          : "Select the observed behavioral and environmental changes to view the reference results."
+      };
+    } else if (score < 20) {
       return {
         level: "safe",
         badge: lang === "ko" ? "뚜렷한 위험 신호 적음" : lang === "ja" ? "正常 - 安心レベル" : "Normal - Low Risk",
