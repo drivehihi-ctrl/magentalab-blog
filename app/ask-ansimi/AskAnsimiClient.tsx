@@ -30,7 +30,7 @@ const COMMON_FAQS = [
   },
   {
     q: '🚨 초콜릿이나 독성 음식을 섭취했는데 얼마나 위험한가요?',
-    a: '강아지나 고양이가 먹지 말아야 할 독성 음식/성분을 섭취했을 때, 몸무게와 유전적 특성, 섭취량을 고려하여 신속한 임상 위험도 및 응급 처치 등급을 판단할 수 있습니다.',
+    a: '강아지나 고양이가 먹지 말아야 할 독성 음식/성분을 섭취했을 때, 몸무게와 유전적 특성, 섭취량을 고려하여 신속한 위험 신호와 진료 필요성을 참고할 수 있습니다.',
     link: '/emergency-calculator',
     linkText: '독성 위험 물질 계산기'
   }
@@ -90,7 +90,7 @@ export default function AskAnsimiClient() {
             안심이에게 무엇이든 물어보세요! 🐾
           </h1>
           <p className="text-xs sm:text-sm text-gray-300 max-w-2xl mx-auto leading-relaxed">
-            반려동물의 행동, 영양, 건강 고민을 마젠타랩 브랜드 캐릭터 안심이가 정밀한 수의학 데이터와 따뜻한 마음으로 답변해 드립니다.
+            반려동물의 행동, 영양, 건강 고민을 마젠타랩 브랜드 캐릭터 안심이가 공개된 수의학 자료와 마젠타랩 콘텐츠를 바탕으로 참고 정보를 쉽게 설명해 드립니다.
           </p>
         </div>
       </div>
@@ -237,7 +237,7 @@ export default function AskAnsimiClient() {
                 <span className="text-[#E5007E]">1.</span> 🧬 수의학 기반 참고 자료 활용
               </h4>
               <p className="text-gray-600 leading-relaxed text-[12px] sm:text-xs">
-                마젠타랩 펫 연구소의 안심이 1:1 상담 시스템은 소형견·대형견 및 고양이의 종별 생리학적 특성과 수의학 임상 가이드라인(AAHA, WSAVA 표준)을 지침으로 합니다. 보호자님이 작성해 주신 연령, 체중, 식습관 및 일시적 증상을 다각도로 대입하여 최적의 케어 팁을 제시합니다.
+                마젠타랩 펫 연구소의 안심이 질문 기능은 소형견·대형견 및 고양이의 종별 생리학적 특성과 수의학 임상 가이드라인(AAHA, WSAVA 표준)을 지침으로 합니다. 보호자님이 작성해 주신 연령, 체중, 식습관 및 일시적 증상을 다각도로 대입하여 생활에서 참고할 관찰 포인트을 제시합니다.
               </p>
             </div>
 
@@ -246,7 +246,7 @@ export default function AskAnsimiClient() {
                 <span className="text-[#E5007E]">2.</span> 🩺 건강 기록 및 참고 도구의 목적과 한계 안내
               </h4>
               <p className="text-gray-600 leading-relaxed text-[12px] sm:text-xs">
-                본 질문하기 및 건강 참고 계산기 모듈은 수의사의 확진을 대체하는 청진·처방 행위가 아닌, 병원 방문 전 보호자님의 막연한 불안감을 해소하고 일상생활 속 정확한 관찰 지포를 제공하는 자가 케어 보조 도구입니다. 증상이 경미하더라도 증상이 지속되는 경우 수의사 정밀 검진을 권장합니다.
+                본 질문하기 및 건강 참고 계산기 모듈은 수의사의 확진을 대체하는 청진·처방 행위가 아닌, 병원 방문 전 보호자님의 막연한 불안감을 해소하고 일상생활 속 정확한 관찰 지포를 제공하는 자가 케어 보조 도구입니다. 증상이 경미하더라도 증상이 지속되는 경우 수의사 진료을 권장합니다.
               </p>
             </div>
 
@@ -255,7 +255,7 @@ export default function AskAnsimiClient() {
                 <span className="text-[#E5007E]">3.</span> 🚨 응급 상황(Emergency) 발생 시 즉시 대처 지침
               </h4>
               <p className="text-gray-600 leading-relaxed text-[12px] sm:text-xs">
-                지속적인 유색 구토(초록색/검은색), 혈변, 갑작스러운 호흡 곤란, 체온 저하, 잇몸 창백함 등의 위급 증상이나 초콜릿·양파 등 독성 물질 섭취 시 온라인 상담을 대기하지 마시고, 당사 <strong>'독성 위험 물질 계산기'</strong> 모듈을 참고하시거나 가까운 24시 응급 동물병원으로 즉시 내원하셔야 합니다.
+                지속적인 유색 구토(초록색/검은색), 혈변, 갑작스러운 호흡 곤란, 체온 저하, 잇몸 창백함 등의 위급 증상이나 초콜릿·양파 등 독성 물질 섭취 시 온라인 정보을 대기하지 마시고, 당사 <strong>'독성 위험 물질 계산기'</strong> 모듈을 참고하시거나 가까운 24시 응급 동물병원으로 즉시 내원하셔야 합니다.
               </p>
             </div>
           </div>
@@ -308,7 +308,7 @@ export default function AskAnsimiClient() {
             <div className="flex items-center gap-3 bg-white/10 p-3.5 rounded-2xl border border-white/10">
               <Phone className="w-4 h-4 text-[#FF6B9D]" />
               <div>
-                <p className="text-gray-400 text-[10px]">대표 수의학 연구 문의</p>
+                <p className="text-gray-400 text-[10px]">서비스 문의</p>
                 <p className="font-bold text-white text-sm">0502-1933-8452</p>
               </div>
             </div>

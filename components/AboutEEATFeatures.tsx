@@ -76,11 +76,11 @@ export default function AboutEEATFeatures({ lang = 'ko' }: AboutEEATFeaturesProp
           <div className="flex items-start gap-3 bg-gray-50 p-4 rounded-2xl border border-gray-100">
             <Building2 className="w-4 h-4 text-[#E5007E] shrink-0 mt-0.5" />
             <div className="space-y-1">
-              <p className="font-bold text-gray-900">소재지 & 사업자 정보</p>
+              <p className="font-bold text-gray-900">{isEn ? "Location & Business Information" : isJa ? "所在地・事業者情報" : "소재지 & 사업자 정보"}</p>
               <p className="text-gray-600 leading-relaxed">
                 경기도 김포시 양촌읍 황금산단로 65, 2층<br />
-                대표이사: 김범준 | 사업자등록번호: 448-07-03101<br />
-                통신판매업 신고: 제 2025-경기김포-1339호
+                {isEn ? "CEO: Kim Beomjun" : isJa ? "代表者: Kim Beomjun" : "대표이사: 김범준"} | {isEn ? "Business Registration No.: 448-07-03101" : isJa ? "事業者登録番号: 448-07-03101" : "사업자등록번호: 448-07-03101"}<br />
+                {isEn ? "E-commerce Registration: 2025-Gyeonggimpo-1339" : isJa ? "通信販売業届出: 第2025-京畿金浦-1339号" : "통신판매업 신고: 제 2025-경기김포-1339호"}
               </p>
             </div>
           </div>
@@ -88,11 +88,11 @@ export default function AboutEEATFeatures({ lang = 'ko' }: AboutEEATFeaturesProp
           <div className="flex items-start gap-3 bg-gray-50 p-4 rounded-2xl border border-gray-100">
             <Phone className="w-4 h-4 text-[#E5007E] shrink-0 mt-0.5" />
             <div className="space-y-1">
-              <p className="font-bold text-gray-900">공식 연락처 & 호스팅 정보</p>
+              <p className="font-bold text-gray-900">{isEn ? "Official Contact & Hosting Information" : isJa ? "公式連絡先・ホスティング情報" : "공식 연락처 & 호스팅 정보"}</p>
               <p className="text-gray-600 leading-relaxed">
-                대표 전화: 0502-1933-8452<br />
-                이메일: smagentalab@gmail.com<br />
-                호스팅 제공자: Vercel Inc. / (주)가비아
+                {isEn ? "Phone: 0502-1933-8452" : isJa ? "電話: 0502-1933-8452" : "대표 전화: 0502-1933-8452"}<br />
+                {isEn ? "Email: smagentalab@gmail.com" : isJa ? "メール: smagentalab@gmail.com" : "이메일: smagentalab@gmail.com"}<br />
+                {isEn ? "Hosting Provider: Vercel Inc. / Gabia Inc." : isJa ? "ホスティング提供者: Vercel Inc. / (株)ガビア" : "호스팅 제공자: Vercel Inc. / (주)가비아"}
               </p>
             </div>
           </div>
