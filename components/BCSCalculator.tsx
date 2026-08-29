@@ -41,7 +41,7 @@ export default function BCSCalculator({ lang = "ko" }: BCSCalculatorProps) {
   const [rer, setRer] = useState<number>(0);
   const [der, setDer] = useState<number>(0);
   const [feedGrams, setFeedGrams] = useState<number>(0);
-  const [isValid, setIsValid] = useState<boolean>(true);
+  const isFormValid = weight !== "" && parseFloat(weight) > 0 && ageValue !== "" && parseInt(ageValue) > 0;
 
   // Multilingual translation dictionaries
   const dict = {
@@ -370,10 +370,8 @@ export default function BCSCalculator({ lang = "ko" }: BCSCalculatorProps) {
     const w = parseFloat(weight);
     const a = parseInt(ageValue);
     if (isNaN(w) || w <= 0 || isNaN(a) || ageValue === "") {
-      setIsValid(false);
       return;
     }
-    setIsValid(true);
 
     const computedRer = 70 * Math.pow(w, 0.75);
     setRer(Math.round(computedRer * 10) / 10);
@@ -580,7 +578,7 @@ export default function BCSCalculator({ lang = "ko" }: BCSCalculatorProps) {
                     kg
                   </span>
                 </div>
-                {!isValid && (
+                {!isFormValid && (
                   <p className="text-xs text-rose-500 font-medium">{t.weightError}</p>
                 )}
               </div>
@@ -707,7 +705,7 @@ export default function BCSCalculator({ lang = "ko" }: BCSCalculatorProps) {
           </div>
 
           {/* 우측: 계산 결과 & 다이어트 솔루션 */}
-          {!isValid ? (
+          {!isFormValid ? (
             <div className="lg:col-span-5 py-16 px-4 text-center space-y-4 bg-white rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-center items-center h-full min-h-[400px]">
               <div className="w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center mx-auto text-3xl animate-bounce">
                 📊
@@ -755,7 +753,7 @@ export default function BCSCalculator({ lang = "ko" }: BCSCalculatorProps) {
                     </div>
                     <div className="text-right">
                       <span className="font-extrabold text-sm sm:text-base text-white">
-                        {isValid ? rer.toLocaleString() : "--"}
+                        {isFormValid ? rer.toLocaleString() : "--"}
                       </span>
                       <span className="text-slate-400 text-xs ml-0.5">kcal</span>
                     </div>
@@ -768,7 +766,7 @@ export default function BCSCalculator({ lang = "ko" }: BCSCalculatorProps) {
                     </div>
                     <div className="text-right">
                       <span className="font-black text-base sm:text-lg text-white">
-                        {isValid ? der.toLocaleString() : "--"}
+                        {isFormValid ? der.toLocaleString() : "--"}
                       </span>
                       <span className="text-slate-400 text-xs ml-0.5">kcal</span>
                     </div>
@@ -778,7 +776,7 @@ export default function BCSCalculator({ lang = "ko" }: BCSCalculatorProps) {
                     <p className="text-[11px] font-extrabold text-magenta uppercase tracking-wider">{t.feedLabel}</p>
                     <div className="flex items-baseline justify-center gap-1.5">
                       <span className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-                        {isValid ? feedGrams : "--"}
+                        {isFormValid ? feedGrams : "--"}
                       </span>
                       <span className="text-slate-300 font-extrabold text-sm">{t.feedUnit}</span>
                     </div>

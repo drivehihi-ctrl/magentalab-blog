@@ -28,7 +28,7 @@ const HEALTH_TOOLS: ToolItem[] = [
   },
   {
     id: 'bcs',
-    title: 'BCS 비만도 진단',
+    title: 'BCS 체형 확인',
     subtitle: '9단계 체형 평가 & 맞춤 다이어트 가이드',
     href: '/bcs-calculator',
     badge: '체형 케어',
@@ -38,7 +38,7 @@ const HEALTH_TOOLS: ToolItem[] = [
   },
   {
     id: 'patella',
-    title: '슬개골 탈구 진단',
+    title: '슬개골 위험 신호 확인',
     subtitle: '1~4단계 관절 증상 체크 & 예방 수칙',
     href: '/patella-diagnoser',
     badge: '관절 건강',
@@ -68,7 +68,7 @@ const HEALTH_TOOLS: ToolItem[] = [
   },
   {
     id: 'fic',
-    title: '고양이 방광염 진단',
+    title: '고양이 방광염 위험 신호 확인',
     subtitle: '특발성 방광염 (FIC) 스트레스 지수 체크',
     badge: '🐱 고양이 전용',
     href: '/fic-diagnoser',
@@ -86,10 +86,10 @@ export default function PetHealthToolsSection() {
         <div>
           <h2 className="text-lg font-extrabold text-gray-900 flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-[#E5007E]" />
-            🐶 펫 헬스케어 셀프 진단 계산기
+            🐶 반려동물 건강 참고 도구
           </h2>
           <p className="text-xs text-gray-500 mt-0.5">
-            마젠타랩 AI가 알려주는 우리 아이 건강 상태 1분 셀프 체크
+            마젠타랩 AI가 알려주는 우리 아이 1분 생활·건강 체크리스트
           </p>
         </div>
       </div>
@@ -129,7 +129,7 @@ export default function PetHealthToolsSection() {
               {/* Bottom Action Line */}
               <div className="mt-4 pt-2 border-t border-gray-100/80 flex items-center justify-between">
                 <span className="text-[10px] sm:text-[11px] font-bold text-[#E5007E] group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
-                  진단해 보기
+                  확인해 보기
                   <ArrowRight className="w-3 h-3" />
                 </span>
               </div>

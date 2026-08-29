@@ -34,7 +34,7 @@ export default function DiagnosticCenterSection({ lang = 'ko' }: DiagnosticCente
     },
     {
       icon: Activity,
-      title: isEn ? 'BCS Obesity Diagnoser' : isJa ? 'BCS 肥満度診断' : 'BCS 체체중 & 비만도 진단',
+      title: isEn ? 'BCS Body Condition Check' : isJa ? 'BCS 体型確認' : 'BCS 체중 & 체형 확인',
       desc: isEn ? 'Evaluate body condition score 1-9' : isJa ? '体型スコア1〜9段階で肥満度を測定' : '우리 아이 현재 체형 스코어와 다이어트 목표',
       link: isEn ? '/en/bcs-calculator' : isJa ? '/ja/bcs-calculator' : '/bcs-calculator',
       tag: isEn ? 'HEALTH' : isJa ? '体型' : '체형·비만',

@@ -38,7 +38,7 @@ export default function FicDiagnoser({ lang = "ko" }: FicDiagnoserProps) {
     ko: {
       badge: "안심이 수석연구원의 스트레스 상태 점검",
       title: "고양이 스트레스 및 특발성 방광염(FIC) 위험 신호 확인 도구",
-      desc: "고양이의 나이, 체형 정보와 최근 영역 내 환경 변화, 행동 이상 징후를 바탕으로 스트레스 누적도를 정밀 분석하고 특발성 방광염(FIC) 위험도를 판정합니다.",
+      desc: "고양이의 나이, 체형 정보와 최근 영역 내 환경 변화, 행동 이상 징후를 바탕으로 스트레스 누적도를 위험 신호 분석하고 특발성 방광염(FIC) 위험도를 판정합니다.",
       loading: "진단 프로그램을 불러오는 중입니다...",
       profileTitle: "1. 반려묘 기본 프로필",
       labelAge: "현재 나이 (만 나이)",
@@ -54,16 +54,16 @@ export default function FicDiagnoser({ lang = "ko" }: FicDiagnoserProps) {
       envTitle: "3. 최근 3개월 내 영역 및 환경 변화 (항목당 10점)",
       envSub: "💡 영역 동물인 고양이에게 환경 변화는 매우 큰 스트레스 요인입니다.",
       btnReset: "문항 전체 초기화",
-      reportTitle: "실시간 스트레스 분석",
+      reportTitle: "현재 스트레스 요인 분석",
       reportSub: "스트레스 & FIC 위험 수준",
       scoreLabel: "FIC 참고 점수",
       scoreOutOf: "/ 90점",
       adviseTitle: "안심이 수석연구원 어드바이스",
-      bannerTitle: "방광염 예방의 필수 요건",
+      bannerTitle: "방광염 예방을 위한 환경 관리",
       bannerDesc: "방광염 예방의 중요한 방법는 바로 수분 섭취량입니다. 우리 아이의 몸무게에 맞는 정확한 필수 물 섭취량이 궁금하시다면 아래 마젠타랩 전용 계산기로 이동해 확인해 보세요.",
       bannerBtn: "마젠타랩 영양 & 음수량 계산기로 이동하기 ➔",
-      cautionTitle: "📌 고양이 FIC 자가진단 유의 사항",
-      cautionDesc: "본 자가진단 프로그램은 국제 고양이의학협회(ISFM) 및 미국의 고양이 임상진료 가이드라인을 근거로 제작되었습니다. 단, 방광염은 요로 결석, 세균성 감염 등 다른 신장 비뇨기계 질환과 증상이 유사하므로, 소변을 전혀 보지 못하거나 혈뇨를 누는 응급 징후 발견 시 즉시 병원 검사를 권장합니다.",
+      cautionTitle: "📌 고양이 FIC 체크리스트 유의 사항",
+      cautionDesc: "본 체크리스트 도구은 국제 고양이의학협회(ISFM) 및 미국의 고양이 임상진료 가이드라인을 근거로 제작되었습니다. 단, 방광염은 요로 결석, 세균성 감염 등 다른 신장 비뇨기계 질환과 증상이 유사하므로, 소변을 전혀 보지 못하거나 혈뇨를 누는 응급 징후 발견 시 즉시 병원 검사를 권장합니다.",
     },
     en: {
       badge: "Ansim-i Senior Researcher's Stress Assessment",
@@ -222,7 +222,7 @@ export default function FicDiagnoser({ lang = "ko" }: FicDiagnoserProps) {
         bgClass: "from-emerald-500/10 to-teal-500/10 border-emerald-500/20",
         glassClass: "bg-emerald-500/10 border-emerald-500/20 shadow-emerald-500/5",
         desc: lang === "ko" 
-          ? "현재 우리 아이의 스트레스 지수는 매우 낮고 편안한 상태입니다. 환경 관리가 아주 잘 되고 계시네요! 다만 고양이는 영역 동물이므로 미세한 변화에도 방광 건강이 무너질 수 있으니 늘 세심하게 관찰해 주세요."
+          ? "현재 반려묘의 스트레스 징후는 비교적 낮아 보입니다. 환경 관리가 아주 잘 되고 계시네요! 다만 고양이는 영역 동물이므로 미세한 변화에도 방광 건강이 무너질 수 있으니 늘 세심하게 관찰해 주세요."
           : lang === "ja"
           ? "現在、愛猫のストレス指数は非常に低く、リラックスしている状態です。環境管理がしっかりと行われていますね。ただし、猫は環境の変化に敏感なため、些細な変化でも膀胱炎を引き起こすことがあります。引き続き観察を続けてください。"
           : "The current stress index is very low and your cat seems comfortable. Great environmental management! Keep in mind cats are sensitive to territorial details; continue routine observations."

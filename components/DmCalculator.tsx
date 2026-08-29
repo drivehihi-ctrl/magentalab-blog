@@ -40,15 +40,26 @@ export default function DmCalculator({ lang = "ko" }: DmCalculatorProps) {
   const [proteinRating, setProteinRating] = useState<"low" | "standard" | "premium">("standard");
 
   // 계산 유효성 플래그
-  const [isWaterValid, setIsWaterValid] = useState<boolean>(true);
-  const [isDmValid, setIsDmValid] = useState<boolean>(true);
+  const isWaterValid = weight !== "" && !isNaN(parseFloat(weight)) && parseFloat(weight) > 0;
+  
+  const moistVal = parseFloat(moisture);
+  const proteinVal = parseFloat(crudeProtein);
+  const fatVal = parseFloat(crudeFat);
+  const ashFiberVal = parseFloat(crudeAshFiber);
+  const totalInput = moistVal + proteinVal + fatVal + ashFiberVal;
+  
+  const isDmValid = 
+    moisture !== "" && crudeProtein !== "" && crudeFat !== "" && crudeAshFiber !== "" &&
+    !isNaN(moistVal) && !isNaN(proteinVal) && !isNaN(fatVal) && !isNaN(ashFiberVal) &&
+    moistVal >= 0 && moistVal < 100 && proteinVal > 0 && fatVal > 0 && ashFiberVal >= 0 &&
+    totalInput <= 100;
   const [activeTab, setActiveTab] = useState<"all" | "water" | "dm">("all");
 
   // Multilingual translation dictionaries
   const dict = {
     ko: {
       title: "영양 성분(DM) & 하루 음수량 계산기",
-      desc: "사료 패키지 뒷면의 등록 성분비를 건조 질량(DM) 기준으로 정밀 환산하고, 수의학 표준 알고리즘을 통한 일일 목표 음수량을 종이컵 시각화와 함께 산출합니다.",
+      desc: "사료 패키지 뒷면의 등록 성분비를 건조 질량(DM) 기준으로 계산하고, 체중 기반 일일 참고 음수량을 종이컵 시각화와 함께 산출합니다.",
       tabDashboard: "종합 분석 대시보드",
       tabWater: "음수량 계산기",
       tabDm: "사료 영양(DM) 계산기",
@@ -182,11 +193,9 @@ export default function DmCalculator({ lang = "ko" }: DmCalculatorProps) {
   // 실시간 음수량 계산
   useEffect(() => {
     const w = parseFloat(weight);
-    if (isNaN(w) || w <= 0) {
-      setIsWaterValid(false);
+    if (!isWaterValid) {
       return;
     }
-    setIsWaterValid(true);
 
     // 고양이: 50ml/kg, 강아지: 60ml/kg (활동량 고려)
     const factor = petType === "cat" ? 50 : 60;
@@ -205,22 +214,9 @@ export default function DmCalculator({ lang = "ko" }: DmCalculatorProps) {
     const fat = parseFloat(crudeFat);
     const ashFiber = parseFloat(crudeAshFiber);
 
-    if (isNaN(moist) || isNaN(protein) || isNaN(fat) || isNaN(ashFiber)) {
-      setIsDmValid(false);
+    if (!isDmValid) {
       return;
     }
-
-    if (moist >= 100 || moist < 0 || protein <= 0 || fat <= 0 || ashFiber < 0) {
-      setIsDmValid(false);
-      return;
-    }
-
-    const totalInput = moist + protein + fat + ashFiber;
-    if (totalInput > 100) {
-      setIsDmValid(false);
-      return;
-    }
-    setIsDmValid(true);
 
     // 1. 건물(Dry Matter) 비율 = 100 - 수분
     const dm = 100 - moist;
@@ -248,10 +244,8 @@ export default function DmCalculator({ lang = "ko" }: DmCalculatorProps) {
       } else {
         setProteinRating("standard");
       }
-    } else {
-      setIsDmValid(false);
     }
-  }, [moisture, crudeProtein, crudeFat, crudeAshFiber]);
+  }, [moisture, crudeProtein, crudeFat, crudeAshFiber, isDmValid]);
 
   const handleReset = () => {
     setPetType("cat");
