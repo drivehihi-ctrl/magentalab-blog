@@ -134,7 +134,7 @@ export default function DiagnosticCenterSection({ lang = 'ko' }: DiagnosticCente
 
               {/* Name badge */}
               <div className="mt-4 text-xs font-black text-[#E5007E] tracking-wide">
-                {isEn ? '🐾 Ansim-i Senior Researcher' : isJa ? '🐾 アンシム 主任研究員' : '🐾 수석 연구원 안심이'}
+                {isEn ? '🐾 Ansim-i' : isJa ? '🐾 アンシム 主任研究員' : '🐾 수석 연구원 안심이'}
               </div>
             </div>
           </div>

@@ -288,7 +288,7 @@ export default function BCSCalculator({ lang = "ko" }: BCSCalculatorProps) {
       level: "danger",
       levelText: lang === "ko" ? "매우 위험 (저체중)" : lang === "ja" ? "極度な危険 (痩せすぎ)" : "Danger (Severe Underweight)",
       description: lang === "ko" ? "갈비뼈, 골반뼈 등이 멀리서도 뚜렷하게 보이며 몸 전체에 체지방이 전혀 느껴지지 않는 매우 야윈 상태입니다." : lang === "ja" ? "肋骨や腰の骨が遠目にもはっきりと突き出て見え、触れても脂肪層が全く感じられない極度に痩せた状態です。" : "Ribs, pelvis, and lumbar vertebrae are easily visible from a distance. No palpable body fat.",
-      solution: lang === "ko" ? "질병이 원인일 수 있으므로 먼저 수의사의 정밀 진단을 권장합니다. 소화가 잘 되는 단백질과 에너지 함량이 높은 특수 영양 사료를 소량씩 자주 급여하여 소실된 근육량과 지방을 점진적으로 복구해야 합니다." : lang === "ja" ? "疾患が原因の可能性があるため、獣医師による精密検査を推奨します。消化しやすいタンパク質と高カロリーフードを少量ずつ頻回に分けて与え、徐々に筋肉量と脂肪を戻していきます。" : "May indicate underlying illness. Seek immediate veterinary diagnostics. Feed highly digestible protein and high-density nutritional recovery diets in small, frequent portions."
+      solution: lang === "ko" ? "질병이 원인일 수 있으므로 먼저 수의사의 정밀 진단을 권장합니다. 소화가 잘 되는 단백질과 에너지 함량이 높은 특수 영양 사료를 소량씩 자주 급여하여 소실된 근육량과 지방을 점진적으로 복구해야 합니다." : lang === "ja" ? "疾患が原因の可能性があるため、獣医師による獣医師の診察を推奨します。消化しやすいタンパク質と高カロリーフードを少量ずつ頻回に分けて与え、徐々に筋肉量と脂肪を戻していきます。" : "May indicate underlying illness. Seek immediate veterinary consultation. Feed highly digestible protein and high-density nutritional recovery diets in small, frequent portions."
     },
     2: {
       score: 2,

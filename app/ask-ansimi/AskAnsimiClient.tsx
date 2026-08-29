@@ -12,7 +12,7 @@ import {
 const COMMON_FAQS = [
   {
     q: '🐶 아이가 사료를 갑자기 잘 안 먹는데 어디가 아픈 건가요?',
-    a: '식욕 부진은 구강 통증(치주염), 소화기 불편, 또는 스트레스가 주원인일 수 있습니다. 치아 상태를 먼저 확인하시고, 24시간 이상 금식이 지속되면 즉시 수의사 진료를 권장합니다. 사료 건조 질량(DM) 계산기로 영양 균형을 체크해 보세요!',
+    a: '식욕 부진은 구강 통증(치주염), 소화기 불편, 또는 스트레스가 주원인일 수 있습니다. 치아 상태를 먼저 확인하시고, 식음 전폐 증상이 지속되면 즉시 수의사 진료를 권장합니다. 사료 건조 질량(DM) 계산기로 영양 균형을 체크해 보세요!',
     link: '/dm-calculator',
     linkText: '사료 DM 성분 계산기'
   },
@@ -24,7 +24,7 @@ const COMMON_FAQS = [
   },
   {
     q: '🦴 소형견 슬개골 탈구 증상은 어떻게 구분하나요?',
-    a: '산책 중 한쪽 뒷다리를 들고 껑충 뛰거나 뚝 소리가 나는 경우 2단계 이상 슬개골 탈구를 의심할 수 있습니다. 슬개골 진단기로 위험도를 바로 검사해 보세요.',
+    a: '이런 변화가 반복되면 여러 정형외과적 원인을 확인하기 위해 수의사 진료가 필요할 수 있습니다. 위험 신호 확인 도구로 참고해 보세요.',
     link: '/patella-diagnoser',
     linkText: '슬개골 탈구 위험 신호 확인 도구'
   },
@@ -70,7 +70,7 @@ export default function AskAnsimiClient() {
     // Present instant intelligent Ansim-i advice to the user
     setTimeout(() => {
       const petTitle = petName.trim() ? petName : (petType === 'dog' ? '우리 강아지' : '우리 고양이');
-      const response = `안녕하세요 보호자님! 마젠타 펫 연구소 수석 연구원 '안심이'입니다. 🐾\n\n[${petTitle}]에 대한 문의 내용("${question.slice(0, 40)}...") 잘 받아보았습니다.\n\n아이의 건강 상태와 증상을 과학적 근거에 기반하여 분석해 드릴게요:\n\n1. 🔍 **상태 추정**: 해당 증상은 영양 상태, 일일 활동량, 또는 특정 부위의 정밀 진단이 필요할 수 있습니다.\n2. 💡 **안심 케어 팁**: 체중 대비 일일 필수 음수량과 활동 칼로리를 정밀 체크해 보시고, 증상이 지속될 경우 최근 건강검진 데이터를 가지고 수의사 상담을 진행하시는 것을 추천합니다.\n3. 🏥 **추천 정밀 툴**: 마젠타랩 펫 헬스케어 계산기(BCS 비만도, 나이 환산, 슬개골/방광염 진단기)를 활용하시면 아이의 상태를 더욱 객관적으로 파악하실 수 있습니다.`;
+      const response = `안녕하세요 보호자님! 마젠타 펫 연구소 수석 연구원 '안심이'입니다. 🐾\n\n[${petTitle}]에 대한 문의 내용("${question.slice(0, 40)}...") 잘 받아보았습니다.\n\n아이의 건강 상태와 증상을 과학적 근거에 기반하여 분석해 드릴게요:\n\n1. 🔍 **상태 추정**: 해당 증상은 영양 상태, 일일 활동량, 또는 특정 부위의 수의사 진료가 필요할 수 있습니다.\n2. 💡 **안심 케어 팁**: 체중 대비 일일 필수 음수량과 활동 칼로리를 정밀 체크해 보시고, 증상이 지속될 경우 최근 건강검진 데이터를 가지고 수의사 상담을 진행하시는 것을 추천합니다.\n3. 🏥 **추천 정밀 툴**: 마젠타랩 펫 헬스케어 계산기(BCS 비만도, 나이 환산, 슬개골/방광염 참고 도구)를 활용하시면 아이의 상태를 더욱 객관적으로 파악하실 수 있습니다.`;
       
       setAiAnswer(response);
       setIsLoading(false);
@@ -84,13 +84,13 @@ export default function AskAnsimiClient() {
         <div className="h-1 w-full bg-gradient-to-r from-[#E5007E] via-amber-400 to-[#E5007E] absolute top-0 left-0" />
         <div className="max-w-4xl mx-auto space-y-4">
           <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#E5007E]/20 text-[#FF6B9D] border border-[#E5007E]/30 text-xs font-bold">
-            <Sparkles className="w-3.5 h-3.5" /> 마젠타랩 AI 1:1 연구 상담소
+            <Sparkles className="w-3.5 h-3.5" /> 마젠타랩 안심이에게 질문하기
           </span>
           <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
             안심이에게 무엇이든 물어보세요! 🐾
           </h1>
           <p className="text-xs sm:text-sm text-gray-300 max-w-2xl mx-auto leading-relaxed">
-            반려동물의 행동, 영양, 건강 고민을 수석 AI 연구원 안심이가 정밀한 수의학 데이터와 따뜻한 마음으로 답변해 드립니다.
+            반려동물의 행동, 영양, 건강 고민을 마젠타랩 브랜드 캐릭터 안심이가 정밀한 수의학 데이터와 따뜻한 마음으로 답변해 드립니다.
           </p>
         </div>
       </div>
@@ -104,7 +104,7 @@ export default function AskAnsimiClient() {
               🐶
             </div>
             <div>
-              <h2 className="text-lg font-bold text-gray-900">안심이 1:1 맞춤 상담 신청</h2>
+              <h2 className="text-lg font-bold text-gray-900">안심이에게 질문 보내기</h2>
               <p className="text-xs text-gray-500">아이의 종, 이름과 함께 고민되는 증상을 편하게 적어주세요</p>
             </div>
           </div>
@@ -172,7 +172,7 @@ export default function AskAnsimiClient() {
               {isLoading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>안심 연구원이 데이터 분석 중...</span>
+                  <span>안심이가 답변 준비 중...</span>
                 </>
               ) : (
                 <>
@@ -190,7 +190,7 @@ export default function AskAnsimiClient() {
                 <span className="w-7 h-7 rounded-full bg-[#E5007E] text-white flex items-center justify-center text-xs font-bold">
                   🐾
                 </span>
-                <h3 className="text-sm font-bold text-gray-900">안심이 연구원의 1:1 진단 답변</h3>
+                <h3 className="text-sm font-bold text-gray-900">안심이의 참고 답변</h3>
               </div>
               <div className="text-xs text-gray-700 whitespace-pre-line leading-relaxed font-medium">
                 {aiAnswer}
@@ -228,13 +228,13 @@ export default function AskAnsimiClient() {
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-sm space-y-6">
           <div className="flex items-center gap-2 border-b border-gray-100 pb-4">
             <Stethoscope className="w-5 h-5 text-[#E5007E]" />
-            <h3 className="text-base font-extrabold text-gray-900">마젠타랩 수의학 연구 원칙 및 1:1 상담 가이드</h3>
+            <h3 className="text-base font-extrabold text-gray-900">마젠타랩 수의학 기반 참고 자료 활용 가이드</h3>
           </div>
 
           <div className="prose prose-sm max-w-none text-gray-600 space-y-5 leading-relaxed text-xs sm:text-sm font-medium">
             <div className="space-y-2">
               <h4 className="font-extrabold text-gray-900 text-xs sm:text-sm flex items-center gap-1.5">
-                <span className="text-[#E5007E]">1.</span> 🧬 수의학 임상 데이터 및 AI 가이드라인 적용
+                <span className="text-[#E5007E]">1.</span> 🧬 수의학 기반 참고 자료 활용
               </h4>
               <p className="text-gray-600 leading-relaxed text-[12px] sm:text-xs">
                 마젠타랩 펫 연구소의 안심이 1:1 상담 시스템은 소형견·대형견 및 고양이의 종별 생리학적 특성과 수의학 임상 가이드라인(AAHA, WSAVA 표준)을 지침으로 합니다. 보호자님이 작성해 주신 연령, 체중, 식습관 및 일시적 증상을 다각도로 대입하여 최적의 케어 팁을 제시합니다.
@@ -243,10 +243,10 @@ export default function AskAnsimiClient() {
 
             <div className="space-y-2">
               <h4 className="font-extrabold text-gray-900 text-xs sm:text-sm flex items-center gap-1.5">
-                <span className="text-[#E5007E]">2.</span> 🩺 온라인 건강 자가진단의 목적과 한계 안내
+                <span className="text-[#E5007E]">2.</span> 🩺 건강 기록 및 참고 도구의 목적과 한계 안내
               </h4>
               <p className="text-gray-600 leading-relaxed text-[12px] sm:text-xs">
-                본 1:1 상담 및 정밀 헬스케어 계산기 모듈은 수의사의 확진을 대체하는 청진·처방 행위가 아닌, 병원 방문 전 보호자님의 막연한 불안감을 해소하고 일상생활 속 정확한 관찰 지포를 제공하는 자가 케어 보조 도구입니다. 증상이 경미하더라도 48시간 이상 지속되는 경우 수의사 정밀 검진을 권장합니다.
+                본 질문하기 및 건강 참고 계산기 모듈은 수의사의 확진을 대체하는 청진·처방 행위가 아닌, 병원 방문 전 보호자님의 막연한 불안감을 해소하고 일상생활 속 정확한 관찰 지포를 제공하는 자가 케어 보조 도구입니다. 증상이 경미하더라도 증상이 지속되는 경우 수의사 정밀 검진을 권장합니다.
               </p>
             </div>
 
@@ -266,7 +266,7 @@ export default function AskAnsimiClient() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Calculator className="w-5 h-5 text-[#E5007E]" />
-              <h3 className="text-sm font-extrabold text-gray-900">마젠타랩 6대 정밀 셀프 진단기</h3>
+              <h3 className="text-sm font-extrabold text-gray-900">마젠타랩 6대 헬스케어 참고 도구</h3>
             </div>
             <span className="text-[11px] text-gray-400 font-semibold">100% 무료</span>
           </div>

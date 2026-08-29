@@ -67,7 +67,7 @@ export default function CalculatorBanner({
       age: {
         tag: "생애주기 & 인간 나이 진단",
         textBefore: "우리 아이의 태어난 연월만 입력하면 인간 나이 환산은 물론, 현재 생애주기에 딱 맞춘 응급 건강 관리 팁까지 그래픽 카드로 즉시 진단해 드립니다. ",
-        button: "안심이 수석연구원의 펫 인간 나이 환산 및 생애주기 진단기 가기 ➔",
+        button: "안심이 수석연구원의 펫 인간 나이 환산 및 생애주기 참고 도구 가기 ➔",
         textAfter: " 링크를 클릭해 무료로 확인해 보세요."
       },
       dm: {
@@ -97,7 +97,7 @@ export default function CalculatorBanner({
       fic: {
         tag: "🐱 고양이 스트레스 & FIC 방광염 진단",
         textBefore: "최근 이사나 모래 교체 후 고양이가 화장실 실수를 하나요? 영역 동물 고양이의 스트레스 수준과 FIC 방광염 위험 단계를 확인해 보세요. ",
-        button: "안심이 수석연구원의 고양이 FIC 방광염 및 스트레스 진단기 가기 ➔",
+        button: "안심이 수석연구원의 고양이 FIC 방광염 및 스트레스 요인 확인 가기 ➔",
         textAfter: " 링크를 통해 무료로 진단할 수 있습니다."
       }
     },

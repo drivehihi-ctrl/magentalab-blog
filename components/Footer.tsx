@@ -40,7 +40,7 @@ export default function Footer() {
               {isEn
                 ? "Data-driven research for better pet lives."
                 : isJa
-                ? "データに基づく反려동물 연구."
+                ? "データに基づくペット研究."
                 : "데이터와 과학으로 반려동물의 더 나은 삶을 연구합니다."}
             </p>
             <nav className="flex flex-wrap gap-3 text-[11px] font-bold text-[#8888aa] uppercase tracking-widest pt-1">

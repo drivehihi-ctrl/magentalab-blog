@@ -36,7 +36,7 @@ export default function FicDiagnoser({ lang = "ko" }: FicDiagnoserProps) {
   // Multilingual Dictionaries
   const dict = {
     ko: {
-      badge: "안심이 수석연구원의 스트레스 상태 점검",
+      badge: "안심이 안심이의 스트레스 상태 점검",
       title: "고양이 스트레스 및 특발성 방광염(FIC) 위험 신호 확인 도구",
       desc: "고양이의 나이, 체형 정보와 최근 영역 내 환경 변화, 행동 이상 징후를 바탕으로 스트레스 누적도를 위험 신호 분석하고 특발성 방광염(FIC) 위험 신호를 참고용으로 확인합니다.",
       loading: "진단 프로그램을 불러오는 중입니다...",
@@ -58,7 +58,7 @@ export default function FicDiagnoser({ lang = "ko" }: FicDiagnoserProps) {
       reportSub: "스트레스 & FIC 위험 수준",
       scoreLabel: "FIC 참고 점수",
       scoreOutOf: "/ 90점",
-      adviseTitle: "안심이 수석연구원 어드바이스",
+      adviseTitle: "안심이 안심이 어드바이스",
       bannerTitle: "방광염 예방을 위한 환경 관리",
       bannerDesc: "방광 건강 관리에서 충분한 수분 섭취는 중요한 요소 중 하나입니다. 우리 아이의 몸무게에 맞는 체중 기반 참고용 일일 수분 섭취량이 궁금하시다면 아래 마젠타랩 전용 계산기로 이동해 확인해 보세요.",
       bannerBtn: "마젠타랩 영양 & 음수량 계산기로 이동하기 ➔",
@@ -66,7 +66,7 @@ export default function FicDiagnoser({ lang = "ko" }: FicDiagnoserProps) {
       cautionDesc: "본 체크리스트 도구는 국제 고양이의학협회(ISFM) 및 미국의 고양이 임상진료 가이드라인을 근거로 제작되었습니다. 단, 방광염은 요로 결석, 세균성 감염 등 다른 신장 비뇨기계 질환과 증상이 유사하므로, 소변을 전혀 보지 못하거나 혈뇨를 누는 응급 징후 발견 시 즉시 병원 검사를 권장합니다.",
     },
     en: {
-      badge: "Ansim-i Senior Researcher's Stress Assessment",
+      badge: "Ansim-i's Stress Note",
       title: "Feline Stress & Feline Idiopathic Cystitis (FIC) Screener",
       desc: "Analyze cumulative stress indices and determine FIC hazard levels based on feline ages, physical conditions, surrounding environments, and somatic warning flags.",
       loading: "Loading diagnostic tool...",
