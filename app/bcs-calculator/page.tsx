@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "반려동물 비만도(BCS) 및 다이어트 칼로리 계산기 | 마젠타랩",
-    description: "수의학 공식을 바탕으로 한 우리 아이 맞춤형 일일 열량 및 사료량 자가진단 시스템.",
+    description: "우리 아이 맞춤형 일일 열량 및 사료량 체형 및 필요 열량 참고 도구.",
     images: ["/images/favicon.png"],
   }
 };
