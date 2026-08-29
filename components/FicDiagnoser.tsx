@@ -17,11 +17,11 @@ import {
   ArrowRight
 } from "lucide-react";
 
-interface FicRisk CheckerProps {
+interface FicDiagnoserProps {
   lang?: "ko" | "en" | "ja";
 }
 
-export default function FicDiagnoser({ lang = "ko" }: FicRisk CheckerProps) {
+export default function FicDiagnoser({ lang = "ko" }: FicDiagnoserProps) {
 
 
   // 입력 폼 상태 관리

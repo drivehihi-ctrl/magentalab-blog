@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   }
 };
 
-export default async function FicRisk CheckerPageEn() {
+export default async function FicDiagnoserPageEn() {
   let relatedPosts: any[] = [];
   try {
     const postsRes = await getPosts(1, 6, undefined, undefined, "en");

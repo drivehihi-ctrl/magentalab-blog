@@ -21,11 +21,11 @@ interface Symptom {
   text: string;
 }
 
-interface PatellaRisk CheckerProps {
+interface PatellaDiagnoserProps {
   lang?: "ko" | "en" | "ja";
 }
 
-export default function PatellaDiagnoser({ lang = "ko" }: PatellaRisk CheckerProps) {
+export default function PatellaDiagnoser({ lang = "ko" }: PatellaDiagnoserProps) {
   const [dogSize, setDogSize] = useState<DogSize>("small");
   const [age, setAge] = useState<string>("");
   const [weight, setWeight] = useState<string>("");

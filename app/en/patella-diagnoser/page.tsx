@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 
 import SeoArticle from "@/components/SeoArticle";
 
-export default async function PatellaRisk CheckerPageEn() {
+export default async function PatellaDiagnoserPageEn() {
   let relatedPosts: any[] = [];
   try {
     const postsRes = await getPosts(1, 6, undefined, undefined, "en");
