@@ -1,11 +1,12 @@
 import { Metadata } from "next";
 import { getPosts } from "@/lib/wp";
+import { notFound } from "next/navigation";
 import RelatedPosts from "@/components/RelatedPosts";
 import AboutEEATFeatures from "@/components/AboutEEATFeatures";
 
 export const metadata: Metadata = {
-  title: "About Us | Magentalab",
-  description: "Introduction to the mission and research fields of Magentalab Pet Research Lab.",
+  title: "About Magentalab | Magentalab",
+  description: "Introducing Magentalab's mission and content creation principles, which started from pet parents' questions.",
   alternates: {
     canonical: "https://www.magentalabblog.com/en/about",
     languages: {
@@ -14,6 +15,20 @@ export const metadata: Metadata = {
       'ja-JP': 'https://www.magentalabblog.com/ja/about',
     },
   },
+  openGraph: {
+    title: "About Magentalab | Magentalab",
+    description: "Introducing Magentalab's mission and content creation principles, which started from pet parents' questions.",
+    url: "https://www.magentalabblog.com/en/about",
+    type: "website",
+    siteName: "Magentalab",
+    images: [{ url: "/images/favicon.png" }]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About Magentalab | Magentalab",
+    description: "Introducing Magentalab's mission and content creation principles, which started from pet parents' questions.",
+    images: ["/images/favicon.png"]
+  }
 };
 
 export default async function EnAboutPage() {
@@ -33,11 +48,11 @@ export default async function EnAboutPage() {
           <span className="inline-block px-4 py-1.5 rounded-full bg-magenta-light text-magenta text-xs font-bold uppercase tracking-widest mb-6">
             ABOUT US
           </span>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-[1.2] mb-8 tracking-tight">
-            Researching Tomorrow for Pets with Data and Love, Magentalab
+          <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold text-gray-900 leading-[1.1] mb-8 tracking-tight">
+            Magentalab Begins with Pet Parents' Questions
           </h1>
-          <p className="text-xl text-gray-500 max-w-2xl mx-auto font-medium italic">
-            "Why should we study the language of our pets?"
+          <p className="text-xl text-gray-500 max-w-2xl mx-auto font-medium">
+            If you live with a pet, you've probably stayed up late searching for answers that never seem clear. Magentalab started from those exact, earnest questions.
           </p>
         </div>
         
@@ -50,52 +65,24 @@ export default async function EnAboutPage() {
       <div className="container mx-auto px-4 -mt-16 relative z-20">
         <div className="max-w-4xl mx-auto bg-white rounded-4xl shadow-2xl shadow-magenta/5 border border-gray-100 p-8 md:p-16">
           <div className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal mb-12">
-            <img 
-              src="https://magentalab.mycafe24.com/wp-content/uploads/2026/04/Magentalab_logo_We_202604050029.jpeg" 
-              alt="Magentalab Pet Research Institute Overview" 
-              className="rounded-3xl w-full mb-8 shadow-md"
-            />
-            <p>
-              The Magentalab Pet Research Institute is not just a place that lists random information. In a flood of pet information, we were founded to provide the "verified medical knowledge" and "practical lifestyle solutions" that pet parents need the most.
-            </p>
-            <p>
-              We utilize global AI technology to rapidly collect vast amounts of worldwide veterinary data, publishing the most accurate and heartwarming content through the precise Editorial Responsibility of our Lead Researcher.
-            </p>
-
-            <h2>🔬 Magentalab’s 3 Core Research Areas</h2>
             
-            <p>
-              <strong>① Precise Breed Analysis (Breed Archive)</strong><br />
-              Beyond simple physical traits, we analyze genetic characteristics, behavioral personalities, and anatomical risks based on activity levels to propose optimal care solutions tailored to each breed.
-            </p>
+            <h2>Why was Magentalab created?</h2>
+            <p>There's a lot of information on the internet, but it's hard to know if it's safe to apply to your own pet right away. Magentalab isn't just a place that gathers a lot of information. Our goal is to help pet parents understand difficult health, nutrition, and behavioral information, and to help distinguish between what can be monitored at home and what requires an immediate vet visit.</p>
+            
+            <h2>How do we verify our data?</h2>
+            <p>When creating content about diseases, nutrition, or behavior, we always prioritize authoritative veterinary guidelines, government agency data, and peer-reviewed research. We don't rely on past posts as our sole starting point for facts; we adhere to the principle of constantly verifying current evidence.</p>
 
-            <p>
-              <strong>② Disease Prevention and Health Encyclopedia (Health Wiki)</strong><br />
-              We meticulously organize disease mechanisms and emergency prevention guidelines so that pet parents can access immediate medical clues during moments of panic in daily life (such as urinary abnormalities, acute poisoning, or joint diseases).
-            </p>
+            <h2>How are articles created?</h2>
+            <p>Our content starts with the actual worries and questions of pet parents. We research a wide range of professional materials, compare different sources of evidence, and explain them in language that pet parents can easily understand. During this process, we carefully review to ensure there are no highly dangerous self-treatment methods or overly definitive statements.</p>
 
-            <p>
-              <strong>③ Pet Life Science (Life Science)</strong><br />
-              From information on pet-friendly infrastructures where you can travel together to the latest nutritional trends, we scientifically research ways to elevate the quality of life you share with your pet.
-            </p>
+            <h2>The limits of medical information</h2>
+            <p>All content and calculator tools on Magentalab are for educational and reference purposes only. An accurate diagnosis and treatment for an individual animal must always be conducted through an in-person consultation with your attending veterinarian. If you observe emergency signs in your pet, visiting a veterinary clinic always takes precedence over online information or calculator results.</p>
 
-            <h2>💖 Magentalab’s Behavioral Governance (E-E-A-T)</h2>
-            <ul>
-              <li><strong>Experience:</strong> Through the eyes of our mascot and Lead Researcher, Ansimi the Dachshund, we deeply capture the realistic nursing concerns and behavioral contexts that actual pet parents face in their daily lives.</li>
-              <li><strong>Expertise:</strong> Based on advanced data analysis tools and veterinary Dry Matter (DM) conversion formulas, we precisely reverse-calculate Nitrogen-Free Extract (NFE) and essential daily water requirements to build absolute numerical reliability in our information.</li>
-              <li><strong>Authoritativeness:</strong> We strictly comply with Google's YMYL (Your Money or Your Life) standards, aiming to serve as the standard technical guide for managing pet health scores and urinary/endocrine diseases.</li>
-              <li><strong>Trust:</strong> We consider the life and health of pets as our absolute highest priority, promising to connect you only with flawless, verified knowledge that has passed our strict Fact Check.</li>
-            </ul>
-
-            <h2>🧪 Magentalab’s 3-Step Content Screening Protocol</h2>
-            <p>
-              To meet the reliability standards of Google search engines and AI answer overviews, all knowledge reports from Magentalab are published only after consistently passing the following 3-step screening protocol:
-            </p>
-            <ul>
-              <li><strong>[API Collection]</strong> Real-time traffic analysis of global medical academic metrics and AAFCO feeding guidelines.</li>
-              <li><strong>[Fact Check]</strong> Removal of AI draft text slop and correction for the absolute integrity of veterinary clinical metrics.</li>
-              <li><strong>[Human Intervention]</strong> Insights drawn from actual pet parents' experiences and the optimization of intuitive structured data (Schema).</li>
-            </ul>
+            <h2>How do we fix incorrect information?</h2>
+            <p>Veterinary medicine is constantly advancing. When new guidelines are published, better evidence is confirmed, or an error is discovered through valuable reader feedback, Magentalab swiftly re-verifies the content and makes transparent updates.</p>
+            
+            <h2>Who runs this site?</h2>
+            <p>Magentalab is an information platform operated to support the healthy daily lives of pets. For inquiries regarding service usage or suggestions, you can always reach us through the official contact information at the bottom of the site.</p>
           </div>
 
           <AboutEEATFeatures lang="en" />
@@ -107,9 +94,9 @@ export default async function EnAboutPage() {
       <div className="container mx-auto px-4 max-w-4xl mt-24">
         <div className="p-12 rounded-4xl bg-gray-900 text-white text-center relative overflow-hidden">
           <div className="relative z-10">
-            <h2 className="text-3xl font-bold mb-6">Join us on our journey forward.</h2>
+            <h2 className="text-3xl font-bold mb-6">Join us on our journey.</h2>
             <p className="text-gray-400 mb-10 max-w-lg mx-auto">
-              Partnership proposals and inquiries are always welcome.
+              Partnership proposals are always welcome.
             </p>
             <div className="flex justify-center">
               <a 

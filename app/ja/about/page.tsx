@@ -1,11 +1,12 @@
 import { Metadata } from "next";
 import { getPosts } from "@/lib/wp";
+import { notFound } from "next/navigation";
 import RelatedPosts from "@/components/RelatedPosts";
 import AboutEEATFeatures from "@/components/AboutEEATFeatures";
 
 export const metadata: Metadata = {
-  title: "研究所紹介 | Magentalab",
-  description: "Magentalabペット研究所のミッションと研究分野を紹介します。",
+  title: "マゼンタラボ紹介 | Magentalab",
+  description: "飼い主さんの疑問から出発したマゼンタラボのミッションと、コンテンツ作成の原則についてご紹介します。",
   alternates: {
     canonical: "https://www.magentalabblog.com/ja/about",
     languages: {
@@ -14,6 +15,20 @@ export const metadata: Metadata = {
       'ja-JP': 'https://www.magentalabblog.com/ja/about',
     },
   },
+  openGraph: {
+    title: "マゼンタラボ紹介 | Magentalab",
+    description: "飼い主さんの疑問から出発したマゼンタラボのミッションと、コンテンツ作成の原則についてご紹介します。",
+    url: "https://www.magentalabblog.com/ja/about",
+    type: "website",
+    siteName: "Magentalab",
+    images: [{ url: "/images/favicon.png" }]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "マゼンタラボ紹介 | Magentalab",
+    description: "飼い主さんの疑問から出発したマゼンタラボのミッションと、コンテンツ作成の原則についてご紹介します。",
+    images: ["/images/favicon.png"]
+  }
 };
 
 export default async function JaAboutPage() {
@@ -33,11 +48,11 @@ export default async function JaAboutPage() {
           <span className="inline-block px-4 py-1.5 rounded-full bg-magenta-light text-magenta text-xs font-bold uppercase tracking-widest mb-6">
             ABOUT US
           </span>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-[1.2] mb-8 tracking-tight">
-            データと愛でペットの明日を研究する、Magentalab（マゼンタラボ）
+          <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold text-gray-900 leading-[1.1] mb-8 tracking-tight">
+            マゼンタラボは飼い主さんの疑問から始まります
           </h1>
-          <p className="text-xl text-gray-500 max-w-2xl mx-auto font-medium italic">
-            「なぜ私たちはペットの言葉を学ぶべきなのでしょうか？」
+          <p className="text-xl text-gray-500 max-w-2xl mx-auto font-medium">
+            ペットと一緒に暮らしていると、一度の検索では明確な答えが出ず、夜を明かして調べた経験があるはずです。マゼンタラボは、そんな切実な疑問から出発しました。
           </p>
         </div>
         
@@ -50,52 +65,24 @@ export default async function JaAboutPage() {
       <div className="container mx-auto px-4 -mt-16 relative z-20">
         <div className="max-w-4xl mx-auto bg-white rounded-4xl shadow-2xl shadow-magenta/5 border border-gray-100 p-8 md:p-16">
           <div className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal mb-12">
-            <img 
-              src="https://magentalab.mycafe24.com/wp-content/uploads/2026/04/Magentalab_logo_We_202604050029.jpeg" 
-              alt="マゼンタラボペット研究所概要" 
-              className="rounded-3xl w-full mb-8 shadow-md"
-            />
-            <p>
-              Magentalabペット研究所は、単に無秩序な情報を羅列する場所ではありません。溢れるペット情報の波の中で、飼い主さんが最も必要とする「検証された医学的知識」と「実用的なライフスタイル」を提案するために設立されました。
-            </p>
-            <p>
-              私たちはグローバルAI技術を活用して世界中の膨大な獣医学データを高速で収集し、首席研究員による精密な監修（Editorial Responsibility）を経て、最も正確で温かいコンテンツを配信しています。
-            </p>
-
-            <h2>🔬 Magentalabの3大中核研究分野</h2>
             
-            <p>
-              <strong>① 犬種・猫種別精密分析 (Breed Archive)</strong><br />
-              ペットの単なる外見的な個性にとどまらず、遺伝的特性、行動学的な性格、運動量に応じた解剖学的なリスクを分析し、品種ごとに最適なケアソリューションを提案します。
-            </p>
+            <h2>なぜマゼンタラボを作ったのですか？</h2>
+            <p>インターネット上には多くの情報がありますが、うちの子にすぐ適用して安全かどうかを判断するのは簡単ではありません。マゼンタラボは単に多くの情報を集めておく場所ではありません。飼い主さんが難しい健康、栄養、行動に関する情報を理解し、家庭で観察すべきこととすぐに診察が必要なサインを区別できるようサポートすることが私たちの目標です。</p>
+            
+            <h2>資料はどのように確認していますか？</h2>
+            <p>疾患、栄養、行動に関するコンテンツを作成する際、私たちは常に公信力のある獣医学ガイドライン、政府機関の資料、そして査読（ピアレビュー）を受けた学術研究を優先的に確認しています。過去の投稿を事実の唯一の出発点とはせず、常に最新の根拠を再確認する原則を固守しています。</p>
 
-            <p>
-              <strong>② 疾病予防および健康百科 (Health Wiki)</strong><br />
-              飼い主さんが日常で最も慌ててしまう排尿異常、急性中毒、関節疾患などの瞬間に、即座に医学的な手がかりを提供できるよう、疾患のメカニズムと応急予防のガイドラインを精密に整理します。
-            </p>
+            <h2>記事はどのように作られますか？</h2>
+            <p>私たちのコンテンツは、飼い主さんたちの実際の悩みや疑問から始まります。関連する専門資料を幅広く調査し、異なる根拠を比較した上で、飼い主さんが理解しやすい言葉で解説します。この過程で、非常に危険な自己治療法や過度に断定的な表現がないか慎重に検討します。</p>
 
-            <p>
-              <strong>③ ペットライフサイエンス (Life Science)</strong><br />
-              同伴可能なペットフレンドリーなインフラ情報から最新の栄養学トレンドまで、ペットと共にする生活の質を科学的に高める方法を研究します。
-            </p>
+            <h2>医療情報には限界があります</h2>
+            <p>マゼンタラボのすべてのコンテンツや計算機ツールは、教育および参考目的でのみ提供されています。個々の動物の正確な診断と治療は、必ず担当獣医師による対面診療を通じて行われなければなりません。ペットに緊急のサインが見られる場合は、オンライン情報や計算結果よりも動物病院での診察が最優先です。</p>
 
-            <h2>💖 Magentalabの行動ガバナンス (E-E-A-T)</h2>
-            <ul>
-              <li><strong>Experience (経験):</strong> Magentalabのマスコットであり首席研究員である「ダックスフントのアンシミ」の視点から、実際の飼い主さんが日常の中で直面する現実的な看病の悩みや行動学的な背景を深く捉えます。</li>
-              <li><strong>Expertise (専門性):</strong> 高度なデータ分析ツールと獣医学的な乾物量（DM）換算式に基づき、可溶無窒素物（NFE）および1日の必須水分摂取量を精密に逆算し、情報の数値的な信頼性を構築します。</li>
-              <li><strong>Authoritativeness (権威性):</strong> GoogleのYMYL基準を徹底的に遵守し、ペットの健康スコアおよび泌泌器・内分泌疾患管理のための標準的な技術ガイドを目指します。</li>
-              <li><strong>Trust (信頼):</strong> 私たちはペットの命と健康を最優先の価値と考え、ファクトチェック（事実確認）を通過した無欠の知識だけをお届けすることをお約束します。</li>
-            </ul>
-
-            <h2>🧪 Magentalabコンテンツの3段階検収プロトコル</h2>
-            <p>
-              Google検索エンジンおよびAI回答オーバービューの信頼性基準を満たすため、Magentalabのすべての知識レポートは、以下の3段階のスクリーニングを常に経た後に最終発行されます。
-            </p>
-            <ul>
-              <li><strong>[API収集]</strong> 世界中の医学学術指標およびAAFCO給与ガイドラインのリアルタイムトラフィック分析</li>
-              <li><strong>[ファクトチェック]</strong> AI草案のテキストスロップ（Slop）の除去、および獣医学的臨床数値の完全性の校正</li>
-              <li><strong>[人間の介入 (Human Intervention)]</strong> 実際の飼い主さんの経験による洞察と、直感的な構造化データ（Schema）の最適化</li>
-            </ul>
+            <h2>間違った内容はどのように修正しますか？</h2>
+            <p>獣医学は常に進歩しています。新しいガイドラインが発表されたり、より良い根拠が確認されたり、読者の皆様からの貴重なご指摘で誤りが発見された場合、マゼンタラボは迅速に内容を再確認し、透明性をもって修正します。</p>
+            
+            <h2>運営者は誰ですか？</h2>
+            <p>マゼンタラボは、ペットの健康な日常をサポートするために運営されている情報プラットフォームです。サービスのご利用やご提案に関するお問い合わせは、サイト下部の公式連絡先からいつでもお寄せいただけます。</p>
           </div>
 
           <AboutEEATFeatures lang="ja" />
@@ -107,9 +94,9 @@ export default async function JaAboutPage() {
       <div className="container mx-auto px-4 max-w-4xl mt-24">
         <div className="p-12 rounded-4xl bg-gray-900 text-white text-center relative overflow-hidden">
           <div className="relative z-10">
-            <h2 className="text-3xl font-bold mb-6">研究所の歩みを共に見守ってください。</h2>
+            <h2 className="text-3xl font-bold mb-6">私たちの歩みをぜひ見守ってください。</h2>
             <p className="text-gray-400 mb-10 max-w-lg mx-auto">
-              パートナーシップの提案やお問い合わせはいつでも歓迎します。
+              パートナーシップのご提案はいつでも歓迎いたします。
             </p>
             <div className="flex justify-center">
               <a 

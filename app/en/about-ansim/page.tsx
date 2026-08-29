@@ -5,7 +5,7 @@ import RelatedPosts from "@/components/RelatedPosts";
 
 export const metadata: Metadata = {
   title: "About Ansim | Magentalab",
-  description: "Introducing Magentalab's mascot and chief researcher, Ansim.",
+  description: "Introducing Ansim, Magentalab's mascot and a guide for pet parents.",
   alternates: {
     canonical: "https://www.magentalabblog.com/en/about-ansim",
     languages: {
@@ -14,6 +14,20 @@ export const metadata: Metadata = {
       'ja-JP': 'https://www.magentalabblog.com/ja/about-ansim',
     },
   },
+  openGraph: {
+    title: "About Ansim | Magentalab",
+    description: "Introducing Ansim, Magentalab's mascot and a guide for pet parents.",
+    url: "https://www.magentalabblog.com/en/about-ansim",
+    type: "website",
+    siteName: "Magentalab",
+    images: [{ url: "/images/favicon.png" }]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About Ansim | Magentalab",
+    description: "Introducing Ansim, Magentalab's mascot and a guide for pet parents.",
+    images: ["/images/favicon.png"]
+  }
 };
 
 export default async function EnAboutAnsimPage() {
@@ -41,10 +55,10 @@ export default async function EnAboutAnsimPage() {
           </Link>
           
           <span className="inline-block px-4 py-1.5 mb-6 rounded-full bg-magenta-light text-magenta text-xs font-bold uppercase tracking-widest">
-            Meet Our Senior Researcher
+            About Ansim
           </span>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight leading-[1.1] mb-4">
-            "I am Ansim, the pet researcher."
+            What kind of researcher is Ansim?
           </h1>
         </div>
         
@@ -58,54 +72,29 @@ export default async function EnAboutAnsimPage() {
           <div className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal mb-16">
             <img 
               src="https://magentalab.mycafe24.com/wp-content/uploads/2026/04/33-17-1024x572.jpeg" 
-              alt="Magentalab Senior Researcher Ansim Dachshund Mascot" 
+              alt="Magentalab Ansim Dachshund Mascot" 
               className="rounded-3xl w-full mb-8 shadow-md"
             />
-            <p>
-              Hello! I am Ansim, the Chief Researcher of the Magentalab Pet Research Lab, and a Dachshund.
-            </p>
-            <p>
-              Pet parents' worries are endless, and pets' pain has no voice. "Why do they scoot?", "Why are their eyes getting cloudy?" Ansim stands here as Magentalab's mascot to help find scientific answers to those questions.
-            </p>
-
-            <h3>🐾 Ansim's Research Profile</h3>
+            
+            <p>Have you ever felt lost while reading complex veterinary articles online when your pet is acting differently? "What does this actually mean for my pet?" Ansim was created for those exact moments—to stand by pet parents and break down complicated information into easy-to-understand terms.</p>
+            
+            <h2>What Ansim Does</h2>
+            <p>Ansim is Magentalab's <strong>Dachshund researcher mascot</strong>, created to explain pet health and lifestyle information from a pet parent's perspective. She is not a real veterinarian or medical professional, and she does not diagnose illnesses or prescribe treatments.</p>
+            <p>Instead, Ansim takes on the following roles:</p>
             <ul>
-              <li><strong>Name:</strong> Ansim</li>
-              <li><strong>Title:</strong> Chief Researcher at Magentalab</li>
-              <li><strong>Breed:</strong> Dachshund <i>(Legs are short, so I hold a magnifying glass to inspect closer.)</i></li>
-              <li><strong>Research Fields:</strong>
-                <ul>
-                  <li>Pet behavioral psychology analysis & behavioral correction prescriptions.</li>
-                  <li>Precision Dry Matter (DM) and Nitrogen-Free Extract (NFE) calculations up to 0.1%.</li>
-                  <li>Decoding emotional communication between pet parents and pets.</li>
-                </ul>
-              </li>
-              <li><strong>Motto:</strong> "Facts are non-negotiable. Veterinary nutrition that allows not even a 0.1% margin of error."</li>
+              <li>Translates difficult veterinary data into everyday language that pet parents can easily understand.</li>
+              <li>Compares different research and guidelines to organize the context clearly.</li>
+              <li>Distinguishes between minor daily symptoms and situations that absolutely require emergency veterinary care.</li>
             </ul>
 
-            <hr />
+            <h2>What sources are referenced?</h2>
+            <p>When explaining pet health and lifestyle information, Magentalab prioritizes authoritative veterinary guidelines, government agency data, and peer-reviewed research. We create content based on reliable resources from organizations such as the AAHA, WSAVA, Merck Veterinary Manual, and the FDA.</p>
 
-            <h3>🌟 Ansim's Mission</h3>
-            <p>
-              We aim to build a companion life where pet parents can trust and feel relieved.
-            </p>
-            <ol>
-              <li><strong>Evidence-Based:</strong> No rumors. We write articles strictly based on veterinary research papers and verified clinical data.</li>
-              <li><strong>Pet Parent-Centric:</strong> Translating difficult medical terms to match pet parents' perspectives and daily needs.</li>
-              <li><strong>QoL Improvement:</strong> Raising the Quality of Life (QoL) of both pets and parents by even 0.1%.</li>
-            </ol>
+            <h2>How should calculators and risk checkers be used?</h2>
+            <p>The various calculators and risk checkers provided by Magentalab are intended solely as <strong>reference tools</strong> for pet parents to understand and track their pet's condition. They cannot replace a physical exam or diagnosis by a real veterinarian, and a single result should never be used to determine a specific disease.</p>
 
-            <hr />
-
-            <h3>💬 A Word from Ansim</h3>
-            <blockquote>
-              <p>
-                "Sometimes, love can get lost in confusion. Is this routing correct? Is this prescription safe? Ansim wants to relieve your anxiety with precise data."
-              </p>
-              <p>
-                "I'll look lower and closer with my short legs, staying by your side as a reliable companion. Stay safe with Magentalab!"
-              </p>
-            </blockquote>
+            <h2>Ansim's Promise</h2>
+            <p>We honestly say when we don't know something. If new evidence is confirmed, we review the content and make necessary updates. Above all, because a life is more important than an online search, guiding you to a vet clinic without delay during emergencies will always be our top priority.</p>
           </div>
           
           <RelatedPosts posts={relatedPosts} lang="en" />
@@ -113,14 +102,14 @@ export default async function EnAboutAnsimPage() {
           {/* CTA / Footer */}
           <div className="mt-20 pt-12 border-t border-gray-100 text-center">
             <h3 className="text-2xl font-bold text-gray-900 mb-6">
-              Have questions for Researcher Ansim?
+              Have questions for Ansim?
             </h3>
             <div className="flex justify-center">
               <a 
                 href="mailto:smagentalab@gmail.com"
                 className="px-10 py-4 bg-magenta hover:bg-magenta/90 text-white font-bold rounded-2xl transition-all shadow-lg shadow-magenta/20 transform hover:-translate-y-1"
               >
-                Send Email to Lab
+                Send Email
               </a>
             </div>
           </div>

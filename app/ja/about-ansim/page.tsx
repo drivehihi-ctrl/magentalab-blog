@@ -5,7 +5,7 @@ import RelatedPosts from "@/components/RelatedPosts";
 
 export const metadata: Metadata = {
   title: "アンシム紹介 | Magentalab",
-  description: "Magentalabのマスコットであり主任研究員、アンシムを紹介します。",
+  description: "マゼンタラボのブランドキャラクターであり、飼い主さんのためのガイドであるアンシムをご紹介します。",
   alternates: {
     canonical: "https://www.magentalabblog.com/ja/about-ansim",
     languages: {
@@ -14,6 +14,20 @@ export const metadata: Metadata = {
       'ja-JP': 'https://www.magentalabblog.com/ja/about-ansim',
     },
   },
+  openGraph: {
+    title: "アンシム紹介 | Magentalab",
+    description: "マゼンタラボのブランドキャラクターであり、飼い主さんのためのガイドであるアンシムをご紹介します。",
+    url: "https://www.magentalabblog.com/ja/about-ansim",
+    type: "website",
+    siteName: "Magentalab",
+    images: [{ url: "/images/favicon.png" }]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "アンシム紹介 | Magentalab",
+    description: "マゼンタラボのブランドキャラクターであり、飼い主さんのためのガイドであるアンシムをご紹介します。",
+    images: ["/images/favicon.png"]
+  }
 };
 
 export default async function JaAboutAnsimPage() {
@@ -41,10 +55,10 @@ export default async function JaAboutAnsimPage() {
           </Link>
           
           <span className="inline-block px-4 py-1.5 mb-6 rounded-full bg-magenta-light text-magenta text-xs font-bold uppercase tracking-widest">
-            Meet Our Senior Researcher
+            About Ansim
           </span>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight leading-[1.1] mb-4">
-            「ペット研究者のアンシムです」
+            アンシムはどんな研究員ですか？
           </h1>
         </div>
         
@@ -58,54 +72,29 @@ export default async function JaAboutAnsimPage() {
           <div className="wp-content prose prose-lg md:prose-xl prose-magenta max-w-none text-gray-700 leading-relaxed font-normal mb-16">
             <img 
               src="https://magentalab.mycafe24.com/wp-content/uploads/2026/04/33-17-1024x572.jpeg" 
-              alt="マゼンタラボ主任研究員アンシム（ダックスフント）" 
+              alt="Magentalab Ansim Dachshund Mascot" 
               className="rounded-3xl w-full mb-8 shadow-md"
             />
-            <p>
-              こんにちは！Magentalabペット研究所の主任研究員であり、ダックスフンドの『アンシム』です。
-            </p>
-            <p>
-              飼い主の悩みは尽きることがなく、ペットの痛みには声がありません。「なぜ床にお尻を擦り付けるの？」「なぜ目が白く濁るの？」アンシムは、まさにこれらの疑問に科学的な正解を見つけるために、Magentalabのマスコットとして活動しています。
-            </p>
-
-            <h3>🐾 アンシムのプロフィール (Ansim's Research Profile)</h3>
+            
+            <p>ペットの様子がいつもと違う時、ネットで難しい獣医学の専門記事を読んで「結局うちの子にはどういう意味なの？」と戸惑ったことはありませんか？アンシムはまさにそんな時、飼い主さんに寄り添い、難しい情報をわかりやすく解説するために誕生しました。</p>
+            
+            <h2>アンシムの役割</h2>
+            <p>アンシムは、ペットの健康や生活情報を飼い主さんの目線でわかりやすく説明するためにマゼンタラボが生み出した、<strong>ダックスフント研究員コンセプトのブランドキャラクター</strong>です。実際の獣医師や医療従事者ではなく、自ら病気を診断したり治療を処方したりすることはありません。</p>
+            <p>その代わり、アンシムは次のような役割を果たします：</p>
             <ul>
-              <li><strong>名前:</strong> アンシム (Ansim)</li>
-              <li><strong>職責:</strong> Magentalab 主任研究員 (Chief Researcher)</li>
-              <li><strong>犬種:</strong> ダックスフンド (Dachshund) <i>(脚が短いため、ルーペを持ってより低く、詳細に観察します。)</i></li>
-              <li><strong>研究分野:</strong>
-                <ul>
-                  <li>ペットの行動心理分析および行動矯正の処方</li>
-                  <li>小数点以下0.1%単位の精密な乾物基準(DM)および可溶無窒素物(NFE)の逆算</li>
-                  <li>飼い主とペットの感情的なコミュニケーションの解読</li>
-                </ul>
-              </li>
-              <li><strong>座右の銘:</strong> 「事実は妥協しない。0.1%の誤差も許さない獣医栄養学」</li>
+              <li>難しい獣医学の資料を、飼い主さんが理解しやすい日常の言葉に翻訳します。</li>
+              <li>異なる研究やガイドラインを比較し、文脈をわかりやすく整理します。</li>
+              <li>日常の軽い症状と、必ず動物病院での緊急診療が必要な状況を明確に区別して案内します。</li>
             </ul>
 
-            <hr />
+            <h2>どんな資料を参考にしていますか？</h2>
+            <p>マゼンタラボではペットの健康や生活情報をご説明する際、公信力のある獣医学ガイドライン、政府機関の資料、および査読（ピアレビュー）を受けた研究を優先して確認しています。AAHA、WSAVA、Merck Veterinary Manual、FDAなどの信頼できるリソースを基にコンテンツを制作しています。</p>
 
-            <h3>🌟 アンシムの使命</h3>
-            <p>
-              私たちは、飼い主が安心して信頼できる伴侶生活を目指します。
-            </p>
-            <ol>
-              <li><strong>エビデンスベース (Evidence-Based):</strong> 根拠のない噂ではなく、信頼できる獣医学論文と検証された臨床データを基礎に作成します。</li>
-              <li><strong>飼い主目線:</strong> 難しく馴染みのない専門医学用語を、飼い主の目線に合わせて解りやすく翻訳・提供します。</li>
-              <li><strong>QoLの向上:</strong> 単なる病気治療を超え、ペットと飼い主の生活の質(QoL)を0.1%でも高めることを目標とします。</li>
-            </ol>
+            <h2>計算機やリスク確認ツールはどう活用すべきですか？</h2>
+            <p>マゼンタラボが提供する各種の計算機やリスク確認ツールは、飼い主さんがペットの状態を理解し記録するための<strong>参考用ツール</strong>です。これらは実際の獣医師による身体検査や診断に代わるものではなく、一つの結果だけで特定の病気を判断してはいけません。</p>
 
-            <hr />
-
-            <h3>💬 主任研究員アンシムより一言</h3>
-            <blockquote>
-              <p>
-                「時には、愛するがゆえに迷うこともあります。この方法で合っているのか、あの処方が安全なのか…アンシムが正確なデータで『安心』をお届けします。」
-              </p>
-              <p>
-                「短い脚で、より低く、より注意深く観察し、常に飼い主の皆様の心強い同行者であり続けます。今日もMagentalabと共に安心してください！」
-              </p>
-            </blockquote>
+            <h2>アンシムの約束</h2>
+            <p>分からないことは正直に分からないとお伝えし、新しい根拠が確認された場合は内容を再検討し、必要な部分を修正します。何よりも、オンラインでの検索より命が最優先であるため、緊急時には遅滞なく動物病院での診療を受けるようご案内することを最優先の原則とします。</p>
           </div>
           
           <RelatedPosts posts={relatedPosts} lang="ja" />
@@ -113,14 +102,14 @@ export default async function JaAboutAnsimPage() {
           {/* CTA / Footer */}
           <div className="mt-20 pt-12 border-t border-gray-100 text-center">
             <h3 className="text-2xl font-bold text-gray-900 mb-6">
-              アンシム主任研究員にご質問はありますか？
+              アンシムに何か質問がありますか？
             </h3>
             <div className="flex justify-center">
               <a 
                 href="mailto:smagentalab@gmail.com"
                 className="px-10 py-4 bg-magenta hover:bg-magenta/90 text-white font-bold rounded-2xl transition-all shadow-lg shadow-magenta/20 transform hover:-translate-y-1"
               >
-                研究所にメールを送る
+                メールを送る
               </a>
             </div>
           </div>
