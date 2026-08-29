@@ -76,7 +76,7 @@ export default function BCSCalculator({ lang = "ko" }: BCSCalculatorProps) {
       feedLabel: "일일 권장 사료 급여량",
       feedUnit: "g / 하루",
       feedDesc: "* 평균 건식 사료 열량(3,500 kcal/kg) 기준으로 환산된 양입니다.",
-      bcsLabel: "비만 진단 척도",
+      bcsLabel: "비만 체형 척도",
       solTitle: "수의학 다이어트 및 식단 솔루션",
       warnDiet: "체중 감량 다이어트 프로그램 가이드라인이 필요합니다.",
       rulesTitle: "1단계씩 서서히 줄여나가는 안전 다이어트 4대 규칙:",
@@ -103,7 +103,7 @@ export default function BCSCalculator({ lang = "ko" }: BCSCalculatorProps) {
     en: {
       title: "Pet Obesity (BCS) & Calorie Calculator",
       desc: "Calculate precise targeted daily energy requirements (DER) and food portions based on weight, clinical status, and body condition scores (BCS 9-step scale).",
-      badge: "Veterinary Standard Algorithm Self-Diagnosis",
+      badge: "Veterinary Standard Algorithm Check",
       labelPetType: "Pet Type",
       dog: "Dog",
       cat: "Cat",
@@ -368,7 +368,8 @@ export default function BCSCalculator({ lang = "ko" }: BCSCalculatorProps) {
   // 실시간 계산 로직
   useEffect(() => {
     const w = parseFloat(weight);
-    if (isNaN(w) || w <= 0) {
+    const a = parseInt(ageValue);
+    if (isNaN(w) || w <= 0 || isNaN(a) || ageValue === "") {
       setIsValid(false);
       return;
     }
@@ -706,6 +707,23 @@ export default function BCSCalculator({ lang = "ko" }: BCSCalculatorProps) {
           </div>
 
           {/* 우측: 계산 결과 & 다이어트 솔루션 */}
+          {!isValid ? (
+            <div className="lg:col-span-5 py-16 px-4 text-center space-y-4 bg-white rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-center items-center h-full min-h-[400px]">
+              <div className="w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center mx-auto text-3xl animate-bounce">
+                📊
+              </div>
+              <h3 className="text-lg font-black text-slate-800">
+                {lang === 'ko' ? '결과 대기 중' : lang === 'ja' ? '結果待機中' : 'Waiting for Results'}
+              </h3>
+              <p className="text-sm text-slate-500 font-bold leading-relaxed max-w-sm mx-auto">
+                {lang === 'ko' 
+                  ? '값을 입력하면 예상 필요 열량과 체형 참고 결과가 표시됩니다.' 
+                  : lang === 'ja' 
+                  ? '数値を入力すると、予想必要カロリーと体型の参考結果が表示されます。' 
+                  : 'Enter the values to view the estimated calorie requirement and body condition results.'}
+              </p>
+            </div>
+          ) : (
           <div className="lg:col-span-5 space-y-6">
             
             {/* 결과 종합 카드 */}
@@ -920,6 +938,7 @@ export default function BCSCalculator({ lang = "ko" }: BCSCalculatorProps) {
             </div>
 
           </div>
+          )}
 
         </div>
       </div>

@@ -159,9 +159,9 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
   // Multilingual Dictionaries (한글 혼입 완벽 디버깅 버전)
   const dict = {
     ko: {
-      badge: "안심 연구원 지출 진단 리포트",
+      badge: "안심 연구원 지출 분석 리포트",
       title: "반려동물 평생 양육비 & 월간 유지비 계산기 💰",
-      desc: "나이대별 수의학 필수 예방접종 비용과 생애 의료비 시뮬레이션을 탑재하여 우리 아이 맞춤형 한 달 고정 유지비와 평생 지출의 비용 분석서를 실시간 확인하세요.",
+      desc: "나이대별 수의학 예방접종 예시 비용과 생애 의료비 시뮬레이션을 탑재하여 우리 아이 맞춤형 한 달 고정 유지비와 평생 지출의 비용 분석서를 실시간 확인하세요.",
       labelSelectType: "축종 및 반려동물 크기 선택",
       dogSmall: "소형견",
       dogSmallDesc: "10kg 미만",
@@ -199,7 +199,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
       careHome: "홈케어 위주",
       careHomeDesc: "셀프 목욕 및 기본 위생케어",
       sliderCareLabel: "미용 및 케어 관리비 (월)",
-      reportTitle: "지출 종합 진단서",
+      reportTitle: "지출 분석 리포트",
       reportRealtime: "실시간 자동 갱신 ⚡",
       reportMonthlyTotal: "월간 고정 유지비",
       reportMonthlyMedical: "의료비 포함",
@@ -213,10 +213,10 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
       chartHygiene: "위생용품",
       chartCare: "미용 및 위생",
       chartMedical: "의료비 (자동)",
-      calendarTitle: "올해 필수 예방접종 & 케어 달력 📅",
+      calendarTitle: "올해 예방접종 예시 & 케어 달력 📅",
       calendarDesc: "현재 나이인 {computedAge}세 시점에 필수 권장되는 수의학 예방 케어 및 건강검진 비용 내역입니다.",
       calendarTag: "권장",
-      calendarDisclaimer: "* 예방접종 비용은 지역 및 동물병원 규모에 따라 상이할 수 있으며, 만 7세 이상 노령기는 주기적인 스크리닝이 아이의 갑작스러운 중증 의료비 폭탄을 방지하는 지름길입니다.",
+      calendarDisclaimer: "* 예방접종 비용은 지역 및 동물병원 규모에 따라 상이할 수 있습니다. 위 일정은 일반적인 예시이며, 실제 접종 필요성과 주기 등은 아이의 종, 접종 이력, 생활 환경, 담당 수의사의 판단에 따라 달라질 수 있습니다. 만 7세 이상 노령기는 주기적인 스크리닝이 중증 의료비 부담 경감에 도움이 됩니다.",
       btnReset: "다시 계산하기",
       statDisclaimer: "농림축산식품부 2025 동물복지 국민의식조사 참고 / 실제 비용은 개체 및 생활방식에 따라 다름",
     },
@@ -261,7 +261,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
       careHome: "Home Care Oriented",
       careHomeDesc: "Self baths and basic hygiene care",
       sliderCareLabel: "Grooming & Care Expense (Monthly)",
-      reportTitle: "Financial Diagnostic Report",
+      reportTitle: "Financial Analysis Report",
       reportRealtime: "Live Updated ⚡",
       reportMonthlyTotal: "Monthly Maintenance Cost",
       reportMonthlyMedical: "Incl. medical simulator",
@@ -323,7 +323,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
       careHome: "自宅でのセルフケア",
       careHomeDesc: "自宅でシャンプーや基本ケア",
       sliderCareLabel: "トリミング・ケア代（月）",
-      reportTitle: "飼育費総合診断書",
+      reportTitle: "飼育費分析レポート",
       reportRealtime: "リアルタイム自動更新 ⚡",
       reportMonthlyTotal: "月間の維持費",
       reportMonthlyMedical: "医療費込み",
@@ -497,7 +497,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
     };
   }, [monthlyTotal, foodCost, hygieneCost, careCost, medicalCalculation.monthlyMedical]);
 
-  // 나이대별 필수 예방접종 달력 데이터 바인딩 (실제 미국, 일본, 한국 병원비 스케일 반영)
+  // 나이대별 예방접종 예시 달력 데이터 바인딩 (실제 미국, 일본, 한국 병원비 스케일 반영)
   const vaccinationSchedule = useMemo(() => {
     const isDog = petType !== "cat";
     
@@ -587,20 +587,20 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
       return {
         stageName: lang === "ko" ? "매년 추가 접종기 (1세 이상 ~ 7세 미만 성숙기)" : lang === "ja" ? "年次追加接種期 (1歳〜7歳未満成熟期)" : "Annual Booster Stage (1-6 yrs)",
         desc: lang === "ko" 
-          ? "튼튼한 성숙기 유지를 위해 매년 1회 면역 보강 추가 접종과 매월 내부외 기생충 관리가 권장됩니다." 
+          ? "튼튼한 성숙기 유지를 위해 면역력 유지를 위한 추가 접종과 매월 내부외 기생충 관리가 권장됩니다." 
           : lang === "ja" 
           ? "健康な成猫・成犬期の維持のため、年1回の免疫補強追加接種と毎月の内外寄生虫予防が推奨されます。" 
           : "Annual boosters support active immunity. Monthly preventative parasite control is highly advised.",
         items: [
           { 
             name: lang === "ko" ? "종합백신(DHPPL/FVRCP) 추가 접종" : lang === "ja" ? "混合ワクチン追加接種" : "Core Booster (DHPPL / FVRCP)", 
-            period: lang === "ko" ? "매년 1회" : lang === "ja" ? "年に1回" : "Annually", 
+            period: lang === "ko" ? "주기적(예: 연 1회)" : lang === "ja" ? "年に1回" : "Annually", 
             cost: getVaccineCost("annual_booster"), 
-            detail: lang === "ko" ? "시간이 지남에 따라 소실되는 면역 항체 수치를 최고치로 유지" : lang === "ja" ? "時間の経過に伴い低下する免疫力を呼び戻すブースター" : "Re-stimulate protective titers that decline over time." 
+            detail: lang === "ko" ? "시간이 지남에 따라 소실되는 면역 질병 방어력 유지" : lang === "ja" ? "時間の経過に伴い低下する免疫力を呼び戻すブースター" : "Re-stimulate protective titers that decline over time." 
           },
           { 
             name: lang === "ko" ? "광견병 & 켄넬코프(강아지) 추가 접종" : lang === "ja" ? "狂犬病＆ケンネルコフ追加" : "Rabies & Respiratory Booster (Dogs)", 
-            period: lang === "ko" ? "매년 1회" : lang === "ja" ? "年に1回" : "Annually", 
+            period: lang === "ko" ? "주기적(예: 연 1회)" : lang === "ja" ? "年に1回" : "Annually", 
             cost: getVaccineCost("annual_rabies"), 
             detail: lang === "ko" ? "단체 이용/호텔링 시 필수로 검증받아야 하는 예방 접종 완료증 갱신" : lang === "ja" ? "ドッグラン・ホテル利用時に必須となる接種証明書の更新" : "Update dynamic proof for hoteling or public dog facilities." 
           },
@@ -608,7 +608,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
             name: lang === "ko" ? "1년치 심장사상충 및 내외부 기생충 예방약" : lang === "ja" ? "フィラリア＆内外寄生虫予防薬 (1年分)" : "1-Yr Supply Heartworm & Tick Spot-ons", 
             period: lang === "ko" ? "매월 복용/바름 (연간)" : lang === "ja" ? "毎月投与 (年間)" : "Monthly administrations", 
             cost: getVaccineCost("annual_parasite"), 
-            detail: lang === "ko" ? "모기 매개 치명 심장사상충 및 진드기 매개 살인진드기병 원천 차단" : lang === "ja" ? "蚊媒介の致命的なフィラリアおよびマダニ感染症の予防" : "Blocks lethal heartworms and tick-borne diseases." 
+            detail: lang === "ko" ? "모기 매개 치명 심장사상충 및 진드기 매개 살인진드기병 발생 위험을 낮춤" : lang === "ja" ? "蚊媒介の致命的なフィラリアおよびマダニ感染症の予防" : "Blocks lethal heartworms and tick-borne diseases." 
           }
         ]
       };
@@ -623,19 +623,19 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
         items: [
           { 
             name: lang === "ko" ? "실버 종합 혈액검사 (CBC & Chemistry 17종)" : lang === "ja" ? "シニア血液スクリーニング検査 (17項目)" : "Senior Chemistry Profile (CBC & 17 channels)", 
-            period: lang === "ko" ? "매년 1회 권장" : lang === "ja" ? "年1回推奨" : "Recommended annually", 
+            period: lang === "ko" ? "정기적(예: 연 1회) 권장" : lang === "ja" ? "年1回推奨" : "Recommended annually", 
             cost: getVaccineCost("silver_cbc"), 
             detail: lang === "ko" ? "간, 신장 기능 수치 및 전해질, 백혈구 적혈구 정밀 신체 장기 분석" : lang === "ja" ? "肝臓・腎臓機能数値および電解質、血球の総合分析" : "Analyzes internal liver, kidney functions, and blood cells." 
           },
           { 
             name: lang === "ko" ? "복부 초음파 & 흉부 엑스레이 영상 정밀 검사" : lang === "ja" ? "腹部エコー＆胸部レントゲン精密画像検査" : "Abdomen Ultrasound & Chest X-Ray Imaging", 
-            period: lang === "ko" ? "매년 1회 권장" : lang === "ja" ? "年1回推奨" : "Recommended annually", 
+            period: lang === "ko" ? "정기적(예: 연 1회) 권장" : lang === "ja" ? "年1回推奨" : "Recommended annually", 
             cost: getVaccineCost("silver_echo"), 
             detail: lang === "ko" ? "종양 조기 발견, 심장 비대증 판정 및 복부 주요 장기 형태 분석" : lang === "ja" ? "腫瘍の早期発見、心臓肥大の検出、腹部臓器の分析" : "Detects early tumors, cardiac enlargement, and organ issues." 
           },
           { 
             name: lang === "ko" ? "종합백신 및 광견병 매년 의무 접종" : lang === "ja" ? "混合ワクチン＆狂犬病の毎年接種" : "Core Booster & Rabies annual routine", 
-            period: lang === "ko" ? "매년 1회" : lang === "ja" ? "年に1回" : "Annually", 
+            period: lang === "ko" ? "주기적(예: 연 1회)" : lang === "ja" ? "年に1回" : "Annually", 
             cost: getVaccineCost("silver_vaccine"), 
             detail: lang === "ko" ? "노화로 인한 저하된 면역계를 서포트하는 필수 기초 추가 접종" : lang === "ja" ? "加齢に伴い低下する免疫をサポートするための予防" : "Supports aging immune systems to withstand infections." 
           },

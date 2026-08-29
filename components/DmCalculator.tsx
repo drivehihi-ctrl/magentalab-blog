@@ -200,13 +200,17 @@ export default function DmCalculator({ lang = "ko" }: DmCalculatorProps) {
 
   // 실시간 사료 DM 계산
   useEffect(() => {
-    const moist = parseFloat(moisture) || 0;
-    const protein = parseFloat(crudeProtein) || 0;
-    const fat = parseFloat(crudeFat) || 0;
-    const ashFiber = parseFloat(crudeAshFiber) || 0;
+    const moist = parseFloat(moisture);
+    const protein = parseFloat(crudeProtein);
+    const fat = parseFloat(crudeFat);
+    const ashFiber = parseFloat(crudeAshFiber);
 
-    // 모든 입력이 0이거나 유효하지 않은 비율 체크
-    if (moist >= 100 || moist < 0 || protein < 0 || fat < 0 || ashFiber < 0) {
+    if (isNaN(moist) || isNaN(protein) || isNaN(fat) || isNaN(ashFiber)) {
+      setIsDmValid(false);
+      return;
+    }
+
+    if (moist >= 100 || moist < 0 || protein <= 0 || fat <= 0 || ashFiber < 0) {
       setIsDmValid(false);
       return;
     }
@@ -566,6 +570,17 @@ export default function DmCalculator({ lang = "ko" }: DmCalculatorProps) {
             {(activeTab === "all" || activeTab === "dm") && (
               <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 space-y-5 relative overflow-hidden">
                 
+                {!isDmValid ? (
+                  <div className="py-12 px-4 text-center space-y-3 flex flex-col justify-center items-center h-full min-h-[320px]">
+                    <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center mx-auto text-2xl animate-pulse">
+                      🧪
+                    </div>
+                    <p className="text-sm text-slate-400 font-medium leading-relaxed max-w-[200px] mx-auto">
+                      {lang === 'ko' ? '올바른 성분 수치를 입력하시면 영양 분석 리포트가 생성됩니다.' : lang === 'ja' ? '正しい成分数値を入力すると栄養分析レポートが生成されます。' : 'Enter valid ingredient values to view the nutrition report.'}
+                    </p>
+                  </div>
+                ) : (
+                  <>
                 {/* 판정 배지 (네온 플로팅) */}
                 <div className="absolute top-6 right-6">
                   <span className={`inline-flex items-center gap-1.5 px-3 py-1 border rounded-full text-xs font-black tracking-wide ${ratingInfo.bg} transition-all`}>
@@ -655,6 +670,9 @@ export default function DmCalculator({ lang = "ko" }: DmCalculatorProps) {
                   </div>
 
                 </div>
+
+                </>
+                )}
 
               </div>
             )}

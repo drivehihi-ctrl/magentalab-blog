@@ -118,8 +118,8 @@ export default function DiagnosticCenterSection({ lang = 'ko' }: DiagnosticCente
                 {isEn
                   ? 'Accurate vet-formula calculators by Ansim Research Team.'
                   : isJa
-                  ? 'アンシム研究チームが開発した無料精密診断ツール。'
-                  : '수석 연구원 안심이가 수의학 공식을 기반으로 제작한 7대 무료 정밀 진단 도구입니다.'}
+                  ? 'アンシム研究チームが開発した無料の健康チェックツール。'
+                  : '수석 연구원 안심이가 수의학 공식을 기반으로 제작한 7대 무료 건강 참고 도구입니다.'}
               </p>
 
               {/* Ansim-i Character Image */}

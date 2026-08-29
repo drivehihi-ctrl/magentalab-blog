@@ -7,7 +7,7 @@ import { searchPosts } from "@/lib/wp";
 // 검색 엔진 노출을 위한 슬개골 자가확인기 전용 메타데이터 설정
 export const metadata: Metadata = {
   title: "강아지 슬개골 탈구 및 관절 건강 위험 신호 확인 도구 | 마젠타랩",
-  description: "우리 아이의 걷는 자세가 이상한가요? 소형견/대형견 맞춤형 슬개골 탈구 위험 신호 확인 도구로 관절 건강 위험도를 1즉시 체크하고 수의학 관절 보호 가이드를 확인해 보세요.",
+  description: "우리 아이의 걷는 자세가 이상한가요? 소형견/대형견 맞춤형 슬개골 탈구 위험 신호 확인 도구로 관절 건강 위험도를 빠르게 체크하고 수의학 관절 보호 가이드를 확인해 보세요.",
   alternates: {
     canonical: "https://www.magentalabblog.com/patella-diagnoser",
     languages: {

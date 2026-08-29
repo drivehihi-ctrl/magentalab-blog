@@ -134,7 +134,7 @@ export default function EmergencyCalculator({ lang = "ko" }: EmergencyCalculator
   const tUI = {
     ko: {
       title: "반려동물 중독 응급 계산기 V2",
-      desc: "의학적 근거에 기반한 다단계 독성 판정 시스템",
+      desc: "의학적 근거에 기반한 다단계 독성 위험도 평가 도구",
       dog: "강아지",
       cat: "고양이",
       weight: "현재 몸무게 (kg)",

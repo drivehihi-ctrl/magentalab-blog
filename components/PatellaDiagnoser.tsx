@@ -603,6 +603,9 @@ export default function PatellaDiagnoser({ lang = "ko" }: PatellaDiagnoserProps)
                     {t.btnReset}
                   </button>
                   
+                  <div className="mt-4 p-4 bg-slate-50 rounded-xl text-xs text-slate-500 text-center leading-relaxed font-medium">
+                    본 도구는 슬개골 탈구 여부나 기수를 확정하는 진단 도구가 아닙니다. 정확한 진단과 기수 평가는 반드시 수의사의 정형외과적 검사가 필요합니다.
+                  </div>
                 </div>
               )}
             </div>
