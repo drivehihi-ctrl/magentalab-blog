@@ -580,7 +580,7 @@ export default function BCSCalculator({ lang = "ko" }: BCSCalculatorProps) {
                     kg
                   </span>
                 </div>
-                {!isFormValid && (
+                {isTouched && (!weight || parseFloat(weight) <= 0) && (
                   <p className="text-xs text-rose-500 font-medium">{t.weightError}</p>
                 )}
               </div>
