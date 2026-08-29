@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import FicDiagnoser from "@/components/FicDiagnoser";
+import FicRisk Checker from "@/components/FicRisk Checker";
 import CalculatorBanner from "@/components/CalculatorBanner";
 import RelatedPosts from "@/components/RelatedPosts";
 import { searchPosts } from "@/lib/wp";
 
-// 검색 엔진 노출을 위한 고양이 FIC 자가진단기 전용 메타데이터 설정
+// 검색 엔진 노출을 위한 고양이 FIC 자가확인기 전용 메타데이터 설정
 export const metadata: Metadata = {
-  title: "고양이 스트레스 및 특발성 방광염(FIC) 자가 진단기 | 마젠타랩",
-  description: "최근 이사나 모래 교체 등 영역 환경 변화가 있었나요? 고양이의 기본 프로필, 행동 시그널 및 환경 스트레스 요소를 종합 분석하여 특발성 방광염(FIC) 위험 단계를 무료로 실시간 진단해 드립니다.",
+  title: "고양이 스트레스 및 특발성 방광염(FIC) 위험 신호 확인 도구 | 마젠타랩",
+  description: "최근 이사나 모래 교체 등 영역 환경 변화가 있었나요? 고양이의 기본 프로필, 행동 시그널 및 환경 스트레스 요소를 종합 분석하여 특발성 방광염(FIC) 위험 단계를 무료로 위험도 확인해 드립니다.",
   alternates: {
     canonical: "https://www.magentalabblog.com/fic-diagnoser",
     languages: {
@@ -18,18 +18,18 @@ export const metadata: Metadata = {
   },
   keywords: [
     "고양이 방광염 계산기", 
-    "고양이 FIC 자가진단", 
+    "고양이 FIC 자가확인", 
     "고양이 스트레스 지수", 
     "고양이 오버그루밍", 
     "고양이 소변 울음", 
     "고양이 방광염 증상", 
     "고양이 화장실 실수", 
-    "마젠타랩 방광염 진단", 
+    "마젠타랩 방광염 확인", 
     "마젠타랩"
   ],
   openGraph: {
-    title: "고양이 스트레스 및 특발성 방광염(FIC) 자가 진단기 | 마젠타랩",
-    description: "아이의 나이, 체형 및 스트레스 환경 체크를 통해 방광염 위험 단계를 10초 만에 분석 진단해 보세요.",
+    title: "고양이 스트레스 및 특발성 방광염(FIC) 위험 신호 확인 도구 | 마젠타랩",
+    description: "아이의 나이, 체형 및 스트레스 환경 체크를 통해 방광염 위험 단계를 간단하게 위험도를 확인해 보세요.",
     url: "https://www.magentalabblog.com/fic-diagnoser",
     type: "website",
     siteName: "Magentalab 반려동물 연구소",
@@ -38,14 +38,14 @@ export const metadata: Metadata = {
         url: "/images/favicon.png",
         width: 800,
         height: 600,
-        alt: "마젠타랩 고양이 FIC 방광염 자가 진단기 대표 이미지",
+        alt: "마젠타랩 고양이 FIC 방광염 위험 신호 확인 도구 대표 이미지",
       }
     ]
   },
   twitter: {
     card: "summary_large_image",
-    title: "고양이 스트레스 및 특발성 방광염(FIC) 자가 진단기 | 마젠타랩",
-    description: "고양이 스트레스 징후 분석을 통해 판별하는 특발성 방광염 자가 진단 프로그램.",
+    title: "고양이 스트레스 및 특발성 방광염(FIC) 위험 신호 확인 도구 | 마젠타랩",
+    description: "고양이 스트레스 징후 분석을 통해 판별하는 특발성 방광염 자가 위험도 평가 가이드.",
     images: ["/images/favicon.png"],
   }
 };
@@ -53,11 +53,11 @@ export const metadata: Metadata = {
 import SeoArticle from "@/components/SeoArticle";
 
 export default async function FicPage() {
-  // Schema.org Structured Data - WebApplication / Diagnoser Tool
+  // Schema.org Structured Data - WebApplication / Risk Checker Tool
   const toolJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": "고양이 스트레스 및 특발성 방광염(FIC) 자가 진단기",
+    "name": "고양이 스트레스 및 특발성 방광염(FIC) 위험 신호 확인 도구",
     "url": "https://www.magentalabblog.com/fic-diagnoser",
     "applicationCategory": "HealthApplication",
     "operatingSystem": "All",
@@ -67,7 +67,7 @@ export default async function FicPage() {
       "name": "Magentalab 반려동물 연구소",
       "url": "https://www.magentalabblog.com"
     },
-    "description": "반려묘의 나이, 비만 여부, 배변 행동 및 주변 스트레스 변화를 기반으로 고양이 특발성 방광염(FIC) 위험 단계를 정밀 판별하는 진단 시뮬레이터입니다."
+    "description": "반려묘의 나이, 비만 여부, 배변 행동 및 주변 스트레스 변화를 기반으로 고양이 특발성 방광염(FIC) 위험 단계를 정밀 판별하는 확인 시뮬레이터입니다."
   };
 
   let relatedPosts: any[] = [];
@@ -84,14 +84,14 @@ export default async function FicPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(toolJsonLd) }}
       />
-      <FicDiagnoser />
+      <FicRisk Checker />
 
       <SeoArticle title="고양이에게 흔한 하부요로질환, 특발성 방광염(FIC)이란?">
         <p>
-          고양이 하부요로질환(FLUTD, Feline Lower Urinary Tract Disease)은 하나의 특정 질병을 뜻하는 것이 아니라 방광과 요도에 발생하는 여러 질환을 통칭하는 표현입니다. 그중 <strong>고양이 특발성 방광염(FIC, Feline Idiopathic Cystitis)</strong>은 특히 흔하게 진단되는 원인 중 하나이며, 여러 연구에서 FLUTD 증상을 보이는 고양이의 약 55~65% 내외를 차지하는 것으로 보고되고 있습니다.
+          고양이 하부요로질환(FLUTD, Feline Lower Urinary Tract Disease)은 하나의 특정 질병을 뜻하는 것이 아니라 방광과 요도에 발생하는 여러 질환을 통칭하는 표현입니다. 그중 <strong>고양이 특발성 방광염(FIC, Feline Idiopathic Cystitis)</strong>은 특히 흔하게 확인되는 원인 중 하나이며, 여러 연구에서 FLUTD 증상을 보이는 고양이의 약 55~65% 내외를 차지하는 것으로 보고되고 있습니다.
         </p>
         <p>
-          '특발성(Idiopathic)'이라는 말은 결석이나 세균 감염, 종양처럼 증상을 설명할 수 있는 명확한 원인이 확인되지 않았다는 의미입니다. 따라서 FIC는 소변검사와 영상검사 등을 통해 다른 원인을 배제한 뒤 진단되는 경우가 많습니다.
+          '특발성(Idiopathic)'이라는 말은 결석이나 세균 감염, 종양처럼 증상을 설명할 수 있는 명확한 원인이 확인되지 않았다는 의미입니다. 따라서 FIC는 소변검사와 영상검사 등을 통해 다른 원인을 배제한 뒤 확인되는 경우가 많습니다.
         </p>
         <p>
           FIC의 정확한 원인은 아직 하나로 밝혀지지 않았습니다. 다만 현재 수의학에서는 <strong>스트레스와 환경적 요인, 신경계와 호르몬의 스트레스 반응, 방광의 감각 및 보호 기능 변화 등이 복합적으로 관여하는 질환</strong>으로 이해하고 있습니다.

@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import PatellaDiagnoser from "@/components/PatellaDiagnoser";
+import PatellaRisk Checker from "@/components/PatellaRisk Checker";
 import CalculatorBanner from "@/components/CalculatorBanner";
 import RelatedPosts from "@/components/RelatedPosts";
 import { searchPosts } from "@/lib/wp";
 
-// 검색 엔진 노출을 위한 슬개골 자가진단기 전용 메타데이터 설정
+// 검색 엔진 노출을 위한 슬개골 자가확인기 전용 메타데이터 설정
 export const metadata: Metadata = {
-  title: "강아지 슬개골 탈구 및 관절 건강 자가 진단기 | 마젠타랩",
-  description: "우리 아이의 걷는 자세가 이상한가요? 소형견/대형견 맞춤형 슬개골 탈구 자가 진단기로 관절 건강 위험도를 10초 만에 체크하고 수의학 관절 보호 가이드를 확인해 보세요.",
+  title: "강아지 슬개골 탈구 및 관절 건강 위험 신호 확인 도구 | 마젠타랩",
+  description: "우리 아이의 걷는 자세가 이상한가요? 소형견/대형견 맞춤형 슬개골 탈구 위험 신호 확인 도구로 관절 건강 위험도를 1즉시 체크하고 수의학 관절 보호 가이드를 확인해 보세요.",
   alternates: {
     canonical: "https://www.magentalabblog.com/patella-diagnoser",
     languages: {
@@ -18,17 +18,17 @@ export const metadata: Metadata = {
   },
   keywords: [
     "슬개골 탈구 계산기", 
-    "강아지 슬개골 탈구 자가진단", 
+    "강아지 슬개골 탈구 자가확인", 
     "강아지 슬개골 탈구 증상", 
     "소형견 슬개골 탈구", 
     "강아지 관절 영양제", 
     "슬개골 보호 매트", 
-    "마젠타랩 슬개골 진단", 
+    "마젠타랩 슬개골 확인", 
     "마젠타랩"
   ],
   openGraph: {
-    title: "강아지 슬개골 탈구 및 관절 건강 자가 진단기 | 마젠타랩",
-    description: "아이의 견종, 나이, 몸무게 및 행동 변화 체크를 통해 관절 건강 상태와 위험 단계를 0초 만에 분석 진단해 보세요.",
+    title: "강아지 슬개골 탈구 및 관절 건강 위험 신호 확인 도구 | 마젠타랩",
+    description: "아이의 견종, 나이, 몸무게 및 행동 변화 체크를 통해 관절 건강 상태와 위험 단계를 즉시 분석 확인해 보세요.",
     url: "https://www.magentalabblog.com/patella-diagnoser",
     type: "website",
     siteName: "Magentalab 반려동물 연구소",
@@ -37,14 +37,14 @@ export const metadata: Metadata = {
         url: "/images/favicon.png",
         width: 800,
         height: 600,
-        alt: "마젠타랩 강아지 슬개골 자가 진단기 대표 이미지",
+        alt: "마젠타랩 강아지 슬개골 위험 신호 확인 도구 대표 이미지",
       }
     ]
   },
   twitter: {
     card: "summary_large_image",
-    title: "강아지 슬개골 탈구 및 관절 건강 자가 진단기 | 마젠타랩",
-    description: "걷는 자세와 행동 징후 분석을 통해 알아내는 슬개골 탈구 위험도 자가 진단 프로그램.",
+    title: "강아지 슬개골 탈구 및 관절 건강 위험 신호 확인 도구 | 마젠타랩",
+    description: "걷는 자세와 행동 징후 분석을 통해 알아내는 슬개골 탈구 위험도 자가 확인 프로그램.",
     images: ["/images/favicon.png"],
   }
 };
@@ -52,12 +52,12 @@ export const metadata: Metadata = {
 import SeoArticle from "@/components/SeoArticle";
 
 export default async function PatellaPage() {
-  // Schema.org Structured Data - WebApplication / Diagnoser Tool
+  // Schema.org Structured Data - WebApplication / Risk Checker Tool
   const toolJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": "강아지 슬개골 탈구 및 관절 건강 자가 진단기",
-    "url": "https://www.magentalabblog.com/patella",
+    "name": "강아지 슬개골 탈구 및 관절 건강 위험 신호 확인 도구",
+    "url": "https://www.magentalabblog.com/patella-diagnoser",
     "applicationCategory": "HealthApplication",
     "operatingSystem": "All",
     "browserRequirements": "Requires JavaScript. Requires HTML5.",
@@ -66,7 +66,7 @@ export default async function PatellaPage() {
       "name": "Magentalab 반려동물 연구소",
       "url": "https://www.magentalabblog.com"
     },
-    "description": "반려견의 나이, 체중, 걷는 모습 행동 증상을 기반으로 슬개골 탈구 및 관절 질환 위험도를 신속하게 진단하는 자가 진단 프로그램입니다."
+    "description": "반려견의 나이, 체중, 걷는 모습 행동 증상을 기반으로 슬개골 탈구 및 관절 질환 위험도를 신속하게 확인하는 자가 확인 프로그램입니다."
   };
 
   let relatedPosts: any[] = [];
@@ -83,7 +83,7 @@ export default async function PatellaPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(toolJsonLd) }}
       />
-      <PatellaDiagnoser />
+      <PatellaRisk Checker />
 
       <SeoArticle title="소형견에서 흔한 슬개골 탈구(Patellar Luxation)란?">
         <p>
@@ -118,7 +118,7 @@ export default async function PatellaPage() {
         </p>
 
         <p className="bg-slate-100 p-4 rounded-xl mt-6 font-medium text-sm">
-          ⚠️ <strong>수의학적 안내:</strong> 본 자가 진단 기능은 보행 모습과 보호자가 관찰한 증상을 바탕으로 슬개골 탈구 가능성을 확인하는 참고 도구이며, 슬개골 탈구 여부나 기수를 확정하는 진단 도구가 아닙니다. 슬개골 탈구의 진단과 기수 평가는 수의사의 정형외과적 촉진 검사가 기본이며, 방사선 검사(X-ray)는 뼈의 형태와 정렬, 관절 변화 및 수술 계획 등을 평가하기 위해 추가로 시행될 수 있습니다. 증상이 반복되거나 통증, 지속적인 절뚝거림, 체중 부하 감소가 나타난다면 동물병원에서 진료를 받으시기 바랍니다.
+          ⚠️ <strong>수의학적 안내:</strong> 본 자가 확인 기능은 보행 모습과 보호자가 관찰한 증상을 바탕으로 슬개골 탈구 가능성을 확인하는 참고 도구이며, 슬개골 탈구 여부나 기수를 확정하는 확인 도구가 아닙니다. 슬개골 탈구의 확인과 기수 평가는 수의사의 정형외과적 촉진 검사가 기본이며, 방사선 검사(X-ray)는 뼈의 형태와 정렬, 관절 변화 및 수술 계획 등을 평가하기 위해 추가로 시행될 수 있습니다. 증상이 반복되거나 통증, 지속적인 절뚝거림, 체중 부하 감소가 나타난다면 동물병원에서 진료를 받으시기 바랍니다.
         </p>
       </SeoArticle>
 

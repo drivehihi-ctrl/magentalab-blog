@@ -94,6 +94,17 @@ WordPress AI Integration 관련 작업에서는
    - `[이미지 X]`
    - `alt 태그:`
    - `이미지 프롬프트:`
+   
+   단, 라이브 사이트에 프롬프트 텍스트가 노출되는 것을 방지하기 위해 반드시 다음과 같이 워드프레스 사용자 정의 HTML 블록(`wp:html`)으로 감싸서 삽입한다:
+   ```html
+   <!-- wp:html -->
+   <div style="display:none;" class="ai-image-prompt">
+   [이미지 X]<br>
+   alt 태그: ...<br>
+   이미지 프롬프트: ...
+   </div>
+   <!-- /wp:html -->
+   ```
 
 6. Batch Rewrite에서는 WordPress 본문 이미지를 자동 삽입하거나
    기존 WordPress 이미지 HTML을 새 placeholder와 자동 병합하지 않는다.

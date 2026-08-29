@@ -141,7 +141,7 @@ export default function EmergencyCalculator({ lang = "ko" }: EmergencyCalculator
       substance: "섭취 물질",
       subtype: "상세 종류",
       amount: "섭취량 (g)",
-      calculate: "응급 진단하기",
+      calculate: "응급 위험도 확인",
       reset: "초기화",
       analyzing: "분석 중...",
       resultTitle: "의학적 위험 평가",

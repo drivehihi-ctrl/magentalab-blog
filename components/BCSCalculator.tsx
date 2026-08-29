@@ -32,8 +32,8 @@ export default function BCSCalculator({ lang = "ko" }: BCSCalculatorProps) {
   // 입력 폼 상태 관리
   const [petType, setPetType] = useState<"dog" | "cat">("dog");
   const [ageType, setAgeType] = useState<"month" | "year">("year");
-  const [ageValue, setAgeValue] = useState<string>("3");
-  const [weight, setWeight] = useState<string>("5.0");
+  const [ageValue, setAgeValue] = useState<string>("");
+  const [weight, setWeight] = useState<string>("");
   const [status, setStatus] = useState<string>("dog_neutered");
   const [bcs, setBcs] = useState<number>(5);
   
@@ -47,8 +47,8 @@ export default function BCSCalculator({ lang = "ko" }: BCSCalculatorProps) {
   const dict = {
     ko: {
       title: "반려동물 비만도(BCS) & 칼로리 계산기",
-      desc: "아이의 체중, 건강 상태 및 체형(BCS 9단계) 정보를 바탕으로 하루에 필요한 정밀 칼로리 요구량(DER)과 일일 사료 급여량을 산출합니다.",
-      badge: "수의학 표준 알고리즘 기반 자가진단",
+      desc: "아이의 체중, 건강 상태 및 체형(BCS 9단계) 정보를 바탕으로 하루에 필요한 예상 필요 열량 요구량(DER)과 일일 사료 급여량을 산출합니다.",
+      badge: "체형 평가 참고 가이드",
       labelPetType: "반려동물 종류",
       dog: "강아지 (Dog)",
       cat: "고양이 (Cat)",
@@ -67,7 +67,7 @@ export default function BCSCalculator({ lang = "ko" }: BCSCalculatorProps) {
       bcsIdeal: "정상 (5)",
       bcsObese: "고도비만 (9)",
       btnReset: "설정 초기화",
-      resultTitle: "진단 결과 분석",
+      resultTitle: "평가 결과 안내",
       resultGuide: "일일 열량 가이드",
       dogGuide: "댕댕이",
       catGuide: "야옹이",
@@ -93,7 +93,7 @@ export default function BCSCalculator({ lang = "ko" }: BCSCalculatorProps) {
       thinRule1Desc: "양질의 단백질 및 건강한 지방 함량이 높은 고에너지 퍼피/키튼 혹은 활력 증진용 사료의 비중을 늘려 소모 칼로리를 메워 줍니다.",
       thinRule2Title: "소화 부담 완화: ",
       thinRule2Desc: "급작스러운 사료 증량은 설사나 구토를 유발합니다. 하루 급여 빈도를 3~4회로 늘려 조금씩 위장에 부담이 가지 않도록 소량 분할 급여하세요.",
-      idealTitle: "아주 건강한 정상 체형이 유지 중입니다.",
+      idealTitle: "이상적인 체형이 유지 중입니다.",
       idealDesc: "에 맞게 균형 잡힌 정량 급여를 유지해 주시고, 주기적인 체중 측정으로 비만으로 넘어가지 않게 유지해 주세요.",
       idealTip: "신체 나이와 관절 유연성에 알맞은 수준의 기초 산책과 캣타워 놀이를 병행하면 근골격계 건강에 가장 이상적입니다.",
       cautionTitle: "📌 알아두세요!",
@@ -157,8 +157,8 @@ export default function BCSCalculator({ lang = "ko" }: BCSCalculatorProps) {
     },
     ja: {
       title: "ペット肥満度(BCS)＆カロリー計算機",
-      desc: "ペットの体重、健康状態、体型（BCS 9段階）データに基づいて、一日に必要な精密カロリー要求量（DER）と一日の推奨フード給与量を算出します。",
-      badge: "獣医学標準アルゴリズムに基づく自己診断",
+      desc: "ペットの体重、健康状態、体型（BCS 9段階）データに基づいて、一日に必要な予想必要カロリー要求量（DER）と一日の推奨フード給与量を算出します。",
+      badge: "体型評価参考ガイド",
       labelPetType: "ペットの種類",
       dog: "犬 (Dog)",
       cat: "猫 (Cat)",

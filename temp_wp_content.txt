@@ -1,0 +1,348 @@
+<p>[안심이 요약 (new_ansim_summary)]</p>
+<ol data-start="389" data-end="959">
+<li data-section-id="6zfqw6" data-start="389" data-end="599">If an unspayed female dog becomes lethargic, drinks much more than usual, vomits, or loses her appetite in the weeks after a heat cycle, pyometra should be considered even when there is no vaginal discharge.</li>
+<li data-section-id="1qjyh1z" data-start="600" data-end="778">Open pyometra may cause visible discharge, while closed pyometra can trap infected fluid inside the uterus, so the absence of pus or blood does not mean the uterus is healthy.</li>
+<li data-section-id="19j6suw" data-start="779" data-end="959">Pyometra requires prompt veterinary assessment with examination, bloodwork, and often ultrasound or X-rays, followed by stabilization and treatment based on the dog&#8217;s condition.</li>
+</ol>
+<p data-start="961" data-end="967">F형 공감:</p>
+<p data-start="969" data-end="1216">When your dog&#8217;s heat seems to be over and she suddenly starts leaving food in the bowl or emptying the water bowl faster than usual, it can be very hard to know whether you are seeing a small temporary change or the beginning of something serious.</p>
+<p data-start="1218" data-end="1237">[검증된 근거 (Evidence)]</p>
+<ul data-start="1239" data-end="1262">
+<li data-section-id="d1jx2b" data-start="1239" data-end="1262">핵심 인사이트 (keyInsight):</li>
+</ul>
+<p data-start="1264" data-end="1775">Canine pyometra is a serious uterine infection associated with hormonal changes after estrus in intact female dogs. It often develops within several weeks to a few months after a heat cycle and may cause lethargy, reduced appetite, increased thirst and urination, vomiting, dehydration, abdominal enlargement, and vaginal discharge. When the cervix is open, infected uterine fluid may drain through the vulva; when the cervix is closed, there may be no visible discharge even though the dog is systemically ill.</p>
+<p data-start="1777" data-end="2161">Diagnosis is based on history, physical examination, laboratory findings, and imaging rather than one symptom or one blood value. Ovariohysterectomy is the recommended treatment for most dogs, with IV fluids, antimicrobials, and other stabilization as needed. Medical treatment may be considered only in carefully selected breeding animals and carries limitations and recurrence risk.</p>
+<ul data-start="2163" data-end="2185">
+<li data-section-id="v5woq5" data-start="2163" data-end="2185">주의 사항 (cautionNote):</li>
+</ul>
+<p data-start="2187" data-end="2714">Do not wait for visible pus before seeking care. An intact female dog that recently finished a heat cycle and becomes markedly lethargic, stops eating, drinks or urinates much more than usual, vomits repeatedly, develops abdominal enlargement, collapses, or has abnormal vaginal discharge should be assessed promptly by a veterinarian. There is no reliable home rule such as “closed pyometra will rupture within 48 hours,” and postoperative feeding or supplements should not be prescribed as one universal recipe for every dog.</p>
+<ul data-start="2716" data-end="3769">
+<li data-section-id="15xvert" data-start="2716" data-end="3058">참고 자료 1 (references)
+<ul data-start="2741" data-end="3058">
+<li data-section-id="xneoey" data-start="2741" data-end="2811">제목: Cystic Endometrial Hyperplasia–Pyometra Complex in Small Animals</li>
+<li data-section-id="rdxfa3" data-start="2814" data-end="2846">기관/출처: Merck Veterinary Manual</li>
+<li data-section-id="1usasa1" data-start="2849" data-end="2884">타입: Veterinary Clinical Reference</li>
+<li data-section-id="1y1t5et" data-start="2887" data-end="3058">URL: <a class="decorated-link" href="https://www.merckvetmanual.com/reproductive-system/reproductive-diseases-of-the-female-small-animal/cystic-endometrial-hyperplasia-pyometra-complex-in-small-animals?utm_source=chatgpt.com" target="_new" rel="noopener" data-start="2894" data-end="3058">https://www.merckvetmanual.com/reproductive-system/reproductive-diseases-of-the-female-small-animal/cystic-endometrial-hyperplasia-pyometra-complex-in-small-animals</a></li>
+</ul>
+</li>
+<li data-section-id="z96ai7" data-start="3060" data-end="3318">참고 자료 2 (references)
+<ul data-start="3085" data-end="3318">
+<li data-section-id="72en6d" data-start="3085" data-end="3128">제목: Reproductive Disorders of Female Dogs</li>
+<li data-section-id="rdxfa3" data-start="3131" data-end="3163">기관/출처: Merck Veterinary Manual</li>
+<li data-section-id="1tbkgpz" data-start="3166" data-end="3198">타입: Veterinary Owner Reference</li>
+<li data-section-id="16zepz5" data-start="3201" data-end="3318">URL: <a class="decorated-link" href="https://www.merckvetmanual.com/dog-owners/reproductive-disorders-of-dogs/reproductive-disorders-of-female-dogs?utm_source=chatgpt.com" target="_new" rel="noopener" data-start="3208" data-end="3318">https://www.merckvetmanual.com/dog-owners/reproductive-disorders-of-dogs/reproductive-disorders-of-female-dogs</a></li>
+</ul>
+</li>
+<li data-section-id="xb66qf" data-start="3320" data-end="3585">참고 자료 3 (references)
+<ul data-start="3345" data-end="3585">
+<li data-section-id="y2bond" data-start="3345" data-end="3359">제목: Pyometra</li>
+<li data-section-id="1pxi7ms" data-start="3362" data-end="3420">기관/출처: Cornell University College of Veterinary Medicine</li>
+<li data-section-id="fcosuz" data-start="3423" data-end="3456">타입: Veterinary Health Education</li>
+<li data-section-id="13yzsuf" data-start="3459" data-end="3585">URL: <a class="decorated-link" href="https://www.vet.cornell.edu/departments-centers-and-institutes/riney-canine-health-center/canine-health-topics/pyometra?utm_source=chatgpt.com" target="_new" rel="noopener" data-start="3466" data-end="3585">https://www.vet.cornell.edu/departments-centers-and-institutes/riney-canine-health-center/canine-health-topics/pyometra</a></li>
+</ul>
+</li>
+<li data-section-id="do4elo" data-start="3587" data-end="3769">참고 자료 4 (references)
+<ul data-start="3612" data-end="3769">
+<li data-section-id="fq368h" data-start="3612" data-end="3634">제목: Pyometra in Dogs</li>
+<li data-section-id="1t6t4mz" data-start="3637" data-end="3666">기관/출처: VCA Animal Hospitals</li>
+<li data-section-id="5lzrl4" data-start="3669" data-end="3704">타입: Veterinary Clinical Education</li>
+<li data-section-id="e1tccv" data-start="3707" data-end="3769">URL: <a class="decorated-link" href="https://vcahospitals.com/know-your-pet/pyometra-in-dogs?utm_source=chatgpt.com" target="_new" rel="noopener" data-start="3714" data-end="3769">https://vcahospitals.com/know-your-pet/pyometra-in-dogs</a></li>
+</ul>
+</li>
+</ul>
+<p data-start="3771" data-end="3788">[본문 내용 (Content)]</p>
+<p data-start="3790" data-end="3793">
+<p data-start="3795" data-end="3994">Your dog&#8217;s heat cycle seemed to end weeks ago, and life had gone back to normal. Then she starts taking longer naps, leaves part of breakfast untouched, and returns to the water bowl again and again.</p>
+<p data-start="3996" data-end="4088">You check under her tail. There is no blood, no pus, and nothing that looks obviously wrong.</p>
+<p data-start="4090" data-end="4135">That is exactly where pyometra can be missed.</p>
+<p data-start="4137" data-end="4396">Many dog owners picture pyometra as an infection that announces itself with foul-smelling vaginal discharge. Sometimes it does. But a dog with <strong data-start="4280" data-end="4336">closed pyometra may have no visible discharge at all</strong>, even while infected fluid is collecting inside the uterus.</p>
+<p data-start="4398" data-end="4584">So if you are searching for <strong data-start="4426" data-end="4455">pyometra symptoms in dogs</strong>, Ansim wants you to remember one thing first: do not judge the uterus by what you can see under the tail. Look at the whole dog.</p>
+<div class="group TyagGW_tableContainer TyagGW_tableContainerWithTableOfContents">
+<div class="TyagGW_tableWrapper flex flex-col-reverse w-fit" tabindex="-1">
+<table class="w-fit min-w-(--thread-content-width)" data-start="4604" data-end="5621">
+<thead data-start="4604" data-end="4675">
+<tr data-start="4604" data-end="4675">
+<th class="last:pe-10" data-start="4604" data-end="4630" data-col-size="md">What you notice at home</th>
+<th class="last:pe-10" data-start="4630" data-end="4661" data-col-size="md">What it may mean in pyometra</th>
+<th class="last:pe-10" data-start="4661" data-end="4675" data-col-size="md">What to do</th>
+</tr>
+</thead>
+<tbody data-start="4690" data-end="5621">
+<tr data-start="4690" data-end="4850">
+<td data-start="4690" data-end="4727" data-col-size="md">Lethargy after a recent heat cycle</td>
+<td data-start="4727" data-end="4782" data-col-size="md">Systemic infection or inflammation may be developing</td>
+<td data-start="4782" data-end="4850" data-col-size="md">Consider the timing of the last heat and other symptoms together</td>
+</tr>
+<tr data-start="4851" data-end="5070">
+<td data-start="4851" data-end="4897" data-col-size="md">Drinking and urinating much more than usual</td>
+<td data-start="4897" data-end="4966" data-col-size="md">Increased thirst and urination are commonly reported with pyometra</td>
+<td data-start="4966" data-end="5070" data-col-size="md">Do not diagnose from thirst alone, but seek veterinary assessment when it appears with other changes</td>
+</tr>
+<tr data-start="5071" data-end="5203">
+<td data-start="5071" data-end="5125" data-col-size="md">Cream, bloody, brown, or pus-like vaginal discharge</td>
+<td data-start="5125" data-end="5156" data-col-size="md">May occur with open pyometra</td>
+<td data-start="5156" data-end="5203" data-col-size="md">Do not assume it is leftover heat discharge</td>
+</tr>
+<tr data-start="5204" data-end="5313">
+<td data-start="5204" data-end="5227" data-col-size="md">No vaginal discharge</td>
+<td data-start="5227" data-end="5262" data-col-size="md">Closed pyometra remains possible</td>
+<td data-start="5262" data-end="5313" data-col-size="md">Absence of discharge does not rule pyometra out</td>
+</tr>
+<tr data-start="5314" data-end="5474">
+<td data-start="5314" data-end="5349" data-col-size="md">Swollen or uncomfortable abdomen</td>
+<td data-start="5349" data-end="5405" data-col-size="md">An enlarged fluid-filled uterus is one possible cause</td>
+<td data-start="5405" data-end="5474" data-col-size="md">Imaging is needed because many conditions can enlarge the abdomen</td>
+</tr>
+<tr data-start="5475" data-end="5621">
+<td data-start="5475" data-end="5524" data-col-size="md">Vomiting, weakness, poor appetite, or collapse</td>
+<td data-start="5524" data-end="5568" data-col-size="md">May indicate significant systemic illness</td>
+<td data-start="5568" data-end="5621" data-col-size="md">Prompt or emergency veterinary care may be needed</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="ez-toc-container" class="ez-toc-v2_0_86 counter-hierarchy ez-toc-counter ez-toc-grey ez-toc-container-direction">
+<div class="ez-toc-title-container">
+<p class="ez-toc-title" style="cursor:inherit">Table of Contents</p>
+<span class="ez-toc-title-toggle"><a href="#" class="ez-toc-pull-right ez-toc-btn ez-toc-btn-xs ez-toc-btn-default ez-toc-toggle" aria-label="목차 토글"><span class="ez-toc-js-icon-con"><span class=""><span class="eztoc-hide" style="display:none;">Toggle</span><span class="ez-toc-icon-toggle-span"><svg style="fill: #999;color:#999" xmlns="http://www.w3.org/2000/svg" class="list-377408" width="20px" height="20px" viewBox="0 0 24 24" fill="none"><path d="M6 6H4v2h2V6zm14 0H8v2h12V6zM4 11h2v2H4v-2zm16 0H8v2h12v-2zM4 16h2v2H4v-2zm16 0H8v2h12v-2z" fill="currentColor"></path></svg><svg style="fill: #999;color:#999" class="arrow-unsorted-368013" xmlns="http://www.w3.org/2000/svg" width="10px" height="10px" viewBox="0 0 24 24" version="1.2" baseProfile="tiny"><path d="M18.2 9.3l-6.2-6.3-6.2 6.3c-.2.2-.3.4-.3.7s.1.5.3.7c.2.2.4.3.7.3h11c.3 0 .5-.1.7-.3.2-.2.3-.5.3-.7s-.1-.5-.3-.7zM5.8 14.7l6.2 6.3 6.2-6.3c.2-.2.3-.5.3-.7s-.1-.5-.3-.7c-.2-.2-.4-.3-.7-.3h-11c-.3 0-.5.1-.7.3-.2.2-.3.5-.3.7s.1.5.3.7z"/></svg></span></span></span></a></span></div>
+<nav><ul class='ez-toc-list ez-toc-list-level-1 ' ><li class='ez-toc-page-1 ez-toc-heading-level-2'><a class="ez-toc-link ez-toc-heading-1" href="https://magentalab.mycafe24.com/en/dog-pyometra-symptoms-id0701-en/#What_is_pyometra_in_dogs" >What is pyometra in dogs?</a><ul class='ez-toc-list-level-3' ><li class='ez-toc-heading-level-3'><a class="ez-toc-link ez-toc-heading-2" href="https://magentalab.mycafe24.com/en/dog-pyometra-symptoms-id0701-en/#When_does_pyometra_happen_after_a_heat_cycle" >When does pyometra happen after a heat cycle?</a></li></ul></li><li class='ez-toc-page-1 ez-toc-heading-level-2'><a class="ez-toc-link ez-toc-heading-3" href="https://magentalab.mycafe24.com/en/dog-pyometra-symptoms-id0701-en/#What_are_the_early_signs_of_pyometra_in_dogs" >What are the early signs of pyometra in dogs?</a></li><li class='ez-toc-page-1 ez-toc-heading-level-2'><a class="ez-toc-link ez-toc-heading-4" href="https://magentalab.mycafe24.com/en/dog-pyometra-symptoms-id0701-en/#Why_is_my_dog_drinking_so_much_after_her_heat" >Why is my dog drinking so much after her heat?</a></li><li class='ez-toc-page-1 ez-toc-heading-level-2'><a class="ez-toc-link ez-toc-heading-5" href="https://magentalab.mycafe24.com/en/dog-pyometra-symptoms-id0701-en/#Is_vulvar_swelling_after_heat_a_sign_of_pyometra" >Is vulvar swelling after heat a sign of pyometra?</a></li><li class='ez-toc-page-1 ez-toc-heading-level-2'><a class="ez-toc-link ez-toc-heading-6" href="https://magentalab.mycafe24.com/en/dog-pyometra-symptoms-id0701-en/#Open_pyometra_when_vaginal_discharge_is_visible" >Open pyometra: when vaginal discharge is visible</a></li><li class='ez-toc-page-1 ez-toc-heading-level-2'><a class="ez-toc-link ez-toc-heading-7" href="https://magentalab.mycafe24.com/en/dog-pyometra-symptoms-id0701-en/#Closed_pyometra_why_no_discharge_can_be_more_misleading" >Closed pyometra: why no discharge can be more misleading</a></li><li class='ez-toc-page-1 ez-toc-heading-level-2'><a class="ez-toc-link ez-toc-heading-8" href="https://magentalab.mycafe24.com/en/dog-pyometra-symptoms-id0701-en/#Open_vs_closed_pyometra_can_I_tell_the_difference_at_home" >Open vs. closed pyometra: can I tell the difference at home?</a></li><li class='ez-toc-page-1 ez-toc-heading-level-2'><a class="ez-toc-link ez-toc-heading-9" href="https://magentalab.mycafe24.com/en/dog-pyometra-symptoms-id0701-en/#When_is_pyometra_an_emergency" >When is pyometra an emergency?</a></li><li class='ez-toc-page-1 ez-toc-heading-level-2'><a class="ez-toc-link ez-toc-heading-10" href="https://magentalab.mycafe24.com/en/dog-pyometra-symptoms-id0701-en/#How_do_veterinarians_diagnose_pyometra" >How do veterinarians diagnose pyometra?</a><ul class='ez-toc-list-level-3' ><li class='ez-toc-heading-level-3'><a class="ez-toc-link ez-toc-heading-11" href="https://magentalab.mycafe24.com/en/dog-pyometra-symptoms-id0701-en/#What_does_ultrasound_show_in_pyometra" >What does ultrasound show in pyometra?</a></li></ul></li><li class='ez-toc-page-1 ez-toc-heading-level-2'><a class="ez-toc-link ez-toc-heading-12" href="https://magentalab.mycafe24.com/en/dog-pyometra-symptoms-id0701-en/#How_is_pyometra_treated_in_dogs" >How is pyometra treated in dogs?</a><ul class='ez-toc-list-level-3' ><li class='ez-toc-heading-level-3'><a class="ez-toc-link ez-toc-heading-13" href="https://magentalab.mycafe24.com/en/dog-pyometra-symptoms-id0701-en/#Does_stabilization_mean_surgery_should_be_delayed_for_days" >Does stabilization mean surgery should be delayed for days?</a></li></ul></li><li class='ez-toc-page-1 ez-toc-heading-level-2'><a class="ez-toc-link ez-toc-heading-14" href="https://magentalab.mycafe24.com/en/dog-pyometra-symptoms-id0701-en/#Can_pyometra_be_treated_without_surgery" >Can pyometra be treated without surgery?</a></li><li class='ez-toc-page-1 ez-toc-heading-level-2'><a class="ez-toc-link ez-toc-heading-15" href="https://magentalab.mycafe24.com/en/dog-pyometra-symptoms-id0701-en/#What_is_the_prognosis_after_pyometra_surgery" >What is the prognosis after pyometra surgery?</a></li><li class='ez-toc-page-1 ez-toc-heading-level-2'><a class="ez-toc-link ez-toc-heading-16" href="https://magentalab.mycafe24.com/en/dog-pyometra-symptoms-id0701-en/#Does_pyometra_always_cause_fever" >Does pyometra always cause fever?</a></li><li class='ez-toc-page-1 ez-toc-heading-level-2'><a class="ez-toc-link ez-toc-heading-17" href="https://magentalab.mycafe24.com/en/dog-pyometra-symptoms-id0701-en/#Can_a_young_dog_get_pyometra" >Can a young dog get pyometra?</a></li><li class='ez-toc-page-1 ez-toc-heading-level-2'><a class="ez-toc-link ez-toc-heading-18" href="https://magentalab.mycafe24.com/en/dog-pyometra-symptoms-id0701-en/#Can_a_spayed_dog_get_pyometra" >Can a spayed dog get pyometra?</a></li><li class='ez-toc-page-1 ez-toc-heading-level-2'><a class="ez-toc-link ez-toc-heading-19" href="https://magentalab.mycafe24.com/en/dog-pyometra-symptoms-id0701-en/#What_should_a_dog_eat_after_pyometra_surgery" >What should a dog eat after pyometra surgery?</a></li><li class='ez-toc-page-1 ez-toc-heading-level-2'><a class="ez-toc-link ez-toc-heading-20" href="https://magentalab.mycafe24.com/en/dog-pyometra-symptoms-id0701-en/#What_matters_most_at_home_after_pyometra_surgery" >What matters most at home after pyometra surgery?</a></li><li class='ez-toc-page-1 ez-toc-heading-level-2'><a class="ez-toc-link ez-toc-heading-21" href="https://magentalab.mycafe24.com/en/dog-pyometra-symptoms-id0701-en/#Can_spaying_prevent_pyometra" >Can spaying prevent pyometra?</a></li><li class='ez-toc-page-1 ez-toc-heading-level-2'><a class="ez-toc-link ez-toc-heading-22" href="https://magentalab.mycafe24.com/en/dog-pyometra-symptoms-id0701-en/#My_dog_seems_normal_after_heat_Do_I_need_to_worry_every_time" >My dog seems normal after heat. Do I need to worry every time?</a></li></ul></nav></div>
+<h2 data-section-id="2dmpkr" data-start="5623" data-end="5651"><span class="ez-toc-section" id="What_is_pyometra_in_dogs"></span>What is pyometra in dogs?<span class="ez-toc-section-end"></span></h2>
+<p data-start="5653" data-end="5763">Pyometra is a serious infection of the uterus that most commonly affects <strong data-start="5726" data-end="5762">intact, or unspayed, female dogs</strong>.</p>
+<p data-start="5765" data-end="5958">It is not simply a case of bacteria accidentally entering an otherwise normal uterus. The hormonal environment after a heat cycle changes the uterus in ways that can make infection more likely.</p>
+<p data-start="5960" data-end="6312">After estrus, progesterone remains active for a period of time whether or not the dog is pregnant. Under this hormonal influence, the uterine lining prepares for a possible pregnancy and uterine secretions increase. Over repeated heat cycles, some dogs develop changes in the uterine lining that can make the uterus more favorable for bacterial growth.</p>
+<p data-start="6314" data-end="6431">Bacteria, commonly including <em data-start="6343" data-end="6352">E. coli</em>, can then ascend from the lower reproductive tract and establish an infection.</p>
+<p data-start="6433" data-end="6502">The result is a uterus that may fill with inflammatory fluid and pus.</p>
+<p data-start="6504" data-end="6521">That is pyometra.</p>
+<h3 data-section-id="vknbrq" data-start="6523" data-end="6572"><span class="ez-toc-section" id="When_does_pyometra_happen_after_a_heat_cycle"></span>When does pyometra happen after a heat cycle?<span class="ez-toc-section-end"></span></h3>
+<p data-start="6574" data-end="6622">This is one of the most useful clues for owners.</p>
+<p data-start="6624" data-end="6828">Pyometra commonly develops <strong data-start="6651" data-end="6688">within several weeks after estrus</strong>, and veterinary references often describe cases appearing roughly one to two months after a heat cycle, although the window can be broader.</p>
+<p data-start="6830" data-end="6940">That does not mean you should start counting days and decide that your dog is safe once a certain date passes.</p>
+<p data-start="6942" data-end="6992">Dogs do not read the calendar before getting sick.</p>
+<p data-start="6994" data-end="7073">The timing of the last heat is a diagnostic clue, not a home screening formula.</p>
+<p data-start="7075" data-end="7270">If an intact female recently came out of heat and then becomes unusually tired, stops eating normally, begins vomiting, or suddenly drinks and urinates much more than usual, that history matters.</p>
+<h2 data-section-id="10cbvok" data-start="7272" data-end="7320"><span class="ez-toc-section" id="What_are_the_early_signs_of_pyometra_in_dogs"></span>What are the early signs of pyometra in dogs?<span class="ez-toc-section-end"></span></h2>
+<p data-start="7322" data-end="7364">This is where pyometra can be frustrating.</p>
+<p data-start="7366" data-end="7402">The first changes may look ordinary.</p>
+<p data-start="7404" data-end="7422">A dog sleeps more.</p>
+<p data-start="7424" data-end="7456">Breakfast is only half finished.</p>
+<p data-start="7458" data-end="7499">She does not seem excited about the walk.</p>
+<p data-start="7501" data-end="7546">She empties the water bowl faster than usual.</p>
+<p data-start="7548" data-end="7735">None of those signs belongs exclusively to pyometra. Kidney disease, diabetes, gastrointestinal disease, hormonal disorders, infections, and many other problems can cause similar changes.</p>
+<p data-start="7737" data-end="7839">But in an unspayed female dog that recently had a heat cycle, the combination deserves more attention.</p>
+<p data-start="7841" data-end="8022">Commonly reported signs include lethargy, poor appetite, increased thirst, increased urination, vomiting, dehydration, fever, abdominal enlargement, weakness, and vaginal discharge.</p>
+<p data-start="8024" data-end="8058">Not every dog develops every sign.</p>
+<p data-start="8060" data-end="8096">A dog does not need to have a fever.</p>
+<p data-start="8098" data-end="8142">She does not need to stop eating completely.</p>
+<p data-start="8144" data-end="8186">And she does not need to have visible pus.</p>
+<p data-start="8188" data-end="8313">Ansim would rather have you notice a <strong data-start="8225" data-end="8266">change from your dog&#8217;s normal pattern</strong> than wait for a perfect textbook symptom list.</p>
+<h2 data-section-id="tyl0rs" data-start="8315" data-end="8364"><span class="ez-toc-section" id="Why_is_my_dog_drinking_so_much_after_her_heat"></span>Why is my dog drinking so much after her heat?<span class="ez-toc-section-end"></span></h2>
+<p data-start="8366" data-end="8420">This is a very common search question around pyometra.</p>
+<p data-start="8422" data-end="8581">A dog with pyometra may begin drinking much more water and producing more urine. Veterinarians call this <strong data-start="8527" data-end="8554">polydipsia and polyuria</strong>, often shortened to PU/PD.</p>
+<p data-start="8583" data-end="8789">The important part is that pyometra can affect more than the uterus. Bacterial toxins, inflammation, dehydration, and changes in kidney function can influence the body&#8217;s ability to regulate water and urine.</p>
+<p data-start="8791" data-end="8879">That is why an owner may first notice the water bowl rather than the reproductive tract.</p>
+<p data-start="8881" data-end="8935">But increased thirst alone does not diagnose pyometra.</p>
+<p data-start="8937" data-end="9059">Kidney disease, diabetes mellitus, hyperadrenocorticism and other diseases can also cause a dog to drink and urinate more.</p>
+<p data-start="9061" data-end="9219">The clue becomes more meaningful when it appears in an intact female dog after a recent heat cycle along with lethargy, poor appetite, vomiting, or discharge.</p>
+<h2 data-section-id="92rkcl" data-start="9221" data-end="9273"><span class="ez-toc-section" id="Is_vulvar_swelling_after_heat_a_sign_of_pyometra"></span>Is vulvar swelling after heat a sign of pyometra?<span class="ez-toc-section-end"></span></h2>
+<p data-start="9275" data-end="9289">Not by itself.</p>
+<p data-start="9291" data-end="9504">The vulva naturally changes in size during the heat cycle and may not appear to return to its usual size instantly afterward. Other reproductive and hormonal conditions can also affect the appearance of the vulva.</p>
+<p data-start="9506" data-end="9549">So a swollen vulva does not equal pyometra.</p>
+<p data-start="9551" data-end="9577">The opposite is also true.</p>
+<p data-start="9579" data-end="9643">A vulva that looks completely normal does not rule pyometra out.</p>
+<p data-start="9645" data-end="9854">This is why judging the disease from one body part can be misleading. Recent heat history, energy level, appetite, thirst, urination, vomiting, abdominal changes, and discharge all provide more useful context.</p>
+<p data-start="9856" data-end="9863"><img loading="lazy" decoding="async" class="alignnone size-large wp-image-6910" src="http://magentalab.mycafe24.com/wp-content/uploads/2026/07/발정-후-반려견의-물-섭취와-컨디션-변화를-기록하며-살펴보는-안심이-연구원1-1024x583.jpg" alt="Ansim reviewing a female dog's health changes after a heat cycle while the dog rests beside a water bowl" width="1024" height="583" srcset="https://magentalab.mycafe24.com/wp-content/uploads/2026/07/발정-후-반려견의-물-섭취와-컨디션-변화를-기록하며-살펴보는-안심이-연구원1-1024x583.jpg 1024w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/발정-후-반려견의-물-섭취와-컨디션-변화를-기록하며-살펴보는-안심이-연구원1-300x171.jpg 300w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/발정-후-반려견의-물-섭취와-컨디션-변화를-기록하며-살펴보는-안심이-연구원1-768x437.jpg 768w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/발정-후-반려견의-물-섭취와-컨디션-변화를-기록하며-살펴보는-안심이-연구원1-1536x874.jpg 1536w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/발정-후-반려견의-물-섭취와-컨디션-변화를-기록하며-살펴보는-안심이-연구원1.jpg 1856w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /></p>
+<h2 data-section-id="yfrxz0" data-start="10613" data-end="10664"><span class="ez-toc-section" id="Open_pyometra_when_vaginal_discharge_is_visible"></span>Open pyometra: when vaginal discharge is visible<span class="ez-toc-section-end"></span></h2>
+<p data-start="10666" data-end="10753">Pyometra is often divided into <strong data-start="10697" data-end="10721">open-cervix pyometra</strong> and <strong data-start="10726" data-end="10752">closed-cervix pyometra</strong>.</p>
+<p data-start="10755" data-end="10855">In open pyometra, the cervix allows infected uterine material to drain through the vagina and vulva.</p>
+<p data-start="10857" data-end="11055">An owner may first notice a stain on the dog&#8217;s bed or on the hair below the tail. The discharge can be cream-colored, bloody, brownish, or pus-like, and its appearance is not identical in every dog.</p>
+<p data-start="11057" data-end="11102">This creates another common misunderstanding.</p>
+<p data-start="11104" data-end="11170">“She was recently in heat, so maybe it is just leftover bleeding.”</p>
+<p data-start="11172" data-end="11407">That may be true in some cases, but abnormal discharge after a heat cycle should not automatically be written off as normal estrus discharge, especially when the dog also seems tired, stops eating well, vomits, or starts drinking more.</p>
+<p data-start="11409" data-end="11480">The color of the discharge does not give you a reliable home diagnosis.</p>
+<p data-start="11482" data-end="11567">And open pyometra is not automatically a mild form simply because material can drain.</p>
+<p data-start="11569" data-end="11627">Dogs with open pyometra can still become systemically ill.</p>
+<h2 data-section-id="m35rvm" data-start="11629" data-end="11688"><span class="ez-toc-section" id="Closed_pyometra_why_no_discharge_can_be_more_misleading"></span>Closed pyometra: why no discharge can be more misleading<span class="ez-toc-section-end"></span></h2>
+<p data-start="11690" data-end="11749">Closed pyometra is the version owners can miss more easily.</p>
+<p data-start="11751" data-end="11841">The cervix is closed, so the infected uterine contents cannot drain out through the vulva.</p>
+<p data-start="11843" data-end="11878">You may see nothing under the tail.</p>
+<p data-start="11880" data-end="11887">No pus.</p>
+<p data-start="11889" data-end="11898">No blood.</p>
+<p data-start="11900" data-end="11932">No obvious reproductive symptom.</p>
+<p data-start="11934" data-end="11972">Instead, the dog may simply look sick.</p>
+<p data-start="11974" data-end="12078">She may become lethargic, eat poorly, vomit, drink more, urinate more, or develop abdominal enlargement.</p>
+<p data-start="12080" data-end="12200">Some dogs deteriorate more severely with a closed cervix because the infected contents remain trapped inside the uterus.</p>
+<p data-start="12202" data-end="12266">The key point, however, is not to replace one myth with another.</p>
+<p data-start="12268" data-end="12304">There is no reliable rule that says:</p>
+<p data-start="12306" data-end="12345">“Closed pyometra ruptures in 48 hours.”</p>
+<p data-start="12347" data-end="12349">or</p>
+<p data-start="12351" data-end="12385">“You have until tomorrow morning.”</p>
+<p data-start="12387" data-end="12591">Pyometra can progress rapidly, but the pace differs among dogs. Uterine condition, bacterial infection, hydration, kidney function, sepsis, and the dog&#8217;s overall health all influence how sick she becomes.</p>
+<p data-start="12593" data-end="12741">A severely distended or diseased uterus can rupture, leading to peritonitis and shock, but owners cannot predict that moment with a countdown clock.</p>
+<p data-start="12743" data-end="12763">Do not wait for one.</p>
+<p data-start="12765" data-end="12772"><img loading="lazy" decoding="async" class="alignnone size-large wp-image-6912" src="http://magentalab.mycafe24.com/wp-content/uploads/2026/07/침구에-묻은-비정상적인-분비물을-발견하고-반려견-상태를-살펴보는-보호자2-1024x576.jpg" alt="Dog owner noticing unusual discharge on bedding after a female dog's heat cycle" width="1024" height="576" srcset="https://magentalab.mycafe24.com/wp-content/uploads/2026/07/침구에-묻은-비정상적인-분비물을-발견하고-반려견-상태를-살펴보는-보호자2-1024x576.jpg 1024w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/침구에-묻은-비정상적인-분비물을-발견하고-반려견-상태를-살펴보는-보호자2-300x169.jpg 300w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/침구에-묻은-비정상적인-분비물을-발견하고-반려견-상태를-살펴보는-보호자2-768x432.jpg 768w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/침구에-묻은-비정상적인-분비물을-발견하고-반려견-상태를-살펴보는-보호자2-1536x864.jpg 1536w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/침구에-묻은-비정상적인-분비물을-발견하고-반려견-상태를-살펴보는-보호자2.jpg 1792w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /></p>
+<h2 data-section-id="1u4ubic" data-start="13360" data-end="13423"><span class="ez-toc-section" id="Open_vs_closed_pyometra_can_I_tell_the_difference_at_home"></span>Open vs. closed pyometra: can I tell the difference at home?<span class="ez-toc-section-end"></span></h2>
+<p data-start="13425" data-end="13512">You may be able to notice a pattern, but you do not need to diagnose the type yourself.</p>
+<p data-start="13514" data-end="13617">Visible abnormal vaginal discharge in a recently cycling intact female can point toward an open cervix.</p>
+<p data-start="13619" data-end="13692">No discharge plus systemic illness can raise concern for a closed cervix.</p>
+<p data-start="13694" data-end="13741">But the real veterinary question is not simply:</p>
+<p data-start="13743" data-end="13760">“Open or closed?”</p>
+<p data-start="13762" data-end="13768">It is:</p>
+<p data-start="13770" data-end="13868"><strong data-start="13770" data-end="13868">How sick is this dog, what does the uterus look like, and how quickly does she need treatment?</strong></p>
+<p data-start="13870" data-end="13924">That requires examination and, in many cases, imaging.</p>
+<p data-start="13926" data-end="14176">If your dog is weak, repeatedly vomiting, refusing food, drinking excessively, developing a swollen abdomen, showing pale gums, collapsing, or behaving very differently from normal after a recent heat, it is not worth waiting for discharge to appear.</p>
+<h2 data-section-id="11hn2uz" data-start="14178" data-end="14211"><span class="ez-toc-section" id="When_is_pyometra_an_emergency"></span>When is pyometra an emergency?<span class="ez-toc-section-end"></span></h2>
+<p data-start="14213" data-end="14300">Pyometra itself warrants prompt veterinary care because it can become life-threatening.</p>
+<p data-start="14302" data-end="14344">Some signs make the need even more urgent.</p>
+<p data-start="14346" data-end="14598">If a dog becomes unable to stand normally, collapses, appears profoundly weak, has pale gums, develops a markedly painful or enlarged abdomen, repeatedly vomits, becomes poorly responsive, or has abnormal breathing, emergency assessment is appropriate.</p>
+<p data-start="14600" data-end="14710">At that point, the most important question is no longer whether the discharge is “open-type” or “closed-type.”</p>
+<p data-start="14712" data-end="14738">The whole dog is unstable.</p>
+<p data-start="14740" data-end="14838">Keep her calm, avoid unnecessary exertion, and contact a veterinary hospital or emergency service.</p>
+<p data-start="14840" data-end="14909">Do not press on the abdomen to see whether the uterus feels enlarged.</p>
+<p data-start="14911" data-end="14949">Do not try to make discharge come out.</p>
+<p data-start="14951" data-end="15028">And do not wait for another symptom so that the diagnosis feels more certain.</p>
+<h2 data-section-id="njjmed" data-start="15030" data-end="15072"><span class="ez-toc-section" id="How_do_veterinarians_diagnose_pyometra"></span>How do veterinarians diagnose pyometra?<span class="ez-toc-section-end"></span></h2>
+<p data-start="15074" data-end="15127">There is no single “pyometra number” on a blood test.</p>
+<p data-start="15129" data-end="15240">That is worth emphasizing because medical articles often make disease look much cleaner than real patients are.</p>
+<p data-start="15242" data-end="15281">A veterinarian starts with the history.</p>
+<p data-start="15283" data-end="15301">Is the dog spayed?</p>
+<p data-start="15303" data-end="15332">When was her last heat cycle?</p>
+<p data-start="15334" data-end="15354">Has she been eating?</p>
+<p data-start="15356" data-end="15381">Has water intake changed?</p>
+<p data-start="15383" data-end="15399">Is she vomiting?</p>
+<p data-start="15401" data-end="15420">Is there discharge?</p>
+<p data-start="15422" data-end="15449">How has her energy changed?</p>
+<p data-start="15451" data-end="15644">Physical examination is followed by tests chosen for the patient&#8217;s condition. Bloodwork may show evidence of infection, inflammation, dehydration, or organ involvement, but those findings vary.</p>
+<p data-start="15646" data-end="15686">A high white blood cell count can occur.</p>
+<p data-start="15688" data-end="15757">A low white blood cell count can also occur in severely ill patients.</p>
+<p data-start="15759" data-end="15810">Neither number alone confirms or excludes pyometra.</p>
+<p data-start="15812" data-end="15898">Urine testing may also be useful, particularly when thirst and urination have changed.</p>
+<p data-start="15900" data-end="15942">Imaging is often central to the diagnosis.</p>
+<h3 data-section-id="4bs3em" data-start="15944" data-end="15986"><span class="ez-toc-section" id="What_does_ultrasound_show_in_pyometra"></span>What does ultrasound show in pyometra?<span class="ez-toc-section-end"></span></h3>
+<p data-start="15988" data-end="16209">Abdominal ultrasound can help identify an enlarged uterus and fluid within the uterine lumen. It can also help the veterinarian assess uterine structures and distinguish reproductive disease from other abdominal problems.</p>
+<p data-start="16211" data-end="16294">X-rays may also show an enlarged tubular structure in the abdomen in some patients.</p>
+<p data-start="16296" data-end="16339">Again, imaging does not exist in isolation.</p>
+<p data-start="16341" data-end="16518">Pregnancy and other reproductive conditions can alter the uterus, so the veterinarian interprets the images together with the dog&#8217;s history, examination, and laboratory results.</p>
+<p data-start="16520" data-end="16569">The diagnosis is a puzzle made of several pieces.</p>
+<p data-start="16571" data-end="16593">Not a one-number quiz.</p>
+<p data-start="16595" data-end="16602"><img loading="lazy" decoding="async" class="alignnone size-large wp-image-6909" src="http://magentalab.mycafe24.com/wp-content/uploads/2026/07/동물병원에서-수의사가-암컷-강아지의-복부-초음파를-확인하며-보호자에게-설명하는-모습3-1024x576.jpg" alt="Veterinarian performing an abdominal ultrasound on a female dog while explaining the findings to the owner" width="1024" height="576" srcset="https://magentalab.mycafe24.com/wp-content/uploads/2026/07/동물병원에서-수의사가-암컷-강아지의-복부-초음파를-확인하며-보호자에게-설명하는-모습3-1024x576.jpg 1024w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/동물병원에서-수의사가-암컷-강아지의-복부-초음파를-확인하며-보호자에게-설명하는-모습3-300x169.jpg 300w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/동물병원에서-수의사가-암컷-강아지의-복부-초음파를-확인하며-보호자에게-설명하는-모습3-768x432.jpg 768w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/동물병원에서-수의사가-암컷-강아지의-복부-초음파를-확인하며-보호자에게-설명하는-모습3-1536x864.jpg 1536w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/동물병원에서-수의사가-암컷-강아지의-복부-초음파를-확인하며-보호자에게-설명하는-모습3.jpg 1792w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /></p>
+<h2 data-section-id="njj8za" data-start="17234" data-end="17269"><span class="ez-toc-section" id="How_is_pyometra_treated_in_dogs"></span>How is pyometra treated in dogs?<span class="ez-toc-section-end"></span></h2>
+<p data-start="17271" data-end="17403">For most dogs, the recommended treatment is surgical removal of the infected uterus and ovaries, known as an <strong data-start="17380" data-end="17402">ovariohysterectomy</strong>.</p>
+<p data-start="17405" data-end="17456">On paper, that may sound similar to a routine spay.</p>
+<p data-start="17458" data-end="17499">Clinically, it is not the same situation.</p>
+<p data-start="17501" data-end="17587">A healthy dog undergoing an elective spay has a normal uterus and is generally stable.</p>
+<p data-start="17589" data-end="17772">A dog with pyometra may be dehydrated, systemically inflamed, septic, vomiting, or experiencing kidney-related changes. The uterus itself may be enlarged and more fragile than normal.</p>
+<p data-start="17774" data-end="17848">That is why treatment often begins with more than just scheduling surgery.</p>
+<p data-start="17850" data-end="18065">The veterinary team evaluates the dog&#8217;s circulation, hydration, bloodwork, organ function, and anesthetic risk. IV fluids, antimicrobials, pain management, and other stabilization may be needed as part of treatment.</p>
+<p data-start="18067" data-end="18101">The goal is not to “wait and see.”</p>
+<p data-start="18103" data-end="18194">The goal is to make a sick patient as safe as reasonably possible for definitive treatment.</p>
+<h3 data-section-id="17als3j" data-start="18196" data-end="18259"><span class="ez-toc-section" id="Does_stabilization_mean_surgery_should_be_delayed_for_days"></span>Does stabilization mean surgery should be delayed for days?<span class="ez-toc-section-end"></span></h3>
+<p data-start="18261" data-end="18264">No.</p>
+<p data-start="18266" data-end="18291">This distinction matters.</p>
+<p data-start="18293" data-end="18478">When veterinarians talk about stabilizing a pyometra patient, they are describing active hospital treatment for a dog that may be dehydrated, hypotensive, septic, or otherwise unstable.</p>
+<p data-start="18480" data-end="18579">It does not mean taking the dog home and watching her for several days to see whether she improves.</p>
+<p data-start="18581" data-end="18699">The timing of surgery depends on the individual patient&#8217;s condition and is determined by the treating veterinary team.</p>
+<h2 data-section-id="ro81cu" data-start="18701" data-end="18744"><span class="ez-toc-section" id="Can_pyometra_be_treated_without_surgery"></span>Can pyometra be treated without surgery?<span class="ez-toc-section-end"></span></h2>
+<p data-start="18746" data-end="18784">Sometimes, but only in selected cases.</p>
+<p data-start="18786" data-end="18921">Medical treatment may be considered in valuable breeding dogs when fertility preservation is important and the dog is not severely ill.</p>
+<p data-start="18923" data-end="18984">That does not make it a safer or easier version of treatment.</p>
+<p data-start="18986" data-end="19165">Dogs undergoing medical management require close veterinary monitoring, and certain cases—particularly dogs with severe systemic illness or a closed cervix—may be poor candidates.</p>
+<p data-start="19167" data-end="19207">Recurrence is also an important concern.</p>
+<p data-start="19209" data-end="19318">So if an owner hears that pyometra “can sometimes be treated with medicine,” the next sentence should not be:</p>
+<p data-start="19320" data-end="19355">“Then I will try medication first.”</p>
+<p data-start="19357" data-end="19385">The next sentence should be:</p>
+<p data-start="19387" data-end="19429">“Is my dog actually a suitable candidate?”</p>
+<p data-start="19431" data-end="19503">That decision belongs in the clinic, not in a home treatment experiment.</p>
+<h2 data-section-id="ph9grl" data-start="19505" data-end="19553"><span class="ez-toc-section" id="What_is_the_prognosis_after_pyometra_surgery"></span>What is the prognosis after pyometra surgery?<span class="ez-toc-section-end"></span></h2>
+<p data-start="19555" data-end="19749">Seeing the words <em data-start="19572" data-end="19591">uterine infection</em>, <em data-start="19593" data-end="19601">sepsis</em>, <em data-start="19603" data-end="19612">rupture</em>, and <em data-start="19618" data-end="19637">emergency surgery</em> in one search session can make it feel as though a diagnosis of pyometra automatically means the worst outcome.</p>
+<p data-start="19751" data-end="19763">It does not.</p>
+<p data-start="19765" data-end="19839">Prognosis depends heavily on the dog&#8217;s condition at the time of diagnosis.</p>
+<p data-start="19841" data-end="20049">Dogs treated before severe systemic complications develop can recover well. Risk becomes greater when there is profound sepsis, organ dysfunction, uterine rupture, peritonitis, or other serious complications.</p>
+<p data-start="20051" data-end="20104">This is one reason early recognition matters so much.</p>
+<p data-start="20106" data-end="20161">Not because every dog has a fixed number of hours left.</p>
+<p data-start="20163" data-end="20307">But because a dog who reaches treatment while still relatively stable is in a different situation from one who arrives after collapse and shock.</p>
+<h2 data-section-id="1iobcos" data-start="20309" data-end="20345"><span class="ez-toc-section" id="Does_pyometra_always_cause_fever"></span>Does pyometra always cause fever?<span class="ez-toc-section-end"></span></h2>
+<p data-start="20347" data-end="20350">No.</p>
+<p data-start="20352" data-end="20422">Fever can occur with pyometra, but it is not present in every patient.</p>
+<p data-start="20424" data-end="20485">Some seriously ill dogs may even have a low body temperature.</p>
+<p data-start="20487" data-end="20594">So checking whether the ears feel warm or using “she doesn&#8217;t seem feverish” as reassurance is not reliable.</p>
+<p data-start="20596" data-end="20650">Pyometra is diagnosed from the whole clinical picture.</p>
+<p data-start="20652" data-end="20791">If the dog has the right risk profile and several compatible signs, the absence of one classic symptom should not create false reassurance.</p>
+<h2 data-section-id="kzflri" data-start="20793" data-end="20825"><span class="ez-toc-section" id="Can_a_young_dog_get_pyometra"></span>Can a young dog get pyometra?<span class="ez-toc-section-end"></span></h2>
+<p data-start="20827" data-end="20831">Yes.</p>
+<p data-start="20833" data-end="20980">Pyometra is more common in middle-aged and older intact female dogs, particularly after repeated heat cycles, but younger dogs can also develop it.</p>
+<p data-start="20982" data-end="21034">That means age changes probability, not possibility.</p>
+<p data-start="21036" data-end="21147">An owner should not ignore concerning post-heat symptoms simply because the dog seems “too young for pyometra.”</p>
+<p data-start="21149" data-end="21187">The same principle applies in reverse.</p>
+<p data-start="21189" data-end="21251">Not every older intact female with poor appetite has pyometra.</p>
+<p data-start="21253" data-end="21318">Veterinary evaluation is what separates suspicion from diagnosis.</p>
+<h2 data-section-id="oc0use" data-start="21320" data-end="21353"><span class="ez-toc-section" id="Can_a_spayed_dog_get_pyometra"></span>Can a spayed dog get pyometra?<span class="ez-toc-section-end"></span></h2>
+<p data-start="21355" data-end="21481">A properly performed ovariohysterectomy removes the uterus and ovaries, so ordinary uterine pyometra should no longer develop.</p>
+<p data-start="21483" data-end="21659">There is, however, a rare condition known as <strong data-start="21528" data-end="21546">stump pyometra</strong>, involving remaining uterine tissue, generally in association with hormonally active ovarian tissue left behind.</p>
+<p data-start="21661" data-end="21775">For most owners of correctly spayed dogs, this is not something to worry about every time a dog drinks more water.</p>
+<p data-start="21777" data-end="21935">But if a supposedly spayed dog shows heat-like signs or develops unexplained vaginal discharge, telling the veterinarian about the previous surgery is useful.</p>
+<h2 data-section-id="1i12hpw" data-start="21937" data-end="21985"><span class="ez-toc-section" id="What_should_a_dog_eat_after_pyometra_surgery"></span>What should a dog eat after pyometra surgery?<span class="ez-toc-section-end"></span></h2>
+<p data-start="21987" data-end="22052">This is a good place to remove another overly tidy internet rule.</p>
+<p data-start="22054" data-end="22101">There is no universal “pyometra recovery food.”</p>
+<p data-start="22103" data-end="22271">Your dog does not automatically need boiled white fish, liver-support soup, omega-3 oil, probiotics, or a special homemade meal simply because she had pyometra surgery.</p>
+<p data-start="22273" data-end="22330">The right feeding plan depends on the individual patient.</p>
+<p data-start="22332" data-end="22349">Was she vomiting?</p>
+<p data-start="22351" data-end="22377">Is she eating voluntarily?</p>
+<p data-start="22379" data-end="22407">Were kidney values abnormal?</p>
+<p data-start="22409" data-end="22439">Does she have another disease?</p>
+<p data-start="22441" data-end="22483">What food did she tolerate before surgery?</p>
+<p data-start="22485" data-end="22530">What did the hospital recommend at discharge?</p>
+<p data-start="22532" data-end="22700">Some dogs can transition back toward their normal complete and balanced diet as recovery progresses. Others need a temporary feeding plan based on their medical status.</p>
+<p data-start="22702" data-end="22795">Postoperative nutrition should support recovery, not turn the kitchen into a second pharmacy.</p>
+<p data-start="22797" data-end="22932">If the veterinary team gives feeding instructions, follow those rather than adding multiple supplements because they sound restorative.</p>
+<h2 data-section-id="13y58qf" data-start="22934" data-end="22986"><span class="ez-toc-section" id="What_matters_most_at_home_after_pyometra_surgery"></span>What matters most at home after pyometra surgery?<span class="ez-toc-section-end"></span></h2>
+<p data-start="22988" data-end="23043">Recovery does not end when the dog leaves the hospital.</p>
+<p data-start="23045" data-end="23169">At home, follow the clinic&#8217;s instructions for activity restriction, incision protection, medications, feeding, and rechecks.</p>
+<p data-start="23171" data-end="23195">Watch the overall trend.</p>
+<p data-start="23197" data-end="23247">Is she gradually becoming more interested in food?</p>
+<p data-start="23249" data-end="23273">Is her energy improving?</p>
+<p data-start="23275" data-end="23308">Can she keep food and water down?</p>
+<p data-start="23310" data-end="23342">Is she urinating and defecating?</p>
+<p data-start="23344" data-end="23396">Is the incision staying closed and reasonably clean?</p>
+<p data-start="23398" data-end="23574">Contact the veterinary clinic if the incision becomes markedly swollen, opens, bleeds, develops discharge, or if your dog repeatedly licks or traumatizes it despite protection.</p>
+<p data-start="23576" data-end="23790">More importantly, do not simply wait for the scheduled recheck if your dog suddenly becomes profoundly weak, repeatedly vomits, collapses, develops breathing difficulty, or otherwise deteriorates after coming home.</p>
+<p data-start="23792" data-end="23799"><img loading="lazy" decoding="async" class="alignnone size-large wp-image-6911" src="http://magentalab.mycafe24.com/wp-content/uploads/2026/07/자궁-수술-후-집에서-안정적으로-쉬는-강아지를-보호자가-관찰하는-모습4-1024x576.jpg" alt="Female dog resting comfortably at home while the owner monitors recovery after veterinary treatment" width="1024" height="576" srcset="https://magentalab.mycafe24.com/wp-content/uploads/2026/07/자궁-수술-후-집에서-안정적으로-쉬는-강아지를-보호자가-관찰하는-모습4-1024x576.jpg 1024w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/자궁-수술-후-집에서-안정적으로-쉬는-강아지를-보호자가-관찰하는-모습4-300x169.jpg 300w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/자궁-수술-후-집에서-안정적으로-쉬는-강아지를-보호자가-관찰하는-모습4-768x432.jpg 768w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/자궁-수술-후-집에서-안정적으로-쉬는-강아지를-보호자가-관찰하는-모습4-1536x864.jpg 1536w, https://magentalab.mycafe24.com/wp-content/uploads/2026/07/자궁-수술-후-집에서-안정적으로-쉬는-강아지를-보호자가-관찰하는-모습4.jpg 1792w" sizes="auto, (max-width: 1024px) 100vw, 1024px" /></p>
+<h2 data-section-id="1x405yi" data-start="24485" data-end="24517"><span class="ez-toc-section" id="Can_spaying_prevent_pyometra"></span>Can spaying prevent pyometra?<span class="ez-toc-section-end"></span></h2>
+<p data-start="24519" data-end="24614">Spaying removes the ovaries and uterus and is highly effective at preventing ordinary pyometra.</p>
+<p data-start="24616" data-end="24719">That does not mean every discussion about spaying should be reduced to one universal age for every dog.</p>
+<p data-start="24721" data-end="24848">The best timing can depend on breed, adult size, individual disease risks, reproductive plans, and other health considerations.</p>
+<p data-start="24850" data-end="25001">If you have an intact female dog and are considering preventive spaying, pyometra risk is one important part of that discussion with your veterinarian.</p>
+<p data-start="25003" data-end="25090">For an owner whose dog already has pyometra, however, this is not the moment for blame.</p>
+<p data-start="25092" data-end="25168">“Why didn&#8217;t I spay sooner?” does not help the patient lying in front of you.</p>
+<p data-start="25170" data-end="25193">The useful question is:</p>
+<p data-start="25195" data-end="25220">“What does she need now?”</p>
+<h2 data-section-id="16leq6s" data-start="25222" data-end="25287"><span class="ez-toc-section" id="My_dog_seems_normal_after_heat_Do_I_need_to_worry_every_time"></span>My dog seems normal after heat. Do I need to worry every time?<span class="ez-toc-section-end"></span></h2>
+<p data-start="25289" data-end="25292">No.</p>
+<p data-start="25294" data-end="25392">Most owners do not need to spend the weeks after every heat cycle waiting for a medical emergency.</p>
+<p data-start="25394" data-end="25443">What helps is knowing your dog&#8217;s normal baseline.</p>
+<p data-start="25445" data-end="25477">How much does she usually drink?</p>
+<p data-start="25479" data-end="25524">Does she normally clean the bowl immediately?</p>
+<p data-start="25526" data-end="25556">How excited is she for a walk?</p>
+<p data-start="25558" data-end="25595">What does her usual energy look like?</p>
+<p data-start="25597" data-end="25662">When you know those patterns, changes become easier to recognize.</p>
+<p data-start="25664" data-end="25919">An intact female dog that recently finished a heat cycle and suddenly develops several changes—such as lethargy, reduced appetite, vomiting, increased thirst, increased urination, abnormal discharge, or abdominal enlargement—deserves veterinary attention.</p>
+<p data-start="25921" data-end="26064">You do not need to determine at home whether it is open pyometra, closed pyometra, kidney disease, gastrointestinal disease, or something else.</p>
+<p data-start="26066" data-end="26093">You only need to recognize:</p>
+<p data-start="26095" data-end="26122"><strong data-start="26095" data-end="26122">This is not her normal.</strong></p>
+<p data-start="26132" data-end="26184">Pyometra often does not begin with a dramatic scene.</p>
+<p data-start="26186" data-end="26217">It can begin with a water bowl.</p>
+<p data-start="26219" data-end="26242">A half-eaten breakfast.</p>
+<p data-start="26244" data-end="26330">A dog who normally follows you into every room but stays curled up on the bed instead.</p>
+<p data-start="26332" data-end="26385">Those changes are easy to explain away one at a time.</p>
+<p data-start="26387" data-end="26437">That is why the timing after a heat cycle matters.</p>
+<p data-start="26439" data-end="26736">If an unspayed female dog becomes unwell in the following weeks, pyometra belongs on the list of possibilities even if there is no vaginal discharge. Open pyometra may be easier to notice because material drains externally, while closed pyometra can remain hidden behind an apparently clean vulva.</p>
+<p data-start="26738" data-end="26799">You do not need to become an expert at telling the two apart.</p>
+<p data-start="26801" data-end="26879">You need to know when the pattern has changed enough to call the veterinarian.</p>
+<p data-start="26881" data-end="26920">That is the decision that matters most.</p>
+<p data-start="26922" data-end="26931"><strong>Ansim’s Research Notes</strong></p>
+<p data-start="26933" data-end="27121">Pyometra is one of those diseases that invites very neat internet rules: “this many weeks after heat,” “this blood count means danger,” or “closed pyometra ruptures after this many hours.”</p>
+<p data-start="27123" data-end="27172">Real dogs are less cooperative with spreadsheets.</p>
+<p data-start="27174" data-end="27325">The timing, discharge, bloodwork, ultrasound findings, and general condition all matter, but none of them should be turned into a home countdown clock.</p>
+<p data-start="27327" data-end="27391">Ansim would much rather have you remember one practical pattern:</p>
+<p data-start="27393" data-end="27494"><strong data-start="27393" data-end="27494">intact female + recent heat + suddenly unwell = do not wait for pus before asking a veterinarian.</strong></p>
+<p data-start="27496" data-end="27581" data-is-last-node="" data-is-only-node="">The absence of discharge can be part of the story, not proof that there is no story.</p>

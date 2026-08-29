@@ -9,12 +9,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.magentalabblog.com';
 
   // 펫 맵 개별 장소 상세 페이지 목록
-  const placeEntries: MetadataRoute.Sitemap = INITIAL_PET_PLACES.map((place) => ({
-    url: `${baseUrl}/map/place/${place.id}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly',
-    priority: 0.8,
-  }));
+  const placeEntries: MetadataRoute.Sitemap = [];
 
   // 블로그 포스트 전체 가져오기
   let posts: any[] = [];

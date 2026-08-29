@@ -21,11 +21,11 @@ interface Symptom {
   text: string;
 }
 
-interface PatellaDiagnoserProps {
+interface PatellaRisk CheckerProps {
   lang?: "ko" | "en" | "ja";
 }
 
-export default function PatellaDiagnoser({ lang = "ko" }: PatellaDiagnoserProps) {
+export default function PatellaRisk Checker({ lang = "ko" }: PatellaRisk CheckerProps) {
   const [dogSize, setDogSize] = useState<DogSize>("small");
   const [age, setAge] = useState<string>("");
   const [weight, setWeight] = useState<string>("");
@@ -59,9 +59,9 @@ export default function PatellaDiagnoser({ lang = "ko" }: PatellaDiagnoserProps)
   // Multilingual Dictionaries
   const dict = {
     ko: {
-      badge: "안심이 AI 정밀 자가진단 시리즈",
-      title: "슬개골 탈구 & 관절 건강 자가 진단기 🐾",
-      desc: "아이의 나이, 체중, 견종 유형과 행동 증상을 유기적으로 반영하여 관절 위험 점수와 정밀 분석 리포트를 실시간으로 확인하고 맞춤 가이드를 받아보세요.",
+      badge: "안심이 보행 증상 기반 위험도 평가 시리즈",
+      title: "슬개골 탈구 & 관절 건강 위험 신호 확인 도구 🐾",
+      desc: "아이의 나이, 체중, 견종 유형과 행동 증상을 유기적으로 반영하여 관절 위험 점수와 참고용 평가 리포트를 실시간으로 확인하고 맞춤 가이드를 받아보세요.",
       step1: "견종 유형을 선택해 주세요",
       smallDog: "소형견",
       smallDogDesc: "10kg 미만 (말티즈, 토이푸들 등)",
@@ -77,7 +77,7 @@ export default function PatellaDiagnoser({ lang = "ko" }: PatellaDiagnoserProps)
       step3: "최근 관찰된 행동 증상을 선택해 주세요 (중복 가능)",
       inputAlert: "아이의 나이와 몸무게를 정확히 입력하시면 실시간 결과 리포트가 완성됩니다.",
       btnMobileReport: "실시간 분석 리포트 보러가기",
-      placeholderTitle: "실시간 정밀 진단서 대기 중",
+      placeholderTitle: "위험도 참고 리포트 대기 중",
       placeholderDesc: "왼쪽 입력창에 견종 크기, 나이, 몸무게를 정확히 입력하시면 실시간 관절 분석 보고서가 자동으로 로드됩니다.",
       reportTitle: "REAL-TIME DIAGNOSIS REPORT",
       reportSub: "관절 위험도 분석",

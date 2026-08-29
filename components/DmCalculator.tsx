@@ -21,7 +21,7 @@ export default function DmCalculator({ lang = "ko" }: DmCalculatorProps) {
 
   // --- 1. 하루 필수 음수량 계산기 상태 ---
   const [petType, setPetType] = useState<"dog" | "cat">("cat");
-  const [weight, setWeight] = useState<string>("4.5");
+  const [weight, setWeight] = useState<string>("");
   const [computedWater, setComputedWater] = useState<number>(0);
   const [cupCount, setCupCount] = useState<number>(0);
 
@@ -72,16 +72,16 @@ export default function DmCalculator({ lang = "ko" }: DmCalculatorProps) {
       outputDmPercent: "건조 건물 비율(DM)",
       outputDmCarbo: "대략적인 탄수화물(DM)",
       outputDmProtein: "실제 단백질 함량 (DM)",
-      outputDmProteinMin: "최소 권장: 25%",
-      outputDmProteinMax: "프리미엄 지향: 35%+",
+      outputDmProteinMin: "참고 권장: 25%",
+      outputDmProteinMax: "고단백 식단 참고: 35%+",
       outputDmFat: "실제 지방 함량 (DM)",
-      outputDmFatMin: "다이어트 권장: 9~15%",
+      outputDmFatMin: "체중 관리 식단 참고: 9~15%",
       outputDmFatMax: "고에너지: 20%+",
       commentTitle: "성분 환산 코멘트",
       commentDefault: "올바른 사료 등록성분을 입력해 주시면 그에 따른 수의학 솔루션 분석 내용이 정밀하게 제공됩니다.",
       commentPremium: "고농축 단백질 사료로 활동성이 뛰어난 반려동물의 골격과 근력 형성에 매우 적합합니다. 다만 기저 신장 질환이 있는 아이는 주치의 수의사와 고단백 사료 급여 지속 여부를 조율하세요.",
-      commentLow: "수분을 제외한 건물 내 단백질 비율이 수의학 최소 권장량인 30%를 하회하고 있습니다. 옥수수나 쌀 등 탄수화물 충전재 비중이 매우 높아 장기 급여 시 비만이나 당뇨병 유발 주의가 요구됩니다.",
-      commentStandard: "표준 영양소 비율을 잘 충족하고 있는 일반 건강 유지식 사료입니다. 현재 영양 성분에 맞추어 정량 급여를 실시하고, 간식을 통한 추가 지방 섭취를 적절히 조절해 주세요.",
+      commentLow: "수분을 제외한 건물 내 단백질 비율이 수의학 참고 권장량인 30%를 하회하고 있습니다. 옥수수나 쌀 등 탄수화물 충전재 비중이 매우 높아 장기 급여 시 비만이나 당뇨병 유발 주의가 요구됩니다.",
+      commentStandard: "일반적인 영양소 비율을 잘 충족하고 있는 일반 건강 유지식 사료입니다. 현재 영양 성분에 맞추어 정량 급여를 실시하고, 간식을 통한 추가 지방 섭취를 적절히 조절해 주세요.",
       badgeLow: "탄수화물 과다 사료 주의",
       badgePremium: "고단백 프리미엄 사료",
       badgeStandard: "균형 잡힌 성분 사료",
@@ -161,7 +161,7 @@ export default function DmCalculator({ lang = "ko" }: DmCalculatorProps) {
       outputDmProteinMin: "最低推奨: 25%",
       outputDmProteinMax: "プレミアム目標: 35%+",
       outputDmFat: "実質脂肪含有量 (DM)",
-      outputDmFatMin: "ダイエット推奨: 9~15%",
+      outputDmFatMin: "体重管理参考: 9~15%",
       outputDmFatMax: "高エネルギー: 20%+",
       commentTitle: "成分換算コメント",
       commentDefault: "正しい成分を入力すると、獣医臨床分析コメ​​ントが詳しく表示されます。",

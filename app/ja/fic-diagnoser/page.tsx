@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import FicDiagnoser from "@/components/FicDiagnoser";
+import FicRisk Checker from "@/components/FicRisk Checker";
 import CalculatorBanner from "@/components/CalculatorBanner";
 import RelatedPosts from "@/components/RelatedPosts";
 import { getPosts } from "@/lib/wp";
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   }
 };
 
-export default async function FicDiagnoserPageJa() {
+export default async function FicRisk CheckerPageJa() {
   let relatedPosts: any[] = [];
   try {
     const postsRes = await getPosts(1, 6, undefined, undefined, "ja");
@@ -44,7 +44,7 @@ export default async function FicDiagnoserPageJa() {
 
   return (
     <div className="bg-slate-50 pb-20">
-      <FicDiagnoser lang="ja" />
+      <FicRisk Checker lang="ja" />
 
       <SeoArticle title="猫に多い下部尿路疾患、特発性膀胱炎（FIC）とは？">
         <p>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PatellaDiagnoser from "@/components/PatellaDiagnoser";
+import PatellaRisk Checker from "@/components/PatellaRisk Checker";
 import CalculatorBanner from "@/components/CalculatorBanner";
 import RelatedPosts from "@/components/RelatedPosts";
 import { getPosts } from "@/lib/wp";
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 
 import SeoArticle from "@/components/SeoArticle";
 
-export default async function PatellaDiagnoserPageEn() {
+export default async function PatellaRisk CheckerPageEn() {
   let relatedPosts: any[] = [];
   try {
     const postsRes = await getPosts(1, 6, undefined, undefined, "en");
@@ -45,7 +45,7 @@ export default async function PatellaDiagnoserPageEn() {
 
   return (
     <div className="bg-slate-50 pb-20">
-      <PatellaDiagnoser lang="en" />
+      <PatellaRisk Checker lang="en" />
       
       <SeoArticle title="What Is Patellar Luxation, a Common Condition in Small Dogs?">
         <p>

@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import FicDiagnoser from "@/components/FicDiagnoser";
+import FicRisk Checker from "@/components/FicRisk Checker";
 import CalculatorBanner from "@/components/CalculatorBanner";
 import RelatedPosts from "@/components/RelatedPosts";
 import { getPosts } from "@/lib/wp";
 import SeoArticle from "@/components/SeoArticle";
 
 export const metadata: Metadata = {
-  title: "Feline FIC Cystitis & Stress Diagnoser | Magentalab",
+  title: "Feline FIC Cystitis & Stress Risk Checker | Magentalab",
   description: "Evaluate your cat's behavioral stress factors and Feline Idiopathic Cystitis (FIC) hazard levels. Veterinary-backed home stress care instructions.",
   alternates: {
     canonical: "https://www.magentalabblog.com/en/fic-diagnoser",
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
   keywords: ["feline idiopathic cystitis", "cat bladder stress diagnoser", "FIC index cat", "cat urination accident", "feline stress behaviors", "urinary tract infection cat", "Magentalab"],
   openGraph: {
-    title: "Feline FIC Cystitis & Stress Diagnoser | Magentalab",
+    title: "Feline FIC Cystitis & Stress Risk Checker | Magentalab",
     description: "Self-screen your cat's stress factors and urinary health condition using our interactive behavioral questionnaire.",
     url: "https://www.magentalabblog.com/en/fic-diagnoser",
     type: "website",
@@ -27,13 +27,13 @@ export const metadata: Metadata = {
         url: "/images/favicon.png",
         width: 800,
         height: 600,
-        alt: "Magentalab Feline FIC Diagnoser",
+        alt: "Magentalab Feline FIC Risk Checker",
       }
     ]
   }
 };
 
-export default async function FicDiagnoserPageEn() {
+export default async function FicRisk CheckerPageEn() {
   let relatedPosts: any[] = [];
   try {
     const postsRes = await getPosts(1, 6, undefined, undefined, "en");
@@ -44,7 +44,7 @@ export default async function FicDiagnoserPageEn() {
 
   return (
     <div className="bg-slate-50 pb-20">
-      <FicDiagnoser lang="en" />
+      <FicRisk Checker lang="en" />
 
       <SeoArticle title="What Is Feline Idiopathic Cystitis (FIC), a Common Cause of Lower Urinary Tract Disease in Cats?">
         <p>

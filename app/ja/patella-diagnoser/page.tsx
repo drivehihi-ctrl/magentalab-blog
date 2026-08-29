@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PatellaDiagnoser from "@/components/PatellaDiagnoser";
+import PatellaRisk Checker from "@/components/PatellaRisk Checker";
 import CalculatorBanner from "@/components/CalculatorBanner";
 import RelatedPosts from "@/components/RelatedPosts";
 import { getPosts } from "@/lib/wp";
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 
 import SeoArticle from "@/components/SeoArticle";
 
-export default async function PatellaDiagnoserPageJa() {
+export default async function PatellaRisk CheckerPageJa() {
   let relatedPosts: any[] = [];
   try {
     const postsRes = await getPosts(1, 6, undefined, undefined, "ja");
@@ -45,7 +45,7 @@ export default async function PatellaDiagnoserPageJa() {
 
   return (
     <div className="bg-slate-50 pb-20">
-      <PatellaDiagnoser lang="ja" />
+      <PatellaRisk Checker lang="ja" />
       
       <SeoArticle title="小型犬に多い膝蓋骨脱臼（Patellar Luxation）とは？">
         <p>

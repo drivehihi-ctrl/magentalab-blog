@@ -161,7 +161,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
     ko: {
       badge: "안심 연구원 지출 진단 리포트",
       title: "반려동물 평생 양육비 & 월간 유지비 계산기 💰",
-      desc: "나이대별 수의학 필수 예방접종 비용과 생애 의료비 시뮬레이션을 탑재하여 우리 아이 맞춤형 한 달 고정 유지비와 평생 지출의 정밀 진단서를 실시간 확인하세요.",
+      desc: "나이대별 수의학 필수 예방접종 비용과 생애 의료비 시뮬레이션을 탑재하여 우리 아이 맞춤형 한 달 고정 유지비와 평생 지출의 비용 분석서를 실시간 확인하세요.",
       labelSelectType: "축종 및 반려동물 크기 선택",
       dogSmall: "소형견",
       dogSmallDesc: "10kg 미만",

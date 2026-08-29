@@ -17,11 +17,11 @@ import {
   ArrowRight
 } from "lucide-react";
 
-interface FicDiagnoserProps {
+interface FicRisk CheckerProps {
   lang?: "ko" | "en" | "ja";
 }
 
-export default function FicDiagnoser({ lang = "ko" }: FicDiagnoserProps) {
+export default function FicRisk Checker({ lang = "ko" }: FicRisk CheckerProps) {
 
 
   // 입력 폼 상태 관리
@@ -36,8 +36,8 @@ export default function FicDiagnoser({ lang = "ko" }: FicDiagnoserProps) {
   // Multilingual Dictionaries
   const dict = {
     ko: {
-      badge: "안심이 수석연구원의 스트레스 정밀 검진",
-      title: "고양이 스트레스 및 특발성 방광염(FIC) 자가 진단기",
+      badge: "안심이 수석연구원의 스트레스 상태 점검",
+      title: "고양이 스트레스 및 특발성 방광염(FIC) 위험 신호 확인 도구",
       desc: "고양이의 나이, 체형 정보와 최근 영역 내 환경 변화, 행동 이상 징후를 바탕으로 스트레스 누적도를 정밀 분석하고 특발성 방광염(FIC) 위험도를 판정합니다.",
       loading: "진단 프로그램을 불러오는 중입니다...",
       profileTitle: "1. 반려묘 기본 프로필",
@@ -56,11 +56,11 @@ export default function FicDiagnoser({ lang = "ko" }: FicDiagnoserProps) {
       btnReset: "문항 전체 초기화",
       reportTitle: "실시간 스트레스 분석",
       reportSub: "스트레스 & FIC 위험 수준",
-      scoreLabel: "FIC 위험 점수",
+      scoreLabel: "FIC 참고 점수",
       scoreOutOf: "/ 90점",
       adviseTitle: "안심이 수석연구원 어드바이스",
       bannerTitle: "방광염 예방의 필수 요건",
-      bannerDesc: "방광염 예방의 치명적인 열쇠는 바로 수분 섭취량입니다. 우리 아이의 몸무게에 맞는 정확한 필수 물 섭취량이 궁금하시다면 아래 마젠타랩 전용 계산기로 이동해 확인해 보세요.",
+      bannerDesc: "방광염 예방의 중요한 방법는 바로 수분 섭취량입니다. 우리 아이의 몸무게에 맞는 정확한 필수 물 섭취량이 궁금하시다면 아래 마젠타랩 전용 계산기로 이동해 확인해 보세요.",
       bannerBtn: "마젠타랩 영양 & 음수량 계산기로 이동하기 ➔",
       cautionTitle: "📌 고양이 FIC 자가진단 유의 사항",
       cautionDesc: "본 자가진단 프로그램은 국제 고양이의학협회(ISFM) 및 미국의 고양이 임상진료 가이드라인을 근거로 제작되었습니다. 단, 방광염은 요로 결석, 세균성 감염 등 다른 신장 비뇨기계 질환과 증상이 유사하므로, 소변을 전혀 보지 못하거나 혈뇨를 누는 응급 징후 발견 시 즉시 병원 검사를 권장합니다.",
@@ -97,9 +97,9 @@ export default function FicDiagnoser({ lang = "ko" }: FicDiagnoserProps) {
     },
     ja: {
       badge: "アンシム副所長のストレス精密検診",
-      title: "猫のストレス＆特発性膀胱炎(FIC)自己診断",
+      title: "猫のストレス＆特発性膀胱炎(FIC)自己評価",
       desc: "猫の年齢、体型データと最近の飼育環境の変化、行動の異変に基づいて、ストレスの蓄積度を分析し、特発性膀胱炎（FIC）のリスクレベルを判定します。",
-      loading: "自己診断プログラムをロードしています...",
+      loading: "自己評価プログラムをロードしています...",
       profileTitle: "1. 愛猫の基本プロファイル",
       labelAge: "現在の年齢",
       unitAge: "歳",
@@ -122,7 +122,7 @@ export default function FicDiagnoser({ lang = "ko" }: FicDiagnoserProps) {
       bannerTitle: "膀胱炎予防に最も必要なこと",
       bannerDesc: "膀胱炎を予防する最大の鍵は「飲水量」です。愛猫の体重に応じた正確な一日の必要水分量を計算するには、以下の計算ページで確認できます。",
       bannerBtn: "マゼンタラボの栄養・飲水量計算機へ移動 ➔",
-      cautionTitle: "📌 猫のFIC自己診断に関するご留意事項",
+      cautionTitle: "📌 猫のFIC自己評価に関するご留意事項",
       cautionDesc: "当ツールは国際猫医学会(ISFM)および米国猫科実務家協会のガイドラインを参考にして設計されました。膀胱炎は尿石症や細菌感染など他の泌尿器疾患と症状が類似しています。排尿がない状態や血尿がある場合は、至急動物病院を受診してください。",
     }
   };
@@ -212,11 +212,11 @@ export default function FicDiagnoser({ lang = "ko" }: FicDiagnoserProps) {
   };
 
   // 판정 단계 반환
-  const getDiagnosis = () => {
+  const getEvaluation = () => {
     if (score < 20) {
       return {
         level: "safe",
-        badge: lang === "ko" ? "정상 - 안심 단계" : lang === "ja" ? "正常 - 安心レベル" : "Normal - Low Risk",
+        badge: lang === "ko" ? "뚜렷한 위험 신호 적음" : lang === "ja" ? "正常 - 安心レベル" : "Normal - Low Risk",
         badgeColor: "bg-emerald-500 text-white",
         textColor: "text-emerald-800",
         bgClass: "from-emerald-500/10 to-teal-500/10 border-emerald-500/20",
@@ -258,7 +258,7 @@ export default function FicDiagnoser({ lang = "ko" }: FicDiagnoserProps) {
     }
   };
 
-  const diag = getDiagnosis();
+  const diag = getEvaluation();
   const nextCalculatorLink = lang === "ko" ? "/dm-calculator" : lang === "ja" ? "/ja/dm-calculator" : "/en/dm-calculator";
 
   return (

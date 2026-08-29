@@ -7,7 +7,7 @@ import { searchPosts } from "@/lib/wp";
 // 검색 엔진 노출을 위한 반려동물 양육비 계산기 전용 메타데이터 설정
 export const metadata: Metadata = {
   title: "반려동물 평생 양육비 및 월간 유지비 계산기 | 마젠타랩",
-  description: "사료비, 위생용품, 미용 및 병원비까지! 강아지, 고양이 축종별 맞춤형 평생 양육비 계산기로 우리 아이 평생 유지비와 지출 비중 차트를 10초 만에 분석해 보세요.",
+  description: "사료비, 위생용품, 미용 및 병원비까지! 강아지, 고양이 축종별 맞춤형 평생 양육비 계산기로 우리 아이 평생 유지비와 지출 비중 차트를 1즉시 만에 분석해 보세요.",
   alternates: {
     canonical: "https://www.magentalabblog.com/petcare-expenses-calculator",
     languages: {
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "반려동물 평생 양육비 및 월간 유지비 계산기 | 마젠타랩",
-    description: "아이의 나이, 예상 수명, 식비 등급 및 필수 케어 지출 분석을 통해 평생 누적 양육비와 월간 고정 지출 비율을 0초 만에 분석 진단해 보세요.",
+    description: "아이의 나이, 예상 수명, 식비 등급 및 필수 케어 지출 분석을 통해 평생 누적 양육비와 월간 고정 지출 비율을 즉시 만에 분석 진단해 보세요.",
     url: "https://www.magentalabblog.com/petcare-expenses-calculator",
     type: "website",
     siteName: "Magentalab 반려동물 연구소",
