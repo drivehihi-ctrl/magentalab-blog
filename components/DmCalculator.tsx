@@ -22,23 +22,12 @@ export default function DmCalculator({ lang = "ko" }: DmCalculatorProps) {
   // --- 1. 하루 필수 음수량 계산기 상태 ---
   const [petType, setPetType] = useState<"dog" | "cat">("cat");
   const [weight, setWeight] = useState<string>("");
-  const [computedWater, setComputedWater] = useState<number>(0);
-  const [cupCount, setCupCount] = useState<number>(0);
 
   // --- 2. 사료 영양 성분 (DM) 계산기 상태 ---
   const [moisture, setMoisture] = useState<string>("10");
   const [crudeProtein, setCrudeProtein] = useState<string>("28");
   const [crudeFat, setCrudeFat] = useState<string>("14");
   const [crudeAshFiber, setCrudeAshFiber] = useState<string>("8"); // 조회분 + 조섬유 합산 권장
-
-  // 영양 성분 연산 결과
-  const [dryMatterPercent, setDryMatterPercent] = useState<number>(0);
-  const [dmProtein, setDmProtein] = useState<number>(0);
-  const [dmFat, setDmFat] = useState<number>(0);
-  const [carboPercent, setCarboPercent] = useState<number>(0); 
-  const [dmCarbo, setDmCarbo] = useState<number>(0);
-  const [proteinRating, setProteinRating] = useState<"low" | "standard" | "premium">("standard");
-
   // 계산 유효성 플래그
   const isWaterValid = weight !== "" && !isNaN(parseFloat(weight)) && parseFloat(weight) > 0;
   
@@ -53,6 +42,20 @@ export default function DmCalculator({ lang = "ko" }: DmCalculatorProps) {
     !isNaN(moistVal) && !isNaN(proteinVal) && !isNaN(fatVal) && !isNaN(ashFiberVal) &&
     moistVal >= 0 && moistVal < 100 && proteinVal > 0 && fatVal > 0 && ashFiberVal >= 0 &&
     totalInput <= 100;
+
+  // 동기적 연산 (SSR 지원)
+  const factor = petType === "cat" ? 50 : 60;
+  const computedWater = isWaterValid ? Math.round(parseFloat(weight) * factor) : 0;
+  const cupCount = isWaterValid ? Math.round((parseFloat(weight) * factor) / 180 * 10) / 10 : 0;
+
+  const dm = isDmValid ? 100 - moistVal : 0;
+  const dryMatterPercent = dm;
+  const dmProtein = isDmValid && dm > 0 ? Math.round(((proteinVal / dm) * 100) * 10) / 10 : 0;
+  const dmFat = isDmValid && dm > 0 ? Math.round(((fatVal / dm) * 100) * 10) / 10 : 0;
+  const estimatedCarbo = isDmValid ? Math.max(0, 100 - moistVal - proteinVal - fatVal - ashFiberVal) : 0;
+  const dmCarbo = isDmValid && dm > 0 ? Math.round((estimatedCarbo / dm) * 100 * 10) / 10 : 0;
+  const proteinRating = (!isDmValid || dm <= 0) ? "standard" : (dmProtein < 30 ? "low" : (dmProtein >= 35 ? "premium" : "standard"));
+
   const [activeTab, setActiveTab] = useState<"all" | "water" | "dm">("all");
 
   // Multilingual translation dictionaries
@@ -63,7 +66,7 @@ export default function DmCalculator({ lang = "ko" }: DmCalculatorProps) {
       tabDashboard: "종합 분석 대시보드",
       tabWater: "음수량 계산기",
       tabDm: "사료 영양(DM) 계산기",
-      waterTitle: "01. 하루 필수 음수량 진단 데이터",
+      waterTitle: "01. 하루 참고 음수량 데이터",
       waterType: "반려동물 종류",
       waterCat: "🐱 고양이 (Cat)",
       waterDog: "🐶 강아지 (Dog)",
@@ -77,7 +80,7 @@ export default function DmCalculator({ lang = "ko" }: DmCalculatorProps) {
       dmAshFiber: "조회분+조섬유 (%)",
       dmError: "성분비 합산값은 100%를 초과할 수 없으며 음수값은 허용되지 않습니다.",
       reset: "설정 리셋",
-      outputWaterTitle: "일일 권장 필수 음수량",
+      outputWaterTitle: "일일 권장 참고 음수량",
       outputCupTitle: "종이컵 환산 기준",
       outputCupDesc: "* 종이컵 1잔을 가득 채웠을 때(약 180ml)를 기초로 산정한 상대 비율 비주얼 가이드입니다.",
       outputDmPercent: "건조 건물 비율(DM)",
@@ -106,7 +109,7 @@ export default function DmCalculator({ lang = "ko" }: DmCalculatorProps) {
       tabDashboard: "Integrated Dashboard",
       tabWater: "Water Intake Calculator",
       tabDm: "DM Nutrition Calculator",
-      waterTitle: "01. Daily Target Hydration Data",
+      waterTitle: "01. Daily Reference Hydration Data",
       waterType: "Pet Type",
       waterCat: "🐱 Cat",
       waterDog: "🐶 Dog",
@@ -149,7 +152,7 @@ export default function DmCalculator({ lang = "ko" }: DmCalculatorProps) {
       tabDashboard: "総合分析ダッシュボード",
       tabWater: "水分摂取量計算機",
       tabDm: "フード栄養(DM)計算機",
-      waterTitle: "01. 一日目標水分摂取データ",
+      waterTitle: "01. 一日参考水分摂取データ",
       waterType: "ペットの種類",
       waterCat: "🐱 猫 (Cat)",
       waterDog: "🐶 犬 (Dog)",
@@ -189,63 +192,6 @@ export default function DmCalculator({ lang = "ko" }: DmCalculatorProps) {
   };
 
   const t = dict[lang] || dict.ko;
-
-  // 실시간 음수량 계산
-  useEffect(() => {
-    const w = parseFloat(weight);
-    if (!isWaterValid) {
-      return;
-    }
-
-    // 고양이: 50ml/kg, 강아지: 60ml/kg (활동량 고려)
-    const factor = petType === "cat" ? 50 : 60;
-    const totalWater = w * factor;
-    setComputedWater(Math.round(totalWater));
-
-    // 종이컵 환산 (한국 표준 종이컵 가득 채웠을 때 약 180ml 기준)
-    const cups = totalWater / 180;
-    setCupCount(Math.round(cups * 10) / 10);
-  }, [weight, petType]);
-
-  // 실시간 사료 DM 계산
-  useEffect(() => {
-    const moist = parseFloat(moisture);
-    const protein = parseFloat(crudeProtein);
-    const fat = parseFloat(crudeFat);
-    const ashFiber = parseFloat(crudeAshFiber);
-
-    if (!isDmValid) {
-      return;
-    }
-
-    // 1. 건물(Dry Matter) 비율 = 100 - 수분
-    const dm = 100 - moist;
-    setDryMatterPercent(dm);
-
-    if (dm > 0) {
-      // 2. 실제 단백질 DM(%) = (조단백 / DM) * 100
-      const actualProtein = (protein / dm) * 100;
-      setDmProtein(Math.round(actualProtein * 10) / 10);
-
-      // 3. 실제 지방 DM(%) = (조지방 / DM) * 100
-      const actualFat = (fat / dm) * 100;
-      setDmFat(Math.round(actualFat * 10) / 10);
-
-      // 4. 대략적인 탄수화물 계산 = 100 - 수분 - 단백 - 지방 - 회분/섬유
-      const estimatedCarbo = Math.max(0, 100 - moist - protein - fat - ashFiber);
-      setCarboPercent(Math.round(estimatedCarbo * 10) / 10);
-      setDmCarbo(Math.round((estimatedCarbo / dm) * 100 * 10) / 10);
-
-      // 5. 단백질 등급 판정
-      if (actualProtein < 30) {
-        setProteinRating("low");
-      } else if (actualProtein >= 35) {
-        setProteinRating("premium");
-      } else {
-        setProteinRating("standard");
-      }
-    }
-  }, [moisture, crudeProtein, crudeFat, crudeAshFiber, isDmValid]);
 
   const handleReset = () => {
     setPetType("cat");

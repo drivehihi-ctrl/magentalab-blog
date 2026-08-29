@@ -214,7 +214,7 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
       chartCare: "미용 및 위생",
       chartMedical: "의료비 (자동)",
       calendarTitle: "올해 예방접종 예시 & 케어 달력 📅",
-      calendarDesc: "현재 나이인 {computedAge}세 시점에 담당 수의사 판단에 따른 주기적 관리되는 수의학 예방 케어 및 건강검진 비용 내역입니다.",
+      calendarDesc: "현재 나이인 {computedAge}세를 기준으로, 담당 수의사 판단에 따라 주기적으로 관리되는 예방 케어 및 건강검진 예상 비용 내역입니다.",
       calendarTag: "권장",
       calendarDisclaimer: "* 예방접종 비용은 지역 및 동물병원 규모에 따라 상이할 수 있습니다. 위 일정은 일반적인 예시이며, 실제 접종 필요성과 주기 등은 아이의 종, 접종 이력, 생활 환경, 담당 수의사의 판단에 따라 달라질 수 있습니다. 시니어 전환 시점은 종, 생활환경 등에 따라 다르며, 주기적인 건강 스크리닝이 중증 의료비 부담 경감에 도움이 됩니다.",
       btnReset: "다시 계산하기",
@@ -585,9 +585,9 @@ export default function PetcareExpensesCalculator({ lang = "ko" }: PetcareExpens
       };
     } else if (computedAge < 7) {
       return {
-        stageName: lang === "ko" ? "담당 수의사 판단에 따른 주기적 관리 (1세 이상 ~ 7세 미만 성숙기)" : lang === "ja" ? "年次追加接種期 (1歳〜7歳未満成熟期)" : "Annual Booster Stage (1-6 yrs)",
+        stageName: lang === "ko" ? "담당 수의사 판단에 따른 주기적 관리" : lang === "ja" ? "年次追加接種期" : "Annual Booster Stage",
         desc: lang === "ko" 
-          ? "튼튼한 성숙기 유지를 위해 면역력 유지를 위한 추가 접종과 매월 내부외 기생충 관리가 권장됩니다." 
+          ? "건강 유지를 위해 면역력 유지를 위한 추가 접종과 매월 내외부 기생충 관리가 권장됩니다." 
           : lang === "ja" 
           ? "健康な成猫・成犬期の維持のため、年1回の免疫補強追加接種と毎月の内外寄生虫予防が推奨されます。" 
           : "Annual boosters support active immunity. Monthly preventative parasite control is highly advised.",

@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "고양이 스트레스 및 특발성 방광염(FIC) 위험 신호 확인 도구 | 마젠타랩",
-    description: "고양이 스트레스 징후 분석을 통해 판별하는 특발성 방광염 자가 위험도 평가 가이드.",
+    description: "고양이 스트레스 징후 분석을 통해 특발성 방광염 위험도를 참고용으로 확인하는 가이드.",
     images: ["/images/favicon.png"],
   }
 };
@@ -67,7 +67,7 @@ export default async function FicPage() {
       "name": "Magentalab 반려동물 연구소",
       "url": "https://www.magentalabblog.com"
     },
-    "description": "반려묘의 나이, 비만 여부, 배변 행동 및 주변 스트레스 변화를 기반으로 고양이 특발성 방광염(FIC) 위험 단계를 정밀 판별하는 확인 시뮬레이터입니다."
+    "description": "반려묘의 행동과 환경 변화를 바탕으로 FIC 관련 위험 신호를 참고용으로 확인하는 도구입니다."
   };
 
   let relatedPosts: any[] = [];
