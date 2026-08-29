@@ -1,14 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import "./globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import "@/app/globals.css";
 import Script from "next/script";
-import { Analytics } from "@vercel/analytics/react";
 import { GoogleTagManager } from "@next/third-parties/google";
-
-import SessionProvider from "@/components/providers/SessionProvider";
-import KakaoScript from "@/components/KakaoScript";
+import { SiteShell } from "@/components/layouts/SiteShell";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.magentalabblog.com"),
@@ -70,7 +65,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html lang="en">
       <GoogleTagManager gtmId="GTM-5J3WFMZS" />
       <head>
         <meta name="google-site-verification" content="nF22SWcLm8AvJD46bLfNyKCJCMvqHS8SuYoiMeEITwE" />
@@ -104,15 +99,7 @@ export default function RootLayout({
         <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js" async></script>
       </head>
       <body className="antialiased overflow-x-hidden">
-        <SessionProvider>
-          <div className="overflow-x-hidden w-full flex flex-col min-h-screen">
-            <KakaoScript />
-            <Header />
-            <main className="flex-grow">{children}</main>
-            <Analytics />
-            <Footer />
-          </div>
-        </SessionProvider>
+        <SiteShell>{children}</SiteShell>
       </body>
     </html>
   );
