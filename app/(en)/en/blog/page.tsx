@@ -1,7 +1,8 @@
 import { Metadata } from "next";
 import BlogListLayout from "@/components/blog/BlogListLayout";
 
-export const revalidate = 3600;
+// ISR 캐시 적용 (24시간 주기 갱신)
+export const revalidate = 86400;
 
 export async function generateMetadata({
   searchParams,

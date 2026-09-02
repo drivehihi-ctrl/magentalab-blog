@@ -338,7 +338,7 @@ export async function getPost(id: string, options?: { noCache?: boolean }): Prom
         : {
             next: {
               revalidate: 86400,
-              tags: [`post-${id}`, 'posts']
+              tags: [`post-${id}`]
             },
           }),
     };
@@ -462,7 +462,7 @@ export async function getComments(postId: number): Promise<WPComment[]> {
   try {
     const res = await fetch(`${WP_API_URL}/comments?post=${postId}&order=asc`, {
       next: {
-        revalidate: 3600,
+        revalidate: 86400,
         tags: [`comments-${postId}`]
       },
     });
@@ -585,7 +585,7 @@ export async function getPageBySlug(slug: string): Promise<WPPost | null> {
   try {
     const res = await fetch(`${WP_API_URL}/pages?slug=${slug}`, {
       next: {
-        revalidate: 3600,
+        revalidate: 86400,
         tags: [`page-${slug}`]
       },
     });
@@ -605,8 +605,8 @@ export async function getPostBySlug(slug: string): Promise<WPPost | null> {
   try {
     const res = await fetch(`${WP_API_URL}/posts?slug=${slug}&_embed`, {
       next: {
-        revalidate: 3600,
-        tags: [`post-slug-${slug.slice(0, 100)}`, 'posts']
+        revalidate: 86400,
+        tags: [`post-slug-${slug.slice(0, 100)}`]
       },
     });
     if (!res.ok) throw new Error(`Failed to fetch post by slug: ${slug}`);
@@ -676,3 +676,58 @@ export async function searchPosts(query: string, lang: string = "ko"): Promise<W
     return [];
   }
 }
+
+export async function fetchRelatedPosts(currentPost: WPPost, limit: number = 3, lang: string = "ko"): Promise<WPPost[]> {
+  try {
+    let relatedPosts: WPPost[] = [];
+    const isBellyPost = currentPost.slug?.includes("belly") || currentPost.slug?.includes("배방구") || currentPost.title?.rendered?.includes("배방구");
+
+    if (isBellyPost) {
+      const bellyRes = await fetch(`${WP_API_URL}/posts?_embed&per_page=5&search=${encodeURIComponent('배방구')}&exclude=${currentPost.id}&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`, {
+        next: { revalidate: 86400, tags: ['posts'] }
+      });
+      if (bellyRes.ok) relatedPosts = await safeJson(bellyRes);
+    }
+
+    if (relatedPosts.length < limit) {
+      const categoryIds = getCategories(currentPost).map((c: any) => c.id).join(',');
+      if (categoryIds) {
+        const catRes = await fetch(`${WP_API_URL}/posts?_embed&per_page=10&categories=${categoryIds}&exclude=${currentPost.id}&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`, {
+          next: { revalidate: 86400, tags: ['posts'] }
+        });
+        if (catRes.ok) {
+          const catPosts = await safeJson(catRes);
+          const existingIds = new Set(relatedPosts.map(p => p.id));
+          for (const p of catPosts) {
+            if (!existingIds.has(p.id)) relatedPosts.push(p);
+          }
+        }
+      }
+    }
+
+    if (lang === "ko") relatedPosts = relatedPosts.filter((p: any) => !p.slug.endsWith("-en") && !p.slug.endsWith("-ja"));
+    else if (lang === "en") relatedPosts = relatedPosts.filter((p: any) => p.slug.endsWith("-en"));
+    else if (lang === "ja") relatedPosts = relatedPosts.filter((p: any) => p.slug.endsWith("-ja"));
+
+    if (relatedPosts.length < limit) {
+      const fallbackRes = await fetch(`${WP_API_URL}/posts?_embed&per_page=${limit}&exclude=${currentPost.id}&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`, {
+        next: { revalidate: 86400, tags: ['posts'] }
+      });
+      if (fallbackRes.ok) {
+        let fallbackPosts = await safeJson(fallbackRes);
+        if (lang === "ko") fallbackPosts = fallbackPosts.filter((p: any) => !p.slug.endsWith("-en") && !p.slug.endsWith("-ja"));
+        else if (lang === "en") fallbackPosts = fallbackPosts.filter((p: any) => p.slug.endsWith("-en"));
+        else if (lang === "ja") fallbackPosts = fallbackPosts.filter((p: any) => p.slug.endsWith("-ja"));
+        const existingIds = new Set(relatedPosts.map(p => p.id));
+        for (const p of fallbackPosts) {
+          if (!existingIds.has(p.id)) relatedPosts.push(p);
+        }
+      }
+    }
+    return relatedPosts.slice(0, limit);
+  } catch (error) {
+    console.error("Error in fetchRelatedPosts:", error);
+    return [];
+  }
+}
+

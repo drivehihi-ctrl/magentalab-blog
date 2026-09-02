@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Metadata } from "next";
-import { getPost, getPostBySlug, getPosts, getFeaturedImage, getCategories, getTags, getRelatedPosts, fixWpLinks } from "@/lib/wp";
+import { getPost, getPostBySlug, getPosts, getFeaturedImage, getCategories, getTags, fetchRelatedPosts, fixWpLinks } from "@/lib/wp";
 import { sanitizeForSeo, decodeHtmlEntities, cleanContentReferences } from "@/lib/utils";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
@@ -99,7 +99,6 @@ export default async function PostDetailPage({ params }: PageProps) {
   const isNumeric = /^\d+$/.test(id);
   
   let post;
-  let allPosts;
   let shouldRedirect = false;
   let targetSlug = "";
 
@@ -113,8 +112,6 @@ export default async function PostDetailPage({ params }: PageProps) {
     } else {
       post = await getPostBySlug(id);
     }
-    const postsRes = await getPosts();
-    allPosts = postsRes.posts;
   } catch (error) {
     // Next.js redirection/notfound 내부 에러는 throw되어야 하므로, 
     // catch문 내에서 에러를 확인하여 redirect/notfound 인 경우는 다시 throw하게 할 수도 있으나,
@@ -137,7 +134,7 @@ export default async function PostDetailPage({ params }: PageProps) {
     }
   }
 
-  const relatedPosts = getRelatedPosts(post, allPosts, 3);
+  const relatedPosts = await fetchRelatedPosts(post, 3, "ko");
   let customEvidence = await evidenceRepository.getByPostId(post.id);
   
   // 1. Authoritative Source

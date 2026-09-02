@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Metadata } from "next";
-import { getPost, getPostBySlug, getPosts, getFeaturedImage, getCategories, getTags, getRelatedPosts, fixWpLinks } from "@/lib/wp";
+import { getPost, getPostBySlug, getPosts, getFeaturedImage, getCategories, getTags, fetchRelatedPosts, fixWpLinks } from "@/lib/wp";
 import { sanitizeForSeo, decodeHtmlEntities, cleanContentReferences } from "@/lib/utils";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
@@ -98,7 +98,6 @@ export default async function EnglishPostDetailPage({ params }: PageProps) {
   const isNumeric = /^\d+$/.test(id);
   
   let post;
-  let allPosts: any[] = [];
   let shouldRedirect = false;
   let targetSlug = "";
 
@@ -129,9 +128,7 @@ export default async function EnglishPostDetailPage({ params }: PageProps) {
       }
     }
     
-    // Fetch only English posts for related recommendations
-    const postsRes = await getPosts(1, 20, undefined, undefined, "en");
-    allPosts = postsRes.posts;
+
   } catch (error) {
     // If we completely fail, we'll let it be handled below
   }
@@ -161,7 +158,7 @@ export default async function EnglishPostDetailPage({ params }: PageProps) {
   // From here on we know post exists and is an English post
   post = fallbackPost;
 
-  const relatedPosts = getRelatedPosts(post, allPosts, 3);
+  const relatedPosts = await fetchRelatedPosts(post, 3, "en");
   let customEvidence = await evidenceRepository.getByPostId(post.id);
   
   // 1. Authoritative Source
