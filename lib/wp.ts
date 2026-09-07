@@ -683,23 +683,26 @@ export async function fetchRelatedPosts(currentPost: WPPost, limit: number = 3, 
     const isBellyPost = currentPost.slug?.includes("belly") || currentPost.slug?.includes("배방구") || currentPost.title?.rendered?.includes("배방구");
 
     if (isBellyPost) {
-      const bellyRes = await fetch(`${WP_API_URL}/posts?_embed&per_page=5&search=${encodeURIComponent('배방구')}&exclude=${currentPost.id}&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`, {
+      const bellyRes = await fetch(`${WP_API_URL}/posts?_embed&per_page=10&search=${encodeURIComponent('배방구')}&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`, {
         next: { revalidate: 86400, tags: ['posts'] }
       });
-      if (bellyRes.ok) relatedPosts = await safeJson(bellyRes);
+      if (bellyRes.ok) {
+        const bellyPosts = await safeJson(bellyRes);
+        relatedPosts = bellyPosts.filter((p: any) => p.id !== currentPost.id);
+      }
     }
 
     if (relatedPosts.length < limit) {
       const categoryIds = getCategories(currentPost).map((c: any) => c.id).join(',');
       if (categoryIds) {
-        const catRes = await fetch(`${WP_API_URL}/posts?_embed&per_page=10&categories=${categoryIds}&exclude=${currentPost.id}&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`, {
+        const catRes = await fetch(`${WP_API_URL}/posts?_embed&per_page=15&categories=${categoryIds}&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`, {
           next: { revalidate: 86400, tags: ['posts'] }
         });
         if (catRes.ok) {
           const catPosts = await safeJson(catRes);
           const existingIds = new Set(relatedPosts.map(p => p.id));
           for (const p of catPosts) {
-            if (!existingIds.has(p.id)) relatedPosts.push(p);
+            if (p.id !== currentPost.id && !existingIds.has(p.id)) relatedPosts.push(p);
           }
         }
       }
@@ -710,7 +713,7 @@ export async function fetchRelatedPosts(currentPost: WPPost, limit: number = 3, 
     else if (lang === "ja") relatedPosts = relatedPosts.filter((p: any) => p.slug.endsWith("-ja"));
 
     if (relatedPosts.length < limit) {
-      const fallbackRes = await fetch(`${WP_API_URL}/posts?_embed&per_page=${limit}&exclude=${currentPost.id}&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`, {
+      const fallbackRes = await fetch(`${WP_API_URL}/posts?_embed&per_page=10&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`, {
         next: { revalidate: 86400, tags: ['posts'] }
       });
       if (fallbackRes.ok) {
@@ -720,7 +723,7 @@ export async function fetchRelatedPosts(currentPost: WPPost, limit: number = 3, 
         else if (lang === "ja") fallbackPosts = fallbackPosts.filter((p: any) => p.slug.endsWith("-ja"));
         const existingIds = new Set(relatedPosts.map(p => p.id));
         for (const p of fallbackPosts) {
-          if (!existingIds.has(p.id)) relatedPosts.push(p);
+          if (p.id !== currentPost.id && !existingIds.has(p.id)) relatedPosts.push(p);
         }
       }
     }
