@@ -31,9 +31,10 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // 2. 포스트 ID 또는 Slug 식별
-    const postId = body.post_id || body.ID || body.post?.ID;
-    const postSlug = body.post_name || body.slug || body.post?.post_name;
+    // 2. 포스트 ID 또는 Slug 식별 (URL 쿼리 파라미터로도 수동 지원)
+    const postId = body.post_id || body.ID || body.post?.ID || request.nextUrl.searchParams.get('id');
+    const postSlug = body.post_name || body.slug || body.post?.post_name || request.nextUrl.searchParams.get('slug');
+    const clearAll = request.nextUrl.searchParams.get('clear_all') === 'true';
 
     // 3. 메모리 전역 캐시(postsCache) 100% 즉시 삭제 (목록 데이터 동기화용)
     clearPostsCache();
@@ -57,13 +58,17 @@ export async function POST(request: NextRequest) {
       revalidateTag(`post-slug-${postSlug.slice(0, 100)}`);
     }
 
-    // layout 전체 초기화(revalidatePath('/', 'layout'))는 제거됨.
-    // 기존에 revalidatePath로 다이내믹 라우트를 초기화하던 로직도 제거 (tags로 커버됨)
+    // 수동으로 전체 초기화가 필요한 경우 (예: 브라우저 주소창에서 강제 갱신 시)
+    if (clearAll) {
+      revalidatePath('/', 'layout');
+    }
 
     return NextResponse.json({ 
       revalidated: true, 
       clearedMemoryCache: true,
       processedPostId: postId || null,
+      processedSlug: postSlug || null,
+      clearedAll: clearAll,
       processedStatus: postStatus || null,
       now: Date.now() 
     });
