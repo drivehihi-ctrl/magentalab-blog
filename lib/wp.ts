@@ -681,9 +681,10 @@ export async function fetchRelatedPosts(currentPost: WPPost, limit: number = 3, 
   try {
     let relatedPosts: WPPost[] = [];
     const isBellyPost = currentPost.slug?.includes("belly") || currentPost.slug?.includes("배방구") || currentPost.title?.rendered?.includes("배방구");
+    const fields = 'id,date,date_gmt,modified,modified_gmt,slug,title,excerpt,categories,tags,_links,_embedded';
 
     if (isBellyPost) {
-      const bellyRes = await fetch(`${WP_API_URL}/posts?_embed&per_page=10&search=${encodeURIComponent('배방구')}&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`, {
+      const bellyRes = await fetch(`${WP_API_URL}/posts?_embed&per_page=10&search=${encodeURIComponent('배방구')}&_fields=${fields}`, {
         next: { revalidate: 86400, tags: ['posts'] }
       });
       if (bellyRes.ok) {
@@ -695,7 +696,7 @@ export async function fetchRelatedPosts(currentPost: WPPost, limit: number = 3, 
     if (relatedPosts.length < limit) {
       const categoryIds = getCategories(currentPost).map((c: any) => c.id).join(',');
       if (categoryIds) {
-        const catRes = await fetch(`${WP_API_URL}/posts?_embed&per_page=15&categories=${categoryIds}&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`, {
+        const catRes = await fetch(`${WP_API_URL}/posts?_embed&per_page=15&categories=${categoryIds}&_fields=${fields}`, {
           next: { revalidate: 86400, tags: ['posts'] }
         });
         if (catRes.ok) {
@@ -708,25 +709,27 @@ export async function fetchRelatedPosts(currentPost: WPPost, limit: number = 3, 
       }
     }
 
+    // 언어 필터 적용
     if (lang === "ko") relatedPosts = relatedPosts.filter((p: any) => !p.slug.endsWith("-en") && !p.slug.endsWith("-ja"));
     else if (lang === "en") relatedPosts = relatedPosts.filter((p: any) => p.slug.endsWith("-en"));
     else if (lang === "ja") relatedPosts = relatedPosts.filter((p: any) => p.slug.endsWith("-ja"));
 
-    if (relatedPosts.length < limit) {
-      const fallbackRes = await fetch(`${WP_API_URL}/posts?_embed&per_page=10&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`, {
-        next: { revalidate: 86400, tags: ['posts'] }
-      });
-      if (fallbackRes.ok) {
-        let fallbackPosts = await safeJson(fallbackRes);
-        if (lang === "ko") fallbackPosts = fallbackPosts.filter((p: any) => !p.slug.endsWith("-en") && !p.slug.endsWith("-ja"));
-        else if (lang === "en") fallbackPosts = fallbackPosts.filter((p: any) => p.slug.endsWith("-en"));
-        else if (lang === "ja") fallbackPosts = fallbackPosts.filter((p: any) => p.slug.endsWith("-ja"));
-        const existingIds = new Set(relatedPosts.map(p => p.id));
-        for (const p of fallbackPosts) {
-          if (p.id !== currentPost.id && !existingIds.has(p.id)) relatedPosts.push(p);
-        }
-      }
-    }
+    // 최근 2개월 이내 작성 또는 수정된 글만 허용 (Eligibility filter)
+    const now = new Date();
+    const twoMonthsAgo = new Date();
+    twoMonthsAgo.setMonth(now.getMonth() - 2);
+
+    relatedPosts = relatedPosts.filter((p: any) => {
+      const d1 = p.date_gmt ? new Date(p.date_gmt + "Z") : new Date(p.date);
+      const d2 = p.modified_gmt ? new Date(p.modified_gmt + "Z") : new Date(p.modified);
+      
+      const isValidD1 = d1 <= now && d1 >= twoMonthsAgo;
+      const isValidD2 = d2 <= now && d2 >= twoMonthsAgo;
+      
+      return isValidD1 || isValidD2;
+    });
+
+    // 기존 연관도순 정렬(우선순위: 배방구 -> 카테고리) 및 중복 방지는 이미 위의 로직과 filter에서 해결됨
     return relatedPosts.slice(0, limit);
   } catch (error) {
     console.error("Error in fetchRelatedPosts:", error);
