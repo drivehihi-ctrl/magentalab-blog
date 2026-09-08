@@ -33,65 +33,40 @@ export default function TermsPage() {
           <div className="prose prose-magenta max-w-none text-gray-600 leading-relaxed font-sans">
             <h2 className="text-xl font-extrabold text-gray-900 mb-4 tracking-tight">Article 1 (Purpose)</h2>
             <p className="mb-6">
-              These Terms of Service aim to regulate the general conditions of use and operation of the services provided by "Magentalab Companion Animal Research Center" (hereinafter referred to as the "Center").
+              These Terms of Service aim to regulate the general conditions of use and operation of the services, information, and tools provided by "Magentalab Companion Animal Research Center" (hereinafter referred to as the "Center"), as well as the rights, obligations, and responsibilities between the users and the Center.
             </p>
 
-            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">Article 2 (Definition of Terms)</h2>
+            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">Article 2 (Nature of Service and Medical Disclaimer)</h2>
             <div className="mb-6">
-              Definitions of major terms used in these Terms are as follows:
+              This website is an <b>informational blog</b> providing general information and reference calculation tools regarding the health, nutrition, and lifestyle of companion animals.
               <ul className="list-disc pl-5 mt-2 space-y-1">
-                <li>Member: An individual who has agreed to these Terms, provided personal information to complete registration, and established a contract of use with the Center to utilize the services.</li>
-                <li>Contract of Use: The agreement established between the Center and a member regarding the use of the services.</li>
-                <li>Member ID (hereinafter "ID"): A unique combination of letters and numbers assigned to each member for member identification and service usage.</li>
-                <li>Password: A combination of letters and numbers chosen by the member to verify identity and protect membership rights.</li>
-                <li>Operator: The administrator responsible for opening and running the service website.</li>
-                <li>Cancellation: The act of a member terminating the contract of use.</li>
+                <li>All content, figures, and calculation results provided on this website cannot substitute for veterinary diagnosis, treatment, or prescription.</li>
+                <li>If your companion animal shows abnormal signs or is suspected of having a disease, you must consult a professional veterinarian.</li>
+                <li>The Center assumes no legal responsibility for any actions taken by users based on the information on this website.</li>
               </ul>
             </div>
 
-            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">Article 3 (Rules Outside These Terms)</h2>
+            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">Article 3 (Non-Membership Operation)</h2>
             <p className="mb-6">
-              The operator may notify operational policies separately if necessary, and if these Terms overlap with the operational policies, the operational policies shall take precedence.
+              The Center does not provide standard membership registration (requiring name, address, password, etc.) or paid payment features. Anyone can freely view published content and use reference tools without charge.
             </p>
 
-            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">Article 4 (Establishment of Contract of Use)</h2>
+            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">Article 4 (Copyright of Content and Restrictions on Use)</h2>
             <p className="mb-6">
-              1. The contract of use is established upon the operator's approval of the registration application and agreement to the terms by a person wishing to use the Center.
-              <br />2. A person wishing to register as a member expresses consent to these Terms by reading them and selecting "I agree" during the site registration process.
+              1. The copyright and intellectual property rights for all content, designs, calculator logic, etc., created by the Center belong to the Center.
+              <br />2. Users shall not use information obtained through the Center's services for commercial purposes by reproduction, transmission, publication, distribution, broadcasting, or other methods, nor allow third parties to use it without the Center's prior consent.
             </p>
 
-            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">Article 5 (Application for Service Use)</h2>
+            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">Article 5 (Suspension and Modification of Services)</h2>
             <p className="mb-6">
-              1. A user wishing to register and use the Center must provide general information requested by the Center (User ID, password, nickname, etc.).
-              <br />2. Members who steal someone else's information or register false information without registering their true details cannot claim any rights regarding the use of the Center and may be punished according to relevant laws.
+              The operator may temporarily suspend or change the provision of services in the event of unavoidable operational or technical reasons, such as regular system inspections, equipment replacement, or communication disruption.
             </p>
 
-            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">Article 6 (Obligations of the Operator)</h2>
+            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">Article 6 (Indemnification)</h2>
             <p className="mb-6">
-              1. The operator shall process opinions or complaints raised by users as quickly as possible if they are recognized as justifiable.
-              <br />2. The operator shall make every effort to repair or restore equipment immediately in the event of failure or loss for continuous and stable service provision.
-            </p>
-
-            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">Article 7 (Obligations of Members)</h2>
-            <p className="mb-6">
-              1. Members must comply with the provisions defined in these Terms, regulations set by the operator, announcements, and operational policies, and must not engage in acts that interfere with the Center's business or damage the Center's reputation.
-              <br />2. Members may not transfer or donate their service usage rights or other contract of use status to others without the explicit consent of the Center.
-            </p>
-
-            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">Article 8 (Service Hours)</h2>
-            <p className="mb-6">
-              As a rule, service hours are 24 hours a day, 365 days a year, unless there is a special operational or technical obstacle. However, services may be temporarily suspended on days or hours designated by the Center for system regular inspection, etc.
-            </p>
-
-            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">Article 9 (Copyright of Posts)</h2>
-            <p className="mb-6">
-              1. The copyright of posts published by members in the service belongs to the author member.
-              <br />2. Users shall not use information obtained through the Center's services for commercial purposes or make third parties use it by reproduction, transmission, publication, distribution, broadcasting, or other methods without the prior consent of the Center.
-            </p>
-
-            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">Article 10 (Indemnification)</h2>
-            <p className="mb-6">
-              The operator is not responsible for any inability to provide services due to natural disasters or equivalent force majeure, nor for service use obstacles caused by the member's fault.
+              1. The operator is exempt from responsibility regarding service provision if services cannot be provided due to natural disasters or equivalent force majeure.
+              <br />2. The operator is not responsible for any service use obstacles caused by the user's fault.
+              <br />3. The operator is not responsible for damages resulting from the user's blind trust in the reliability or accuracy of the website's information, data, or facts.
             </p>
 
             <p className="mt-12 pt-8 border-t border-gray-100 text-sm text-gray-400">

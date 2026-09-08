@@ -83,7 +83,7 @@ export default function LiveSearch() {
       {isOpen && (query.trim().length >= 2 || isLoading) && (
         <div className="absolute top-14 right-0 w-[90vw] md:w-[450px] bg-white/95 backdrop-blur-xl border border-gray-100 shadow-2xl rounded-3xl overflow-hidden z-[60] animate-in fade-in slide-in-from-top-2 duration-300">
           <div className="p-4 border-b border-gray-50 bg-gray-50/50 flex items-center justify-between">
-            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">검색 결과</span>
+            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{isEn ? 'Search Results' : isJa ? '検索結果' : '검색 결과'}</span>
             {isLoading && <Loader2 size={14} className="animate-spin text-magenta" />}
           </div>
 
@@ -91,7 +91,7 @@ export default function LiveSearch() {
             {isLoading ? (
               <div className="py-20 text-center">
                 <Loader2 size={32} className="animate-spin text-magenta/20 mx-auto mb-3" />
-                <p className="text-xs text-gray-400 font-medium">안심 연구원이 정보를 찾는 중...</p>
+                <p className="text-xs text-gray-400 font-medium">{isEn ? 'Searching related articles...' : isJa ? '関連記事を検索しています...' : '관련 글을 찾는 중...'}</p>
               </div>
             ) : results.length > 0 ? (
               <div className="flex flex-col p-2 gap-1">
@@ -116,7 +116,7 @@ export default function LiveSearch() {
                         dangerouslySetInnerHTML={{ __html: post.title.rendered }}
                       />
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] text-magenta font-black uppercase tracking-tighter bg-magenta/10 px-1.5 py-0.5 rounded">Story</span>
+                        <span className="text-[10px] text-magenta font-black uppercase tracking-tighter bg-magenta/10 px-1.5 py-0.5 rounded">{isEn ? 'Article' : isJa ? '記事' : '글'}</span>
                         <span className="text-[10px] text-gray-400 font-medium">{new Date(post.date).toLocaleDateString()}</span>
                       </div>
                     </div>
@@ -127,16 +127,14 @@ export default function LiveSearch() {
             ) : query.trim().length >= 2 ? (
               <div className="py-20 text-center">
                 <div className="text-4xl mb-3">🧐</div>
-                <p className="text-[13px] font-bold text-gray-900 mb-1">관련된 정보를 찾지 못했어요</p>
-                <p className="text-[11px] text-gray-400">다른 검색어로 다시 시도해볼까요?</p>
+                <p className="text-[13px] font-bold text-gray-900 mb-1">{isEn ? 'No related articles were found.' : isJa ? '関連記事が見つかりませんでした。' : '관련된 글을 찾지 못했어요'}</p>
+                <p className="text-[11px] text-gray-400">{isEn ? 'Try searching with a different term.' : isJa ? '別のキーワードで検索してみてください。' : '다른 검색어로 다시 검색해 보세요.'}</p>
               </div>
             ) : null}
           </div>
 
           <div className="p-4 bg-gray-50/80 border-t border-gray-100 text-center">
-            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-              Powered by Magentalab Research AI
-            </p>
+              Magentalab Search
           </div>
         </div>
       )}

@@ -38,38 +38,34 @@ export default function PrivacyPage() {
             <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">1. 個人情報の処理目的</h2>
             <p className="mb-6">
               研究所は、以下の目的のために個人情報を処理し、目的以外の用途には利用しません。
-              <br />- ホームページ会員登録および管理：登録意思の確認、本人識別、会員資格の維持、各種通知・告知など
-              <br />- サービスの提供：コンテンツの提供、カスタマイズされたサービスの提供、本人確認など
-              <br />- 苦情処理：苦情申し立て人の身元確認、事実調査のための連絡、処理結果の通知など
+              <br />- メール問い合わせ対応：問い合わせ者の身元確認、事実調査のための連絡、処理結果の通知など
+              <br />- サービスの利用統計および分析（Vercel Analyticsなどの活用）
             </p>
 
-            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">2. 個人情報の処理および保有期間</h2>
+            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">2. 収集する個人情報項目および保有期間</h2>
             <p className="mb-6">
-              研究所は、法令に基づく個人情報の保有・利用期間、または情報主体から個人情報を収集する際に同意を得た個人情報の保有・利用期間内で個人情報を処理・保有します。
-              <br />- ホームページ会員登録および管理：ホームページ退会時まで
-              <br />- 財貨またはサービスの提供：サービスの提供完了および料金決済・精算完了時まで
+              研究所は、一般的な会員登録（名前、パスワード、住所、電話番号など）を通じた個人情報の収集を行いません。
+              <br />- メール問い合わせ時に収集する項目：メールアドレス、問い合わせ内容（目的達成後、遅滞なく破棄）
+              <br />- ソーシャルログイン（OAuth）利用時に収集する項目：ソーシャルアカウントの名前およびメールアドレス（利用終了または退会時に破棄）
+              <br />- インターネットサービス利用の過程で自動的に生成され収集される項目：IPアドレス、クッキー、サービス利用記録、訪問記録（Vercel Analyticsなどを通じてウェブサイトの改善目的で活用）
             </p>
 
-            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">3. 収集する個人情報項目</h2>
+            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">3. 分析ツール（Vercel Analytics）の使用</h2>
             <p className="mb-6">
-              研究所は、以下の個人情報項目を処理しています。
-              <br />- 必須項目：氏名、ユーザーID、パスワード、住所、電話番号、メールアドレス
-              <br />- インターネットサービス利用の過程で自動的に生成され収集される項目：IPアドレス、クッキー、サービス利用記録、訪問記録など
+              本ウェブサイトは、訪問者のサービス利用行動を分析し、より良いユーザーエクスペリエンスを提供するためにVercel Analyticsを使用しています。この過程で、個人を特定できない形式のブラウザおよびデバイス情報、ページ訪問記録などが匿名化されて収集される場合があります。
             </p>
 
             <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">4. Google AdSenseおよびサードパーティクッキーポリシー</h2>
             <p className="mb-6">
-              本ウェブサイトは、Google LLCが提供するオンライン広告サービスであるGoogle AdSenseを利用しています。
-              <br />- Googleおよびサードパーティ広告配信事業者は、ユーザーの過去のウェブサイト訪問記録に基づき、パーソナライズ広告を提供するためにクッキー（Cookie）を使用します。
+              本ウェブサイトに広告が有効化され掲載される場合、Google LLCが提供するオンライン広告サービスであるGoogle AdSenseを利用することがあります。
+              <br />- Googleおよびサードパーティ広告配信事業者は、ユーザーの過去のウェブサイト訪問記録に基づき、パーソナライズ広告を提供するためにクッキー（Cookie）を使用することがあります。
               <br />- ユーザーはGoogleの広告設定（<a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-magenta underline">www.google.com/settings/ads</a>）にアクセスし、パーソナライズ広告の受信を拒否（Opt-out）できます。
               <br />- または <a href="https://www.aboutads.info" target="_blank" rel="noopener noreferrer" className="text-magenta underline">www.aboutads.info</a> にアクセスしてサードパーティ事業者のクッキー使用を無効にできます。
             </p>
 
             <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">5. 個人情報の破棄手続きおよび方法</h2>
-
             <p className="mb-6">
-              研究所は、個人情報の保有期間の経過、処理目的の達成など、個人情報が不要になったときは、遅滞なく当該個人情報を破棄します。
-              <br />- 破棄方法：電子的なファイル形態は記録を再生できない技術的な方法を使用し、紙の文書は粉砕するか焼却します。
+              研究所は、保有期間の経過、処理目的の達成など、個人情報が不要になったときは、遅滞なく当該個人情報を破棄します。
             </p>
 
             <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">6. 利用者および法定代理人の権利とその行使方法</h2>

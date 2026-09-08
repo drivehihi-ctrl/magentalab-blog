@@ -13,19 +13,19 @@ export default function AboutEEATFeatures({ lang = 'ko' }: AboutEEATFeaturesProp
   const isJa = lang === 'ja';
 
   const mapTitle = isEn 
-    ? "🗺️ Real-Time Pet-Friendly Map Science (Magenta Pet Map)"
+    ? "🗺️ Pet-Friendly Map (Magenta Pet Map)"
     : isJa 
-    ? "🗺️ リアルタイム犬同伴可能ペットマップ (Magenta Pet Map)"
-    : "🗺️ 실시간 펫 프렌들리 지도 라이프 사이언스 (마젠타 펫 맵)";
+    ? "🗺️ ペット同伴可能マップ (Magenta Pet Map)"
+    : "🗺️ 반려동물 생활지도 (마젠타 펫 맵)";
 
   const mapDesc = isEn
-    ? "Discover pet-friendly restaurants, cafes, parks, and 24-hour emergency vet clinics across the country in real time through Magentalab's location-based smart map service."
+    ? "Discover pet-friendly restaurants, cafes, parks, and 24-hour emergency vet clinics across the country."
     : isJa
-    ? "全国のペット同伴可能なレストラン、カフェ、公園、24時間応急動物病院の情報をリアルタイムで探せるマゼンタラボのスマートマップをご体験ください。"
-    : "전국의 애견동반 식당, 펫 프렌들리 카페, 24시 응급 동물병원, 산책 공원 정보를 실시간으로 탐색할 수 있는 마젠타랩의 위치 기반 스마트 지도를 경험해 보세요.";
+    ? "全国のペット同伴可能なレストラン、カフェ、公園、24時間応急動物病院の情報を探せます。"
+    : "전국의 애견동반 식당, 펫 프렌들리 카페, 24시 응급 동물병원, 산책 공원 정보를 탐색할 수 있는 마젠타랩의 위치 기반 지도입니다.";
 
-  const mapBtnText = isEn ? "Explore Pet Map Live ➔" : isJa ? "ペットマップを見る ➔" : "실시간 펫 맵 바로가기 ➔";
-  const mapLink = isEn ? "/en" : isJa ? "/ja" : "/map";
+  const mapBtnText = isEn ? "Explore Pet Map ➔ (Korean)" : isJa ? "ペットマップを見る ➔ (韓国語)" : "펫 맵 바로가기 ➔";
+  const mapLink = "/map";
 
   const trustTitle = isEn
     ? "🏢 Magentalab Pet Research Lab Company Information & Contact"
@@ -42,7 +42,7 @@ export default function AboutEEATFeatures({ lang = 'ko' }: AboutEEATFeaturesProp
         
         <div className="flex items-center gap-2">
           <span className="px-3 py-1 rounded-full bg-[#E5007E]/20 text-[#FF6B9D] border border-[#E5007E]/30 text-xs font-bold flex items-center gap-1">
-            <Sparkles className="w-3.5 h-3.5" /> Life Science Map Service
+            <Sparkles className="w-3.5 h-3.5" /> Pet Map Service
           </span>
         </div>
 
@@ -78,7 +78,9 @@ export default function AboutEEATFeatures({ lang = 'ko' }: AboutEEATFeaturesProp
             <div className="space-y-1">
               <p className="font-bold text-gray-900">{isEn ? "Location & Business Information" : isJa ? "所在地・事業者情報" : "소재지 & 사업자 정보"}</p>
               <p className="text-gray-600 leading-relaxed">
-                경기도 김포시 양촌읍 황금산단로 65, 2층<br />
+                {isEn ? "2F, 65, Hwanggeumsandan-ro, Yangchon-eup, Gimpo-si, Gyeonggi-do, Republic of Korea" : 
+                 isJa ? "京畿道金浦市陽村邑黄金産団路65, 2階" : 
+                 "경기도 김포시 양촌읍 황금산단로 65, 2층"}<br />
                 {isEn ? "CEO: Kim Beomjun" : isJa ? "代表者: Kim Beomjun" : "대표이사: 김범준"} | {isEn ? "Business Registration No.: 448-07-03101" : isJa ? "事業者登録番号: 448-07-03101" : "사업자등록번호: 448-07-03101"}<br />
                 {isEn ? "E-commerce Registration: 2025-Gyeonggimpo-1339" : isJa ? "通信販売業届出: 第2025-京畿金浦-1339号" : "통신판매업 신고: 제 2025-경기김포-1339호"}
               </p>

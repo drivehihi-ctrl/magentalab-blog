@@ -41,22 +41,22 @@ export default function DiagnosticCenterSection({ lang = 'ko' }: DiagnosticCente
     },
     {
       icon: AlertTriangle,
-      title: isEn ? 'Toxic Food Emergency Checker' : isJa ? '誤食・中毒緊急チェッカー' : '음식 독성 & 응급 처치 체커',
+      title: isEn ? 'Toxic Food Risk & Emergency Check' : isJa ? '誤食・中毒リスク確認' : '음식 섭취 위험 & 응급 신호 확인',
       desc: isEn ? 'Instant check for onion, garlic, chocolate' : isJa ? '양파・마늘・초콜릿 위험도 확인' : '양파, 마늘, 초콜릿 섭취 시 긴급 대처 가이드',
       link: isEn ? '/en/emergency-calculator' : isJa ? '/ja/emergency-calculator' : '/emergency-calculator',
       tag: isEn ? 'EMERGENCY' : isJa ? '緊急' : '응급·독성',
     },
     {
       icon: Bone,
-      title: isEn ? 'Patella Joint Self-Diagnoser' : isJa ? 'パテラ（膝蓋骨）セルフ診断' : '슬개골 관절 건강 셀프 진단',
+      title: isEn ? 'Patella Risk Sign Check' : isJa ? 'パテラ（膝蓋骨）のリスクサイン確認' : '슬개골 관절 위험 신호 확인',
       desc: isEn ? 'Check limp & step risk level' : isJa ? '歩行異常と関節リスクをチェック' : '소형견 슬개골 탈구 단계별 증상 확인',
       link: isEn ? '/en/patella-diagnoser' : isJa ? '/ja/patella-diagnoser' : '/patella-diagnoser',
       tag: isEn ? 'JOINT' : isJa ? '関節' : '관절·슬개골',
     },
     {
       icon: Stethoscope,
-      title: isEn ? 'Feline Cystitis (FIC) Checker' : isJa ? '猫の特発性膀胱炎（FIC）チェック' : '고양이 특발성 방광염(FIC) 진단',
-      desc: isEn ? 'Identify frequent litter box visits & stress' : isJa ? '頻尿・血尿・ストレスサインを分析' : '빈뇨, 화장실 들락거림 등 방광염 위험 분석',
+      title: isEn ? 'Feline Cystitis (FIC) Checker' : isJa ? '猫の尿路・膀胱リスクサイン確認' : '고양이 방광 이상 신호 확인',
+      desc: isEn ? 'Review urinary and stress-related warning signs' : isJa ? '排尿やストレスに関する気になるサインを確認' : '배뇨 변화와 스트레스 관련 위험 신호 확인',
       link: isEn ? '/en/fic-diagnoser' : isJa ? '/ja/fic-diagnoser' : '/fic-diagnoser',
       tag: isEn ? 'CAT HEALTH' : isJa ? '猫の健康' : '고양이 방광',
     },
@@ -98,7 +98,7 @@ export default function DiagnosticCenterSection({ lang = 'ko' }: DiagnosticCente
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/70 border border-[#E5007E]/20 text-[#E5007E] text-[10px] font-black tracking-widest uppercase mb-4 shadow-sm">
                 <ShieldCheck className="w-3 h-3" />
                 <span>
-                  {isEn ? 'FREE DIAGNOSTIC TOOLS' : isJa ? '無料診断ツール' : '마젠타랩 무료 진단센터'}
+                  {isEn ? 'FREE PET HEALTH TOOLS' : isJa ? 'ペット健康参考ツール' : '마젠타랩 건강 참고 도구'}
                 </span>
               </div>
 
@@ -116,17 +116,17 @@ export default function DiagnosticCenterSection({ lang = 'ko' }: DiagnosticCente
               {/* Sub description */}
               <p className="text-xs text-gray-500 font-medium leading-relaxed mb-5">
                 {isEn
-                  ? 'Accurate vet-formula calculators by Ansim Research Team.'
+                  ? 'Practical reference tools to help you understand and track your pet’s health information.'
                   : isJa
-                  ? 'アンシム研究チームが開発した無料の健康チェックツール。'
-                  : '수석 연구원 안심이가 수의학 공식을 기반으로 제작한 7대 무료 건강 참고 도구입니다.'}
+                  ? '愛犬・愛猫の健康情報を理解し、記録するための参考ツールです。'
+                  : '반려동물의 건강 정보와 생활 변화를 이해하고 기록하는 데 도움을 주는 무료 참고 도구입니다.'}
               </p>
 
               {/* Ansim-i Character Image */}
               <div className="relative w-48 h-48 mx-auto" style={{ animation: 'float 5s ease-in-out infinite' }}>
                 <Image
                   src="/images/wing.png"
-                  alt="수석 연구원 안심이"
+                  alt="반려동물 건강 정보를 설명하는 안심이"
                   fill
                   className="object-contain drop-shadow-lg"
                 />
@@ -134,7 +134,7 @@ export default function DiagnosticCenterSection({ lang = 'ko' }: DiagnosticCente
 
               {/* Name badge */}
               <div className="mt-4 text-xs font-black text-[#E5007E] tracking-wide">
-                {isEn ? '🐾 Ansim-i' : isJa ? '🐾 アンシム 主任研究員' : '🐾 수석 연구원 안심이'}
+                {isEn ? '🐾 Ansim' : isJa ? '🐾 アンシム' : '🐾 안심이'}
               </div>
             </div>
           </div>
@@ -169,7 +169,7 @@ export default function DiagnosticCenterSection({ lang = 'ko' }: DiagnosticCente
                       </p>
                     </div>
                     <div className="inline-flex items-center gap-0.5 text-xs font-extrabold text-[#E5007E] pt-3 mt-3 border-t border-gray-100">
-                      <span>{isEn ? 'Start Now' : isJa ? '今すぐ診断' : '지금 진단하기'}</span>
+                      <span>{isEn ? 'Check the Guide' : isJa ? '確認する' : '확인해 보기'}</span>
                       <ChevronRight className="w-3.5 h-3.5" />
                     </div>
                   </Link>
@@ -204,7 +204,7 @@ export default function DiagnosticCenterSection({ lang = 'ko' }: DiagnosticCente
                       </p>
                     </div>
                     <div className="inline-flex items-center gap-0.5 text-xs font-extrabold text-[#E5007E] group-hover:translate-x-1 transition-transform pt-3 mt-3 border-t border-gray-100">
-                      <span>{isEn ? 'Start Now' : isJa ? '今すぐ診断' : '지금 진단하기'}</span>
+                      <span>{isEn ? 'Check the Guide' : isJa ? '確認する' : '확인해 보기'}</span>
                       <ChevronRight className="w-3.5 h-3.5" />
                     </div>
                   </Link>

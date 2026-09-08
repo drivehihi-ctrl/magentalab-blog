@@ -38,38 +38,34 @@ export default function PrivacyPage() {
             <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">1. Purpose of Processing Personal Information</h2>
             <p className="mb-6">
               The Center processes personal information for the following purposes and does not use it for purposes other than these.
-              <br />- Homepage member registration and management: Confirmation of intent to register, identification, maintenance of membership status, various announcements and notices, etc.
-              <br />- Service Provision: Content provision, customized service provision, identity authentication, etc.
-              <br />- Complaint Handling: Identification of complainants, contact for investigation, notification of processing results, etc.
+              <br />- Handling Email Inquiries: Identification of the inquirer, contact for investigation, and notification of processing results, etc.
+              <br />- Service Usage Statistics and Analysis (Utilizing Vercel Analytics, etc.)
             </p>
 
-            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">2. Processing and Retention Period of Personal Information</h2>
+            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">2. Collected Personal Information Items and Retention Period</h2>
             <p className="mb-6">
-              The Center processes and retains personal information within the personal information retention and use period according to laws and regulations or agreed upon when collecting personal information from the data subject.
-              <br />- Homepage registration and management: Until withdrawal from the website
-              <br />- Goods or Service Provision: Until completion of service supply and completion of payment/settlement
+              The Center does not collect personal information through standard membership registration (name, password, address, phone number, etc.).
+              <br />- Items collected upon email inquiry: Email address, content of inquiry (Destroyed without delay after achieving the purpose)
+              <br />- Items collected when using simple login (OAuth): Name and email address of the social account (Destroyed upon termination of use or account withdrawal)
+              <br />- Items automatically generated and collected during internet service use: IP address, cookies, service usage logs, visit logs (Used for website improvement purposes via Vercel Analytics, etc.)
             </p>
 
-            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">3. Collected Personal Information Items</h2>
+            <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">3. Use of Analytics Tools (Vercel Analytics)</h2>
             <p className="mb-6">
-              The Center processes the following personal information items:
-              <br />- Required items: Name, User ID, Password, Address, Phone number, Email address
-              <br />- Automatically generated and collected items during internet service use: IP address, cookies, service usage logs, visit logs, etc.
+              This website uses Vercel Analytics to analyze visitors' service usage behavior and provide a better user experience. During this process, non-personally identifiable browser and device information, page visit records, etc., may be collected anonymously.
             </p>
 
             <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">4. Google AdSense & Third-Party Cookie Policy</h2>
             <p className="mb-6">
-              This website uses Google AdSense, a third-party advertising service provided by Google LLC.
-              <br />- Google and third-party vendors use cookies to serve ads based on a user's prior visits to this website or other websites on the Internet.
-              <br />- Users may opt out of personalized advertising by visiting Google Ads Settings (<a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-magenta underline">www.google.com/settings/ads</a>).
-              <br />- Alternatively, users can opt out of third-party vendor's use of cookies for personalized advertising by visiting <a href="https://www.aboutads.info" target="_blank" rel="noopener noreferrer" className="text-magenta underline">www.aboutads.info</a>.
+              If advertisements are activated and displayed on this website, it may use Google AdSense, an online advertising service provided by Google LLC.
+              <br />- Google and third-party vendors may use cookies to serve ads based on a user's prior visits to this website.
+              <br />- Users may opt out of personalized advertising at any time by visiting Google Ads Settings (<a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-magenta underline">www.google.com/settings/ads</a>).
+              <br />- Alternatively, users can opt out of a third-party vendor's use of cookies for personalized advertising by visiting <a href="https://www.aboutads.info" target="_blank" rel="noopener noreferrer" className="text-magenta underline">www.aboutads.info</a>.
             </p>
 
             <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">5. Destruction Procedure and Method of Personal Information</h2>
-
             <p className="mb-6">
-              The Center destroys the personal information without delay when the personal information becomes unnecessary, such as the expiration of the retention period or the achievement of the processing purpose.
-              <br />- Destruction Method: Electronic files are destroyed using technical methods that cannot reproduce the records, and paper documents are shredded or incinerated.
+              The Center destroys personal information without delay when the personal information becomes unnecessary, such as the expiration of the retention period or the achievement of the processing purpose.
             </p>
 
             <h2 className="text-xl font-extrabold text-gray-900 mt-10 mb-4 tracking-tight">6. Rights of Users and Legal Representatives and How to Exercise Them</h2>

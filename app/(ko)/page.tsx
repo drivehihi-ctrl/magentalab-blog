@@ -39,6 +39,10 @@ export default async function HomePage({
 }) {
   const { posts: allPosts } = await getPosts(1, 500, undefined, undefined, "ko");
 
+  if (!allPosts || allPosts.length === 0) {
+    throw new Error("No posts found. Aborting ISR revalidation to keep stale cache.");
+  }
+
   // 🌟 "지금 뜨고 있는 글" (Trending Posts) - Fixed List by User Request
   const fixedSlugs = [
     "why-dogs-hate-belly-farts-id308",

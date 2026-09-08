@@ -68,10 +68,10 @@ export default function Header() {
     patellaLink: isEn ? "/en/patella-diagnoser" : isJa ? "/ja/patella-diagnoser" : "/patella-diagnoser",
     petCare: isEn ? "Pet Expenses" : isJa ? "養育費計算" : "양육비 계산",
     petCareLink: isEn ? "/en/petcare-expenses-calculator" : isJa ? "/ja/petcare-expenses-calculator" : "/petcare-expenses-calculator",
-    fic: isEn ? "Cystitis Risk Check" : isJa ? "膀胱炎確認" : "방광염 위험 확인",
+    fic: isEn ? "Cystitis Risk Check" : isJa ? "膀胱炎リスク確認" : "방광염 위험 확인",
     ficLink: isEn ? "/en/fic-diagnoser" : isJa ? "/ja/fic-diagnoser" : "/fic-diagnoser",
     contact: isEn ? "Contact" : isJa ? "お問い合わせ" : "문의하기",
-    searchLabel: isEn ? "AI Search" : isJa ? "AI検索" : "AI 검색",
+    searchLabel: isEn ? "Search" : isJa ? "検索" : "검색",
   };
 
   const getNavLink = (linkPath: string) => {

@@ -39,6 +39,10 @@ export default async function JapaneseHomePage({
 }) {
   const { posts: allPosts } = await getPosts(1, 500, undefined, undefined, "ja");
 
+  if (!allPosts || allPosts.length === 0) {
+    throw new Error("No posts found. Aborting ISR revalidation to keep stale cache.");
+  }
+
   // Trending Posts (Fixed List by User Request)
   const fixedSlugs = [
     "why-dogs-hate-belly-farts-id308-ja",
