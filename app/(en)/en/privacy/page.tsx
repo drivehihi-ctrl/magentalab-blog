@@ -46,7 +46,12 @@ export default function PrivacyPage() {
             <p className="mb-6">
               The Center does not collect personal information through standard membership registration (name, password, address, phone number, etc.).
               <br />- Items collected upon email inquiry: Email address, content of inquiry (Destroyed without delay after achieving the purpose)
-              <br />- Items collected when using simple login (OAuth): Name and email address of the social account (Destroyed upon termination of use or account withdrawal)
+              <br />- Items collected when using simple login (OAuth 2.0):
+              <ul className="list-disc pl-5 mt-2 space-y-1">
+                <li>Login Method: Google, Kakao simple login</li>
+                <li>Collected Fields: Name, email address, and profile image of the social account</li>
+                <li>Account and Information Deletion Method: Destroyed without delay upon request via email (smagentalab@gmail.com)</li>
+              </ul>
               <br />- Items automatically generated and collected during internet service use: IP address, cookies, service usage logs, visit logs (Used for website improvement purposes via Vercel Analytics, etc.)
             </p>
 

@@ -40,9 +40,7 @@ export default function TermsPage() {
             <div className="mb-6">
               This website is an <b>informational blog</b> providing general information and reference calculation tools regarding the health, nutrition, and lifestyle of companion animals.
               <ul className="list-disc pl-5 mt-2 space-y-1">
-                <li>All content, figures, and calculation results provided on this website cannot substitute for veterinary diagnosis, treatment, or prescription.</li>
-                <li>If your companion animal shows abnormal signs or is suspected of having a disease, you must consult a professional veterinarian.</li>
-                <li>The Center assumes no legal responsibility for any actions taken by users based on the information on this website.</li>
+                <li>The information on this website is provided for general educational and reference purposes and does not replace veterinary diagnosis or treatment decisions for an individual animal. Users should seek veterinary care when an individual health decision is required.</li>
               </ul>
             </div>
 
@@ -66,7 +64,7 @@ export default function TermsPage() {
             <p className="mb-6">
               1. The operator is exempt from responsibility regarding service provision if services cannot be provided due to natural disasters or equivalent force majeure.
               <br />2. The operator is not responsible for any service use obstacles caused by the user's fault.
-              <br />3. The operator is not responsible for damages resulting from the user's blind trust in the reliability or accuracy of the website's information, data, or facts.
+              <br />3. Information and calculation results are provided based on the sources available at the time of publication or update and may not reflect every individual animal or later changes in external data. Important medical decisions should not be made from online information alone and should be confirmed with a veterinarian.
             </p>
 
             <p className="mt-12 pt-8 border-t border-gray-100 text-sm text-gray-400">
