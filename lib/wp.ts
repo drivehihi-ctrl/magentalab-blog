@@ -684,7 +684,7 @@ export async function fetchRelatedPosts(currentPost: WPPost, limit: number = 3, 
     const fields = 'id,date,date_gmt,modified,modified_gmt,slug,title,excerpt,categories,tags,_links,_embedded';
 
     if (isBellyPost) {
-      const bellyRes = await fetch(`${WP_API_URL}/posts?_embed&per_page=10&search=${encodeURIComponent('배방구')}&_fields=${fields}`, {
+      const bellyRes = await fetch(`${WP_API_URL}/posts?_embed&per_page=50&search=${encodeURIComponent('배방구')}&_fields=${fields}`, {
         next: { revalidate: 86400, tags: ['posts'] }
       });
       if (bellyRes.ok) {
@@ -696,7 +696,7 @@ export async function fetchRelatedPosts(currentPost: WPPost, limit: number = 3, 
     if (relatedPosts.length < limit) {
       const categoryIds = getCategories(currentPost).map((c: any) => c.id).join(',');
       if (categoryIds) {
-        const catRes = await fetch(`${WP_API_URL}/posts?_embed&per_page=15&categories=${categoryIds}&_fields=${fields}`, {
+        const catRes = await fetch(`${WP_API_URL}/posts?_embed&per_page=50&categories=${categoryIds}&_fields=${fields}`, {
           next: { revalidate: 86400, tags: ['posts'] }
         });
         if (catRes.ok) {
@@ -716,8 +716,17 @@ export async function fetchRelatedPosts(currentPost: WPPost, limit: number = 3, 
 
     // 최근 2개월 이내 작성 또는 수정된 글만 허용 (Eligibility filter)
     const now = new Date();
-    const twoMonthsAgo = new Date();
-    twoMonthsAgo.setMonth(now.getMonth() - 2);
+    let targetMonth = now.getMonth() - 2;
+    let targetYear = now.getFullYear();
+    if (targetMonth < 0) {
+      targetMonth += 12;
+      targetYear--;
+    }
+    const twoMonthsAgo = new Date(targetYear, targetMonth, now.getDate());
+    // JS 달력 롤오버(예: 3월 31일 -> 3월 3일이 아닌 3월 달의 일수가 모자라 3월 2~3일로 넘어가는 현상 등) 방지 및 안전한 클램프
+    if (twoMonthsAgo.getMonth() !== targetMonth) {
+      twoMonthsAgo.setDate(0);
+    }
 
     relatedPosts = relatedPosts.filter((p: any) => {
       const d1 = p.date_gmt ? new Date(p.date_gmt + "Z") : new Date(p.date);
