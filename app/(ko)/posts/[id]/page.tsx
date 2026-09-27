@@ -334,8 +334,8 @@ export default async function PostDetailPage({ params }: PageProps) {
             postId={post.id.toString()}
           />
 
-          {/* 제휴몰 배너 (본문 직후) */}
-          <AffiliateStoreBanner />
+          {/* 제휴몰 배너 (한국어판 전용) */}
+          <AffiliateStoreBanner lang="ko" />
         
         {/* Social Share Section */}
         <SocialShare url={`/posts/${post.slug}`} title={post.title.rendered.replace(/<[^>]*>?/gm, "")} lang="ko" />
