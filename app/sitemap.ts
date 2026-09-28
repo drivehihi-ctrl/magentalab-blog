@@ -2,8 +2,8 @@ import { MetadataRoute } from 'next';
 import { getAllPostsForSitemap } from '@/lib/wp';
 import { INITIAL_PET_PLACES } from '@/lib/map/places';
 
-// 사이트맵은 매 요청시마다 최신 데이터로 동적 생성
-export const dynamic = 'force-dynamic';
+// 사이트맵 ISR 캐싱 적용 (24시간 주기 갱신으로 검색봇 무한 풀스캔 방지)
+export const revalidate = 86400;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.magentalabblog.com';

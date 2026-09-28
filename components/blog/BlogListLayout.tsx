@@ -1,6 +1,6 @@
 import PostListItem from "@/components/PostListItem";
 import Pagination from "@/components/Pagination";
-import { getPosts, getAllCategories, getCategories, getTags } from "@/lib/wp";
+import { getPosts, getAllPostsSummaryIndex, getAllCategories } from "@/lib/wp";
 import Link from "next/link";
 import { decodeHtmlEntities } from "@/lib/utils";
 import React from "react";
@@ -33,18 +33,25 @@ export default async function BlogListLayout({
   const isJa = lang === "ja";
   const basePath = isEn ? "/en/blog" : isJa ? "/ja/blog" : "/blog";
 
-  // 1. Fetch ALL posts for the selected language to calculate 100% accurate post & category counts
-  const [{ posts: allLangPosts }, allCategories] = await Promise.all([
-    getPosts(1, 500, search, undefined, lang, tagId),
+  // 1. 현재 요청 페이지(20개)와 초경량 요약 인덱스, 카테고리를 병렬 조회
+  const [postsRes, allSummaries, allCategories] = await Promise.all([
+    getPosts(currentPage, PER_PAGE, search, categoryId, lang, tagId),
+    getAllPostsSummaryIndex().catch(() => []),
     getAllCategories().catch(() => [])
   ]);
 
-  // 2. Filter categories relevant to this language and calculate EXACT matching post counts per category
+  // 2. 언어 필터링된 요약 인덱스를 기반으로 카테고리별 실시간 포스트 수(realCount) 초고속 계산
+  const langSummaries = allSummaries.filter(p => {
+    const slug = p.slug || "";
+    if (isEn) return slug.endsWith("-en");
+    if (isJa) return slug.endsWith("-ja");
+    return !slug.endsWith("-en") && !slug.endsWith("-ja");
+  });
+
   const categoriesWithCounts = allCategories
     .map((cat: any) => {
-      // Count how many posts in allLangPosts actually belong to this category
-      const count = allLangPosts.filter((post) =>
-        getCategories(post).some((c) => c.id === cat.id || c.slug === cat.slug)
+      const count = langSummaries.filter((p) =>
+        (p.categories && p.categories.includes(cat.id)) || p.slug === cat.slug
       ).length;
       return { ...cat, realCount: count };
     })
@@ -57,17 +64,9 @@ export default async function BlogListLayout({
       return hasKorean || cat.slug === 'food-nutrition';
     });
 
-  // 3. Filter posts by selected category if categoryId is present
-  const filteredPosts = categoryId
-    ? allLangPosts.filter((post) =>
-        getCategories(post).some((c) => c.id.toString() === categoryId)
-      )
-    : allLangPosts;
-
-  const totalPosts = filteredPosts.length;
-  const totalPages = Math.ceil(totalPosts / PER_PAGE) || 1;
-  const startIndex = (currentPage - 1) * PER_PAGE;
-  const paginatedPosts = filteredPosts.slice(startIndex, startIndex + PER_PAGE);
+  const paginatedPosts = postsRes.posts;
+  const totalPosts = postsRes.totalPosts;
+  const totalPages = postsRes.totalPages;
 
   const currentCategory = categoriesWithCounts.find((c: any) => c.id.toString() === categoryId);
 
@@ -144,7 +143,7 @@ export default async function BlogListLayout({
                     : "bg-gray-50 text-gray-500 border border-gray-100 hover:bg-gray-105 hover:text-gray-750"
                 }`}
               >
-                {isEn ? `View All (${allLangPosts.length})` : isJa ? `すべて見る (${allLangPosts.length})` : `전체보기 (${allLangPosts.length})`}
+                {isEn ? `View All (${langSummaries.length})` : isJa ? `すべて見る (${langSummaries.length})` : `전체보기 (${langSummaries.length})`}
               </Link>
               {/* Category Chips */}
               {categoriesWithCounts.map((cat: any) => {

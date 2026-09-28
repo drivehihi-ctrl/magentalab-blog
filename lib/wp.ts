@@ -54,16 +54,145 @@ async function safeJson(res: Response): Promise<any> {
   return res.json();
 }
 
-// global memory cache for posts to prevent high serverless compute costs and rate-limiting
-let postsCache: {
-  allPosts: WPPost[];
+// 안전하게 HTTP Header에 적합한 ASCII 캐시 태그를 생성하는 헬퍼 함수
+export function getSafeSlugTag(slug: string): string {
+  if (!slug) return 'post-slug-empty';
+  // 순수 ASCII (영문, 숫자, 하이픈, 언더스코어)만 있으면 그대로 반환
+  if (/^[a-zA-Z0-9_-]+$/.test(slug)) {
+    return `post-slug-${slug.slice(0, 80)}`;
+  }
+  // 한글 등 Non-ASCII 문자가 포함된 경우 URL 인코딩하여 유효한 ASCII 문자열로 변환 (Header TypeError 방지)
+  const encoded = encodeURIComponent(slug);
+  return `post-slug-${encoded.slice(0, 80)}`;
+}
+
+// 초경량 포스트 요약 메타데이터 인터페이스 (_embed 없음, 페이지당 40KB 수준)
+export interface WPPostSummary {
+  id: number;
+  date: string;
+  modified: string;
+  slug: string;
+  title: { rendered: string };
+  categories: number[];
+  tags: number[];
+  featured_media?: number;
+}
+
+// global memory cache for posts index
+let postsIndexCache: {
+  allPosts: WPPostSummary[];
   timestamp: number;
 } | null = null;
 
 const CACHE_TTL = 1000 * 60 * 30; // 30 minutes in-memory cache
 
 export function clearPostsCache() {
-  postsCache = null;
+  postsIndexCache = null;
+}
+
+/**
+ * 전체 글의 초경량 요약 인덱스를 수집합니다.
+ * _embed와 본문/발췌문이 제외되어 470여 개 글 전체가 약 180KB에 불과하므로
+ * Next.js Data Cache(2MB 한도)에 100% 안전하게 적재됩니다.
+ */
+export async function getAllPostsSummaryIndex(): Promise<WPPostSummary[]> {
+  const now = Date.now();
+  if (postsIndexCache && (now - postsIndexCache.timestamp < CACHE_TTL)) {
+    return postsIndexCache.allPosts;
+  }
+
+  try {
+    const perPage = 100;
+    const fields = 'id,date,modified,slug,title,categories,tags,featured_media';
+    const firstUrl = `${WP_API_URL}/posts?per_page=${perPage}&page=1&_fields=${fields}`;
+
+    const firstRes = await fetch(firstUrl, {
+      next: {
+        revalidate: 86400,
+        tags: ['posts-index']
+      }
+    });
+
+    if (!firstRes.ok) {
+      console.error(`Failed to fetch posts index: ${firstRes.status}`);
+      return postsIndexCache?.allPosts || [];
+    }
+
+    const totalPages = Number(firstRes.headers.get('X-WP-TotalPages') || 1);
+    const firstPagePosts: WPPostSummary[] = await safeJson(firstRes);
+    let allSummaries: WPPostSummary[] = Array.isArray(firstPagePosts) ? [...firstPagePosts] : [];
+
+    if (totalPages > 1) {
+      const remainingFetches = Array.from({ length: totalPages - 1 }, (_, i) =>
+        fetch(`${WP_API_URL}/posts?per_page=${perPage}&page=${i + 2}&_fields=${fields}`, {
+          next: {
+            revalidate: 86400,
+            tags: ['posts-index']
+          }
+        }).then(res => res.ok ? safeJson(res) as Promise<WPPostSummary[]> : [])
+          .catch(err => {
+            console.error(`Error fetching posts index page ${i + 2}:`, err);
+            return [];
+          })
+      );
+
+      const remainingPages = await Promise.all(remainingFetches);
+      allSummaries = allSummaries.concat(remainingPages.flat().filter(Boolean));
+    }
+
+    if (allSummaries.length > 0) {
+      postsIndexCache = {
+        allPosts: allSummaries,
+        timestamp: now
+      };
+    }
+
+    return allSummaries;
+  } catch (error) {
+    console.error("Critical error in getAllPostsSummaryIndex:", error);
+    return postsIndexCache?.allPosts || [];
+  }
+}
+
+/**
+ * ID 목록에 해당하는 상세 포스트(_embed 포함)를 안전한 청크 단위(최대 20개)로 가져옵니다.
+ * 각 요청의 응답 크기가 약 300KB로 2MB 한도보다 훨씬 작아 Data Cache에 100% 정상 저장됩니다.
+ */
+async function fetchDetailedPostsByIds(ids: number[]): Promise<WPPost[]> {
+  if (!ids || ids.length === 0) return [];
+
+  // 최대 20개 단위로 청킹하여 2MB 초과를 원천 차단
+  const CHUNK_SIZE = 20;
+  const chunks: number[][] = [];
+  for (let i = 0; i < ids.length; i += CHUNK_SIZE) {
+    chunks.push(ids.slice(i, i + CHUNK_SIZE));
+  }
+
+  const fields = 'id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded';
+
+  const chunkFetches = chunks.map(chunkIds =>
+    fetch(`${WP_API_URL}/posts?include=${chunkIds.join(',')}&per_page=${chunkIds.length}&_embed&_fields=${fields}`, {
+      next: {
+        revalidate: 86400,
+        tags: ['posts']
+      }
+    }).then(res => res.ok ? safeJson(res) as Promise<WPPost[]> : [])
+      .catch(err => {
+        console.error("Error fetching detailed chunk:", err);
+        return [];
+      })
+  );
+
+  const chunkResults = await Promise.all(chunkFetches);
+  const flattened: WPPost[] = chunkResults.flat().filter(Boolean);
+
+  // WordPress의 include 쿼리는 ID 순서를 보장하지 않으므로 요청한 ID 순서대로 재정렬
+  const idMap = new Map<number, WPPost>();
+  for (const post of flattened) {
+    idMap.set(post.id, post);
+  }
+
+  return ids.map(id => idMap.get(id)).filter(Boolean) as WPPost[];
 }
 
 export async function getPosts(
@@ -75,130 +204,95 @@ export async function getPosts(
   tag?: string
 ): Promise<PostsResponse> {
   const isKo = lang === "ko" || !lang;
-  const now = Date.now();
-  const isMainFetch = !search && !category && !tag;
-
-  let allPosts: WPPost[] = [];
 
   try {
-    if (isMainFetch && postsCache && (now - postsCache.timestamp < CACHE_TTL)) {
-      allPosts = postsCache.allPosts;
-    } else {
-      // 1페이지를 먼저 요청하여 전체 페이지 수(X-WP-TotalPages) 및 헤더 정보를 가져옵니다.
-      let url = `${WP_API_URL}/posts?_embed&per_page=100&page=1&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`;
-      if (search) {
-        url += `&search=${encodeURIComponent(search)}`;
-      }
-      if (category) {
-        url += `&categories=${category}`;
-      }
-      if (tag) {
-        url += `&tags=${tag}`;
-      }
+    // 1. 검색 쿼리가 있는 경우: WordPress search API를 페이징하여 타겟 조회
+    if (search) {
+      let searchUrl = `${WP_API_URL}/posts?search=${encodeURIComponent(search)}&per_page=100&page=1&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded&_embed`;
+      if (category) searchUrl += `&categories=${category}`;
+      if (tag) searchUrl += `&tags=${tag}`;
 
-      const firstRes = await fetch(url, {
-        next: {
-          revalidate: 86400,
-          tags: ['posts']
-        },
+      const res = await fetch(searchUrl, {
+        next: { revalidate: 86400, tags: ['posts-search'] }
       });
 
-      if (!firstRes.ok) {
-        console.error(`Failed to fetch posts from WP: ${firstRes.status}`);
-        // 캐시 데이터가 있으면 에러 상태에서도 이전 캐시를 재활용하여 다운 방지
-        if (postsCache) {
-          allPosts = postsCache.allPosts;
-        } else {
-          return { posts: [], totalPages: 1, totalPosts: 0 };
-        }
-      } else {
-        const totalPagesHeader = Number(firstRes.headers.get('X-WP-TotalPages') || 1);
-        const firstPagePosts = await safeJson(firstRes);
-
-        allPosts = Array.isArray(firstPagePosts) ? [...firstPagePosts] : [];
-
-        // 2페이지 이상이 존재하면 나머지 페이지 데이터를 병렬로 모두 가져옵니다.
-        if (totalPagesHeader > 1) {
-          const remainingUrls = [];
-          for (let i = 2; i <= totalPagesHeader; i++) {
-            let rUrl = `${WP_API_URL}/posts?_embed&per_page=100&page=${i}&_fields=id,date,modified,slug,title,excerpt,categories,tags,_links,_embedded`;
-            if (search) rUrl += `&search=${encodeURIComponent(search)}`;
-            if (category) rUrl += `&categories=${category}`;
-            if (tag) rUrl += `&tags=${tag}`;
-            remainingUrls.push(rUrl);
-          }
-
-          const remainingFetches = remainingUrls.map(rUrl =>
-            fetch(rUrl, {
-              next: {
-                revalidate: 86400,
-                tags: ['posts']
-              }
-            }).then(res => res.ok ? safeJson(res) : [])
-              .catch(err => {
-                console.error(`Failed to fetch next page posts at ${rUrl}:`, err);
-                return [];
-              })
-          );
-
-          const remainingPagesPosts = await Promise.all(remainingFetches);
-          allPosts = allPosts.concat(remainingPagesPosts.flat().filter(Boolean));
-        }
-
-        // 메인 조회이고 글이 정상 수집되었을 때만 메모리에 캐시 적재
-        if (isMainFetch && allPosts.length > 0) {
-          postsCache = {
-            allPosts,
-            timestamp: now
-          };
-        }
+      if (!res.ok) {
+        console.error(`Search fetch failed: ${res.status}`);
+        return { posts: [], totalPages: 1, totalPosts: 0 };
       }
+
+      let searchPosts: WPPost[] = await safeJson(res);
+      if (!Array.isArray(searchPosts)) searchPosts = [];
+
+      // 언어 필터링
+      if (isKo) {
+        searchPosts = searchPosts.filter(p => !p.slug.endsWith("-en") && !p.slug.endsWith("-ja"));
+      } else if (lang === "en") {
+        searchPosts = searchPosts.filter(p => p.slug.endsWith("-en"));
+      } else if (lang === "ja") {
+        searchPosts = searchPosts.filter(p => p.slug.endsWith("-ja"));
+      }
+
+      const totalPosts = searchPosts.length;
+      const totalPages = Math.ceil(totalPosts / perPage) || 1;
+      const startIndex = (page - 1) * perPage;
+      const paginatedPosts = searchPosts.slice(startIndex, startIndex + perPage);
+
+      return {
+        posts: paginatedPosts,
+        totalPages,
+        totalPosts
+      };
     }
+
+    // 2. 일반 목록 / 카테고리 / 태그 조회: 초경량 인덱스를 활용한 스마트 타겟 페이징
+    const allSummaries = await getAllPostsSummaryIndex();
+
+    // 언어 필터링
+    let filteredSummaries = allSummaries;
+    if (isKo) {
+      filteredSummaries = allSummaries.filter(p => {
+        const slug = p.slug || "";
+        return !slug.endsWith("-en") && !slug.endsWith("-ja");
+      });
+    } else if (lang === "en") {
+      filteredSummaries = allSummaries.filter(p => (p.slug || "").endsWith("-en"));
+    } else if (lang === "ja") {
+      filteredSummaries = allSummaries.filter(p => (p.slug || "").endsWith("-ja"));
+    }
+
+    // 카테고리 필터링
+    if (category) {
+      const catId = Number(category);
+      filteredSummaries = filteredSummaries.filter(p => p.categories && p.categories.includes(catId));
+    }
+
+    // 태그 필터링
+    if (tag) {
+      const tagId = Number(tag);
+      filteredSummaries = filteredSummaries.filter(p => p.tags && p.tags.includes(tagId));
+    }
+
+    const totalPosts = filteredSummaries.length;
+    const totalPages = Math.ceil(totalPosts / perPage) || 1;
+
+    // 현재 페이지에 필요한 포스트 ID 목록 추출
+    const startIndex = (page - 1) * perPage;
+    const targetSummaries = filteredSummaries.slice(startIndex, startIndex + perPage);
+    const targetIds = targetSummaries.map(p => p.id);
+
+    // 해당 포스트들의 상세 데이터(_embed 포함)만 정확히 fetch (크기 약 300KB)
+    const detailedPosts = await fetchDetailedPostsByIds(targetIds);
+
+    return {
+      posts: detailedPosts,
+      totalPages,
+      totalPosts
+    };
   } catch (error) {
-    console.error("Critical network or parsing error in getPosts:", error);
-    if (postsCache) {
-      allPosts = postsCache.allPosts;
-    } else {
-      return { posts: [], totalPages: 1, totalPosts: 0 };
-    }
+    console.error("Critical error in getPosts:", error);
+    return { posts: [], totalPages: 1, totalPosts: 0 };
   }
-
-  // 이제 모든 포스트(allPosts)를 확보했으므로 언어 필터링을 수행합니다.
-  let filteredPosts = allPosts;
-
-  if (isKo) {
-    // 한국어 페이지: 슬러그가 -en 또는 -ja로 끝나는 글을 전면 배제
-    filteredPosts = allPosts.filter((post: any) => {
-      const slug = post.slug || "";
-      return !slug.endsWith("-en") && !slug.endsWith("-ja");
-    });
-  } else if (lang === "en") {
-    // 영어 페이지: 슬러그가 -en으로 끝나는 글만 필터링
-    filteredPosts = allPosts.filter((post: any) => {
-      const slug = post.slug || "";
-      return slug.endsWith("-en");
-    });
-  } else if (lang === "ja") {
-    // 일본어 페이지: 슬러그가 -ja로 끝나는 글만 필터링
-    filteredPosts = allPosts.filter((post: any) => {
-      const slug = post.slug || "";
-      return slug.endsWith("-ja");
-    });
-  }
-
-  // 필터링된 전체 글 수 기준으로 totalPosts, totalPages 계산
-  const totalPosts = filteredPosts.length;
-  const totalPages = Math.ceil(totalPosts / perPage) || 1;
-
-  // 요청한 page, perPage 크기에 맞게 데이터 슬라이싱
-  const startIndex = (page - 1) * perPage;
-  const paginatedPosts = filteredPosts.slice(startIndex, startIndex + perPage);
-
-  return {
-    posts: paginatedPosts,
-    totalPages,
-    totalPosts
-  };
 }
 
 
@@ -288,10 +382,10 @@ export async function getCategoryBySlugOrName(slugOrName: string): Promise<WPCat
 export async function getAllPostsForSitemap(): Promise<WPPost[]> {
   try {
     const perPage = 100;
-    // 1페이지를 먼저 가져와 전체 페이지 수 확인
+    // 1페이지를 먼저 가져와 전체 페이지 수 확인 (24시간 캐시 및 sitemap 태그 적용)
     const firstRes = await fetch(
       `${WP_API_URL}/posts?_fields=id,date,modified,slug&per_page=${perPage}&page=1`,
-      { next: { revalidate: 0 } }
+      { next: { revalidate: 86400, tags: ['sitemap'] } }
     );
     if (!firstRes.ok) throw new Error("Failed to fetch posts for sitemap");
 
@@ -304,7 +398,7 @@ export async function getAllPostsForSitemap(): Promise<WPPost[]> {
     const remainingFetches = Array.from({ length: totalPages - 1 }, (_, i) =>
       fetch(
         `${WP_API_URL}/posts?_fields=id,date,modified,slug&per_page=${perPage}&page=${i + 2}`,
-        { next: { revalidate: 0 } }
+        { next: { revalidate: 86400, tags: ['sitemap'] } }
       ).then(res => res.ok ? safeJson(res) as Promise<WPPost[]> : [])
        .catch(err => {
          console.error("Error fetching sitemap page:", err);
@@ -603,10 +697,11 @@ export async function getPageBySlug(slug: string): Promise<WPPost | null> {
 
 export async function getPostBySlug(slug: string): Promise<WPPost | null> {
   try {
-    const res = await fetch(`${WP_API_URL}/posts?slug=${slug}&_embed`, {
+    const safeTag = getSafeSlugTag(slug);
+    const res = await fetch(`${WP_API_URL}/posts?slug=${encodeURIComponent(slug)}&_embed`, {
       next: {
         revalidate: 86400,
-        tags: [`post-slug-${slug.slice(0, 100)}`]
+        tags: [safeTag]
       },
     });
     if (!res.ok) throw new Error(`Failed to fetch post by slug: ${slug}`);
@@ -684,8 +779,8 @@ export async function fetchRelatedPosts(currentPost: WPPost, limit: number = 3, 
     const fields = 'id,date,date_gmt,modified,modified_gmt,slug,title,excerpt,categories,tags,_links,_embedded';
 
     if (isBellyPost) {
-      const bellyRes = await fetch(`${WP_API_URL}/posts?_embed&per_page=50&search=${encodeURIComponent('배방구')}&_fields=${fields}`, {
-        next: { revalidate: 86400, tags: ['posts'] }
+      const bellyRes = await fetch(`${WP_API_URL}/posts?_embed&per_page=10&search=${encodeURIComponent('배방구')}&_fields=${fields}`, {
+        next: { revalidate: 86400, tags: ['related-belly'] }
       });
       if (bellyRes.ok) {
         const bellyPosts = await safeJson(bellyRes);
@@ -696,8 +791,9 @@ export async function fetchRelatedPosts(currentPost: WPPost, limit: number = 3, 
     if (relatedPosts.length < limit) {
       const categoryIds = getCategories(currentPost).map((c: any) => c.id).join(',');
       if (categoryIds) {
-        const catRes = await fetch(`${WP_API_URL}/posts?_embed&per_page=50&categories=${categoryIds}&_fields=${fields}`, {
-          next: { revalidate: 86400, tags: ['posts'] }
+        const primaryCat = categoryIds.split(',')[0];
+        const catRes = await fetch(`${WP_API_URL}/posts?_embed&per_page=12&categories=${categoryIds}&_fields=${fields}`, {
+          next: { revalidate: 86400, tags: [`related-cat-${primaryCat}`] }
         });
         if (catRes.ok) {
           const catPosts = await safeJson(catRes);

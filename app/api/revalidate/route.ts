@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidateTag, revalidatePath } from 'next/cache';
-import { clearPostsCache } from '@/lib/wp';
+import { clearPostsCache, getSafeSlugTag } from '@/lib/wp';
 
 export async function POST(request: NextRequest) {
   const secret = request.nextUrl.searchParams.get('secret');
@@ -36,16 +36,20 @@ export async function POST(request: NextRequest) {
     const postSlug = body.post_name || body.slug || body.post?.post_name || request.nextUrl.searchParams.get('slug');
     const clearAll = request.nextUrl.searchParams.get('clear_all') === 'true';
 
-    // 3. 메모리 전역 캐시(postsCache) 100% 즉시 삭제 (목록 데이터 동기화용)
+    // 3. 메모리 전역 캐시(postsIndexCache) 100% 즉시 삭제 (목록 데이터 동기화용)
     clearPostsCache();
 
     // 4. Next.js 타겟팅 무효화
     // @ts-ignore
-    revalidateTag('posts');      // 전체 포스트 목록(목록 페이지 등에 영향)
+    revalidateTag('posts');        // 전체 포스트 목록
     // @ts-ignore
-    revalidateTag('categories'); // 카테고리
+    revalidateTag('posts-index');  // 포스트 메타 요약 인덱스
     // @ts-ignore
-    revalidateTag('tags');       // 태그
+    revalidateTag('sitemap');      // 사이트맵
+    // @ts-ignore
+    revalidateTag('categories');   // 카테고리
+    // @ts-ignore
+    revalidateTag('tags');         // 태그
     
     if (postId) {
       // @ts-ignore
@@ -53,9 +57,10 @@ export async function POST(request: NextRequest) {
     }
     
     if (postSlug) {
-      // 슬러그를 포함한 태그 무효화
+      // 안전한 ASCII 캐시 태그 무효화 (한글 슬러그 TypeError 방지)
+      const safeSlugTag = getSafeSlugTag(postSlug);
       // @ts-ignore
-      revalidateTag(`post-slug-${postSlug.slice(0, 100)}`);
+      revalidateTag(safeSlugTag);
     }
 
     // 수동으로 전체 초기화가 필요한 경우 (예: 브라우저 주소창에서 강제 갱신 시)

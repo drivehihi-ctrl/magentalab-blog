@@ -5,6 +5,8 @@ import { sanitizeForSeo } from "@/lib/utils";
  * 전용몰 제품이 포함되지 않은 순수 블로그 포스트 전용 RSS 피드를 생성합니다.
  * 네이버 서치어드바이저 및 구글 서치콘솔 제출용입니다.
  */
+export const revalidate = 3600;
+
 export async function GET() {
   const siteUrl = "https://www.magentalabblog.com";
   
